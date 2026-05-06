@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #4a6fa5;
+  border-radius: 10px;
+}
+
+/* Tùy chỉnh độ cao tối thiểu của vùng soạn thảo */
+.ck-editor__editable_inline {
+    min-height: 200px; 
+}
