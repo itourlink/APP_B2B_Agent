@@ -78,6 +78,10 @@ export function Router() {
           ),
           children: [
             {
+              index: true,
+              element: <Navigate to={paths.content.info} replace />,
+            },
+            {
               path: paths.tour.list,
               element: <TourPage />,
             },

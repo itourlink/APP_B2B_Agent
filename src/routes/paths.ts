@@ -8,7 +8,7 @@ export const paths = {
     newPassword: "/new-password",
   },
   tour: {
-    list: "/",
+    list: "/tour",
     detail: "/tour-detail"
   },
   boat: {
