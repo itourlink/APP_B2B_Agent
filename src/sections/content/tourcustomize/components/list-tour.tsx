@@ -19,9 +19,11 @@ const MENU_ITEMS: IServiceMenuItem[] = [
 interface Props {
   item: any[]; // ❗ đổi từ item -> items
   onChange: (value: string) => void;
+  dayIndex: number
+
 }
 
-const ListTour = ({ item, onChange }: Props) => {
+const ListTour = ({ item, onChange, dayIndex }: Props) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const parseLocations = (str: string) => {
@@ -47,6 +49,11 @@ const ListTour = ({ item, onChange }: Props) => {
     const safe = (val: any) =>
       typeof val === "object" ? "" : val ?? "";
 
+    const starOptions = String(
+      item?.strListEasiaCateID || ""
+    )
+      .split(",")
+      .filter(Boolean);
     return (
       <tr
         key={item?.id ?? index}
@@ -79,12 +86,23 @@ const ListTour = ({ item, onChange }: Props) => {
               ({safe(item?.strCateName)})
             </div>
 
-            <div className="flex items-center gap-1 border border-gray-300 rounded px-2 py-1 w-fit bg-white cursor-pointer hover:border-gray-400 transition-colors">
-              <div className="flex text-[#333]">
-                {safe(item?.strListEasiaCateName)}
-              </div>
-              <ChevronDown size={14} className="text-gray-400" />
-            </div>
+            <select
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
+              defaultValue=""
+            >
+              <option value="">
+                Select star
+              </option>
+
+              {starOptions.map((star) => (
+                <option
+                  key={star}
+                  value={star}
+                >
+                  {"⭐".repeat(Number(star))}
+                </option>
+              ))}
+            </select>
           </div>
         </td>
 

@@ -91,6 +91,13 @@ export const useListServiceTourCustomized = async (body: any) => {
     );
     return res.data;
 };
+export const useDelDayTourCustomized = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/DelDayTourCustomized",
+        body
+    );
+    return res.data;
+};
 export const useFilterCompanyBankAccount = async (body: any) => {
     const res = await apiClient.post(
         "user/GetFilterCompanyBankAccount",

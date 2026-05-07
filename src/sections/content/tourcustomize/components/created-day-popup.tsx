@@ -4,15 +4,24 @@ import AddTourCustomize from "../../info/components/add-tour-customize";
 interface CreatedDayPopupProps {
   open: boolean;
   onClose: () => void;
+
+  // FIX
   strTourCustomizedGUID: string;
+
   intDayOrder: number;
+
+  // callback add local
+  onAddLocalDay?: (day: any) => void;
 }
 
-const CreatedDayPopup = ({ open, onClose, strTourCustomizedGUID, intDayOrder }: CreatedDayPopupProps) => {
-  // console.log("--- CreatedDayPopup nhận dữ liệu từ ChangeDayOrder ---");
-  // console.log("GUID:", strTourCustomizedGUID);
-  // console.log("Thứ tự ngày:", intDayOrder);
-  
+const CreatedDayPopup = ({
+  open,
+  onClose,
+  strTourCustomizedGUID,
+  intDayOrder,
+  onAddLocalDay,
+}: CreatedDayPopupProps) => {
+
   return (
     <Popup
       open={open}
@@ -23,8 +32,13 @@ const CreatedDayPopup = ({ open, onClose, strTourCustomizedGUID, intDayOrder }: 
       <div className="p-1 font-sans">
         <AddTourCustomize
           onClose={onClose}
-          strTourCustomizedGUID={strTourCustomizedGUID}
+          strTourCustomizedGUID={
+            strTourCustomizedGUID
+          }
           intDayOrder={intDayOrder}
+
+          // FIX
+          onAddLocalDay={onAddLocalDay}
         />
       </div>
     </Popup>
