@@ -133,7 +133,6 @@ export const DetailTourContent = ({
                         >
                             <ListTour
                                 item={items}
-                                dayIndex={index}
                                 onChange={(value) =>
                                     setSelectedService(value)
                                 }

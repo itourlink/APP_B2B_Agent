@@ -140,6 +140,13 @@ export const useListAgentHostServiceItem = async (body: any) => {
     );
     return res.data;
 };
+export const updTourCustomizedDayItemCate = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/UpdTourCustomizedDayItemCate",
+        body
+    );
+    return res.data;
+};
 export const useListPayableBooking = async (body: any) => {
     const res = await apiClient.post(
         "payrcvbooking/GetListPayableBooking",

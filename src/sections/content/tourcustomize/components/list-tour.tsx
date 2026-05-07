@@ -1,11 +1,13 @@
 import { useState } from "react";
 import {
-  MapPin, ChevronsUpDown, Menu, Trash2, ChevronDown, RefreshCw,
+  MapPin, ChevronsUpDown, Menu, Trash2, RefreshCw,
   Bed, Landmark, Car, Pencil, PlusCircle, Image as ImageIcon
 } from "lucide-react";
 import ServiceMenu, { type IServiceMenuItem } from "./service-menu";
 import { getUrlImage } from "@/utils/format-image";
 import { isValidValue } from "@/utils/utilts";
+import { updTourCustomizedDayItemCate, } from "@/hooks/actions/useUser";
+import { useMutation, } from "@tanstack/react-query";
 
 const MENU_ITEMS: IServiceMenuItem[] = [
   { icon: <Bed size={20} />, label: 'Thêm chỗ nghỉ', value: 'accommodation', color: 'text-blue-700' },
@@ -19,11 +21,10 @@ const MENU_ITEMS: IServiceMenuItem[] = [
 interface Props {
   item: any[]; // ❗ đổi từ item -> items
   onChange: (value: string) => void;
-  dayIndex: number
 
 }
 
-const ListTour = ({ item, onChange, dayIndex }: Props) => {
+const ListTour = ({ item, onChange }: Props) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const parseLocations = (str: string) => {
@@ -44,6 +45,12 @@ const ListTour = ({ item, onChange, dayIndex }: Props) => {
 
   const locations = parseLocations(String(firstItem?.strListLocation));
 
+  const {
+    mutateAsync: upTourCateAPI,
+    isPending: isupdLoading,
+  } = useMutation({
+    mutationFn: updTourCustomizedDayItemCate,
+  });
 
   const renderRow = (item: any, index: number) => {
     const safe = (val: any) =>
@@ -54,6 +61,8 @@ const ListTour = ({ item, onChange, dayIndex }: Props) => {
     )
       .split(",")
       .filter(Boolean);
+
+
     return (
       <tr
         key={item?.id ?? index}
@@ -89,6 +98,19 @@ const ListTour = ({ item, onChange, dayIndex }: Props) => {
             <select
               className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
               defaultValue=""
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (!value) return;
+
+                upTourCateAPI({
+                  strTourCustomizedGUID: item?.strTourCustomizedGUID,
+                  strTourCustomizedPriceItemGUID:
+                    item?.strTourCustomizedPriceItemGUID,
+                  strListEasiaCateID: value,
+                });
+              }}
+              disabled={isupdLoading}
             >
               <option value="">
                 Select star
