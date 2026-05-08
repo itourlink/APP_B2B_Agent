@@ -26,6 +26,7 @@ const AgentCompanyPage = lazy(() => import("@/pages/agent-company/list"));
 const SearchPage = lazy(() => import("@/pages/search/search"));
 const CartPage = lazy(() => import("@/pages/cart/list"));
 const SalesChannelPage = lazy(() => import("@/pages/sales-channel/list"));
+const ShopPage = lazy(() => import("@/pages/shop/list"));
 // const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
 
 // import InitLayout, { LAYOUT } from "@/layouts/init-layout";
@@ -159,6 +160,10 @@ export function Router() {
               path: paths.salesChannel.list,
               element: <SalesChannelPage />,
             },
+            {
+              path: paths.shop.list,
+              element: <ShopPage />,
+            },
 
           ],
         },
@@ -210,7 +215,7 @@ export function Router() {
           ],
         },
 
-        // OVERLAY LAYOUT
+        // INFO LAYOUT
         {
           element: (
             <InitLayout type={LAYOUT.INFO}>

@@ -52,6 +52,9 @@ export const paths = {
   salesChannel: {
     list: "/sales-channel"
   },
+  shop: {
+    list: "/shop"
+  },
   content: {
     info: "/info",
     requestBooking: "/request-booking",

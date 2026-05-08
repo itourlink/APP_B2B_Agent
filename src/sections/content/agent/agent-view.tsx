@@ -103,9 +103,10 @@ const AgentView = () => {
                         Tariff
                     </button>
                     <button
-                        onClick={() => router.replaceQuery(paths.tour.list, {
-                            company: row?.strUrlLink,
-                        })}
+                        // onClick={() => router.replaceQuery(paths.tour.list, {
+                        //     company: row?.strUrlLink,
+                        // })}
+                        onClick={() => router.replaceQuery(paths.shop.list, { company: row?.strUrlLink, })}
                         className="cursor-pointer px-4 py-1.5 bg-[#004b91] text-white text-[13px] font-medium rounded hover:bg-[#003d76] transition-all shadow-sm"
                     >
                         Shop
