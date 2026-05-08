@@ -6,9 +6,8 @@ import {
 import ServiceMenu, { type IServiceMenuItem } from "./service-menu";
 import { getUrlImage } from "@/utils/format-image";
 import { isValidValue } from "@/utils/utilts";
-import { updTourCustomizedDayItemCate, useListServiceTourCustomized, } from "@/hooks/actions/useUser";
-import { keepPreviousData, useMutation, useQuery, } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { updTourCustomizedDayItemCate, } from "@/hooks/actions/useUser";
+import { useMutation, } from "@tanstack/react-query";
 
 const MENU_ITEMS: IServiceMenuItem[] = [
   { icon: <Bed size={20} />, label: 'Thêm chỗ nghỉ', value: 'accommodation', color: 'text-blue-700' },
@@ -23,7 +22,6 @@ interface Props {
   item: any[]; // ❗ đổi từ item -> items
   itemDetail: any; // dữ liệu detail gốc của toàn bộ detail
   onChange: (value: string) => void;
-
 }
 
 const ListTour = ({ item, itemDetail, onChange }: Props) => {
