@@ -11,6 +11,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 
 interface DetailTourContentProps {
+    itemDetail?: any
     onOpenChangeDay: () => void;
     isPopupOpen: boolean;
     setIsPopupOpen: (val: boolean) => void;
@@ -20,6 +21,7 @@ interface DetailTourContentProps {
 }
 
 export const DetailTourContent = ({
+    itemDetail,
     isPopupOpen,
     setIsPopupOpen,
     hasChange,
@@ -29,7 +31,6 @@ export const DetailTourContent = ({
 
     const location = useLocation();
     const item = location.state?.item;
-
     const [selectedService, setSelectedService] = useState<string | null>(null);
 
     // CLOSE POPUP
@@ -51,8 +52,7 @@ export const DetailTourContent = ({
         ],
         queryFn: () =>
             useListServiceTourCustomized({
-                strTourCustomizedGUID:
-                    item?.strTourCustomizedGUID,
+                strTourCustomizedGUID: item?.strTourCustomizedGUID,
                 strTourCustomizedDayGUID: null,
             }),
         placeholderData: keepPreviousData,
@@ -133,6 +133,7 @@ export const DetailTourContent = ({
                         >
                             <ListTour
                                 item={items}
+                                itemDetail={itemDetail ?? ""}
                                 onChange={(value) =>
                                     setSelectedService(value)
                                 }

@@ -35,7 +35,6 @@ const RestaurantDetail = () => {
   });
 
   const { mpData, mpLoading } = useListMappingPrice(filters3);
-  console.log("mpData", mpData);
 
   const colDefs: ColumnDef<any>[] = [
     {

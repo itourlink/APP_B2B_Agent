@@ -27,7 +27,6 @@ const DetailService = () => {
 
     const user = useUserStore((state) => state.user);
 
-    console.log("item", item)
 
     const { data, isLoading } = useQuery({
         queryKey: [QUERY_KEYS.USER.LIST_AGENT_HOST_SERVICE_ITEM, 1],

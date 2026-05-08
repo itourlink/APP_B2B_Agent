@@ -198,7 +198,6 @@ const TourCustomizedPopup = () => {
                ORDER BY MC04_CityName`,
     });
 
-    console.log("ntData", ntData)
     const CITY_OPTIONS = ntData.map((item: any) => ({
         label: item.strCityName,
         value: item.strCityCode,

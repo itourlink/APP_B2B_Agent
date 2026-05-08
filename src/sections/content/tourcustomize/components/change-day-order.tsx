@@ -235,7 +235,6 @@ const ChangeDayOrder = ({
       onClose();
 
     } catch (error) {
-      console.log(error);
 
       showToast("error", "Lưu thất bại");
     }

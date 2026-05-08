@@ -113,7 +113,6 @@ export const useDetailRestaurant = (filters?: {
 
   const listData = query.data ?? [];
 
-  console.log("lssiaias", listData);
   const totalRecords = listData?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
   return {

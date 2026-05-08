@@ -14,7 +14,7 @@ const DetailRequestCustomize = () => {
     const { showToast } = useToastStore();
     const router = useRouter();
     const location = useLocation();
-    const item = location.state?.item; console.log("itemahaha", item)
+    const item = location.state?.item; 
 
     const { data, isLoading, isError } = useQuery({
         queryKey: [QUERY_KEYS.USER.LIST_REQUEST_MESSAGE],

@@ -12,7 +12,6 @@ export const DetailTour = () => {
   const location = useLocation();
   const item = location.state?.item;
 
-  console.log("item", item)
   const [isUpdate, setIsUpdate] = useState(false);
 
   // 1. Quản lý trạng thái Popup & Thay đổi tập trung tại cha
@@ -48,6 +47,7 @@ export const DetailTour = () => {
         <UpdateTour onBack={() => setIsUpdate(false)} />
       ) : (
         <DetailTourContent
+          itemDetail={item ?? ""}
           onOpenChangeDay={() => setIsPopupOpen(true)}
           // onUpdateDays={setDays}
           isPopupOpen={isPopupOpen}

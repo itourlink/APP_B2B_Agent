@@ -168,7 +168,6 @@ export const useDetailFlight = (filters: {
   const totalRecords = listData?.[0]?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
 
-  console.log("listData Flight", listData);
   
   return {
     fdData: listData,

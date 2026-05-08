@@ -57,7 +57,6 @@ const SignUpView = () => {
       state,
     };
 
-    console.log("payload:", payload);
 
     // loginApi(payload, {
     //   onSuccess: () => {

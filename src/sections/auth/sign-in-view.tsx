@@ -57,7 +57,6 @@ const SignInView = () => {
       state,
     };
 
-    console.log("payload:", payload);
 
     // loginApi(payload, {
     //   onSuccess: () => {

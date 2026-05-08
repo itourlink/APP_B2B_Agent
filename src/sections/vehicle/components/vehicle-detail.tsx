@@ -27,7 +27,6 @@ const VehicleDetail = () => {
   const vehicle = vdData?.[0]?.[0];
   const company = vdData?.[1]?.[0];
 
-  console.log("vehicle", vehicle);
   // table 
 
 
@@ -38,7 +37,6 @@ const VehicleDetail = () => {
   tblsReturn: "[0][1][2]",
 });
     const { mpData, mpLoading } = useListVehicleMappingPrice(filters);
-    console.log("vehclie data" , mpData);
     
   
 const colDefs: ColumnDef<any>[] = [

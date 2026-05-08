@@ -19,7 +19,6 @@ const GuideFeeDetail = () => {
     pageSize: 1,
     strSupplierGUID: item?.strSupplierGUID,
   });
-  console.log("filters", filters);
   
   const { gfData } = useDetailGuideFee(filters);
 
@@ -33,7 +32,6 @@ const GuideFeeDetail = () => {
     tblsReturn: "[0]",
   });
   const { mpData, mpLoading,  } = useListMappingPrice(filters3) 
-  console.log("mpData guide", mpData);
 
   const colDefs: ColumnDef<any>[] = [
     {

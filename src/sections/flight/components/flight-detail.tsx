@@ -15,7 +15,6 @@ import { TableCore, type ColumnDef } from "@/components/table/table-core";
 const FlightDetail = () => {
   const location = useLocation();
   const item = location?.state?.item;
-  console.log("item", item);
 
   const { fdData } = useDetailFlight({
     page: 1,
@@ -38,7 +37,6 @@ const FlightDetail = () => {
 const [selectedCompany, setSelectedCompany] = useState("");
 
 
-  console.log("mpData Flight", mpData);
 
   const colDefs: ColumnDef<any>[] =[
   {

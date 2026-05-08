@@ -10,7 +10,6 @@ const CartList = () => {
   });
 
   const { cartData, cartLoading, cartError } = useListCart(filters);
-  console.log("cartData", cartData);
 
   const colDefs: ColumnDef<any>[] = [
     {
