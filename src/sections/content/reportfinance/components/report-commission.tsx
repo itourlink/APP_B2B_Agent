@@ -17,6 +17,8 @@ import { useRouter } from "@/routes/hooks/use-router";
 const ReportCommission = () => {
     const router = useRouter();
     const user = useUserStore((state) => state.user);
+
+    console.log("user", user)
     const [filters, setFilters] = useState({
         startTime: "",
         endTime: "",
@@ -30,22 +32,37 @@ const ReportCommission = () => {
     const [page, setPage] = useState(1);
     const pageSize = 5;
     const { data, isLoading, isError } = useQuery({
-        queryKey: [QUERY_KEYS.USER.LIST_REPORT_COMMISSION_BY_AGENT_HOST, page, appliedFilters],
+        queryKey: [
+            QUERY_KEYS.USER.LIST_REPORT_COMMISSION_BY_AGENT_HOST,
+            page,
+            appliedFilters,
+            user?.strCompanyGUID,
+        ],
+
         queryFn: () =>
             useReportCommissionByAgent({
                 strCompanyGUID: user?.strCompanyGUID,
                 strPayableBookingItemGUID: null,
-                strFilterAgentHostName: appliedFilters?.nameProvider || null,
-                strFilterBookingCode: appliedFilters?.idOrder || null,
-                strFilterGroupName: appliedFilters?.nameGroup || null,
-                dtmFilterDateFrom: appliedFilters?.startTime || null,
-                dtmFilterDateTo: appliedFilters?.endTime || null,
+                strFilterAgentHostName:
+                    appliedFilters?.nameProvider || null,
+                strFilterBookingCode:
+                    appliedFilters?.idOrder || null,
+                strFilterGroupName:
+                    appliedFilters?.nameGroup || null,
+                dtmFilterDateFrom:
+                    appliedFilters?.startTime || null,
+                dtmFilterDateTo:
+                    appliedFilters?.endTime || null,
                 intCurPage: page,
                 intPageSize: pageSize,
                 strOrder: null,
-                tblsReturn: "[0]"
+                tblsReturn: "[0]",
             }),
+
         placeholderData: keepPreviousData,
+
+        // 👇 chỉ call khi có companyGUID
+        enabled: !!user?.strCompanyGUID,
     });
     const listData = data?.[0] ?? [];
     const totalRecords = listData?.[0]?.intTotalRecords || 0;
