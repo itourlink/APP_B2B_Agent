@@ -73,16 +73,24 @@ const Header = () => {
 
   const hasActive = (menu || []).some((item) => item && isPathMatch(item));
 
+  const company =
+    new URLSearchParams(location.search).get("company") || "";
 
   return (
     <div className="bg-white px-6 fixed top-0 left-0 w-full z-51 shadow h-30 flex flex-col justify-center gap-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <button onClick={() => router.push(paths.tour.list)} className="overflow-hidden w-10 cursor-pointer">
+          <button onClick={() =>
+            router.push(`${paths.shop.home}?company=${company}`)
+          } className="overflow-hidden w-10 cursor-pointer">
             <img src={logo} alt="logo" className="w-full h-full object-contain" />
           </button>
           <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
-          <button onClick={() => router.push(paths.salesChannel.list)} className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+          <button onClick={() =>
+            router.push(
+              `${paths.shop.salesChannel.list}?company=${company}`
+            )
+          } className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
             Thiết lập kênh bán
           </button>
         </div>
@@ -96,7 +104,9 @@ const Header = () => {
               Yêu cầu của tôi
             </button>
             <TourCustomized />
-            <button onClick={() => router.push(paths.agentCompany.list)} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+            <button onClick={() => router.push(
+              `${paths.shop.agentCompany.list}?company=${company}`
+            )} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
               Danh sách Agent Host
             </button>
           </div>

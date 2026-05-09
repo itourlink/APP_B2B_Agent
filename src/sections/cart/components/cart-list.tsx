@@ -99,7 +99,7 @@ const CartList = () => {
   }
 
   return (
-    <div className="w-full min-h-screen mt-10">
+    <div className="w-full min-h-screen mt-30">
       <div className="max-w-[1320px] mx-auto px-6 py-10">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-800">

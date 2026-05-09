@@ -3,6 +3,7 @@ import { MainLayout } from "./main-layout";
 import AuthLayout from "./auth-layout";
 import { InfoLayout } from "./info-layout";
 import OverlayLayout from "./overlay-layout";
+import ShopLayout from "./shop-layout";
 
 interface Props {
   type: string;
@@ -14,6 +15,7 @@ export const LAYOUT = {
   MAIN: "MAIN-LAYOUT",
   INFO: "INFO-LAYOUT",
   OVERLAY: "OVERLAY-LAYOUT",
+  SHOP: "SHOP-LAYOUT",
 };
 
 const InitLayout = ({ type, children }: Props) => {
@@ -23,6 +25,7 @@ const InitLayout = ({ type, children }: Props) => {
     [LAYOUT.MAIN]: <MainLayout>{children}</MainLayout>,
     [LAYOUT.INFO]: <InfoLayout>{children}</InfoLayout>,
     [LAYOUT.OVERLAY]: <OverlayLayout>{children}</OverlayLayout>,
+    [LAYOUT.SHOP]: <ShopLayout>{children}</ShopLayout>,
   };
   return <div className=" h-full">{layoutMap[type]}</div>;
 };

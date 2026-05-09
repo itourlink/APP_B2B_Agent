@@ -16,11 +16,7 @@ export function useRouter() {
       forward: () => navigate(1),
       refresh: () => navigate(0),
 
-      push: (href: string) =>
-        navigate({
-          pathname: href,
-          search: location.search, // 👈 giữ ?company
-        }),
+      push: (href: string) => navigate(href),
 
       replace: (href: string) =>
         navigate(

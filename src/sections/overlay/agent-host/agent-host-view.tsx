@@ -140,7 +140,7 @@ const AgentHostView = () => {
     const selectClass =
         "w-full h-10 px-3 border border-slate-200 rounded-md text-sm outline-none bg-white cursor-pointer";
     return (
-        <div className="bg-slate-50 min-h-screen py-10">
+        <div className="bg-slate-50 min-h-screen py-10 mt-30">
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* TITLE */}

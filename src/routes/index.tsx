@@ -17,7 +17,6 @@ const GuideDetailPage = lazy(() => import("@/pages/guide-fee/detail"));
 const RestaurantPage = lazy(() => import("@/pages/restaurant/list"));
 const RestaurantDetailPage = lazy(() => import("@/pages/restaurant/detail"));
 const NotificationPage = lazy(() => import("@/pages/notification/notification"));
-const SignInPage = lazy(() => import("@/pages/auth/sign-in"));
 const HotelPage = lazy(() => import("@/pages/hotel/list"));
 const HotelDetailPage = lazy(() => import("@/pages/hotel/detail"));
 const Page404Page = lazy(() => import("@/pages/error/page404"));
@@ -69,119 +68,6 @@ export function Router() {
         </Suspense>
       ),
       children: [
-
-        {
-          element: (
-
-            <InitLayout type={LAYOUT.MAIN}>
-              <Outlet />
-            </InitLayout>
-          ),
-          children: [
-            {
-              index: true,
-              element: <Navigate to={paths.content.info} replace />,
-            },
-            {
-              path: paths.tour.list,
-              element: <TourPage />,
-            },
-            {
-              path: paths.tour.detail,
-              element: <TourDetailPage />,
-            },
-            {
-              path: paths.boat.list,
-              element: <BoatPage />,
-            },
-            {
-              path: paths.boat.detail,
-              element: <BoatDetailPage />,
-            },
-            {
-              path: paths.hotel.list,
-              element: <HotelPage />,
-            },
-            {
-              path: paths.hotel.detail,
-              element: <HotelDetailPage />,
-            },
-            {
-              path: paths.flight.list,
-              element: <FlightPage />,
-            },
-            {
-              path: paths.flight.detail,
-              element: <FlightDetailPage />,
-            },
-            {
-              path: paths.vehicle.list,
-              element: <VehiclePage />,
-            },
-            {
-              path: paths.vehicle.detail,
-              element: <VehicleDetailPage />,
-            },
-            {
-              path: paths.guide.list,
-              element: <GuidePage />,
-            },
-            {
-              path: paths.guide.detail,
-              element: <GuideDetailPage />,
-            },
-            {
-              path: paths.restaurant.list,
-              element: <RestaurantPage />,
-            },
-            {
-              path: paths.restaurant.detail,
-              element: <RestaurantDetailPage />,
-            },
-            {
-              path: paths.notification.list,
-              element: <NotificationPage />,
-            },
-            {
-              path: paths.agentCompany.list,
-              element: <AgentCompanyPage />,
-            },
-            {
-              path: paths.search,
-              element: <SearchPage />,
-
-            },
-
-            {
-              path: paths.cart.list,
-              element: <CartPage />,
-            },
-            {
-              path: paths.salesChannel.list,
-              element: <SalesChannelPage />,
-            },
-            {
-              path: paths.shop.list,
-              element: <ShopPage />,
-            },
-
-          ],
-        },
-
-        // AUTH LAYOUT
-        {
-          element: (
-            <InitLayout type={LAYOUT.AUTH}>
-              <Outlet />
-            </InitLayout>
-          ),
-          children: [
-            {
-              path: paths.auth.signIn,
-              element: <SignInPage />,
-            },
-          ],
-        },
 
         // OVERLAY LAYOUT
         {
@@ -299,6 +185,112 @@ export function Router() {
           ],
         },
 
+        // SHOP LAYOUT
+        {
+          element: (
+            <InitLayout type={LAYOUT.SHOP}>
+              <Outlet />
+            </InitLayout>
+          ),
+          children: [
+            {
+              index: true,
+              element: <Navigate to={paths.content.info} replace />,
+            },
+            {
+              path: paths.shop.home,
+              element: <ShopPage />,
+            },
+
+            {
+              path: paths.shop.tour.list,
+              element: <TourPage />,
+            },
+            {
+              path: paths.shop.tour.detail,
+              element: <TourDetailPage />,
+            },
+
+            {
+              path: paths.shop.boat.list,
+              element: <BoatPage />,
+            },
+            {
+              path: paths.shop.boat.detail,
+              element: <BoatDetailPage />,
+            },
+
+            {
+              path: paths.shop.hotel.list,
+              element: <HotelPage />,
+            },
+            {
+              path: paths.shop.hotel.detail,
+              element: <HotelDetailPage />,
+            },
+
+            {
+              path: paths.shop.flight.list,
+              element: <FlightPage />,
+            },
+            {
+              path: paths.shop.flight.detail,
+              element: <FlightDetailPage />,
+            },
+
+            {
+              path: paths.shop.vehicle.list,
+              element: <VehiclePage />,
+            },
+            {
+              path: paths.shop.vehicle.detail,
+              element: <VehicleDetailPage />,
+            },
+
+            {
+              path: paths.shop.guide.list,
+              element: <GuidePage />,
+            },
+            {
+              path: paths.shop.guide.detail,
+              element: <GuideDetailPage />,
+            },
+
+            {
+              path: paths.shop.restaurant.list,
+              element: <RestaurantPage />,
+            },
+            {
+              path: paths.shop.restaurant.detail,
+              element: <RestaurantDetailPage />,
+            },
+
+            {
+              path: paths.shop.notification.list,
+              element: <NotificationPage />,
+            },
+
+            {
+              path: paths.shop.agentCompany.list,
+              element: <AgentCompanyPage />,
+            },
+
+            {
+              path: paths.shop.search,
+              element: <SearchPage />,
+            },
+
+            {
+              path: paths.shop.cart.list,
+              element: <CartPage />,
+            },
+
+            {
+              path: paths.shop.salesChannel.list,
+              element: <SalesChannelPage />,
+            },
+          ],
+        },
       ],
     },
 
