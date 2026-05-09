@@ -18,7 +18,7 @@ const TourCustomized = () => {
             >
                 <div className="max-h-[80vh] flex flex-col">
                     <div className="flex-1 overflow-y-auto">
-                        <TourCustomizedPopup />
+                        <TourCustomizedPopup onClose={() => setOpenPopup(false)} />
                     </div>
                 </div>
             </PanelPopup>

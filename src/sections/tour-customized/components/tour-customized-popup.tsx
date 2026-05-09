@@ -55,8 +55,10 @@ export const Schema = z
     );
 
 type SchemaType = zod.infer<typeof Schema>;
-
-const TourCustomizedPopup = () => {
+type Props = {
+    onClose: () => void;
+};
+const TourCustomizedPopup = ({ onClose }: Props) => {
     const { user } = useUser();
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
@@ -152,6 +154,7 @@ const TourCustomizedPopup = () => {
         addNewTourCustomizedApi(payload, {
             onSuccess: () => {
                 showToast("success", "Thêm tour tùy chỉnh thành công");
+                onClose()
             },
             onError: () => {
                 showToast("error", "Thêm tour tùy chỉnh thất bại");
