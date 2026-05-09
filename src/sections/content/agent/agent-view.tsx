@@ -93,9 +93,15 @@ const AgentView = () => {
                     </button>
                     <button
                         onClick={() =>
-                            router.replaceQuery(paths.shop.home, {
-                                company: row?.strUrlLink,
-                            })
+                            router.replaceQuery(
+                                paths.shop.home,
+                                {
+                                    company: row?.strUrlLink,
+                                },
+                                {
+                                    target: "_blank",
+                                }
+                            )
                         }
                         className="cursor-pointer px-4 py-1.5 bg-[#004b91] text-white text-[13px] font-medium rounded hover:bg-[#003d76] transition-all shadow-sm"
                     >

@@ -36,9 +36,20 @@ export function useRouter() {
           { replace: false, state }
         ),
 
-      replaceQuery: (href: string, params?: Record<string, any>) => {
+      replaceQuery: (
+        href: string,
+        params?: Record<string, any>,
+        options?: { target?: "_blank" | "_self" }
+      ) => {
         const query = params ? `?${buildQuery(params)}` : "";
-        navigate(`${href}${query}`);
+        const url = `${href}${query}`;
+
+        if (options?.target === "_blank") {
+          window.open(url, "_blank");
+          return;
+        }
+
+        navigate(url);
       },
     }),
     [navigate, location.search]
