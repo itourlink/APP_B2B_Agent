@@ -13,6 +13,7 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useEffect, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
+import { CircleX } from "lucide-react";
 
 
 export const Schema = z
@@ -21,8 +22,8 @@ export const Schema = z
         currency: z.string().min(1, "Vui lòng chọn ĐVTT"),
         tourName: z.string().min(1, "Tên Tour là bắt buộc"),
         dateStart: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
-
-        nationality: z.string().optional(),
+        
+        nationality: z.string().min(1, "Vui lòng chọn Quốc tịch"),
 
         adults: z.coerce.number().min(1, "Tối thiểu 1 người lớn"),
         children: z.coerce.number().default(0),
@@ -38,7 +39,7 @@ export const Schema = z
         tpl: z.coerce.number().min(0).default(0),
 
         // list điểm đến (required)
-        listLocation: z.string().min(1, "Danh sách điểm đến là bắt buộc"),
+        listLocation: z.string().min(1, "Vui lòng chọn thêm điểm đến"),
 
         bannerImg: z.any().optional(),
 
@@ -89,8 +90,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         resolver: zodResolver(Schema) as any,
         defaultValues: {
             agentHost: coData?.strCompanyGUID || "",
-            currency: "Vietnamese Dong",
-            tourName: "Test Tour 1044",
+            currency: "",
+            tourName: "",
             dateStart: "2026-04-25",
 
             nationality: "",
@@ -119,7 +120,78 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
 
 
-    const onSubmit = handleSubmit(async (data) => {
+    // const onSubmit = handleSubmit(async (data) => {
+    //     const payload = {
+    //         strCompanyGUID: user?.strCompanyGUID || "",
+    //         strCompanyAgentHostGUID: data.agentHost, // nếu đang là GUID thì OK, không thì cần map lại
+
+    //         intLangID: null,
+    //         strCountryGUID: data.nationality,
+
+    //         intAdult: data.adults,
+    //         intNoOfChild: data.children,
+
+    //         intSGL: data.sgl,
+    //         intDBL: data.dbl,
+    //         intTWN: data.twn,
+    //         intTPL: data.tpl,
+
+    //         dtmDateFrom: data.dateStart,
+
+    //         strServiceName: data.tourName,
+
+    //         intNoOfDay: null,
+    //         intPerPaxID: null,
+
+    //         intCurrencyID: data.currency, // nếu là ID thì giữ number/string ID
+
+    //         strListEasiaCateID: data.category,
+
+    //         strRemark: data.remark,
+
+    //         strListLocation: buildListLocation(),
+    //     };
+
+    //     addNewTourCustomizedApi(payload, {
+    //         onSuccess: () => {
+    //             showToast("success", "Thêm tour tùy chỉnh thành công");
+    //             onClose()
+    //         },
+    //         onError: () => {
+    //             showToast("error", "Thêm tour tùy chỉnh thất bại");
+    //         },
+    //     });
+    // });
+    const onValid = async (data: SchemaType) => {
+        const existingTourNames = [
+            "Test Tour 1044",
+            "Ha Noi Tour",
+            "Da Nang Tour",
+        ];
+
+        const isDuplicateTourName = existingTourNames.some(
+            (name) => name.trim().toLowerCase() === data.tourName.trim().toLowerCase()
+        );
+        if (isDuplicateTourName) {
+            methods.setError("tourName", {
+                type: "manual",
+                message: "Tên tour đã tồn tại",
+            });
+            return;
+        }
+
+
+
+        if(locations.length === 0 ) { 
+            showToast("error", "Vui lòng thêm điểm đến");
+            return;
+        }
+        const currentCountry = methods.getValues("country");
+        const currentCity = methods.getValues("city");
+        if(currentCountry && currentCity) {
+            const confirmMissing = window.confirm("Vui lòng chọn thêm điểm đến");
+            if(!confirmMissing) return;
+        }
         const payload = {
             strCompanyGUID: user?.strCompanyGUID || "",
             strCompanyAgentHostGUID: data.agentHost, // nếu đang là GUID thì OK, không thì cần map lại
@@ -150,7 +222,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             strListLocation: buildListLocation(),
         };
-
         addNewTourCustomizedApi(payload, {
             onSuccess: () => {
                 showToast("success", "Thêm tour tùy chỉnh thành công");
@@ -160,7 +231,13 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                 showToast("error", "Thêm tour tùy chỉnh thất bại");
             },
         });
-    });
+    }
+
+    const onINValid = (errors: any) => {
+        console.log(errors);
+        showToast("error", "Vui lòng kiểm tra lại thông tin");
+    }
+    const onSubmit = handleSubmit(onValid, onINValid);
 
     useEffect(() => {
         if (coData) {
@@ -172,7 +249,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     }, [coData]);
 
 
-    //     // quốc gia
+   // quốc gia
 
     const { ctData } = useListCity({
         strTableName: "MC02",
@@ -213,11 +290,31 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
     const watchedCountry = methods.watch("country");
 
+    // xóa lỗi khi gõ lại tên tour
+    const watchedTourName = methods.watch("tourName");
+    useEffect(() => {
+        if(watchedTourName) { 
+            methods.clearErrors("tourName")
+        }
+    }, [watchedTourName])
+    // xóa lỗi nationality khi chọn quốc gia
+    const watchedNationality = methods.watch("nationality")
+
+    useEffect(() => {
+        if(watchedNationality) 
+            methods.clearErrors("nationality")
+    }, [watchedNationality])
+
+
     const handleAddLocation = () => {
         const countryVal = methods.getValues("country");
         const cityVal = methods.getValues("city");
 
+        if (!countryVal) return showToast("error", "Vui lòng chọn quốc gia");
+        if (!cityVal) return showToast("error", "Vui lòng chọn thành phố");
         if (!countryVal || !cityVal) return;
+
+
 
         setLocations((prev) => {
             // tránh duplicate city
@@ -235,6 +332,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
         // reset form fields
         methods.setValue("city", "");
+        methods.clearErrors(["country","city","listLocation"]);
     };
 
     useEffect(() => {
@@ -350,7 +448,12 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             <div className="space-y-2 border border-slate-200 rounded-2xl p-4">
                 <label className="">Danh sách điểm đến</label>
-
+                {methods.formState.errors.listLocation && (
+                    <div className="flex items-center gap-2 text-red-500 text-xs mt-2 px-4">
+                        <CircleX size={16} />
+                        <span>{methods.formState.errors.listLocation.message}</span>
+                    </div>
+                )}
 
                 <div className="flex gap-2">
                     <div className="flex-1">
