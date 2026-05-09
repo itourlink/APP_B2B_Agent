@@ -44,18 +44,18 @@ export function RHFTextField({
   ...other
 }: Props) {
   const { control, clearErrors } = useFormContext();
-  const { errors } = useFormState({ name });
+  // const { errors } = useFormState({ name });
 
-  const error = errors[name];
+  // const error = errors[name];
 
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        clearErrors(name);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, clearErrors, name]);
+  // useEffect(() => {
+  //   if (error) {
+  //     const timer = setTimeout(() => {
+  //       clearErrors(name);
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [error, clearErrors, name]);
 
   const [isFocused, setIsFocused] = useState(false);
 

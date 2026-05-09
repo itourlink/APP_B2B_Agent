@@ -55,17 +55,17 @@ export function RHFSelect({
     }
   }, [disabled, open]);
 
-  const { errors } = useFormState({ name });
-  const error = errors[name];
+  // const { errors } = useFormState({ name });
+  // const error = errors[name];
 
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        clearErrors(name);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, clearErrors, name]);
+  // useEffect(() => {
+  //   if (error) {
+  //     const timer = setTimeout(() => {
+  //       clearErrors(name);
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [error, clearErrors, name]);
 
   return (
     <Controller
