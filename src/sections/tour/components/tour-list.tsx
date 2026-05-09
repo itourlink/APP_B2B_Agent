@@ -55,7 +55,7 @@ export const TourCard = ({ tour }: any) => {
                         </p>
                     </div>
                     <button
-                        onClick={() => router.replaceParams(paths.tour.detail, { item: tour })}
+                        onClick={() => router.replaceParams(paths.shop.tour.detail, { item: tour })}
                         className="cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                     >
                         Xem chi tiết

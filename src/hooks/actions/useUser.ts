@@ -70,13 +70,7 @@ export const useListPaidBookingItem = async (body: any) => {
     );
     return res.data;
 };
-export const useListCompanyOwner = async (body: any) => {
-    const res = await apiClient.post(
-        "user/GetListCompanyOwner",
-        body
-    );
-    return res.data;
-};
+
 export const useListTourCustomized = async (body: any) => {
     const res = await apiClient.post(
         "tourcustomized/GetListTourCustomized",

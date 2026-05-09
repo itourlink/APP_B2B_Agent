@@ -18,7 +18,7 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
       {/* Image — left */}
       <div
         className="relative w-1/2 overflow-hidden bg-gray-100 cursor-pointer shrink-0"
-        // onClick={handleNavigate}
+      // onClick={handleNavigate}
       >
         <img
           src={getUrlImage(restaurant?.strSupplierImage)}
@@ -73,7 +73,7 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
             <p className="text-[11px] text-gray-500 mb-0.5">Giá từ</p>
             <p className="text-[#2563eb] font-bold text-lg leading-none">
               {restaurant.dblPriceFrom === "$0" ||
-              restaurant.dblPriceFrom === "N/A" ? (
+                restaurant.dblPriceFrom === "N/A" ? (
                 <span className="text-gray-400 text-base">N/A</span>
               ) : (
                 restaurant.dblPriceFrom
@@ -83,7 +83,7 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
 
           <button
             onClick={() =>
-              router.replaceParams(paths.restaurant.detail, {
+              router.replaceParams(paths.shop.restaurant.detail, {
                 item: restaurant,
               })
             }
@@ -99,40 +99,100 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
 
 // ─── RestaurantList ───────────────────────────────────────────────────────────
 
-const RestaurantList = () => {
+export const RestaurantList = () => {
   const [filters] = useState({
     page: 1,
     pageSize: 15,
   });
 
-  const { restaurantData } = useListRestaurant(filters);
+  const {
+    restaurantData = [],
+    restaurantLoading,
+    restaurantError,
+  } = useListRestaurant(filters);
+
+  const isEmpty = !restaurantLoading && restaurantData?.length === 0;
 
   return (
     <section className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Khám phá nhà hàng</h2>
-
-        <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
-          <span className="text-sm text-gray-500 ml-2">Hiển thị dạng:</span>
-          <button className="p-1.5 bg-[#2566b0] text-white rounded-md shadow-sm">
-            <LayoutGrid size={18} />
-          </button>
-          <button className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
-            <List size={18} />
-          </button>
-        </div>
+        <h2 className="text-2xl font-bold text-gray-800">
+          Khám phá nhà hàng
+        </h2>
       </div>
 
+      {/* GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {restaurantData.map((restaurant: any) => (
-          <RestaurantCard
-            key={restaurant.strSupplierGUID}
-            restaurant={restaurant}
-          />
-        ))}
+
+        {/* LOADING */}
+        {restaurantLoading &&
+          Array.from({ length: 6 }).map((_, i) => (
+            <RestaurantSkeleton key={i} />
+          ))}
+
+        {/* ERROR */}
+        {restaurantError && <ErrorState />}
+
+        {/* EMPTY */}
+        {isEmpty && <EmptyState />}
+
+        {/* DATA */}
+        {!restaurantLoading &&
+          !restaurantError &&
+          restaurantData?.map((restaurant: any) => (
+            <RestaurantCard
+              key={restaurant.strSupplierGUID}
+              restaurant={restaurant}
+            />
+          ))}
       </div>
     </section>
   );
 };
 
-export default RestaurantList;
+
+const RestaurantSkeleton = () => {
+  return (
+    <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden h-[195px] animate-pulse">
+      <div className="w-1/2 bg-gray-200" />
+
+      <div className="w-1/2 p-4 flex flex-col gap-3">
+        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-3 bg-gray-200 rounded w-1/2" />
+        <div className="h-3 bg-gray-200 rounded w-2/3" />
+
+        <div className="mt-auto">
+          <div className="h-4 bg-gray-200 rounded w-1/3" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+const EmptyState = () => {
+  return (
+    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+      <h3 className="text-gray-700 font-semibold text-lg">
+        Không có nhà hàng nào
+      </h3>
+      <p className="text-gray-500 text-sm mt-1">
+        Hiện tại chưa có dữ liệu phù hợp
+      </p>
+    </div>
+  );
+};
+
+const ErrorState = () => {
+  return (
+    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+      <div className="text-red-400 text-5xl mb-3">⚠️</div>
+      <h3 className="text-gray-800 font-semibold text-lg">
+        Có lỗi xảy ra
+      </h3>
+      <p className="text-gray-500 text-sm mt-1">
+        Không thể tải danh sách nhà hàng
+      </p>
+    </div>
+  );
+};

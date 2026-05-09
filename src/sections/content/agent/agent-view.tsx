@@ -4,52 +4,34 @@ import { Building2, RotateCcw, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import Pagination from "@/components/pagination/pagination";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useListCompanyOwner } from "@/hooks/actions/useUser";
-import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import { useUserStore } from "@/zustand/useUserStore";
 import type { IAgent } from "@/hooks/interfaces/user";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import { useCompanyOwnerListInfo } from "@/hooks/actions/useCompanyOwnerInfo";
 
 const AgentView = () => {
     const { showToast } = useToastStore()
     const router = useRouter();
-    const user = useUserStore((state) => state.user);
+
     const [filters, setFilters] = useState({
         nameProvider: "",
     });
+
     const [appliedFilters, setAppliedFilters] = useState(filters);
     const [page, setPage] = useState(1);
     const pageSize = 5;
 
-    console.log("USER", user);
-    console.log("appliedFilters", appliedFilters);
-    
-    const { data, isError, isLoading } = useQuery({
-
-
-
-        queryKey: [QUERY_KEYS.USER.LIST_COMPANY_OWNER, page, appliedFilters],
-        queryFn: () =>
-            useListCompanyOwner({
-                strUserPartnerGUID: user?.strUserGUID,
-                strCompanyPartnerGUID: user?.strCompanyGUID,
-                strCompanyOwnerGUID: null,
-                intCurPage: page,
-                intPageSize: pageSize,
-                strOrder: null,
-                strFilterCompanyName: appliedFilters?.nameProvider || null,
-                strCompanyNameUrl: null,
-                IsOwnerFriend: true,
-                tblsReturn: "[0]"
-            }),
-        placeholderData: keepPreviousData,
+    const { data, isError, isLoading, totalRecords } = useCompanyOwnerListInfo({
+        page,
+        pageSize,
+        nameProvider: appliedFilters.nameProvider,
     });
-    const listData = data?.[0] ?? [];
-    const totalRecords = listData?.[0]?.intTotalRecords || 0;
+
     const totalPages = Math.ceil(totalRecords / pageSize);
+
+    const listData = data;
+
 
     useEffect(() => {
         if (page > totalPages) {
