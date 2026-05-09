@@ -11,6 +11,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 
 interface DetailTourContentProps {
+    itemListData?: any
     itemDetail?: any
     onOpenChangeDay: () => void;
     isPopupOpen: boolean;
@@ -21,6 +22,7 @@ interface DetailTourContentProps {
 }
 
 export const DetailTourContent = ({
+    itemListData,
     itemDetail,
     isPopupOpen,
     setIsPopupOpen,

@@ -28,16 +28,16 @@ const Page404 = () => {
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <button
-                        onClick={() => router.push(paths.tour.list)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full hover:bg-gray-100 hover:border-gray-300 transition-all active:scale-95 text-[14px]"
+                        onClick={() => router.push(paths.content.info)}
+                        className="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full hover:bg-gray-100 hover:border-gray-300 transition-all active:scale-95 text-[14px]"
                     >
                         <ArrowLeft size={18} />
                         <h1 className="text-[13px] uppercase font-bold text-gray-800">  Quay lại</h1>
                     </button>
 
                     <button
-                        onClick={() => router.push(paths.tour.list)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-[#4a6fa5] text-white font-bold rounded-full shadow-lg shadow-blue-200 hover:bg-[#3b5b7e] transition-all active:scale-95 uppercase tracking-wide text-[13px]"
+                        onClick={() => router.push(paths.content.info)}
+                        className="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-[#4a6fa5] text-white font-bold rounded-full shadow-lg shadow-blue-200 hover:bg-[#3b5b7e] transition-all active:scale-95 uppercase tracking-wide text-[13px]"
                     >
                         <Home size={18} />
                         Về trang chủ

@@ -7,7 +7,8 @@ import ServiceMenu, { type IServiceMenuItem } from "./service-menu";
 import { getUrlImage } from "@/utils/format-image";
 import { isValidValue } from "@/utils/utilts";
 import { updTourCustomizedDayItemCate, } from "@/hooks/actions/useUser";
-import { useMutation, } from "@tanstack/react-query";
+import { useMutation, useQueryClient, } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 
 const MENU_ITEMS: IServiceMenuItem[] = [
   { icon: <Bed size={20} />, label: 'Thêm chỗ nghỉ', value: 'accommodation', color: 'text-blue-700' },
@@ -46,11 +47,21 @@ const ListTour = ({ item, itemDetail, onChange }: Props) => {
 
   const locations = parseLocations(String(firstItem?.strListLocation));
 
+  const queryClient = useQueryClient();
+
   const {
     mutateAsync: upTourCateAPI,
     isPending: isupdLoading,
   } = useMutation({
     mutationFn: updTourCustomizedDayItemCate,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+        ],
+      });
+    },
   });
 
   const renderRow = (item: any, index: number) => {
@@ -97,15 +108,19 @@ const ListTour = ({ item, itemDetail, onChange }: Props) => {
 
             <select
               className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
-              defaultValue=""
+              value={
+                typeof item?.strListEasiaCateID === "object"
+                  ? ""
+                  : String(item?.strListEasiaCateID || "")
+              }
               onChange={(e) => {
                 const value = e.target.value;
 
-                if (!value) return;
-
                 upTourCateAPI({
-                  strTourCustomizedGUID: itemDetail?.strAgentHostServiceItemGUID,
-                  strTourCustomizedPriceItemGUID: item?.strTourCustomizedPriceItemGUID,
+                  strTourCustomizedGUID:
+                    itemDetail?.strAgentHostServiceItemGUID,
+                  strTourCustomizedPriceItemGUID:
+                    item?.strTourCustomizedPriceItemGUID,
                   strListEasiaCateID: value,
                 });
               }}

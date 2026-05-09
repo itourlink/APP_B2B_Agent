@@ -64,7 +64,6 @@ const AddUser = ({ onClose }: Props) => {
                 intMemberTypeID: 1,
                 intSaluteID: Number(data.title),
                 intMemberRoleID: Number(data.role),
-
                 strFirstName: data.firstName,
                 strLastName: data.lastName,
                 strMobile: data.phone,

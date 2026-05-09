@@ -30,7 +30,7 @@ const TourProposalsView = () => {
     const [page, setPage] = useState(1);
     const pageSize = 5;
     const { data, isLoading, isError } = useQuery({
-        queryKey: [QUERY_KEYS.USER.LIST_USER_IN_COMPANY_OWNER, page, appliedFilters],
+        queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED, page, appliedFilters],
         queryFn: () =>
             useListTourCustomized({
                 strTourCustomizedGUID: null,

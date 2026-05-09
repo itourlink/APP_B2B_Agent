@@ -135,6 +135,7 @@ export function RHFSearchSelect({
                                     {/* SEARCH */}
                                     <div className="p-2 border-b">
                                         <input
+                                            autoFocus
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
                                             placeholder="Tìm kiếm..."

@@ -19,7 +19,7 @@ export const DetailTour = () => {
   const [hasChange, setHasChange] = useState(false);
 
   const { data } = useQuery({
-    queryKey: [QUERY_KEYS.USER.LIST_USER_IN_COMPANY_OWNER, item?.strTourCode],
+    queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED, item?.strTourCode],
     queryFn: () =>
       useListTourCustomized({
         strTourCustomizedGUID: null,
@@ -36,6 +36,7 @@ export const DetailTour = () => {
   });
   const listData = data?.[0]?.[0] ?? [];
 
+  console.log("listData", data)
   return (
     <div className={isPopupOpen ? "overflow-hidden h-screen" : "mt-30"}>
       <DetailTourHeader
@@ -47,6 +48,7 @@ export const DetailTour = () => {
         <UpdateTour onBack={() => setIsUpdate(false)} />
       ) : (
         <DetailTourContent
+          itemListData={listData ?? ""}
           itemDetail={item ?? ""}
           onOpenChangeDay={() => setIsPopupOpen(true)}
           // onUpdateDays={setDays}

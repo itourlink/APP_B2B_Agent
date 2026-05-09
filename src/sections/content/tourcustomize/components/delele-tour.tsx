@@ -22,7 +22,7 @@ const DeleteTour = ({ item, onClose }: Props) => {
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({
-                        queryKey: [QUERY_KEYS.USER.LIST_USER_IN_COMPANY_OWNER],
+                        queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED],
                     });
                     onClose();
                     showToast("success", "Xóa tour thành công");
