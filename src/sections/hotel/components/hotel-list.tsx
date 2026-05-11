@@ -28,7 +28,6 @@ export const HotelCard = ({ hotel }: any) => {
                         <Building2 size={14} className="text-gray-400 shrink-0" />
                         <span>Khách sạn</span>
                         <div className="flex items-center ml-1">
-                            { }
                             {[...Array(5)].map((_, i) => (
                                 <Star
                                     key={i}
@@ -63,7 +62,68 @@ export const HotelCard = ({ hotel }: any) => {
                             {formatPrice(hotel?.dblPriceFrom)}
                         </p>
                     </div>
-                    <button onClick={() => router.replaceParams(paths.hotel.detail, { item: hotel })} className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all">
+                    <button onClick={() => router.replaceParams(paths.shop.hotel.detail, { item: hotel })} className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all">
+                        Xem chi tiết
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const HotelCardList = ({ hotel }: any) => {
+    const router = useRouter()
+    return (
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-48 group">
+            <div className="relative w-72 overflow-hidden shrink-0">
+                <img
+                    src={getUrlImage(hotel?.strSupplierImage)}
+                    alt={hotel?.strSupplierName}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+            </div>
+
+            <div className="p-5 flex flex-col flex-grow justify-between">
+                <div>
+                    <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-gray-800 font-bold text-lg leading-tight uppercase line-clamp-1">
+                            {hotel?.strSupplierName}
+                        </h3>
+                        <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                                <Star
+                                    key={i}
+                                    size={14}
+                                    className={i < hotel.intEasiaCateID ? "fill-orange-400 text-orange-400" : "text-gray-300"}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2 text-[14px] text-gray-600">
+                        <div className="flex items-center gap-2">
+                            <Building2 size={16} className="text-gray-400 shrink-0" />
+                            <span>Khách sạn</span>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                            <MapPin size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                            <span className="line-clamp-2 leading-relaxed">{hotel?.strSupplierAddr}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-end justify-between pt-4 border-t border-gray-50">
+                    <div>
+                        <p className="text-[12px] text-gray-500 mb-0.5">Giá từ</p>
+                        <p className="text-[#2563eb] font-bold text-2xl leading-none">
+                            {formatPrice(hotel?.dblPriceFrom)}
+                        </p>
+                    </div>
+                    <button 
+                        onClick={() => router.replaceParams(paths.shop.hotel.detail, { item: hotel })} 
+                        className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+                    >
                         Xem chi tiết
                     </button>
                 </div>
@@ -81,7 +141,7 @@ const HotelList = () => {
     });
 
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
-
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     return (
         <div className="max-w-7xl mx-auto p-6 bg-white min-h-screen">
             <div className="flex justify-between items-center mb-8">
@@ -90,10 +150,16 @@ const HotelList = () => {
                 <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
                     <span className="text-[12px] text-gray-500 ml-2">Hiển thị dạng:</span>
                     <div className="flex gap-1">
-                        <button className="p-1.5 bg-[#2566b0] text-white rounded-md">
+                        <button
+                            onClick={() => setViewMode("grid")}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                        >
                             <LayoutGrid size={16} />
                         </button>
-                        <button className="p-1.5 text-gray-400 hover:bg-gray-200 rounded-md">
+                        <button
+                            onClick={() => setViewMode("list")}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                        >
                             <List size={16} />
                         </button>
                     </div>
@@ -114,9 +180,19 @@ const HotelList = () => {
 
             {/* DATA */}
             {!hotelLoading && !hotelError && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div
+                    className={
+                        viewMode === "grid"
+                            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+                            : "flex flex-col gap-4"
+                    }
+                >
                     {hotelData?.map((hotel: any) => (
-                        <HotelCard key={hotel?.strSupplierGUID} hotel={hotel} />
+                        viewMode === "grid" ? (
+                            <HotelCard key={hotel?.strSupplierGUID} hotel={hotel} />
+                        ) : (
+                            <HotelCardList key={hotel?.strSupplierGUID} hotel={hotel} />
+                        )
                     ))}
                 </div>
             )}

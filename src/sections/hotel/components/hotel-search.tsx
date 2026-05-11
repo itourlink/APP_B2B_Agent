@@ -10,7 +10,7 @@ const today = new Date();
 const DEFAULT_FILTERS = {
     page: 1,
     pageSize: 10,
-    strFilterDestinationName: "Ha Noi, Vietnam",
+    strFilterDestinationName: "",
     start: today,
     end: null,
     guestRoom: {

@@ -18,7 +18,7 @@ import { useState } from 'react';
 const VehicleCard = ({ vehicle }: any) => {
   const router = useRouter();
 
-  const handleNavigate = () => router.push(paths.vehicle.detail);
+  const handleNavigate = () => router.push(paths.shop.vehicle.detail);
 
   return (
     <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full min-h-[195px] group">
@@ -78,7 +78,7 @@ const VehicleCard = ({ vehicle }: any) => {
 
           <button
             onClick={() =>
-              router.replaceParams(paths.vehicle.detail, {
+              router.replaceParams(paths.shop.vehicle.detail, {
                 item: vehicle,
               })
             }
@@ -103,7 +103,7 @@ const VehicleList = () => {
   return (
     <section className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Kham pha nha xe</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Khám phá nhà xe</h2>
 
         <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
           <span className="text-sm text-gray-500 ml-2">Hien thi dang:</span>

@@ -76,7 +76,7 @@ const BoatCard = ({ boat }: any) => {
                             {formatPrice(boat?.dblPriceFrom)}
                         </p>
                     </div>
-                    <button onClick={() => router.replaceParams(paths.boat.detail, { item: boat })} className="cursor-pointer text-[#2566b0] border border-blue-200 hover:border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all">
+                    <button onClick={() => router.replaceParams(paths.shop.boat.detail, { item: boat })} className="cursor-pointer text-[#2566b0] border border-blue-200 hover:border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all">
                         Xem chi tiết
                     </button>
                 </div>

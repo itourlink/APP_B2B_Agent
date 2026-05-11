@@ -7,13 +7,47 @@ import { useRouter } from "@/routes/hooks/use-router";
 
 const today = new Date();
 
+const TOUR_TYPE_OPTIONS = [
+    { label: "Tất cả", value: "all" },
+    { label: "Tour ghép", value: "group" },
+    { label: "Tour riêng", value: "private" },
+];
+const getTourSubOptions = (mainType: string) => {
+    if (mainType === "group") {
+        return [
+            { label: "Tất cả", value: "all" },
+            { label: "Hàng ngày", value: "daily" },
+            { label: "Theo lịch", value: "schedule" },
+        ];
+    }
+
+    if (mainType === "private") {
+        return [
+            { label: "Tất cả", value: "all" },
+            { label: "VIP", value: "vip" },
+            { label: "Standard", value: "standard" },
+        ];
+    }
+
+    return [{ label: "Tất cả", value: "all" }];
+};
+
+
+
+
+
+
 const DEFAULT_FILTERS = {
     page: 1,
     pageSize: 10,
     isTourSeries: false,
-    strFilterDestinationName: "Ha Noi, Vietnam",
+    strFilterDestinationName: "",
     start: today,
     end: null,
+    tourType: {
+        mainType: "all",
+        subType: "all",
+    },
     guestRoom: {
         rooms: 1,
         adults: 1,
@@ -36,6 +70,8 @@ const DEFAULT_FILTERS2 = {
     strLocationCode: "VN0000",
     dtmFilterDateValidFrom: today,
     dtmFilterDateValidTo: null,
+     strTourType: "all",
+    strTourSubType: "all",
 };
 
 const TourSearch = () => {
@@ -50,6 +86,8 @@ const TourSearch = () => {
         strLocationCode: string | null;
         dtmFilterDateValidFrom: Date;
         dtmFilterDateValidTo: Date | null;
+        strTourType: string;
+        strTourSubType: string;
     }>(DEFAULT_FILTERS2);
 
     const [selectedTourUrl, setSelectedTourUrl] = useState<string | null>(null);
@@ -132,6 +170,7 @@ const TourSearch = () => {
 
                     { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
                     { type: "dateRange", keyStart: "start", keyEnd: "end" },
+                    { type: "tourType", key: "tourType", mainOptions: TOUR_TYPE_OPTIONS, getSubOptions: getTourSubOptions },
                 ]}
                 values={filters}
                 onChange={(k, v) => {
@@ -171,6 +210,13 @@ const TourSearch = () => {
                                     k === "end"
                                         ? v
                                         : prev.dtmFilterDateValidTo,
+                            }));
+                        }
+                        if (k === "tourType") {
+                            setDraftFilters2((prev) => ({
+                                ...prev,
+                               strTourType: v?.mainType,
+                                strTourSubType: v?.subType,
                             }));
                         }
 

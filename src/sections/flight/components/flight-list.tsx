@@ -77,7 +77,7 @@ const FlightCard = ({ flight }:  any ) => {
           <button
             // onClick={() => handleNavigate()}
             onClick={() => {
-              router.replaceParams(paths.flight.detail, {
+              router.replaceParams(paths.shop.flight.detail, {
                 item: flight
               })
             }}

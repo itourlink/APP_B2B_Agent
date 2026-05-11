@@ -26,6 +26,9 @@ const SearchPage = lazy(() => import("@/pages/search/search"));
 const CartPage = lazy(() => import("@/pages/cart/list"));
 const SalesChannelPage = lazy(() => import("@/pages/sales-channel/list"));
 const ShopPage = lazy(() => import("@/pages/shop/list"));
+const VoucherPage = lazy(() => import("@/pages/voucher/list"));
+const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
+
 // const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
 
 // import InitLayout, { LAYOUT } from "@/layouts/init-layout";
@@ -54,6 +57,8 @@ const TourCancelledPage = lazy(() => import("@/pages/content/tour-cancelled"));
 const TourProposalsPage = lazy(() => import("@/pages/content/tour-proposals"));
 const DetailTourPage = lazy(() => import("@/pages/content/detail-tour"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
+
+
 export function Router() {
   // const isLoading = true;
   // if (isLoading) return <SplashScreen />
@@ -98,6 +103,7 @@ export function Router() {
               path: paths.content.agentHost,
               element: <AgentHostPage />,
             },
+
           ],
         },
 
@@ -195,7 +201,15 @@ export function Router() {
           children: [
             {
               index: true,
-              element: <Navigate to={paths.content.info} replace />,
+              element: <Navigate to={paths.content.agent} replace />,
+            },
+            {
+              path: paths.shop.voucher.list,
+              element: <VoucherPage />,
+            },
+            {
+              path: paths.shop.voucher.detail,
+              element: <VoucherDetailPage />,
             },
             {
               path: paths.shop.home,

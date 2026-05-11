@@ -137,6 +137,7 @@ export const paths = {
 
     voucher: {
       list: "/shop/voucher",
+      detail: "/shop/voucher-detail",
     },
 
     notification: {

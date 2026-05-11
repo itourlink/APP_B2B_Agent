@@ -7,6 +7,7 @@ import {
     CheckCircle2,
     XCircle,
     Info,
+    X,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -26,6 +27,12 @@ const HotelDetail = () => {
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
 
     const hotel = hotelData?.[0] ?? {};
+    
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    
+    
+
 
     const colDefs: ColumnDef<any>[] = [
         {
@@ -40,14 +47,20 @@ const HotelDetail = () => {
         {
             field: "No",
             headerName: "Image",
-            render: (value) => (
-                <div>
+            render: (value) => {
+                const imageUrl =
+                    getUrlImage(value) ||
+                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image";
+
+                return (
                     <img
-                        src={value || "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image"}
-                        alt="no-image"
+                        src={imageUrl}
+                        alt="room-image"
+                        onClick={() => setPreviewImage(imageUrl)}
+                        className="w-24 h-16 object-cover rounded cursor-pointer"
                     />
-                </div>
-            )
+                );
+            },
         },
         {
             field: "strItemTypeName",
@@ -56,7 +69,7 @@ const HotelDetail = () => {
         },
         {
             field: "strSglDblName",
-            headerName: "Tên phòng",
+            headerName: "Loại phòng",
             render: (value) => (
                 <div>
                     {value === "Double" ? "Phòng đôi" : "Phòng đơn"}
@@ -137,11 +150,17 @@ const HotelDetail = () => {
                     <div className="lg:col-span-2 space-y-6">
                         <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                             <img
+                                onClick={() => {
+                                    console.log("Image clicked, opening popup...");
+                                    setPreviewImage(
+                                        getUrlImage(hotel?.strSupplierImage) ||
+                                        "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image");
+                                }}
                                 src={
                                     getUrlImage(hotel?.strSupplierImage) ||
                                     "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image"
                                 }
-                                className="w-full h-[500px] object-cover"
+                                className="w-full h-[500px] object-cover cursor-pointer hover:brightness-90 transition-all duration-300 relative z-10"
                             />
                         </div>
                     </div>
@@ -213,6 +232,36 @@ const HotelDetail = () => {
                     </p>
                 </div>
             </div>
+
+            {previewImage  && (
+                <div 
+                    className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={() => setPreviewImage(null)}
+                >
+                    <div 
+                        className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                            <h2 className="text-xl font-bold text-slate-800">Xem chi tiết hình ảnh</h2>
+                            <button  
+                                onClick={() => setPreviewImage(null)}
+                                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <div className="p-2 flex justify-center bg-slate-50">
+                            <img 
+                                className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                                src={getUrlImage(hotel?.strSupplierImage) || "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image"} 
+                                alt="hotel-image" 
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

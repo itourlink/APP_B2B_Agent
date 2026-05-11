@@ -5,12 +5,10 @@ import FlightList from "./components/flight-list";
 import BannerSlider from "@/components/banner/banner-slider";
 const FlightView = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50">
       <BannerSlider slides={slidesFlight} />
-      <div className="py-8">
-        <FlightList />
-      </div>
-    </div>
+      <FlightList />
+    </main>
   );
 };
 

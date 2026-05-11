@@ -84,5 +84,8 @@ export const QUERY_KEYS = {
     },
     MENU: {
         LIST_MENU: "LIST_MENU",
+    },
+    VOUCHER: {
+        LIST_VOUCHER: "LIST_VOUCHER",
     }
 };

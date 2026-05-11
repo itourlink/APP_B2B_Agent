@@ -34,10 +34,25 @@ const BoatDetail = () => {
     const company = boatData?.[1] ?? []
 
     useEffect(() => {
-        if (imgData.length > 0) {
-            setActiveImg(getUrlImage(imgData[0].strSupplierImageFileLink));
+        if (imgData && imgData.length > 0) {
+            // Khởi tạo ảnh đầu tiên nếu chưa có
+            if (!activeImg) {
+                setActiveImg(getUrlImage(imgData[0].strSupplierImageFileLink));
+            }
+
+            const interval = setInterval(() => {
+                setActiveImg((current) => {
+                    const currentIndex = imgData.findIndex(
+                        (img: any) => getUrlImage(img.strSupplierImageFileLink) === current
+                    );
+                    const nextIndex = (currentIndex + 1) % imgData.length;
+                    return getUrlImage(imgData[nextIndex].strSupplierImageFileLink);
+                });
+            }, 3000);
+
+            return () => clearInterval(interval);
         }
-    }, [imgData]);
+    }, [imgData, activeImg]);
 
     if (imgLoading || boatLoading || mpLoading) {
         return <BoatDetailSkeleton />;
