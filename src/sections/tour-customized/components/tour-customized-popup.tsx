@@ -118,50 +118,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         mutationFn: addNewTourCustomized,
     });
 
-
-
-    // const onSubmit = handleSubmit(async (data) => {
-    //     const payload = {
-    //         strCompanyGUID: user?.strCompanyGUID || "",
-    //         strCompanyAgentHostGUID: data.agentHost, // nếu đang là GUID thì OK, không thì cần map lại
-
-    //         intLangID: null,
-    //         strCountryGUID: data.nationality,
-
-    //         intAdult: data.adults,
-    //         intNoOfChild: data.children,
-
-    //         intSGL: data.sgl,
-    //         intDBL: data.dbl,
-    //         intTWN: data.twn,
-    //         intTPL: data.tpl,
-
-    //         dtmDateFrom: data.dateStart,
-
-    //         strServiceName: data.tourName,
-
-    //         intNoOfDay: null,
-    //         intPerPaxID: null,
-
-    //         intCurrencyID: data.currency, // nếu là ID thì giữ number/string ID
-
-    //         strListEasiaCateID: data.category,
-
-    //         strRemark: data.remark,
-
-    //         strListLocation: buildListLocation(),
-    //     };
-
-    //     addNewTourCustomizedApi(payload, {
-    //         onSuccess: () => {
-    //             showToast("success", "Thêm tour tùy chỉnh thành công");
-    //             onClose()
-    //         },
-    //         onError: () => {
-    //             showToast("error", "Thêm tour tùy chỉnh thất bại");
-    //         },
-    //     });
-    // });
     const onValid = async (data: SchemaType) => {
         const existingTourNames = [
             "Test Tour 1044",

@@ -85,7 +85,7 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
             <div className="flex items-center gap-4">
                 <div className="text-right mr-2">
                     <div className="text-2xl text-gray-800 font-normal tracking-tight underline decoration-gray-300 underline-offset-4">
-                        đ0
+                        đ{item?.dblTotalMarkupPrice ?? 0}
                     </div>
                     <div className="text-[13px] text-green-500 font-normal flex items-center justify-end gap-1">
                         <span className="text-[10px]">↑</span>0(%)

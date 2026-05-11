@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import { useListServiceTourCustomized } from "@/hooks/actions/useUser";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useAddDayTourCustomized, useListServiceTourCustomized } from "@/hooks/actions/useUser";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MapPin, Pen, Plus } from "lucide-react";
 import ListTour from "./list-tour";
 import DetailTourInEx from "./detail-tour-in-ex";
@@ -9,6 +9,8 @@ import DetailTourPrice from "./detail-tour-price";
 import { useLocation } from "react-router-dom";
 import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
+import ListDaySidebar from "./list-day-sidebar";
+import { useToastStore } from "@/zustand/useToastStore";
 
 interface DetailTourContentProps {
     itemListData?: any
@@ -22,7 +24,6 @@ interface DetailTourContentProps {
 }
 
 export const DetailTourContent = ({
-    itemListData,
     itemDetail,
     isPopupOpen,
     setIsPopupOpen,
@@ -30,7 +31,8 @@ export const DetailTourContent = ({
     setHasChange,
     tourCustomizedGUID,
 }: DetailTourContentProps) => {
-
+    const { showToast } = useToastStore()
+    const queryClient = useQueryClient();
     const location = useLocation();
     const item = location.state?.item;
     const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -81,8 +83,44 @@ export const DetailTourContent = ({
         return Object.values(map);
     };
 
+    // useAddDayTourCustomized
+    const { mutate: useAddDayTourCustomizedApi, isPending: isLoading } = useMutation({
+        mutationFn: useAddDayTourCustomized,
+    });
+    const handleAddTourNow = () => {
+        const totalDay = groupByDay(listData).length;
+
+        const payload = {
+            strTourCustomizedGUID: item?.strTourCustomizedGUID,
+            intDayOrder: totalDay + 1,
+            strDayTitle: `Day ${totalDay + 1}`,
+        };
+
+        useAddDayTourCustomizedApi(payload, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: [
+                        QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+                        item?.strTourCustomizedGUID,
+                    ],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: [
+                        QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED
+                    ],
+                });
+
+                showToast("success", "Add day success");
+            },
+
+            onError: () => {
+                showToast("error", "Add day failed");
+            },
+        });
+    };
+
     return (
-        <div className="flex h-[calc(100vh-80px)] bg-gray-50 overflow-hidden font-sans">
+        <div className="flex bg-gray-50 overflow-hidden font-sans h-full">
 
             {/* LEFT */}
             <div
@@ -92,6 +130,8 @@ export const DetailTourContent = ({
                         : "w-20 lg:w-48 bg-white border-r border-gray-100 flex flex-col items-center py-6 gap-4"
                 }
             >
+
+                <ListDaySidebar item={item ?? ""} />
 
                 {/* CHANGE DAY */}
                 <button
@@ -107,7 +147,8 @@ export const DetailTourContent = ({
 
                 {/* ADD DAY */}
                 <button
-                    className="w-12 h-12 lg:w-40 lg:h-10 flex items-center justify-center gap-2 border border-dashed border-gray-300 text-gray-400 rounded-xl hover:border-[#004b91] hover:text-[#004b91] transition-all group"
+                    className="cursor-pointer w-12 h-12 lg:w-40 lg:h-10 flex items-center justify-center gap-2 border border-dashed border-gray-300 text-gray-400 rounded-xl hover:border-[#004b91] hover:text-[#004b91] transition-all group"
+                    onClick={handleAddTourNow}
                 >
                     <Plus size={18} />
 

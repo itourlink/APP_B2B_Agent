@@ -36,7 +36,6 @@ export const DetailTour = () => {
   });
   const listData = data?.[0]?.[0] ?? [];
 
-  console.log("listData", data)
   return (
     <div className={isPopupOpen ? "overflow-hidden h-screen" : "mt-30"}>
       <DetailTourHeader

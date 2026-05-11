@@ -141,6 +141,20 @@ export const updTourCustomizedDayItemCate = async (body: any) => {
     );
     return res.data;
 };
+export const delTourCustomizedDayItemLink = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/DelTourCustomizedDayItemLink",
+        body
+    );
+    return res.data;
+};
+export const addTourCustomizedDayDestination = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/AddTourCustomizedDayDestination",
+        body
+    );
+    return res.data;
+};
 export const useListPayableBooking = async (body: any) => {
     const res = await apiClient.post(
         "payrcvbooking/GetListPayableBooking",
