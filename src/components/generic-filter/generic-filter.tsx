@@ -9,6 +9,9 @@ import TypeSelect, { type Option } from "./type-select";
 import GuestRoomPopup from "./guess-room-popup";
 import TourTypeSelect from "./tour-type-select";
 
+
+
+
 type FilterItem =
     | {
         type: "search"; key: string; placeholder?: string; label?: string; renderDropdown?: (args: {
@@ -47,7 +50,7 @@ export const GenericFilter = ({
     const locadesRef = useRef<HTMLDivElement>(null);
 
     const [active, setActive] = useState<
-        "guest" | "guestRoom" | "date" | "dateOne" | "locades" | "search" | null
+        "guest" | "guestRoom" | "date" | "dateOne" | "locades" | "search"  | null
     >(null);
 
     useEffect(() => {
@@ -314,7 +317,7 @@ export const GenericFilter = ({
                 return (
                     <div className="flex flex-col gap-1">
                         <div className="text-sm font-semibold">
-                            {item.label || "Loại tour"}
+                            {item.label || "Tour Type"}
                         </div>
                         <TourTypeSelect
                             value={values[item.key] || { mainType: "all", subType: "all" }}

@@ -117,10 +117,29 @@ const TourDetail = () => {
 
                                     <div className="flex items-center gap-2 text-slate-500">
                                         <span className="text-sm font-semibold">Share:</span>
-                                        {[Facebook, Mail, Twitter].map((Icon, i) => (
-                                            <button key={i} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                        {[
+                                            { 
+                                                Icon: Facebook, 
+                                                link: `https://www.facebook.com` 
+                                            },
+                                            { 
+                                                Icon: Twitter, 
+                                                link: `https://twitter.com` 
+                                            },
+                                            { 
+                                                Icon: Mail, 
+                                                link: `https://gmail.com` 
+                                            }
+                                        ].map(({ Icon, link }, i) => (
+                                            <a 
+                                                key={i} 
+                                                href={link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors text-slate-500"
+                                            >
                                                 <Icon size={14} />
-                                            </button>
+                                            </a>
                                         ))}
                                     </div>
                                 </div>
