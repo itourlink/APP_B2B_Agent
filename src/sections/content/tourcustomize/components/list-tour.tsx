@@ -6,6 +6,7 @@ import {
   Trash2,
   RefreshCw,
   Plus,
+  Pen,
 } from "lucide-react";
 
 import ServiceMenu, {
@@ -17,6 +18,7 @@ import { isValidValue } from "@/utils/utilts";
 import {
   updTourCustomizedDayItemCate,
   delTourCustomizedDayItemLink,
+  updTourCustomizedDay,
 } from "@/hooks/actions/useUser";
 
 import {
@@ -79,6 +81,13 @@ const ListTour = ({
   const locations = parseLocations(
     String(firstItem?.strListLocation)
   );
+
+
+  const { mutate: updTourCustomizedDayApi, isPending:isLoading } = useMutation({
+    mutationFn: updTourCustomizedDay,
+  });
+
+
 
   // UPDATE CATEGORY
   const {
@@ -334,12 +343,16 @@ const ListTour = ({
             firstItem?.intDayOrder
           )}
         </h3>
+        <div className="flex items-center gap-5">
 
-        <h3 className="text-lg font-bold text-gray-800">
-          {isValidValue(
-            firstItem?.strDayTitle
-          )}
-        </h3>
+          <h3 className="text-lg font-bold text-gray-800">
+            {isValidValue(
+              firstItem?.strDayTitle
+            )}
+          </h3>
+          <button className="cursor-pointer"><Pen size={17} /></button>
+        </div>
+
       </div>
 
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">

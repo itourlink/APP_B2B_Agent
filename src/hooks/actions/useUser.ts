@@ -92,6 +92,20 @@ export const useDelDayTourCustomized = async (body: any) => {
     );
     return res.data;
 };
+export const updTourCustomized = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/UpdTourCustomized",
+        body
+    );
+    return res.data;
+};
+export const updTourCustomizedDay = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/UpdTourCustomizedDay",
+        body
+    );
+    return res.data;
+};
 export const useFilterCompanyBankAccount = async (body: any) => {
     const res = await apiClient.post(
         "user/GetFilterCompanyBankAccount",

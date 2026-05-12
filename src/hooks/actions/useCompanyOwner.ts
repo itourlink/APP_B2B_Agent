@@ -9,6 +9,10 @@ const fetchListCompanyOwner = async (body: any) => {
     return res.data;
 };
 
+export const listCompanyOwner = async (body: any) => {
+    const res = await apiClient.post("user/GetListCompanyOwner", body);
+    return res.data;
+};
 
 export const useListCompanyOwner = () => {
     const { user } = useUser();

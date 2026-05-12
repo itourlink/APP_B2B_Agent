@@ -8,11 +8,12 @@ import { ArrowLeft } from "lucide-react";
 import { COUNTRIES_OPTIONS, MEALS_OPTIONS, STARS_OPTIONS } from "@/utils/oprion-data";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import { useAddSaleRequest, useListCompanyOwner } from "@/hooks/actions/useUser";
+import { useAddSaleRequest } from "@/hooks/actions/useUser";
 import { useUserStore } from "@/zustand/useUserStore";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { useState } from "react";
 import { AgentHostSelect } from "./agent-host-select";
+import { listCompanyOwner, useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
@@ -51,7 +52,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
     } = useInfiniteQuery({
         queryKey: [QUERY_KEYS.USER.LIST_COMPANY_OWNER, debouncedSearch],
         queryFn: ({ pageParam = 1 }) =>
-            useListCompanyOwner({
+            listCompanyOwner({
                 strUserPartnerGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 intCurPage: pageParam,

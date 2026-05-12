@@ -3,10 +3,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z as zod } from "zod";
 
 import { Field, Form } from "@/components/hook-form";
-import PrimaryButton from "@/components/button/primary-button";
 import { useToastStore } from "@/zustand/useToastStore";
 import { ArrowLeft, RotateCcw } from "lucide-react";
-import { AGENT_HOST, COUNTRIES_OPTIONS, CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/oprion-data";
+import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/oprion-data";
+import { useLocation } from "react-router-dom";
+import { useListCity } from "@/hooks/actions/useCity";
+import { useEffect, useState } from "react";
+import { AgentHostSelect } from "../../request/components/agent-host-select";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { listCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useUserStore } from "@/zustand/useUserStore";
+import { useDebounce } from "@/hooks/components/use-debounce";
+import { updTourCustomized } from "@/hooks/actions/useUser";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
@@ -22,7 +31,7 @@ const Schema = zod.object({
     children: zod.number().default(0),
     category: zod.string().min(1, "Vui lòng chọn hạng sao"),
     remark: zod.string().default(""),
-    bannerImg: zod.any().optional(),
+    linkImgBannerTCM: zod.any().optional(),
 });
 
 type SchemaType = zod.infer<typeof Schema>;
@@ -31,44 +40,190 @@ interface Props {
     onBack: () => void
 }
 const UpdateTour = ({ onBack }: Props) => {
+    const location = useLocation();
+    const item = location.state?.item;
+    const queryClient = useQueryClient();
+
     const { showToast } = useToastStore();
     const methods = useForm<SchemaType>({
         resolver: zodResolver(Schema) as any,
         defaultValues: {
-            agentHost: "CÔNG TY KẾT NỐI DU LỊCH",
-            currency: "Vietnamese Dong",
-            tourName: "Test tour",
-            dateStart: "2026-09-29",
-            sgl: 0,
-            dbl: 2,
-            twn: 0,
-            tpl: 0,
-            adults: 4,
-            children: 0,
-            category: "5",
-            remark: "",
+            agentHost: item?.strCompanyAgentHostGUID,
+            currency: String(item?.intCurrencyID ?? ""),
+            tourName: item?.strServiceName,
+            dateStart: item?.dtmDateFrom
+                ? item.dtmDateFrom.split("T")[0]
+                : "",
+            sgl: item?.intSGL,
+            dbl: item?.intDBL,
+            twn: item?.intTWN,
+            tpl: item?.intTPL,
+            adults: item?.intAdult,
+            children: item?.intNoOfChild,
+            category: item?.strListEasiaCateID,
+            remark: item?.strRemark,
+            linkImgBannerTCM: item?.LinkImgBannerTCM,
         },
     });
 
+    const { reset } = methods;
+
+    useEffect(() => {
+        if (item) {
+            reset({
+                agentHost: item?.strCompanyAgentHostGUID,
+                currency: String(item?.intCurrencyID ?? ""),
+                tourName: item?.strServiceName,
+                dateStart: item?.dtmDateFrom
+                    ? item.dtmDateFrom.split("T")[0]
+                    : "",
+                sgl: item?.intSGL,
+                dbl: item?.intDBL,
+                twn: item?.intTWN,
+                tpl: item?.intTPL,
+                adults: item?.intAdult,
+                children: item?.intNoOfChild,
+                category: item?.strListEasiaCateID,
+                remark: item?.strRemark,
+                linkImgBannerTCM: item?.LinkImgBannerTCM,
+            });
+        }
+    }, [item, reset]);
     const { handleSubmit, formState: { isSubmitting } } = methods;
 
-    const onSubmit = handleSubmit(async (_) => {
+    const onSubmit = handleSubmit(async (data) => {
+
         try {
-            showToast("success", "Tạo yêu cầu mới thành công");
+            const payload = {
+                strTourCustomizedGUID: item?.strTourCustomizedGUID,
+
+                strCompanyAgentHostGUID: data.agentHost,
+
+                intCurrencyID: Number(data.currency),
+
+                strServiceName: data.tourName,
+
+                dtmDateFrom: data.dateStart,
+
+                strNationalityGUID: data.nationality || "",
+
+                intSGL: Number(data.sgl || 0),
+                intDBL: Number(data.dbl || 0),
+                intTWN: Number(data.twn || 0),
+                intTPL: Number(data.tpl || 0),
+
+                intAdult: Number(data.adults || 0),
+
+                intNoOfChild: Number(data.children || 0),
+
+                strListEasiaCateID: data.category,
+
+                strRemark: data.remark || "",
+
+                // linkImgBannerTCM: data.linkImgBannerTCM,
+                linkImgBannerTCM: "Upload/Agent/486BD4/tom and jerry_20260420_083450.jpg",
+            };
+
+            updTourCustomizedApi(payload, {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+                        ],
+                    });
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED,
+                        ],
+                    });
+
+                    showToast("success", "Update tour thành công");
+
+                    onBack();
+                },
+
+                onError: (error: any) => {
+                    console.log("update error", error);
+
+                    console.log(data.linkImgBannerTCM);
+                    console.log(data.linkImgBannerTCM instanceof File);
+
+                    showToast("error", "Update tour thất bại");
+                },
+            });
         } catch (error) {
-            showToast("error", "Có lỗi xảy ra, vui lòng kiểm tra lại");
+            console.log("submit error", error);
+
+            showToast("error", "Có lỗi xảy ra");
+
         }
     });
+
+    const { ctData } = useListCity({
+        strTableName: "MC02",
+        strFeildSelect: "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
+        strWhere: "WHERE (IsActive=1)  ORDER BY MC02_CountryName ASC ",
+    })
+
+    const COUNTRY_OPTIONS = ctData.map((item: any) => ({
+        label: item.strName,
+        value: item.id,
+    }));
+    const user = useUserStore((state) => state.user);
+    const [searchTerm, setSearchTerm] = useState("");
+    const debouncedSearch = useDebounce(searchTerm, 500);
+
+    const { mutate: updTourCustomizedApi } = useMutation({
+        mutationFn: updTourCustomized,
+    });
+
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading
+    } = useInfiniteQuery({
+        queryKey: [QUERY_KEYS.USER.LIST_COMPANY_OWNER, debouncedSearch],
+        queryFn: ({ pageParam = 1 }) =>
+            listCompanyOwner({
+                strUserPartnerGUID: user?.strUserGUID,
+                strCompanyPartnerGUID: user?.strCompanyGUID,
+                intCurPage: pageParam,
+                intPageSize: 9999,
+                strFilterCompanyName: debouncedSearch,
+                IsOwnerFriend: true,
+                tblsReturn: "[0]"
+            }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages) => {
+            const lastDataArray = lastPage?.[0] || [];
+            return lastDataArray.length < 10 ? undefined : allPages.length + 1;
+        },
+    });
+
+    const listData = data?.pages.flatMap(page => page[0]) ?? [];
+
+    const [preview, setPreview] = useState(
+        item?.LinkImgBannerTCM || ""
+    );
 
     const renderForm = (
         <div className="bg-white rounded-4xl p-8 border border-gray-100 shadow-sm space-y-8 font-sans">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-end gap-2">
                     <div className="flex-1">
-                        <Field.Select
+                        <AgentHostSelect
                             name="agentHost"
-                            label={{ text: "Agent Host", icon: <span className="text-red-500">*</span> }}
-                            options={AGENT_HOST}
+                            label="Agent Host"
+                            data={listData}
+                            isLoading={isLoading}
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
+                            fetchNextPage={fetchNextPage}
+                            hasNextPage={hasNextPage}
+                            isFetchingNextPage={isFetchingNextPage}
                         />
                     </div>
                     <button
@@ -97,11 +252,10 @@ const UpdateTour = ({ onBack }: Props) => {
                     label={{ text: "Date Start", icon: <span className="text-red-500">*</span> }}
                 />
 
-                <Field.Select
+                <Field.SearchSelect
                     name="nationality"
                     label={{ text: "Nationality" }}
-                    options={COUNTRIES_OPTIONS}
-                    placeholder="Select country"
+                    options={COUNTRY_OPTIONS}
                 />
 
                 <Field.Text name="sgl" type="number" label={{ text: "SGL" }} />
@@ -129,10 +283,6 @@ const UpdateTour = ({ onBack }: Props) => {
                 />
             </div>
 
-
-
-
-
             <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">Remark</label>
                 <div className="rounded-2xl overflow-hidden border border-gray-200">
@@ -141,23 +291,70 @@ const UpdateTour = ({ onBack }: Props) => {
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">Banner Img</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-12 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                        <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <span className="text-sm text-gray-400 font-medium">Nhấp để tải ảnh lên</span>
-                </div>
+                <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">
+                    Banner Img
+                </label>
+
+                <label
+                    htmlFor="banner-upload"
+                    className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer overflow-hidden"
+                >
+                    {preview ? (
+                        <img
+                            src={preview}
+                            alt="banner"
+                            className="w-full h-64 object-cover rounded-xl"
+                        />
+                    ) : (
+                        <>
+                            <div className="p-4 bg-white rounded-full shadow-sm mb-4">
+                                <svg
+                                    className="w-8 h-8 text-gray-300"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                            </div>
+
+                            <span className="text-sm text-gray-400 font-medium">
+                                Nhấp để tải ảnh lên
+                            </span>
+                        </>
+                    )}
+                </label>
+
+                <input
+                    id="banner-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+
+                        if (!file) return;
+
+                        methods.setValue("linkImgBannerTCM", file);
+
+                        setPreview(URL.createObjectURL(file));
+                    }}
+                />
             </div>
 
             <div className="flex justify-start pt-6 border-t border-gray-50">
-                <PrimaryButton
-                    text="Lưu"
-                    isLoading={isSubmitting}
-                    className="px-12 py-3 bg-[#004b91] hover:bg-[#003d75] rounded-xl text-white font-bold shadow-lg shadow-blue-100 transition-all active:scale-95 uppercase text-sm tracking-wide"
-                />
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="cursor-pointer px-12 py-3 bg-[#004b91] hover:bg-[#003d75] rounded-xl text-white font-bold shadow-lg shadow-blue-100 transition-all active:scale-95 uppercase text-sm tracking-wide disabled:opacity-50"
+                >
+                    {isSubmitting ? "Đang lưu..." : "Lưu"}
+                </button>
             </div>
         </div>
     );
