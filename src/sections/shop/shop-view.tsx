@@ -16,7 +16,7 @@ const ShopView = () => {
     const { menuData } = useListMenu();
 
     const firstMenu = menuData?.find(
-        (item) => item?.IsShowMenu
+        (item:any) => item?.IsShowMenu
     );
 
     const redirectPath =

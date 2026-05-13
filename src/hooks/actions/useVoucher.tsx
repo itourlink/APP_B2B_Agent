@@ -16,18 +16,17 @@ export const useListSupplierVoucherByAgent = (filters?: {
     dtmFilterDatePlan?: Date | null
 }) => {
     const { user } = useUser()
+    const { coData } = useListCompanyOwner();
     const {
         page = 1,
         pageSize = 10,
-        strSupplierGUID = null
     } = filters || {}
-
     const query = useQuery({
         queryKey: [QUERY_KEYS.VOUCHER.LIST_VOUCHER, filters],
         queryFn: () =>
             fetchListSupplierVoucherByAgent({
                 strCompanyPartnerGUID: user?.strCompanyGUID,
-                strCompanyOwnerGUID: user?.strCompanyOwnerGUID,
+                strCompanyOwnerGUID: coData?.strCompanyGUID,
                 strSupplierVoucherGUID: null,
                 strFilterVoucherName: null,
                 strFilterLocationCode: null,

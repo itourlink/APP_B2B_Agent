@@ -27,9 +27,6 @@ import {
 } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-
-import PanelPopup from "@/components/popup/panel-popup";
-
 import { useToastStore } from "@/zustand/useToastStore";
 import { MENU_ITEMS } from "./menu-data-add";
 import DeleteServicePopup from "./delete-service-popup";

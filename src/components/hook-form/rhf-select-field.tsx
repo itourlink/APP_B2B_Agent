@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, CircleX } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { useFormContext, Controller, useFormState } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 type Option = {
@@ -33,7 +33,7 @@ export function RHFSelect({
   placeholder = "-- Chọn --",
   disabled = false,
 }: Props) {
-  const { control, clearErrors } = useFormContext();
+  const { control } = useFormContext();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 

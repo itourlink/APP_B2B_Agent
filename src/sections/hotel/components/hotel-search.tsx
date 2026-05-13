@@ -51,7 +51,7 @@ const HotelSearch = () => {
         if (selectedUrl) {
             setIsNavigating(true);
 
-            router.replaceParams(paths.hotel.detail, {
+            router.replaceParams(paths.shop.hotel.detail, {
                 item: {
                     strSupplierNameURL: selectedUrl,
                 },
@@ -66,7 +66,7 @@ const HotelSearch = () => {
             dtmFilterCheckOut: filters.end,
         };
 
-        router.replaceParams(paths.search, {
+        router.replaceParams(paths.shop.search, {
             isSearchHotel: payload,
         });
     };

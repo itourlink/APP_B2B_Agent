@@ -11,16 +11,16 @@ import { useTranslation } from "react-i18next";
 import { z as zod } from "zod";
 import AuthBox from "./components/auth-box";
 // import { useLogin } from "@/hooks/actions/useAuth";
-import { useSearchParams } from "react-router-dom";
+// import { useSearchParams } from "react-router-dom";
 // import { useToastStore } from "@/zustand/useToastStore";
 const SignInView = () => {
   const { t } = useTranslation("auth");
   const { value: showPassword, onToggle } = useBoolean();
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   // const { showToast } = useToastStore()
-  const appId = searchParams.get("app_id") ?? "";
-  const challengeCode = searchParams.get("challenge_code") ?? "";
-  const state = searchParams.get("state") ?? "";
+  // const appId = searchParams.get("app_id") ?? "";
+  // const challengeCode = searchParams.get("challenge_code") ?? "";
+  // const state = searchParams.get("state") ?? "";
 
   // const { mutate: loginApi, isPending: isLoading } = useMutation({
   //   mutationFn: useLogin,
@@ -49,14 +49,7 @@ const SignInView = () => {
   const { handleSubmit, formState } = methods;
   const { isValid } = formState;
 
-  const onSubmit = handleSubmit(async (data) => {
-    const payload = {
-      ...data,
-      appId,
-      challengeCode,
-      state,
-    };
-
+  const onSubmit = handleSubmit(async (_) => {
 
     // loginApi(payload, {
     //   onSuccess: () => {

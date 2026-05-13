@@ -1,5 +1,5 @@
-import { useFormContext, Controller, useFormState } from "react-hook-form";
-import React, { useEffect, useState } from "react";
+import { useFormContext, Controller } from "react-hook-form";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import "./style.css";
 import { CircleX } from "lucide-react";
@@ -43,7 +43,7 @@ export function RHFTextField({
   align = "left",
   ...other
 }: Props) {
-  const { control, clearErrors } = useFormContext();
+  const { control } = useFormContext();
   // const { errors } = useFormState({ name });
 
   // const error = errors[name];

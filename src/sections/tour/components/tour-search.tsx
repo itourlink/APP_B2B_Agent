@@ -70,7 +70,7 @@ const DEFAULT_FILTERS2 = {
     strLocationCode: "VN0000",
     dtmFilterDateValidFrom: today,
     dtmFilterDateValidTo: null,
-     strTourType: "all",
+    strTourType: "all",
     strTourSubType: "all",
 };
 
@@ -104,7 +104,7 @@ const TourSearch = () => {
     const handleSearch = () => {
         // TOUR → detail
         if (selectedTourUrl) {
-            router.replaceParams(paths.tour.detail, {
+            router.replaceParams(paths.shop.tour.detail, {
                 item: {
                     strServiceNameUrl: selectedTourUrl,
                 },
@@ -113,7 +113,7 @@ const TourSearch = () => {
         }
 
         // SEARCH LIST
-        router.replaceParams(paths.search, {
+        router.replaceParams(paths.shop.search, {
             isTourSeries: filters.isTourSeries,
             isSearchTour: draftFilters2,
         });
@@ -215,7 +215,7 @@ const TourSearch = () => {
                         if (k === "tourType") {
                             setDraftFilters2((prev) => ({
                                 ...prev,
-                               strTourType: v?.mainType,
+                                strTourType: v?.mainType,
                                 strTourSubType: v?.subType,
                             }));
                         }

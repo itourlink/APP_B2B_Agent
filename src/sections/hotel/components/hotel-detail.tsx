@@ -29,7 +29,6 @@ const HotelDetail = () => {
     const hotel = hotelData?.[0] ?? {};
     
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     
     
 

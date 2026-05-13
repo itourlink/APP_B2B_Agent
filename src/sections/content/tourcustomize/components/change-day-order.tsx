@@ -43,7 +43,7 @@ const ChangeDayOrder = ({
     item?.strTourCustomizedGUID || strTourCustomizedGUID;
 
   // local state
-  const [localDays, setLocalDays] = useState<IDayItem[]>(items);
+  const [_, setLocalDays] = useState<IDayItem[]>(items);
 
   const [isAddDayOpen, setIsAddDayOpen] = useState(false);
 

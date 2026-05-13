@@ -153,7 +153,7 @@ export const DetailTourContent = ({
                     <Plus size={18} />
 
                     <span className="hidden lg:inline text-xs font-bold uppercase tracking-tight">
-                        Add Day
+                        {isLoading ? "Add Day..." : "Add Day"}
                     </span>
                 </button>
             </div>

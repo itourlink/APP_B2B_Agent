@@ -29,7 +29,7 @@ const ShopHeader = () => {
 
     const { menuData } = useListMenu();
 
-    const menu = buildMenu(menuData || [], true);
+    const menu = buildMenu(menuData || []);
 
     const { user, userLoading } = useUser();
 

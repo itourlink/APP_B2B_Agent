@@ -44,7 +44,7 @@ const SalesChannelView = () => {
                 </div>
 
                 <div className="flex justify-center">
-                    <button onClick={() => router.push(paths.tour.list)} className="flex items-center gap-2 px-6 py-2.5 bg-[#2566b0] hover:bg-[#1d4f8a] cursor-pointer text-white text-sm font-medium rounded-full transition-all duration-200">
+                    <button onClick={() => router.push(paths.shop.tour.list)} className="flex items-center gap-2 px-6 py-2.5 bg-[#2566b0] hover:bg-[#1d4f8a] cursor-pointer text-white text-sm font-medium rounded-full transition-all duration-200">
                         <ChevronLeft size={18} />
                         Quay lại
                     </button>

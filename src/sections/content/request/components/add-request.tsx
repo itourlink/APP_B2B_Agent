@@ -13,7 +13,7 @@ import { useUserStore } from "@/zustand/useUserStore";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { useState } from "react";
 import { AgentHostSelect } from "./agent-host-select";
-import { listCompanyOwner, useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { listCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),

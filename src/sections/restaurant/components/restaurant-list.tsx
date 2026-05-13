@@ -1,7 +1,7 @@
-  import { useListRestaurant } from "@/hooks/actions/useRestaurant";
+import { useListRestaurant } from "@/hooks/actions/useRestaurant";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
-import { Star, MapPin, LayoutGrid, List } from "lucide-react";
+import { Star, MapPin } from "lucide-react";
 import { useState } from "react";
 import { getUrlImage } from "@/utils/format-image";
 

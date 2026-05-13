@@ -23,7 +23,7 @@ export const GuideCard = ({ guide }: {guide: any}) => {
       ? `?supplierGuid=${encodeURIComponent(guide.strSupplierGUID)}`
       : "";
 
-    router.replaceParams(`${paths.guide.detail}${supplierGuidQuery}`, {
+    router.replaceParams(`${paths.shop.guide.detail}${supplierGuidQuery}`, {
       item: guide,
     });
   };

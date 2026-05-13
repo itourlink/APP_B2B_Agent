@@ -211,7 +211,7 @@ const UpdateTour = ({ onBack }: Props) => {
 
     const listData = data?.pages.flatMap(page => page[0]) ?? [];
 
-    const [preview, setPreview] = useState(
+    const [preview, _] = useState(
         item?.LinkImgBannerTCM || ""
     );
 

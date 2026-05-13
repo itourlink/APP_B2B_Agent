@@ -46,7 +46,7 @@ const ListDaySidebar = ({ item }: Props) => {
 
     return (
         <div className="flex flex-col gap-5">
-            {groupedDays.map((dayItems: any[], index: number) => {
+            {groupedDays.map((dayItems: any[]) => {
                 const firstItem = dayItems?.[0];
 
                 const date = new Date(firstItem?.strDateDay);
