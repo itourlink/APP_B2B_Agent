@@ -78,6 +78,7 @@ const ListTour = ({
 
   const firstItem = item?.[0];
 
+
   const locations = parseLocations(
     String(firstItem?.strListLocation)
   );
@@ -87,7 +88,60 @@ const ListTour = ({
     mutationFn: updTourCustomizedDay,
   });
 
+  const handleUpdateNameDay = () => {
 
+    const payload = {
+      strTourCustomizedDayGUID:
+        firstItem?.strTourCustomizedDayGUID,
+
+      strDayTitle: dayTitle,
+
+      strDayContent: null,
+      strDayImageUrl: null,
+      strDayImageSubTwo: null,
+      strDayImagesSubThree: null,
+      strDayImagesSubFour: null,
+    };
+
+    updTourCustomizedDayApi(
+      payload,
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            {
+              queryKey: [
+                QUERY_KEYS.USER
+                  .LIST_SERVICE_TOUR_CUSTOMIZED,
+              ],
+            }
+          );
+
+          queryClient.invalidateQueries(
+            {
+              queryKey: [
+                QUERY_KEYS.USER
+                  .LIST_TOUR_CUSTOMIZED,
+              ],
+            }
+          );
+
+          setIsEditTitle(false);
+
+          showToast(
+            "success",
+            "Update tour thành công"
+          );
+        },
+
+        onError: () => {
+          showToast(
+            "error",
+            "Update tour thất bại"
+          );
+        },
+      }
+    );
+  }
 
   // UPDATE CATEGORY
   const {
@@ -316,7 +370,7 @@ const ListTour = ({
             ) && (
                 <button
                   onClick={() => {
-                    console.log("firstl", item)
+
                     setDeleteItem(item);
 
                     setOpen((prev) => ({
@@ -335,6 +389,13 @@ const ListTour = ({
     );
   };
 
+  const [isEditTitle, setIsEditTitle] =
+    useState(false);
+
+  const [dayTitle, setDayTitle] =
+    useState(
+      firstItem?.strDayTitle || ""
+    );
   return (
     <div className="w-full bg-white font-sans">
       <div className="flex items-center gap-5">
@@ -344,14 +405,60 @@ const ListTour = ({
             firstItem?.intDayOrder
           )}
         </h3>
-        <div className="flex items-center gap-5">
 
-          <h3 className="text-lg font-bold text-gray-800">
-            {isValidValue(
-              firstItem?.strDayTitle
-            )}
-          </h3>
-          <button className="cursor-pointer"><Pen size={17} /></button>
+        <div className="flex items-center gap-2">
+          {isEditTitle ? (
+            <>
+              <input
+                value={dayTitle}
+                onChange={(e) =>
+                  setDayTitle(e.target.value)
+                }
+                className="border rounded px-2 py-1 text-lg font-bold outline-none"
+              />
+
+              {/* Đồng ý */}
+              <button
+                disabled={isLoading}
+                onClick={() => handleUpdateNameDay()}
+                className="text-green-600 hover:text-green-700 border w-10 rounded-2xl cursor-pointer"
+              >
+                ✓
+              </button>
+
+              {/* Huỷ */}
+              <button
+                onClick={() => {
+                  setDayTitle(
+                    firstItem?.strDayTitle ||
+                    ""
+                  );
+
+                  setIsEditTitle(false);
+                }}
+                className="text-red-500 hover:text-red-600 border w-10 rounded-2xl cursor-pointer"
+              >
+                ✕
+              </button>
+            </>
+          ) : (
+            <>
+              <h3 className="text-lg font-bold text-gray-800">
+                {isValidValue(
+                  firstItem?.strDayTitle
+                )}
+              </h3>
+
+              <button
+                onClick={() =>
+                  setIsEditTitle(true)
+                }
+                className="text-gray-500 hover:text-[#2566b0] cursor-pointer"
+              >
+                <Pen size={16} />
+              </button>
+            </>
+          )}
         </div>
 
       </div>

@@ -1,21 +1,31 @@
+import PanelPopup from "@/components/popup/panel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { fDateTime } from "@/utils/format-time";
 import { useToastStore } from "@/zustand/useToastStore";
 import { ArrowLeft, Calendar, ChevronDown, Copy, Play, Users, X } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import UpdatePriceMarkup from "./update-price-markup";
 
 interface HeaderProps {
+    item?: any;
     onUpdate: () => void;
     isLocked?: boolean;
 }
 
-export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
-
-    const location = useLocation();
-    const item = location.state?.item;
+export const DetailTourHeader = ({
+    item,
+    onUpdate,
+    isLocked
+}: HeaderProps) => {
 
     const router = useRouter();
     const { showToast } = useToastStore();
+
+    const [open, setOpen] = useState({
+        update: false
+    })
+
+
     return (
         <div className={isLocked ? "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans opacity-50 pointer-events-none transition-opacity" : "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans"}>
             <div className="flex items-center gap-4">
@@ -87,8 +97,19 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
                     <div className="text-2xl text-gray-800 font-normal tracking-tight underline decoration-gray-300 underline-offset-4">
                         đ{item?.dblTotalMarkupPrice ?? 0}
                     </div>
-                    <div className="text-[13px] text-green-500 font-normal flex items-center justify-end gap-1">
-                        <span className="text-[10px]">↑</span>0(%)
+                    <div className="relative group inline-block">
+                        <button onClick={() => setOpen((prev) => ({ ...prev, update: true }))} className="cursor-pointer text-[13px] text-green-500 font-normal flex items-center justify-end gap-1">
+                            <span className="text-[10px]">↑</span>{item?.dblMarkupService}(%) {item?.intMarkupTypeID === 2 && <span>
+                                (Fixed)
+                            </span>
+                            }
+                        </button>
+
+                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 
+    whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded 
+    opacity-0 group-hover:opacity-100 transition">
+                            Click to update
+                        </span>
                     </div>
                 </div>
 
@@ -112,6 +133,15 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
                     </button>
                 </div>
             </div>
+
+
+
+            {open.update && (
+
+                <PanelPopup title="Update Price" open={open.update} onClose={() => setOpen((prev) => ({ ...prev, update: false }))}>
+                    <UpdatePriceMarkup item={item} onClose={() => setOpen((prev) => ({ ...prev, update: false }))} />
+                </PanelPopup>
+            )}
         </div>
     );
 };

@@ -358,7 +358,7 @@ const UpdateTour = ({ onBack }: Props) => {
 
             {open.imgState && (
 
-                <PanelPopup title="Media" open={open.imgState} onClose={() => setOpen((prev) => ({ ...prev, imgState: false }))} >
+                <PanelPopup className="max-w-[900px]" title="Media" open={open.imgState} onClose={() => setOpen((prev) => ({ ...prev, imgState: false }))} >
                     <ListMedia />
                 </PanelPopup>
             )}

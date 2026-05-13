@@ -35,10 +35,10 @@ export const DetailTour = () => {
     placeholderData: keepPreviousData,
   });
   const listData = data?.[0]?.[0] ?? [];
-
   return (
     <div className={isPopupOpen ? "overflow-hidden h-screen" : "mt-30"}>
       <DetailTourHeader
+        item={listData}
         onUpdate={() => setIsUpdate(true)}
         isLocked={isPopupOpen}
       />
