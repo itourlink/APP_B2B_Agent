@@ -87,5 +87,8 @@ export const QUERY_KEYS = {
     },
     VOUCHER: {
         LIST_VOUCHER: "LIST_VOUCHER",
+    },
+    MEDIA: {
+        LIST_MEDIA: "LIST_MEDIA"
     }
 };

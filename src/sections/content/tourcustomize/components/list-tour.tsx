@@ -83,7 +83,7 @@ const ListTour = ({
   );
 
 
-  const { mutate: updTourCustomizedDayApi, isPending:isLoading } = useMutation({
+  const { mutate: updTourCustomizedDayApi, isPending: isLoading } = useMutation({
     mutationFn: updTourCustomizedDay,
   });
 
@@ -316,11 +316,12 @@ const ListTour = ({
             ) && (
                 <button
                   onClick={() => {
+                    console.log("firstl", item)
                     setDeleteItem(item);
 
                     setOpen((prev) => ({
                       ...prev,
-                      del: false,
+                      del: true,
                     }));
                   }}
                   className="cursor-pointer bg-[#f2f4f7] p-2 rounded-md hover:bg-red-50 hover:text-red-600 transition-all text-gray-500"

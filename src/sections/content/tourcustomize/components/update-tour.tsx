@@ -16,6 +16,8 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUserStore } from "@/zustand/useUserStore";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { updTourCustomized } from "@/hooks/actions/useUser";
+import PanelPopup from "@/components/popup/panel-popup";
+import ListMedia from "./list-media";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
@@ -43,6 +45,10 @@ const UpdateTour = ({ onBack }: Props) => {
     const location = useLocation();
     const item = location.state?.item;
     const queryClient = useQueryClient();
+
+    const [open, setOpen] = useState({
+        imgState: false
+    })
 
     const { showToast } = useToastStore();
     const methods = useForm<SchemaType>({
@@ -290,61 +296,33 @@ const UpdateTour = ({ onBack }: Props) => {
                 </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col ">
                 <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">
                     Banner Img
                 </label>
 
-                <label
-                    htmlFor="banner-upload"
-                    className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer overflow-hidden"
+                <button
+                    type="button"
+                    onClick={() =>
+                        setOpen((prev) => ({ ...prev, imgState: true }))
+                    }
                 >
-                    {preview ? (
-                        <img
-                            src={preview}
-                            alt="banner"
-                            className="w-full h-64 object-cover rounded-xl"
-                        />
-                    ) : (
-                        <>
-                            <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                                <svg
-                                    className="w-8 h-8 text-gray-300"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                </svg>
-                            </div>
 
-                            <span className="text-sm text-gray-400 font-medium">
-                                Nhấp để tải ảnh lên
-                            </span>
-                        </>
-                    )}
-                </label>
+                    <label
+                        htmlFor="banner-upload"
+                        className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer overflow-hidden"
+                    >
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="banner"
+                                className="w-full h-64 object-cover rounded-xl"
+                            />
+                        )}
+                    </label>
 
-                <input
-                    id="banner-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                        const file = e.target.files?.[0];
+                </button>
 
-                        if (!file) return;
-
-                        methods.setValue("linkImgBannerTCM", file);
-
-                        setPreview(URL.createObjectURL(file));
-                    }}
-                />
             </div>
 
             <div className="flex justify-start pt-6 border-t border-gray-50">
@@ -362,6 +340,7 @@ const UpdateTour = ({ onBack }: Props) => {
     return (
         <div className="max-w-5xl mx-auto p-3">
             <button
+                type="button"
                 onClick={() => onBack()}
                 className="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-[#004b91] transition-colors group py-2"
             >
@@ -374,6 +353,15 @@ const UpdateTour = ({ onBack }: Props) => {
             <Form methods={methods} onSubmit={onSubmit}>
                 {renderForm}
             </Form>
+
+
+
+            {open.imgState && (
+
+                <PanelPopup title="Media" open={open.imgState} onClose={() => setOpen((prev) => ({ ...prev, imgState: false }))} >
+                    <ListMedia />
+                </PanelPopup>
+            )}
         </div>
     );
 };
