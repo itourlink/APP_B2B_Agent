@@ -8,6 +8,9 @@ import { CURRENCYS_OPTIONS, LANGUES_OPTIONS } from "../../../../utils/oprion-dat
 import { useUserStore } from "@/zustand/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 import { useUpdCompanyInfo } from "@/hooks/actions/useUser";
+import BannerMediaField from "@/components/media/banner-media-field";
+import { CONFIG } from "@/config-global";
+import { useState } from "react";
 
 const Schema = zod.object({
     companyName: zod.string().min(1, "Tên công ty là bắt buộc"),
@@ -45,7 +48,7 @@ const InfoCompany = () => {
         defaultValues,
     });
 
-    const { handleSubmit, formState: { isSubmitting } } = methods;
+    const { handleSubmit, formState: { isSubmitting }, setValue } = methods;
 
     const onSubmit = handleSubmit(async (data) => {
         const payload = {
@@ -76,11 +79,15 @@ const InfoCompany = () => {
         });
     });
 
-
+    const [preview, setPreview] = useState(
+        user?.strAvatar
+            ? `${CONFIG.serverUrlSP}${user.strAvatar.replace(/^\//, "")}`
+            : ""
+    );
     const renderForm = (
         <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="flex flex-col items-center gap-2">
+                {/* <div className="flex flex-col items-center gap-2">
                     <span className="text-sm font-bold self-start">Logo</span>
                     <div className="w-40 h-32 bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg">
                         <div className="text-gray-300">
@@ -90,9 +97,19 @@ const InfoCompany = () => {
                             </svg>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <BannerMediaField
+                    title="Logo"
+                    value={preview}
+                    onChange={(path) => {
+                    setPreview(
+                        `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
+                    );
 
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-6">
+                    setValue("strCompanyLogo", path);
+                    }}
+                />
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-6">
                     <div className="md:col-span-3 flex gap-2 items-end">
                         <div className="flex-1">
                             <Field.Text
