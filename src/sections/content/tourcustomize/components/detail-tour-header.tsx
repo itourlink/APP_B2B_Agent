@@ -2,9 +2,14 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { fDateTime } from "@/utils/format-time";
 import { useToastStore } from "@/zustand/useToastStore";
-import { ArrowLeft, Calendar, ChevronDown, Copy, Play, Users, X } from "lucide-react";
-import { useState } from "react";
 import UpdatePriceMarkup from "./update-price-markup";
+import { useState } from "react";
+import DetailTourHeaderPopup from "./detail-tour-header-popup";
+import { useGetlistCustomer } from "@/hooks/actions/useTourCustomized";
+import { ArrowLeft, Calendar, ChevronDown, Copy, Play, SquarePen, Users, X } from "lucide-react";
+import { isValidValue } from "@/utils/utilts";
+
+
 
 interface HeaderProps {
     item?: any;
@@ -24,6 +29,22 @@ export const DetailTourHeader = ({
     const [open, setOpen] = useState({
         update: false
     })
+    const [openCustomerPopup, setOpenCustomerPopup] = useState(false);
+
+    const TourCustoemerList = () => {
+        const filters = {
+            page: 1,
+            pageSize: 10,
+            strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
+            strTourCode: item?.strTourCode,
+        };
+
+        const { tourCustomer } = useGetlistCustomer(filters)
+        console.log("tourCustomer", tourCustomer);
+    }
+
+    TourCustoemerList();
+
 
 
     return (
@@ -74,9 +95,17 @@ export const DetailTourHeader = ({
                         <div className="flex items-center gap-1.5">
                             <Users size={14} />
                             <span>{item?.intTotalPax || 0}</span>
-                            <button className="text-blue-400 hover:text-[#004b91]">
-                                <Play size={12} className="rotate-90 fill-current" />
-                            </button>
+                            <div className="relative group inline-flex">
+                                <button
+                                    onClick={() => setOpenCustomerPopup(true)}
+                                    className="text-blue-400 hover:text-[#004b91]"
+                                >
+                                    <SquarePen size={12} />
+                                </button>
+                                <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100">
+                                    Update list customer
+                                </span>
+                            </div>
                         </div>
                         <span className="text-gray-300">|</span>
 
@@ -95,7 +124,7 @@ export const DetailTourHeader = ({
             <div className="flex items-center gap-4">
                 <div className="text-right mr-2">
                     <div className="text-2xl text-gray-800 font-normal tracking-tight underline decoration-gray-300 underline-offset-4">
-                        đ{item?.dblTotalMarkupPrice ?? 0}
+                        đ{isValidValue(item?.dblTotalMarkupPrice)}
                     </div>
                     <div className="relative group inline-block">
                         <button onClick={() => setOpen((prev) => ({ ...prev, update: true }))} className="cursor-pointer text-[13px] text-green-500 font-normal flex items-center justify-end gap-1">
@@ -142,6 +171,17 @@ export const DetailTourHeader = ({
                     <UpdatePriceMarkup item={item} onClose={() => setOpen((prev) => ({ ...prev, update: false }))} />
                 </PanelPopup>
             )}
+
+
+
+            <PanelPopup
+                title="Config customer information"
+                open={openCustomerPopup}
+                onClose={() => setOpenCustomerPopup(false)}
+                className="w-[950px]"
+            >
+                <DetailTourHeaderPopup />
+            </PanelPopup>
         </div>
     );
 };

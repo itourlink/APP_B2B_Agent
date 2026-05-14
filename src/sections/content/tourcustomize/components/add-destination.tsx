@@ -239,7 +239,7 @@ const AddDestination = ({
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50 cursor-pointer"
+                            className="px-4 py-2 rounded-lg bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white disabled:opacity-50 cursor-pointer"
                         >
                             {isLoading
                                 ? "Saving..."

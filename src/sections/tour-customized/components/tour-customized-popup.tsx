@@ -4,16 +4,18 @@ import { z as zod } from "zod";
 
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
-import {RotateCcw, Trash2 } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/oprion-data";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { addNewTourCustomized } from "@/hooks/actions/useTour";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useEffect, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
 import { CircleX } from "lucide-react";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useListTourCustomized } from "@/hooks/actions/useUser";
 
 
 export const Schema = z
@@ -22,7 +24,7 @@ export const Schema = z
         currency: z.string().min(1, "Vui lòng chọn ĐVTT"),
         tourName: z.string().min(1, "Tên Tour là bắt buộc"),
         dateStart: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
-        
+
         nationality: z.string().min(1, "Vui lòng chọn Quốc tịch"),
 
         adults: z.coerce.number().min(1, "Tối thiểu 1 người lớn"),
@@ -63,7 +65,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     const { user } = useUser();
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
-
+    const [strTourCustomizedGUID, setStrTourCustomizedGUID] = useState("");
     const [preview, setPreview] = useState<string | null>(null);
     const AGENT_HOST_OPTIONS = coData
         ? [
@@ -138,15 +140,15 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
 
 
-        if(locations.length === 0 ) { 
+        if (locations.length === 0) {
             showToast("error", "Vui lòng thêm điểm đến");
             return;
         }
         const currentCountry = methods.getValues("country");
         const currentCity = methods.getValues("city");
-        if(currentCountry && currentCity) {
+        if (currentCountry && currentCity) {
             const confirmMissing = window.confirm("Vui lòng chọn thêm điểm đến");
-            if(!confirmMissing) return;
+            if (!confirmMissing) return;
         }
         const payload = {
             strCompanyGUID: user?.strCompanyGUID || "",
@@ -179,15 +181,37 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             strListLocation: buildListLocation(),
         };
         addNewTourCustomizedApi(payload, {
-            onSuccess: () => {
+            onSuccess: async (res: any) => {
                 showToast("success", "Thêm tour tùy chỉnh thành công");
-                onClose()
+
+                const guid = res?.[0]?.[0]?.strTourCustomizedGUID;
+
+                if (!guid) return;
+
+                // delay 1 chút cho backend insert xong
+                setTimeout(async () => {
+                    const detail = await useListTourCustomized({
+                        strTourCustomizedGUID: guid,
+                        strFilter: null,
+                        intTourStepID: 2,
+                        strCodeChkVer: null,
+                        intMemberTypeID: 1,
+                        strOrder: null,
+                        intCurPage: 1,
+                        intPageSize: 5,
+                        tblsReturn: "[0]"
+                    });
+
+                    console.log("detail", detail?.[0]?.[0]);
+                    router
+                }, 500);
             },
             onError: () => {
                 showToast("error", "Thêm tour tùy chỉnh thất bại");
             },
         });
     }
+
 
     const onINValid = (errors: any) => {
         console.log(errors);
@@ -205,7 +229,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     }, [coData]);
 
 
-   // quốc gia
+    // quốc gia
 
     const { ctData } = useListCity({
         strTableName: "MC02",
@@ -249,7 +273,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     // xóa lỗi khi gõ lại tên tour
     const watchedTourName = methods.watch("tourName");
     useEffect(() => {
-        if(watchedTourName) { 
+        if (watchedTourName) {
             methods.clearErrors("tourName")
         }
     }, [watchedTourName])
@@ -257,7 +281,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     const watchedNationality = methods.watch("nationality")
 
     useEffect(() => {
-        if(watchedNationality) 
+        if (watchedNationality)
             methods.clearErrors("nationality")
     }, [watchedNationality])
 
@@ -288,7 +312,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
         // reset form fields
         methods.setValue("city", "");
-        methods.clearErrors(["country","city","listLocation"]);
+        methods.clearErrors(["country", "city", "listLocation"]);
     };
 
     useEffect(() => {

@@ -220,16 +220,6 @@ const ListTour = ({
     return true;
   };
 
-  const isValidCate = (
-    value: any
-  ) => {
-    return (
-      value !== null &&
-      value !== undefined &&
-      value !== "" &&
-      typeof value !== "object"
-    );
-  };
   const renderRow = (
     item: any,
     index: number
@@ -287,50 +277,43 @@ const ListTour = ({
             <div className="text-[12px] text-gray-500">
               ({safe(item?.strCateName)})
             </div>
+            <select
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
+              value={String(
+                item?.strListEasiaCateID || ""
+              )}
+              onChange={(e) => {
+                const value =
+                  e.target.value;
 
-            {
-              isValidCate(
-                item?.strListEasiaCateID
-              ) && (
-                <select
-                  className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
-                  value={String(
-                    item?.strListEasiaCateID || ""
-                  )}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value;
+                upTourCateAPI({
+                  strTourCustomizedGUID:
+                    itemDetail?.strAgentHostServiceItemGUID,
 
-                    upTourCateAPI({
-                      strTourCustomizedGUID:
-                        itemDetail?.strAgentHostServiceItemGUID,
+                  strTourCustomizedPriceItemGUID:
+                    item?.strTourCustomizedPriceItemGUID,
 
-                      strTourCustomizedPriceItemGUID:
-                        item?.strTourCustomizedPriceItemGUID,
+                  strListEasiaCateID:
+                    value,
+                });
+              }}
+              disabled={isupdLoading}
+            >
+              <option value="">
+                Select star
+              </option>
 
-                      strListEasiaCateID:
-                        value,
-                    });
-                  }}
-                  disabled={isupdLoading}
+              {starOptions.map((star) => (
+                <option
+                  key={star}
+                  value={star}
                 >
-                  <option value="">
-                    Select star
-                  </option>
-
-                  {starOptions.map((star) => (
-                    <option
-                      key={star}
-                      value={star}
-                    >
-                      {"⭐".repeat(
-                        Number(star)
-                      )}
-                    </option>
-                  ))}
-                </select>
-              )
-            }
+                  {"⭐".repeat(
+                    Number(star)
+                  )}
+                </option>
+              ))}
+            </select>
           </div>
         </td>
 
