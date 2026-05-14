@@ -11,7 +11,6 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 import ListDaySidebar from "./list-day-sidebar";
 import { useToastStore } from "@/zustand/useToastStore";
-import { formatMoney } from "@/utils/format-number";
 
 interface DetailTourContentProps {
     itemListData?: any

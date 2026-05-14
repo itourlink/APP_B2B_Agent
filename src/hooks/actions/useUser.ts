@@ -343,6 +343,15 @@ export const useListTourCustomizedInExService = async (body: any) => {
     );
     return res.data;
 };
+
+export const useUpdTourCustomizedInExclude = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/UpdTourCustomizedInExclude",
+        body
+    );
+    return res.data;
+};
+
 export const useListTotalPriceForTourCustom = async (body: any) => {
     const res = await apiClient.post(
         "tourcustomized/GetListTotalPriceForTourCustom",

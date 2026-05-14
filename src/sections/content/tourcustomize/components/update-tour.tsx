@@ -16,8 +16,6 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUserStore } from "@/zustand/useUserStore";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { updTourCustomized } from "@/hooks/actions/useUser";
-import PanelPopup from "@/components/popup/panel-popup";
-import ListMedia from "../../../../components/media/list-media";
 import { CONFIG } from "@/config-global";
 import BannerMediaField from "@/components/media/banner-media-field";
 

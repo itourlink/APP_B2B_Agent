@@ -1,95 +1,122 @@
-import { QUERY_KEYS } from '@/hooks/actions/query-keys';
-import { useListTourCustomizedInExService } from '@/hooks/actions/useUser';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Pen } from 'lucide-react'
+import { useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { Pen } from "lucide-react";
+
+import { useListTourCustomizedInExService } from "@/hooks/actions/useUser";
+
+import DetailTourInExPopup, {
+  getTourCustomizedInExQueryKey,
+  type DetailTourInExApiItem,
+} from "./detail-tour-in-ex-popup";
 
 interface DetailTourInExProps {
-    item?: any
+  item?: any;
 }
 
 const SkeletonItem = () => (
-    <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>
+  <div className="h-3 w-full animate-pulse rounded bg-gray-200" />
 );
 
 const DetailTourInEx = ({ item }: DetailTourInExProps) => {
+  const [openPopup, setOpenPopup] = useState(false);
 
-    const { data, isLoading, error } = useQuery({
-        queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED_INEX, item?.strTourCustomizedGUID],
-        queryFn: () =>
-            useListTourCustomizedInExService({
-                strTourCustomizedGUID: item?.strTourCustomizedGUID,
-                IsSelected: true
-            }),
-        placeholderData: keepPreviousData,
-    });
+  const { data, isLoading, error } = useQuery({
+    queryKey: getTourCustomizedInExQueryKey(item?.strTourCustomizedGUID),
+    queryFn: () =>
+      useListTourCustomizedInExService({
+        strTourCustomizedGUID: item?.strTourCustomizedGUID,
+        IsSelected: null,
+      }),
+    placeholderData: keepPreviousData,
+    enabled: !!item?.strTourCustomizedGUID,
+  });
 
-    const listData = data?.[0] ?? [];
+  const listData: DetailTourInExApiItem[] = data?.[0] ?? [];
 
-    const includeList = listData.filter((i: any) => i?.isInclude);
-    const excludeList = listData.filter((i: any) => !i?.isInclude);
+  const includeList = listData.filter(
+    (entry) => entry?.isInclude && entry?.inIsSelected
+  );
+  const excludeList = listData.filter(
+    (entry) => !entry?.isInclude && entry?.inIsSelected
+  );
 
-    return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-                <h3 className="text-lg font-bold text-gray-800">Bao Gồm / Không Bao Gồm</h3>
-                <Pen size={16} className="text-[#4a6fa5] cursor-pointer" />
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
+        <h3 className="text-lg font-bold text-gray-800">
+          Bao Gồm / Không Bao Gồm
+        </h3>
+
+        <button
+          type="button"
+          onClick={() => setOpenPopup(true)}
+          className="cursor-pointer text-[#4a6fa5] transition hover:text-[#2f69b1]"
+        >
+          <Pen size={16} />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-8 text-[13px] leading-relaxed">
+        <div className="space-y-2">
+          <p className="font-bold text-gray-700">Bao Gồm:</p>
+
+          {error ? (
+            <div className="text-sm text-red-500">
+              Có lỗi xảy ra, vui lòng thử lại.
             </div>
-
-            <div className="grid grid-cols-2 gap-8 text-[13px] leading-relaxed">
-
-                {/* ✅ Bao gồm */}
-                <div className="space-y-2">
-                    <p className="font-bold text-gray-700">Bao gồm:</p>
-
-                    {error ? (
-                        <div className="text-red-500 text-sm">
-                            Có lỗi xảy ra, vui lòng thử lại.
-                        </div>
-                    ) : isLoading ? (
-                        <div className="space-y-2">
-                            {[...Array(5)].map((_, i) => (
-                                <SkeletonItem key={i} />
-                            ))}
-                        </div>
-                    ) : (
-                        <ul className="list-disc list-inside space-y-1 text-gray-600 pl-2">
-                            {includeList.map((item: any) => (
-                                <li key={item.excludeID}>
-                                    {item?.strInExName || item?.include}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-
-                {/* ❌ Không bao gồm */}
-                <div className="space-y-2">
-                    <p className="font-bold text-gray-700">Không bao gồm:</p>
-
-                    {error ? (
-                        <div className="text-red-500 text-sm">
-                            Có lỗi xảy ra, vui lòng thử lại.
-                        </div>
-                    ) : isLoading ? (
-                        <div className="space-y-2">
-                            {[...Array(5)].map((_, i) => (
-                                <SkeletonItem key={i} />
-                            ))}
-                        </div>
-                    ) : (
-                        <ul className="list-disc list-inside space-y-1 text-gray-600 pl-2">
-                            {excludeList.map((item: any) => (
-                                <li key={item.excludeID}>
-                                    {item?.strInExName || item?.include}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-
+          ) : isLoading ? (
+            <div className="space-y-2">
+              {[...Array(5)].map((_, index) => (
+                <SkeletonItem key={index} />
+              ))}
             </div>
+          ) : includeList.length === 0 ? (
+            <div className="text-sm text-gray-500">No data</div>
+          ) : (
+            <ul className="list-disc list-inside space-y-1 pl-2 text-gray-600">
+              {includeList.map((entry) => (
+                <li key={entry.excludeID}>
+                  {entry?.strInExName || entry?.include}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-    )
-}
+
+        <div className="space-y-2">
+          <p className="font-bold text-gray-700">Không Bao Gồm:</p>
+
+          {error ? (
+            <div className="text-sm text-red-500">
+              Có lỗi xảy ra, vui lòng thử lại.
+            </div>
+          ) : isLoading ? (
+            <div className="space-y-2">
+              {[...Array(5)].map((_, index) => (
+                <SkeletonItem key={index} />
+              ))}
+            </div>
+          ) : excludeList.length === 0 ? (
+            <div className="text-sm text-gray-500">No data</div>
+          ) : (
+            <ul className="list-disc list-inside space-y-1 pl-2 text-gray-600">
+              {excludeList.map((entry) => (
+                <li key={entry.excludeID}>
+                  {entry?.strInExName || entry?.include}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <DetailTourInExPopup
+        open={openPopup}
+        onClose={() => setOpenPopup(false)}
+        strTourCustomizedGUID={item?.strTourCustomizedGUID}
+      />
+    </div>
+  );
+};
 
 export default DetailTourInEx;
