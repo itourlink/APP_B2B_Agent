@@ -83,7 +83,7 @@ const Header = () => {
           <button onClick={() =>
             router.push(`${paths.shop.home}?company=${company}`)
           } className="overflow-hidden w-10 cursor-pointer">
-            <img src={logo} alt="logo" className="w-full h-full object-contain" />
+            <img src={logo} alt="logo" className="w-full h-full object-contain cursor-pointer" />
           </button>
           <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
           <button onClick={() =>

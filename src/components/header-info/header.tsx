@@ -23,9 +23,9 @@ const Header = () => {
         <div className="flex items-center gap-8">
           <button
             onClick={() => router.push(paths.content.info)}
-            className="transition-transform active:scale-95 duration-200"
+            className="transition-transform active:scale-95 duration-200 cursor-pointer"
           >
-            <img src={logo} alt="logo" className="h-10 w-auto object-contain" />
+            <img src={logo} alt="logo" className="h-10 w-auto object-contain cursor-pointer" />
           </button>
 
           <div onClick={() =>

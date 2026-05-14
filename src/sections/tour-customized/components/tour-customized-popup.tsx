@@ -16,6 +16,8 @@ import { useListCity } from "@/hooks/actions/useCity";
 import { CircleX } from "lucide-react";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
+import { useRouter } from "@/routes/hooks/use-router";
+import { paths } from "@/routes/paths";
 
 
 export const Schema = z
@@ -63,6 +65,7 @@ type Props = {
 };
 const TourCustomizedPopup = ({ onClose }: Props) => {
     const { user } = useUser();
+    const router = useRouter()
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
     const [strTourCustomizedGUID, setStrTourCustomizedGUID] = useState("");
@@ -203,7 +206,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     });
 
                     console.log("detail", detail?.[0]?.[0]);
-                    router
+                    const itemDetailTour = detail?.[0]?.[0]
+                    router.replaceParams(paths.content.detailTour, { item: itemDetailTour })
                 }, 500);
             },
             onError: () => {

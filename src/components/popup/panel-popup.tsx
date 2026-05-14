@@ -120,7 +120,7 @@ const PanelPopup = ({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+                      className="cursor-pointer inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
                     >
                       <X size={18} />
                     </button>
