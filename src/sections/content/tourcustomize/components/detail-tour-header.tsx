@@ -6,7 +6,8 @@ import UpdatePriceMarkup from "./update-price-markup";
 import { useState } from "react";
 import DetailTourHeaderPopup from "./detail-tour-header-popup";
 import { ArrowLeft, Calendar, ChevronDown, Copy, Play, SquarePen, Users, X } from "lucide-react";
-import { isValidValue } from "@/utils/utilts";
+// import { isValidValue } from "@/utils/utilts";
+import { formatMoney } from "@/utils/format-number";
 
 
 
@@ -109,7 +110,7 @@ export const DetailTourHeader = ({
             <div className="flex items-center gap-4">
                 <div className="text-right mr-2">
                     <div className="text-2xl text-gray-800 font-normal tracking-tight underline decoration-gray-300 underline-offset-4">
-                        đ{isValidValue(item?.dblTotalMarkupPrice)}
+                        {formatMoney(item?.dblTotalMarkupPrice)}
                     </div>
                     <div className="relative group inline-block">
                         <button onClick={() => setOpen((prev) => ({ ...prev, update: true }))} className="cursor-pointer text-[13px] text-green-500 font-normal flex items-center justify-end gap-1">

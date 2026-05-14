@@ -348,3 +348,4 @@ export const useDelCustomer = async (body: any) => {
     );
     return res.data;
 };
+
