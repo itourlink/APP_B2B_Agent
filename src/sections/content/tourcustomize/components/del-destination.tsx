@@ -8,7 +8,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface Props {
   open: boolean;
   onClose: () => void;
-  strUserGUID: string;
   strTourCustomizedDayGUID: string;
   strCityGUID: string;
   locationName?: string;
@@ -17,11 +16,11 @@ interface Props {
 const DeleteDestination = ({
   open,
   onClose,
-  strUserGUID,
   strTourCustomizedDayGUID,
   strCityGUID,
   locationName,
 }: Props) => {
+
   const { showToast } = useToastStore();
   const queryClient = useQueryClient();
 
@@ -33,14 +32,13 @@ const DeleteDestination = ({
   });
 
   const handleDelete = async () => {
-    if (!strUserGUID || !strTourCustomizedDayGUID || !strCityGUID) {
+    if (!strTourCustomizedDayGUID || !strCityGUID) {
       showToast("error", "Thiếu thông tin điểm đến để xóa");
       return;
     }
 
     try {
       await deleteDestinationApi({
-        strUserGUID,
         strTourCustomizedDayGUID,
         strCityGUID,
         strLocationCode: strCityGUID,

@@ -1,6 +1,7 @@
 export type ConfigValue = {
   appName: string;
   serverUrl: string;
+  serverUrlSP: string;
   clientUrl: string;
   binanceServerUrlV1: string;
   binanceServerUrlV3: string;
@@ -15,6 +16,7 @@ export type ConfigValue = {
 export const CONFIG: ConfigValue = {
   appName: "Agent",
   serverUrl: import.meta.env.VITE_SERVER_URL ?? "",
+  serverUrlSP: import.meta.env.VITE_SERVER_URL_SP ?? "",
   clientUrl: import.meta.env.VITE_CLIENT_URL ?? "",
   binanceServerUrlV1: import.meta.env.VITE_BINANCE_SERVER_URL_V1 ?? "",
   binanceServerUrlV3: import.meta.env.VITE_BINANCE_SERVER_URL_V3 ?? "",

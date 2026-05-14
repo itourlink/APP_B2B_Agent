@@ -1,9 +1,11 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useListMedia } from "@/hooks/actions/useMedia";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/axios";
 import { useUserStore } from "@/zustand/useUserStore";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { CONFIG } from "@/config-global";
+import clsx from "clsx";
 
 const IMAGE_EXTENSIONS = [
     "jpg",
@@ -16,15 +18,19 @@ const IMAGE_EXTENSIONS = [
     "avif",
 ];
 
+
+
 const ListMedia = () => {
-    const { mediaData } =
-        useListMedia();
+    const { mediaData } = useListMedia();
 
     const { user } = useUserStore();
     const queryClient = useQueryClient();
 
     const inputRef =
         useRef<HTMLInputElement>(null);
+
+    const [selectedImage, setSelectedImage] =
+        useState<any>(null);
 
     const imageFiles = useMemo(() => {
         const files = mediaData?.file || [];
@@ -39,29 +45,31 @@ const ListMedia = () => {
         });
     }, [mediaData]);
 
-    const { mutate: uploadFilesMediaApi, isPending } =
-        useMutation({
-            mutationFn: (
-                body: FormData
-            ) =>
-                uploadFilesMedia(
-                    body,
-                    user?.strCompanyCode
-                ),
+    const {
+        mutate: uploadFilesMediaApi,
+        isPending,
+    } = useMutation({
+        mutationFn: (body: FormData) =>
+            uploadFilesMedia(
+                body,
+                user?.strCompanyCode
+            ),
 
-            onSuccess: () => {
-                queryClient.invalidateQueries({
-                    queryKey: [QUERY_KEYS.MEDIA.LIST_MEDIA],
-                });
-            },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [
+                    QUERY_KEYS.MEDIA.LIST_MEDIA,
+                ],
+            });
+        },
 
-            onError: (error) => {
-                console.log(
-                    "upload error",
-                    error
-                );
-            },
-        });
+        onError: (error) => {
+            console.log(
+                "upload error",
+                error
+            );
+        },
+    });
 
     const handleChooseImage = () => {
         inputRef.current?.click();
@@ -71,8 +79,6 @@ const ListMedia = () => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const file = e.target.files?.[0];
-
-        console.log("selected file", file);
 
         if (!file) return;
 
@@ -84,11 +90,12 @@ const ListMedia = () => {
     };
 
     const getImageUrl = (path: string) => {
-        return `https://localhost:7153/${path.replace(
+        return `${CONFIG.serverUrlSP}${path.replace(
             /^\//,
             ""
         )}`;
     };
+
     return (
         <div>
             <button
@@ -108,44 +115,65 @@ const ListMedia = () => {
                 onChange={handleUploadImage}
             />
 
-            <div className="max-h-[600px] overflow-y-auto">
+            <div className="max-h-[600px]">
                 <div className="grid grid-cols-3 gap-4 p-4 mt-4">
                     {imageFiles.length > 0 ? (
                         imageFiles.map(
                             (
                                 item: any,
                                 index: number
-                            ) => (
-                                <div
-                                    key={index}
-                                    className="rounded overflow-hidden border border-slate-200 p-2"
-                                >
-                                    <img
-                                        src={getImageUrl(
-                                            item.path
-                                        )}
-                                        onError={(e) => {
-                                            console.log(
-                                                "image error",
-                                                e.currentTarget
-                                                    .src
-                                            );
-                                        }}
-                                        alt={item.name}
-                                        className="w-30 h-30 object-cover"
-                                    />
+                            ) => {
+                                const isActive =
+                                    selectedImage?.path ===
+                                    item.path;
 
-                                    <p className="text-sm break-all pt-2">
-                                        {item.name}
-                                    </p>
-                                </div>
-                            )
+                                return (
+                                    <div
+                                        key={index}
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                item
+                                            )
+                                        }
+                                        className={clsx(
+                                            "rounded overflow-hidden border p-2 cursor-pointer transition-all duration-200",
+                                            isActive
+                                                ? "border-[#2566b0] ring-2 ring-[#2566b0] bg-blue-50"
+                                                : "border-slate-200 hover:border-[#2566b0]"
+                                        )}
+                                    >
+                                        <img
+                                            src={getImageUrl(
+                                                item.path
+                                            )}
+                                            alt={
+                                                item.name
+                                            }
+                                            className="w-30 h-30 object-cover"
+                                        />
+
+                                        <p className="text-sm break-all pt-2">
+                                            {
+                                                item.name
+                                            }
+                                        </p>
+                                    </div>
+                                );
+                            }
                         )
                     ) : (
                         <div>Không có ảnh</div>
                     )}
                 </div>
             </div>
+
+            {selectedImage && (
+                <div className="flex justify-end px-4 pt-10">
+                    <button className="px-5 py-2 rounded bg-[#2566b0] hover:bg-[#1d4f87] text-white cursor-pointer">
+                        Chọn
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
@@ -169,3 +197,5 @@ const uploadFilesMedia = async (
 
     return res.data;
 };
+
+
