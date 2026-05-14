@@ -1,10 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, X } from "lucide-react";
 import { useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
-import { Popup } from "./popup";
 import { twMerge } from "tailwind-merge";
-import { ChevronLeft } from "lucide-react";
-import Breadcrumb from "../breadcrums";
 
 interface Props {
   open: boolean;
@@ -17,7 +14,9 @@ interface Props {
   description?: string;
   isOverflowHidden?: boolean;
   className?: string;
+  footer?: React.ReactNode;
 }
+
 const PanelPopup = ({
   open,
   onClose,
@@ -27,102 +26,136 @@ const PanelPopup = ({
   subChildren,
   title,
   description,
-  isOverflowHidden = true,
   className,
+  footer,
 }: Props) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 640px)" });
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden"; 
+      document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""; 
+      document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     }
+
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !onClose) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onClose]);
+
+  const bodyMaxHeightClass = footer
+    ? "max-h-[calc(90vh-140px)]"
+    : "max-h-[calc(90vh-96px)]";
+
   return (
-    <div>
-      {isMobile ? (
-        <div className="">
-          {/* Overlay + Panel */}
-          <AnimatePresence>
-            {open && (
-              <>
-                {/* Overlay mờ nền */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-10 overscroll-contain"
-                  onClick={onClose}
-                />
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] overflow-y-auto bg-black/50 p-4 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <div className="flex min-h-full items-center justify-center">
+            <div className="flex items-center gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                onClick={(event) => event.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                className={twMerge(
+                  "flex w-[700px] max-w-[95vw] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl max-h-[90vh]",
+                  className
+                )}
+              >
+                <div className="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 md:px-6">
+                  <div className="flex min-w-0 items-start gap-3">
+                    {onBack && !hideBack && (
+                      <button
+                        type="button"
+                        onClick={onBack}
+                        className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-50"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                    )}
 
-                <motion.div
-                  drag="y"
-                  dragConstraints={{ top: 0, bottom: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.y > 100) {
-                      if (!onClose) return;
-                      onClose();
-                    }
-                  }}
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: "100%", opacity: 0 }}
-                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                  className="fixed bottom-0 left-0 right-0 rounded-t-3xl z-20 min-h-[60vh] max-h-[95vh] overflow-hidden"
-                >
-                  <div className="p-5 flex flex-col w-full justify-center items-center">
-                    <div className="w-[64px] h-[4px] mb-2 rounded-[100px] bg-white" />
-
-                    <div className=" w-full flex gap-2 text-left pb-2">
-                      {onBack && !hideBack && (
-                        <ChevronLeft
-                          className="cursor-pointer"
-                          onClick={onBack}
-                        />
+                    <div className="min-w-0">
+                      {title && (
+                        <h2 className="text-lg font-semibold text-gray-900 md:text-xl">
+                          {title}
+                        </h2>
                       )}
 
-                      <Breadcrumb
-                        title={title ?? ""}
-                        description={description ?? ""}
-                      />
-                    </div>
-                    <div
-                      className={twMerge(
-                        "max-h-[510px] w-full pt-1",
-                        isOverflowHidden
-                          ? "overflow-y-scroll scrollbar-hiden"
-                          : ""
+                      {description && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          {description}
+                        </p>
                       )}
-                    >
-                      {children}
                     </div>
                   </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
-      ) : (
-        <Popup
-          title={title}
-          open={open}
-          onClose={onClose}
-          subChildren={subChildren}
-          className={className}
-          onBack={onBack}
-          hideBack={hideBack}
-        >
-          <div className="overflow-auto scrollbar-hide">{children}</div>
-        </Popup>
+
+                  {onClose && (
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+
+                <div
+                  className={twMerge(
+                    "min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-6",
+                    bodyMaxHeightClass
+                  )}
+                >
+                  {children}
+                </div>
+
+                {footer && (
+                  <div className="shrink-0 border-t border-gray-200 bg-white px-5 py-4 md:px-6">
+                    {footer}
+                  </div>
+                )}
+              </motion.div>
+
+              {subChildren && (
+                <div
+                  className="hidden w-[320px] shrink-0 xl:block"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  {subChildren}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 };
 

@@ -1,8 +1,14 @@
 import { useRouter } from "@/routes/hooks/use-router";
 import { fDateTime } from "@/utils/format-time";
 import { useToastStore } from "@/zustand/useToastStore";
-import { ArrowLeft, Calendar, ChevronDown, Copy, Play, Users, X } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronDown, Copy, Play, SquarePen, Users, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import PanelPopup from "@/components/popup/panel-popup";
+import DetailTourHeaderPopup from "./detail-tour-header-popup";
+import { useGetlistCustomer } from "@/hooks/actions/useTourCustomized";
+
+
 
 interface HeaderProps {
     onUpdate: () => void;
@@ -16,6 +22,24 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
 
     const router = useRouter();
     const { showToast } = useToastStore();
+    const [openCustomerPopup, setOpenCustomerPopup] = useState(false);
+
+    const TourCustoemerList = () => {
+        const filters = {
+            page: 1,
+            pageSize: 10,
+            strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
+            strTourCode: item?.strTourCode,
+        };
+
+        const { tourCustomer } = useGetlistCustomer(filters)
+        console.log("tourCustomer", tourCustomer);
+    }
+
+    TourCustoemerList();
+
+
+
     return (
         <div className={isLocked ? "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans opacity-50 pointer-events-none transition-opacity" : "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans"}>
             <div className="flex items-center gap-4">
@@ -64,9 +88,17 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
                         <div className="flex items-center gap-1.5">
                             <Users size={14} />
                             <span>{item?.intTotalPax || 0}</span>
-                            <button className="text-blue-400 hover:text-[#004b91]">
-                                <Play size={12} className="rotate-90 fill-current" />
-                            </button>
+                            <div className="relative group inline-flex">
+                                <button 
+                                    onClick={() => setOpenCustomerPopup(true)}
+                                    className="text-blue-400 hover:text-[#004b91]"
+                                >
+                                    <SquarePen size={12} />
+                                </button>
+                                <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100">
+                                    Update list customer
+                                </span>
+                            </div>
                         </div>
                         <span className="text-gray-300">|</span>
 
@@ -112,6 +144,15 @@ export const DetailTourHeader = ({ onUpdate, isLocked }: HeaderProps) => {
                     </button>
                 </div>
             </div>
+
+            <PanelPopup
+                title="Config customer information"
+                open={openCustomerPopup}
+                onClose={() => setOpenCustomerPopup(false)}
+                className="w-[950px]"
+            >
+                <DetailTourHeaderPopup />
+            </PanelPopup>
         </div>
     );
 };

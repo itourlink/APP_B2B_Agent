@@ -41,6 +41,10 @@ export const QUERY_KEYS = {
         LIST_TOUR_SERIES: "LIST_TOUR_SERIES",
         LIST_TOUR_CUSTOMIZE_DETAIL: "LIST_TOUR_CUSTOMIZE_DETAIL",
     },
+    TOUR_CUSTOMER:
+    {
+        LIST_TOUR_CUSTOMER: "LIST_TOUR_CUSTOMER",
+    },
     HOTEL: {
         LIST_HOTEL: "LIST_HOTEL",
         LIST_ITEM_BY_AGENT: "LIST_ITEM_BY_AGENT",
@@ -88,4 +92,5 @@ export const QUERY_KEYS = {
     VOUCHER: {
         LIST_VOUCHER: "LIST_VOUCHER",
     }
+
 };
