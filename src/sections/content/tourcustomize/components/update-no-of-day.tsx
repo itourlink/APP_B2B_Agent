@@ -1,8 +1,7 @@
 import PanelPopup from "@/components/popup/panel-popup";
 import { addTourCustomizedSerByListDays } from "@/hooks/actions/useUser";
-import { useToastStore } from "@/zustand/useToastStore";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 interface Props {
     open: boolean;
@@ -12,10 +11,6 @@ interface Props {
 }
 
 const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props) => {
-
-    const { showToast } = useToastStore();
-    const queryClient = useQueryClient();
-
     const {
         mutateAsync: addTourCustomizedSerByListDaysApi,
         isPending: isLoading,

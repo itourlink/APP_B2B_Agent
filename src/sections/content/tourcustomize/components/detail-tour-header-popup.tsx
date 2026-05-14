@@ -3,7 +3,6 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Copy,
   Edit,
   Filter,
   Plus,
