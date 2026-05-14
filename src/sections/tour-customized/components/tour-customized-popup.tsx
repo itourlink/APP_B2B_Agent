@@ -7,14 +7,13 @@ import { useToastStore } from "@/zustand/useToastStore";
 import { RotateCcw, Trash2 } from "lucide-react";
 import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/oprion-data";
 import { z } from "zod";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { addNewTourCustomized } from "@/hooks/actions/useTour";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useEffect, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
 import { CircleX } from "lucide-react";
-import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
 
 
@@ -65,7 +64,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     const { user } = useUser();
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
-    const [strTourCustomizedGUID, setStrTourCustomizedGUID] = useState("");
     const [preview, setPreview] = useState<string | null>(null);
     const AGENT_HOST_OPTIONS = coData
         ? [
@@ -203,7 +201,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     });
 
                     console.log("detail", detail?.[0]?.[0]);
-                    router
+                    onClose();
                 }, 500);
             },
             onError: () => {
