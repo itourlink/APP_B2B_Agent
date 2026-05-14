@@ -47,6 +47,8 @@ const ListTour = ({
   itemDetail,
   onChange,
 }: Props) => {
+
+  console.log("itemitemitemitem", item)
   const queryClient = useQueryClient();
 
   const { showToast } = useToastStore();
@@ -669,8 +671,8 @@ const ListTour = ({
             updateNoOfDay: false,
           }));
         }}
-        strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}
-        strCityGUID={locItem}
+        strTourCustomizedPriceItemGUID={firstItem?.strTourCustomizedDayGUID}
+        item={item}
       />
     </div>
   );

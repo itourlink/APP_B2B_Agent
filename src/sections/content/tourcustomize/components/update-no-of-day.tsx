@@ -8,6 +8,7 @@ interface Props {
     open: boolean;
     onClose: () => void;
     strTourCustomizedPriceItemGUID: string;
+    item?: any
 }
 
 const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props) => {
@@ -24,7 +25,7 @@ const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props)
 
     const handleUpdate = async () => {
         const payload = {
-            strTourCustomizedPriceItemGUID: "c168f48b-ef96-418f-b662-b87c6f6147f5",
+            strTourCustomizedPriceItemGUID: strTourCustomizedPriceItemGUID,
             strListDays: "1,2,3"
         }
         addTourCustomizedSerByListDaysApi(payload, {

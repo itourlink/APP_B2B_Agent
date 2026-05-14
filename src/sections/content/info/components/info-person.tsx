@@ -14,10 +14,10 @@ import {
   TITLES_OPTIONS,
 } from "../../../../utils/oprion-data";
 import { useUserStore } from "@/zustand/useUserStore";
-import { getUrlImage } from "@/utils/format-image";
 import { useMutation } from "@tanstack/react-query";
 import { updMemberInfoProfile } from "@/hooks/actions/useUser";
-import { isValidValue } from "@/utils/utilts";
+import BannerMediaField from "@/components/media/banner-media-field";
+import { CONFIG } from "@/config-global";
 
 const Schema = zod.object({
   avartarFile: zod.any().optional(),
@@ -59,9 +59,6 @@ const default_form_values: SchemaType = {
   signature: "",
 };
 
-const MAX_AVATAR_SIZE_MB = 2;
-const MAX_AVATAR_SIZE_BYTES = MAX_AVATAR_SIZE_MB * 1024 * 1024;
-
 const InfoPerson = () => {
   const user = useUserStore((state) => state.user);
 
@@ -78,8 +75,6 @@ const InfoPerson = () => {
     changePw: false,
   });
 
-  const [avatarPreview, setAvatarPreview] = useState("");
-
   const methods = useForm<SchemaType>({
     resolver: zodResolver(Schema) as any,
     defaultValues: default_form_values,
@@ -88,7 +83,6 @@ const InfoPerson = () => {
   const {
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { isSubmitting },
   } = methods;
@@ -97,7 +91,7 @@ const InfoPerson = () => {
     if (!user) return;
 
     reset({
-      avartarFile: undefined,
+      avartarFile: user?.strAvatar || undefined,
       username: "",
       title: "",
       firstName: user?.strFirstName || "",
@@ -114,59 +108,7 @@ const InfoPerson = () => {
       bio: "",
       signature: "",
     });
-
-    setAvatarPreview(isValidValue(user?.strAvatar) ? getUrlImage(isValidValue(user?.strAvatar)) : "");
   }, [user, reset]);
-
-  const avartarFile = watch("avartarFile");
-
-  useEffect(() => {
-    if (!avartarFile) return;
-    if (!(avartarFile instanceof File)) return;
-
-    const previewUrl = URL.createObjectURL(avartarFile);
-    setAvatarPreview(previewUrl);
-
-    return () => {
-      URL.revokeObjectURL(previewUrl);
-    };
-  }, [avartarFile]);
-
-  const validateAvatarFile = (file: File): string | null => {
-    if (!file.type.startsWith("image/")) {
-      return "Chỉ được chọn file ảnh";
-    }
-
-    if (file.size > MAX_AVATAR_SIZE_BYTES) {
-      return `Ảnh phải nhỏ hơn ${MAX_AVATAR_SIZE_MB}MB`;
-    }
-
-    return null;
-  };
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-
-    if (!selectedFile) return;
-
-    const errorMessage = validateAvatarFile(selectedFile);
-
-    if (errorMessage) {
-      showToast("error", errorMessage);
-      setValue("avartarFile", undefined, { shouldValidate: true });
-      event.target.value = "";
-      return;
-    }
-
-    setValue("avartarFile", selectedFile, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-
-    event.target.value = "";
-  };
-
-
 
   const onSubmit = handleSubmit(async (data) => {
     const payload = {
@@ -206,65 +148,24 @@ const InfoPerson = () => {
     );
   }
 
+  const [preview, setPreview] = useState(
+    user?.strAvatar || ""
+  );
+
   return (
     <div className="">
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
-          <div className="flex gap-8 items-start">
-            <div className="flex flex-col items-center gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                id="avatar-upload"
-                className="hidden"
-                onChange={handleAvatarChange}
-              />
+          <BannerMediaField
+            value={preview}
+            onChange={(path) => {
+              setPreview(
+                `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
+              );
 
-              <label htmlFor="avatar-upload" className="cursor-pointer">
-                <div
-                  className={`overflow-hidden w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center border-2 ${avatarPreview ? "" : "border-dashed"
-                    } border-gray-300 relative hover:opacity-80 transition`}
-                >
-                  {avatarPreview ? (
-                    <img
-                      src={avatarPreview}
-                      alt="avatar-preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-xs text-center px-2">
-                      Ảnh đại diện
-                    </span>
-                  )}
-                </div>
-              </label>
-            </div>
-
-            <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium text-gray-500">Tên đăng nhập</p>
-              <div className="flex items-center gap-4">
-                <span className="font-bold text-lg">{isValidValue(user?.strFullName)}</span>
-                <button
-                  onClick={() =>
-                    setOpen((prev) => ({ ...prev, changeId: true }))
-                  }
-                  type="button"
-                  className="cursor-pointer text-blue-600 text-sm hover:underline"
-                >
-                  (Thay đổi)
-                </button>
-                <button
-                  onClick={() =>
-                    setOpen((prev) => ({ ...prev, changePw: true }))
-                  }
-                  type="button"
-                  className="cursor-pointer text-blue-600 text-sm hover:underline"
-                >
-                  Đổi mật khẩu
-                </button>
-              </div>
-            </div>
-          </div>
+              setValue("avartarFile", path);
+            }}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <Field.Select
