@@ -14,6 +14,11 @@ export const addTourCustomizedCustomer = async (body: any) => {
   return res.data;
 };
 
+export const deleteTourCustomizedCustomer = async (body: any) => {
+  const res = await apiClient.post("tourcustomized/DelCustomer", body);
+  return res.data;
+};
+
 export interface UseGetListCustomerFilters {
   strTourCode: string;
   page?: number;

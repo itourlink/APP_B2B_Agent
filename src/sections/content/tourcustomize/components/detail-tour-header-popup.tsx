@@ -16,6 +16,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useGetlistCustomer } from "@/hooks/actions/useTourCustomized";
 import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
 
+import DeleteCustomer from "./del-customer";
 import DetailTourHeaderPopupAdd from "./detail-tour-header-popup-add";
 
 interface Props {
@@ -28,6 +29,8 @@ const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
 const DISABLED_ACTION_BUTTON_CLASS =
   "flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-[#34495e] opacity-50 cursor-not-allowed";
+const DELETE_ACTION_BUTTON_CLASS =
+  "flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-[#34495e] transition hover:bg-red-50 hover:text-red-600 cursor-pointer";
 
 const normalizeText = (value?: string | null) => value?.trim() || null;
 
@@ -66,6 +69,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
   const [page, setPage] = useState(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [selectedCustomer, setSelectedCustomer] = useState<ITourCustomizedCustomer | null>(null);
   const addCustomerFormId = "detail-tour-add-customer-form";
 
   const {
@@ -128,6 +132,20 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
     refetch();
   };
 
+  const handleDeleteCustomerSuccess = () => {
+    const isDeletingLastVisibleCustomer =
+      tourCustomer.length === 1 && page > DEFAULT_PAGE;
+
+    if (isDeletingLastVisibleCustomer) {
+      setPage((prev) => Math.max(prev - 1, DEFAULT_PAGE));
+      return;
+    }
+
+    refetch();
+  };
+
+  
+
   const pageCount = Math.max(totalPages, 1);
   const isEmpty = !isLoading && tourCustomer.length === 0;
   const displayFrom = totalRecords === 0 ? 0 : (page - 1) * pageSize + 1;
@@ -136,6 +154,8 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
       ? 0
       : Math.min((page - 1) * pageSize + tourCustomer.length, totalRecords);
 
+
+ 
   return (
     <div className="w-full">
       <div className="px-5 py-5">
@@ -288,8 +308,13 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
 
                         <button
                           type="button"
-                          disabled
-                          className={DISABLED_ACTION_BUTTON_CLASS}
+                          disabled={!customer?.strCustomerGUID}
+                          className={
+                            customer?.strCustomerGUID
+                              ? DELETE_ACTION_BUTTON_CLASS
+                              : DISABLED_ACTION_BUTTON_CLASS
+                          }
+                          onClick={() => setSelectedCustomer(customer)}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -425,6 +450,15 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
           strTourCode={strTourCode}
         />
       </PanelPopup>
+
+      <DeleteCustomer
+        open={!!selectedCustomer}
+        onClose={() => setSelectedCustomer(null)}
+        strCustomerGUID={selectedCustomer?.strCustomerGUID || ""}
+        strTourCode={strTourCode}
+        customerName={selectedCustomer ? getCustomerName(selectedCustomer) : ""}
+        onDeleted={handleDeleteCustomerSuccess}
+      />
     </div>
   );
 };
