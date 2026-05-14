@@ -7,6 +7,7 @@ import {
   RefreshCw,
   Plus,
   Pen,
+  X,
 } from "lucide-react";
 
 import ServiceMenu, {
@@ -31,6 +32,7 @@ import { useToastStore } from "@/zustand/useToastStore";
 import { MENU_ITEMS } from "./menu-data-add";
 import DeleteServicePopup from "./delete-service-popup";
 import AddDestination from "./add-destination";
+import DeleteDestination from "./del-destination";
 
 interface Props {
   item: any[];
@@ -53,7 +55,10 @@ const ListTour = ({
   const [open, setOpen] = useState({
     del: false,
     destination: false,
+    deleteDestination: false,
   });
+
+  const [locItem, setLocItem] = useState<any>(null);
 
   const [deleteItem, setDeleteItem] =
     useState<any>(null);
@@ -68,9 +73,11 @@ const ListTour = ({
         const parts = item.split("!");
 
         return {
-          name: parts[1],
+          id: parts[0] || "",
+          name: parts[1] || parts[0] || "",
         };
-      });
+      })
+      .filter((location) => location.name);
   };
 
   const firstItem = item?.[0];
@@ -451,12 +458,23 @@ const ListTour = ({
           />
 
           <div className="flex flex-wrap gap-2 items-center">
-            {locations.map((loc, idx) => (
+            {locations.map((loc: any, idx) => (
               <span
                 key={idx}
                 className="border border-[#4a6fa5] p-1 rounded-sm text-[#4a6fa5]"
               >
                 {loc.name}
+                <button
+                type="button"
+                onClick={() => {
+                  setLocItem(loc.id);
+                  setOpen((prev) => ({
+                    ...prev,
+                    deleteDestination: true,
+                  }));
+                }}>
+                  <X size={18} />
+                </button>
               </span>
             ))}
 
@@ -621,6 +639,17 @@ const ListTour = ({
         strTourCustomizedDayGUID={
           firstItem?.strTourCustomizedDayGUID
         }
+      />
+      <DeleteDestination
+        open={open.deleteDestination}
+        onClose={() => {
+          setOpen((prev) => ({
+            ...prev,
+            deleteDestination: false,
+          }));
+        }}
+        strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}
+        strCityGUID={locItem}
       />
     </div>
   );

@@ -176,6 +176,14 @@ export const addTourCustomizedDayDestination = async (body: any) => {
     );
     return res.data;
 };
+export const useDelTourCustomizedDayDestination = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/DelTourCustomizedDayDestination",
+        body
+    );
+    return res.data;
+};
+
 export const useListPayableBooking = async (body: any) => {
     const res = await apiClient.post(
         "payrcvbooking/GetListPayableBooking",
@@ -331,3 +339,5 @@ export const useListTotalPriceForTourCustom = async (body: any) => {
     );
     return res.data;
 };
+
+
