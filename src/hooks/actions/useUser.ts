@@ -352,3 +352,11 @@ export const useListTotalPriceForTourCustom = async (body: any) => {
 };
 
 
+export const useDelCustomer = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/DelCustomer",
+        body
+    );
+    return res.data;
+};
+

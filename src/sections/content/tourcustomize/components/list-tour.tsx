@@ -34,6 +34,7 @@ import DeleteServicePopup from "./delete-service-popup";
 import AddDestination from "./add-destination";
 import DeleteDestination from "./del-destination";
 import UpdateNoOfDay from "./update-no-of-day";
+import { formatMoney } from "@/utils/format-number";
 
 interface Props {
   item: any[];
@@ -345,15 +346,14 @@ const ListTour = ({
         </td>
 
         <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
-          ₫
-          {isValidValue(
+          {formatMoney(
             item?.dblPriceCost
           )}
         </td>
 
         <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
-          ₫
-          {isValidValue(
+
+          {formatMoney(
             item?.dblPriceCostUnit
           )}
         </td>

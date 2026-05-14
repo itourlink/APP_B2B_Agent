@@ -11,6 +11,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 import ListDaySidebar from "./list-day-sidebar";
 import { useToastStore } from "@/zustand/useToastStore";
+import { formatMoney } from "@/utils/format-number";
 
 interface DetailTourContentProps {
     itemListData?: any
@@ -166,7 +167,7 @@ export const DetailTourContent = ({
                         : "flex-1 overflow-y-auto px-8 py-6 space-y-6 bg-white"
                 }
             >
-
+                
                 {/* LIST DAY */}
                 {groupByDay(listData).map(
                     (items: any[], index) => (
@@ -181,6 +182,7 @@ export const DetailTourContent = ({
                                     setSelectedService(value)
                                 }
                             />
+                            
                         </div>
                     )
                 )}

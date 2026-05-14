@@ -120,3 +120,29 @@ export const formatPrice = (price: any) => {
 
   return `$${num}`;
 };
+
+export const formatMoney = (
+  num: number | string,
+  locale: string = "vi-VN",
+  currency: string = "VND"
+): string => {
+  if (
+    num === null ||
+    num === undefined ||
+    num === ""
+  ) {
+    return "0 ₫";
+  }
+
+  const value = Number(num);
+
+  if (Number.isNaN(value)) {
+    return "0 ₫";
+  }
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
