@@ -5,8 +5,7 @@ import { useToastStore } from "@/zustand/useToastStore";
 import UpdatePriceMarkup from "./update-price-markup";
 import { useState } from "react";
 import DetailTourHeaderPopup from "./detail-tour-header-popup";
-import { ArrowLeft, Calendar, ChevronDown, Copy, Play, SquarePen, Users, X } from "lucide-react";
-// import { isValidValue } from "@/utils/utilts";
+import { ArrowLeft, Calendar, Copy, Play, SquarePen, Users, X } from "lucide-react";
 import { formatMoney } from "@/utils/format-number";
 
 
@@ -22,7 +21,6 @@ export const DetailTourHeader = ({
     onUpdate,
     isLocked
 }: HeaderProps) => {
-
     const router = useRouter();
     const { showToast } = useToastStore();
 

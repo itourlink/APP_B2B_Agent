@@ -25,6 +25,7 @@ interface DetailTourContentProps {
 }
 
 export const DetailTourContent = ({
+    itemListData,
     itemDetail,
     isPopupOpen,
     setIsPopupOpen,
@@ -167,7 +168,7 @@ export const DetailTourContent = ({
                         : "flex-1 overflow-y-auto px-8 py-6 space-y-6 bg-white"
                 }
             >
-                
+
                 {/* LIST DAY */}
                 {groupByDay(listData).map(
                     (items: any[], index) => (
@@ -181,8 +182,9 @@ export const DetailTourContent = ({
                                 onChange={(value) =>
                                     setSelectedService(value)
                                 }
+                                itemListData={itemListData}
                             />
-                            
+
                         </div>
                     )
                 )}

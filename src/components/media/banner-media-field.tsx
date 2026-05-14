@@ -3,17 +3,18 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ListMedia from "@/components/media/list-media";
 
 interface Props {
+    title: string;
     value?: string;
     onChange: (path: string) => void;
 }
 
-const BannerMediaField = ({ value, onChange }: Props) => {
+const BannerMediaField = ({ title, value, onChange }: Props) => {
     const [open, setOpen] = useState(false);
 
     return (
         <div className="flex flex-col">
-            <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">
-                Banner Img
+            <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px] pb-2">
+                {title}
             </label>
 
             <button

@@ -299,6 +299,7 @@ const UpdateTour = ({ onBack }: Props) => {
             </div>
 
             <BannerMediaField
+                title="Banner IMG"
                 value={preview}
                 onChange={(path) => {
                     setPreview(

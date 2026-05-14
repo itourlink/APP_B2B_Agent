@@ -39,6 +39,7 @@ import { formatMoney } from "@/utils/format-number";
 interface Props {
   item: any[];
   itemDetail: any;
+  itemListData: any;
   onChange: (value: string) => void;
 }
 
@@ -46,9 +47,12 @@ const ListTour = ({
   item,
   itemDetail,
   onChange,
+  itemListData
 }: Props) => {
 
-  console.log("itemitemitemitem", item)
+  const [selectedPriceItemGUID, setSelectedPriceItemGUID] =
+    useState("");
+
   const queryClient = useQueryClient();
 
   const { showToast } = useToastStore();
@@ -338,7 +342,16 @@ const ListTour = ({
             <div className="">
               {safe(item?.intNoOfDay)}
             </div>
-            <button onClick={() => { setOpen((prev) => ({ ...prev, updateNoOfDay: true })) }} className="cursor-pointer"><Pen size={16} />
+            <button onClick={() => {
+              setSelectedPriceItemGUID(
+                item?.strTourCustomizedPriceItemGUID
+              );
+
+              setOpen((prev) => ({
+                ...prev,
+                updateNoOfDay: true,
+              }));
+            }} className="cursor-pointer"><Pen size={16} />
             </button>
           </div>
         </td>
@@ -671,8 +684,10 @@ const ListTour = ({
             updateNoOfDay: false,
           }));
         }}
-        strTourCustomizedPriceItemGUID={firstItem?.strTourCustomizedDayGUID}
-        item={item}
+        strTourCustomizedPriceItemGUID={
+          selectedPriceItemGUID
+        }
+        item={itemListData}
       />
     </div>
   );

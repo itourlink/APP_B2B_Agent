@@ -1,20 +1,39 @@
+import { useEffect, useState } from "react";
+
 import PanelPopup from "@/components/popup/panel-popup";
-import { addTourCustomizedSerByListDays } from "@/hooks/actions/useUser";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import {
+    addTourCustomizedSerByListDays,
+    useListServiceTourCustomized,
+} from "@/hooks/actions/useUser";
+
 import { useToastStore } from "@/zustand/useToastStore";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+    keepPreviousData,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
 
 interface Props {
     open: boolean;
     onClose: () => void;
     strTourCustomizedPriceItemGUID: string;
-    item?: any
+    item?: any;
 }
 
-const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props) => {
-
+const UpdateNoOfDay = ({
+    open,
+    onClose,
+    strTourCustomizedPriceItemGUID,
+    item,
+}: Props) => {
     const { showToast } = useToastStore();
+
     const queryClient = useQueryClient();
+
+    const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
     const {
         mutateAsync: addTourCustomizedSerByListDaysApi,
@@ -23,16 +42,88 @@ const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props)
         mutationFn: addTourCustomizedSerByListDays,
     });
 
+    const groupByDay = (data: any[]) => {
+        const map: Record<string, any[]> = {};
+
+        data.forEach((item) => {
+            const key = item?.strTourCustomizedDayGUID;
+
+            if (!map[key]) {
+                map[key] = [];
+            }
+
+            map[key].push(item);
+        });
+
+        return Object.values(map);
+    };
+
+    const { data } = useQuery({
+        queryKey: [
+            QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+            item?.strTourCustomizedGUID,
+        ],
+
+        queryFn: () =>
+            useListServiceTourCustomized({
+                strTourCustomizedGUID:
+                    item?.strTourCustomizedGUID || "",
+
+                strTourCustomizedDayGUID: null,
+            }),
+
+        placeholderData: keepPreviousData,
+
+        enabled: !!item?.strTourCustomizedGUID,
+    });
+
+    const listData = data?.[0] ?? [];
+
+    const groupedDays = groupByDay(listData);
+
+    useEffect(() => {
+        if (selectedDays.length > 0) return;
+
+        const defaultSelected = groupedDays.map(
+            (dayItems: any[]) =>
+                String(dayItems?.[0]?.intDayOrder)
+        );
+
+        setSelectedDays(defaultSelected);
+    }, [groupedDays]);
+
+    const handleToggleDay = (day: string) => {
+        setSelectedDays((prev) =>
+            prev.includes(day)
+                ? prev.filter((id) => id !== day)
+                : [...prev, day]
+        );
+    };
+
     const handleUpdate = async () => {
         const payload = {
-            strTourCustomizedPriceItemGUID: strTourCustomizedPriceItemGUID,
-            strListDays: "1,2,3"
-        }
+            strTourCustomizedPriceItemGUID,
+            strListDays: selectedDays.join(","),
+        };
+
         addTourCustomizedSerByListDaysApi(payload, {
-            onSuccess: () => { },
-            onError: () => { }
-        })
-    }
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: [
+                        QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+                    ],
+                });
+
+                showToast("success", "Cập nhật thành công");
+
+                onClose();
+            },
+
+            onError: () => {
+                showToast("error", "Cập nhật thất bại");
+            },
+        });
+    };
 
     return (
         <PanelPopup
@@ -50,12 +141,41 @@ const UpdateNoOfDay = ({ open, onClose, strTourCustomizedPriceItemGUID }: Props)
                 </button>
             }
         >
-            <div className="space-y-2 text-sm text-gray-700">
-                <p>REGULAR RESTAURANTS</p>
+            <div className="space-y-4 text-sm text-gray-700">
+                <p className="text-[15px] font-semibold">
+                    REGULAR RESTAURANTS
+                </p>
 
+                <div className="flex flex-col gap-4">
+                    {groupedDays.map((dayItems: any[]) => {
+                        const firstItem = dayItems?.[0];
+
+                        const dayOrder = String(firstItem?.intDayOrder);
+
+                        return (
+                            <label
+                                key={dayOrder}
+                                className="flex items-center gap-3 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={selectedDays.includes(dayOrder)}
+                                    onChange={() =>
+                                        handleToggleDay(dayOrder)
+                                    }
+                                    className="w-4 h-4"
+                                />
+
+                                <span className="font-medium text-[14px]">
+                                    Day {dayOrder}
+                                </span>
+                            </label>
+                        );
+                    })}
+                </div>
             </div>
         </PanelPopup>
     );
-}
+};
 
 export default UpdateNoOfDay;
