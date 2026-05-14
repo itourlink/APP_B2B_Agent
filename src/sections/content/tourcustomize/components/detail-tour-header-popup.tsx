@@ -153,7 +153,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
     refetch();
   };
 
-  
+
 
   const pageCount = Math.max(totalPages, 1);
   const isEmpty = !isLoading && tourCustomer.length === 0;
@@ -164,7 +164,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
       : Math.min((page - 1) * pageSize + tourCustomer.length, totalRecords);
 
 
- 
+
   return (
     <div className="w-full">
       <div className="px-5 py-5">
@@ -424,7 +424,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
         <button
           type="button"
           onClick={() => setOpenPopup(true)}
-          className="mt-10 flex h-11 items-center gap-2 rounded bg-[#2869bd] px-4 text-lg font-semibold text-white hover:bg-[#1f5ca8]"
+          className="cursor-pointer mt-10 flex h-11 items-center gap-2 rounded bg-[#2869bd] px-4 text-lg font-semibold text-white hover:bg-[#1f5ca8]"
         >
           <Plus size={26} />
           Add new

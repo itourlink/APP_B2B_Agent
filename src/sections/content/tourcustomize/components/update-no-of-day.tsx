@@ -83,15 +83,18 @@ const UpdateNoOfDay = ({
     const groupedDays = groupByDay(listData);
 
     useEffect(() => {
-        if (selectedDays.length > 0) return;
+        if (!listData?.length || !strTourCustomizedPriceItemGUID) return;
 
-        const defaultSelected = groupedDays.map(
-            (dayItems: any[]) =>
-                String(dayItems?.[0]?.intDayOrder)
-        );
+        const selected = listData
+            .filter(
+                (x: any) =>
+                    x?.strTourCustomizedPriceItemGUID ===
+                    strTourCustomizedPriceItemGUID
+            )
+            .map((x: any) => String(x?.intDayOrder));
 
-        setSelectedDays(defaultSelected);
-    }, [groupedDays]);
+        setSelectedDays(selected);
+    }, [listData, strTourCustomizedPriceItemGUID]);
 
     const handleToggleDay = (day: string) => {
         setSelectedDays((prev) =>
