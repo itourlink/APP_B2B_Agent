@@ -143,6 +143,34 @@ export interface ITourCustomized {
   strUpdatedBy: string;
 }
 
+export interface ITourCustomizedCustomer {
+  No: number;
+  intSaluteID: number;
+  intTotalRecords: number;
+
+  dtmDateOfBirth: string | null;
+  dtmPassportExpireDate: string | null;
+
+  strContactDetail: string;
+  strCountryGUID: string;
+  strCountryName?: string;
+  strCustomerGUID?: string;
+  strEmail: string;
+  strFirstName: string;
+  strFullName?: string;
+  strLastName: string;
+  strPassNum: string;
+  strPhoneNumber?: string;
+  strRemark?: string;
+  strRoomName?: string;
+  strRoomType?: string;
+  strRoomTypeName?: string;
+  strSGLDBLName?: string;
+  strTourCustomizedGUID: string;
+
+  [key: string]: any;
+}
+
 export interface ICompanyBankAccount {
   No: number;
 

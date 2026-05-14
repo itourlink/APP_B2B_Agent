@@ -5,7 +5,6 @@ import { useToastStore } from "@/zustand/useToastStore";
 import UpdatePriceMarkup from "./update-price-markup";
 import { useState } from "react";
 import DetailTourHeaderPopup from "./detail-tour-header-popup";
-import { useGetlistCustomer } from "@/hooks/actions/useTourCustomized";
 import { ArrowLeft, Calendar, ChevronDown, Copy, Play, SquarePen, Users, X } from "lucide-react";
 import { isValidValue } from "@/utils/utilts";
 
@@ -30,20 +29,6 @@ export const DetailTourHeader = ({
         update: false
     })
     const [openCustomerPopup, setOpenCustomerPopup] = useState(false);
-
-    const TourCustoemerList = () => {
-        const filters = {
-            page: 1,
-            pageSize: 10,
-            strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
-            strTourCode: item?.strTourCode,
-        };
-
-        const { tourCustomer } = useGetlistCustomer(filters)
-        console.log("tourCustomer", tourCustomer);
-    }
-
-    TourCustoemerList();
 
 
 
@@ -180,7 +165,10 @@ export const DetailTourHeader = ({
                 onClose={() => setOpenCustomerPopup(false)}
                 className="w-[950px]"
             >
-                <DetailTourHeaderPopup />
+                <DetailTourHeaderPopup
+                    strTourCustomizedGUID={item?.strTourCustomizedGUID || ""}
+                    strTourCode={item?.strTourCode || ""}
+                />
             </PanelPopup>
         </div>
     );
