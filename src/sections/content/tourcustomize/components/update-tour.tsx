@@ -17,7 +17,9 @@ import { useUserStore } from "@/zustand/useUserStore";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { updTourCustomized } from "@/hooks/actions/useUser";
 import PanelPopup from "@/components/popup/panel-popup";
-import ListMedia from "./list-media";
+import ListMedia from "../../../../components/media/list-media";
+import { CONFIG } from "@/config-global";
+import BannerMediaField from "@/components/media/banner-media-field";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
@@ -45,11 +47,6 @@ const UpdateTour = ({ onBack }: Props) => {
     const location = useLocation();
     const item = location.state?.item;
     const queryClient = useQueryClient();
-
-    const [open, setOpen] = useState({
-        imgState: false
-    })
-
     const { showToast } = useToastStore();
     const methods = useForm<SchemaType>({
         resolver: zodResolver(Schema) as any,
@@ -95,7 +92,13 @@ const UpdateTour = ({ onBack }: Props) => {
             });
         }
     }, [item, reset]);
-    const { handleSubmit, formState: { isSubmitting } } = methods;
+
+    const {
+        handleSubmit,
+        setValue,
+        formState: { isSubmitting },
+    } = methods;
+
 
     const onSubmit = handleSubmit(async (data) => {
 
@@ -126,8 +129,7 @@ const UpdateTour = ({ onBack }: Props) => {
 
                 strRemark: data.remark || "",
 
-                // linkImgBannerTCM: data.linkImgBannerTCM,
-                linkImgBannerTCM: "Upload/Agent/486BD4/tom and jerry_20260420_083450.jpg",
+                linkImgBannerTCM: data.linkImgBannerTCM,
             };
 
             updTourCustomizedApi(payload, {
@@ -211,7 +213,7 @@ const UpdateTour = ({ onBack }: Props) => {
 
     const listData = data?.pages.flatMap(page => page[0]) ?? [];
 
-    const [preview, _] = useState(
+    const [preview, setPreview] = useState(
         item?.LinkImgBannerTCM || ""
     );
 
@@ -296,34 +298,16 @@ const UpdateTour = ({ onBack }: Props) => {
                 </div>
             </div>
 
-            <div className="flex flex-col ">
-                <label className="text-sm font-bold text-gray-700 uppercase tracking-wider text-[11px]">
-                    Banner Img
-                </label>
+            <BannerMediaField
+                value={preview}
+                onChange={(path) => {
+                    setPreview(
+                        `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
+                    );
 
-                <button
-                    type="button"
-                    onClick={() =>
-                        setOpen((prev) => ({ ...prev, imgState: true }))
-                    }
-                >
-
-                    <label
-                        htmlFor="banner-upload"
-                        className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer overflow-hidden"
-                    >
-                        {preview && (
-                            <img
-                                src={preview}
-                                alt="banner"
-                                className="w-full h-64 object-cover rounded-xl"
-                            />
-                        )}
-                    </label>
-
-                </button>
-
-            </div>
+                    setValue("linkImgBannerTCM", path);
+                }}
+            />
 
             <div className="flex justify-start pt-6 border-t border-gray-50">
                 <button
@@ -354,14 +338,6 @@ const UpdateTour = ({ onBack }: Props) => {
                 {renderForm}
             </Form>
 
-
-
-            {open.imgState && (
-
-                <PanelPopup className="max-w-[900px]" title="Media" open={open.imgState} onClose={() => setOpen((prev) => ({ ...prev, imgState: false }))} >
-                    <ListMedia />
-                </PanelPopup>
-            )}
         </div>
     );
 };

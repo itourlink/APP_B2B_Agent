@@ -83,7 +83,7 @@ export const DetailTourHeader = ({
                             <div className="relative group inline-flex">
                                 <button
                                     onClick={() => setOpenCustomerPopup(true)}
-                                    className="text-blue-400 hover:text-[#004b91]"
+                                    className="text-blue-400 hover:text-[#004b91] cursor-pointer"
                                 >
                                     <SquarePen size={12} />
                                 </button>
@@ -92,7 +92,7 @@ export const DetailTourHeader = ({
                                 </span>
                             </div>
                         </div>
-                        <span className="text-gray-300">|</span>
+                        {/* <span className="text-gray-300">|</span>
 
                         <div className="flex items-center gap-1">
                             <span>Ver⁺</span>
@@ -101,7 +101,7 @@ export const DetailTourHeader = ({
                                 <ChevronDown size={12} />
                             </div>
                             <X size={12} className="text-gray-300 cursor-pointer hover:text-red-400" />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

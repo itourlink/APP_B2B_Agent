@@ -33,6 +33,7 @@ import { MENU_ITEMS } from "./menu-data-add";
 import DeleteServicePopup from "./delete-service-popup";
 import AddDestination from "./add-destination";
 import DeleteDestination from "./del-destination";
+import UpdateNoOfDay from "./update-no-of-day";
 
 interface Props {
   item: any[];
@@ -56,6 +57,7 @@ const ListTour = ({
     del: false,
     destination: false,
     deleteDestination: false,
+    updateNoOfDay: false
   });
 
   const [locItem, setLocItem] = useState<any>(null);
@@ -329,7 +331,13 @@ const ListTour = ({
         </td>
 
         <td className="px-4 py-4 text-[13px] text-gray-700">
-          {safe(item?.intNoOfDay)}
+          <div className="flex items-center gap-2">
+            <div className="">
+              {safe(item?.intNoOfDay)}
+            </div>
+            <button onClick={() => { setOpen((prev) => ({ ...prev, updateNoOfDay: true })) }} className="cursor-pointer"><Pen size={16} />
+            </button>
+          </div>
         </td>
 
         <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
@@ -461,18 +469,21 @@ const ListTour = ({
             {locations.map((loc: any, idx) => (
               <span
                 key={idx}
-                className="border border-[#4a6fa5] p-1 rounded-sm text-[#4a6fa5]"
+                className="border border-[#4a6fa5] p-1 rounded-sm text-[#4a6fa5] flex items-center gap-2"
               >
-                {loc.name}
+                <div className="">
+                  {loc.name}
+                </div>
                 <button
-                type="button"
-                onClick={() => {
-                  setLocItem(loc.id);
-                  setOpen((prev) => ({
-                    ...prev,
-                    deleteDestination: true,
-                  }));
-                }}>
+                  type="button"
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setLocItem(loc.id);
+                    setOpen((prev) => ({
+                      ...prev,
+                      deleteDestination: true,
+                    }));
+                  }}>
                   <X size={18} />
                 </button>
               </span>
@@ -514,7 +525,6 @@ const ListTour = ({
                   items={MENU_ITEMS}
                   onChange={(value) => {
                     onChange(value);
-
                     setShowMenu(false);
                   }}
                 />
@@ -646,6 +656,17 @@ const ListTour = ({
           setOpen((prev) => ({
             ...prev,
             deleteDestination: false,
+          }));
+        }}
+        strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}
+        strCityGUID={locItem}
+      />
+      <UpdateNoOfDay
+        open={open.updateNoOfDay}
+        onClose={() => {
+          setOpen((prev) => ({
+            ...prev,
+            updateNoOfDay: false,
           }));
         }}
         strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}

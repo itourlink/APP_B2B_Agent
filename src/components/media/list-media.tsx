@@ -18,9 +18,14 @@ const IMAGE_EXTENSIONS = [
     "avif",
 ];
 
+interface Props {
+    onSelect: (item: {
+        name: string;
+        path: string;
+    }) => void;
+}
 
-
-const ListMedia = () => {
+const ListMedia = ({ onSelect }: Props) => {
     const { mediaData } = useListMedia();
 
     const { user } = useUserStore();
@@ -169,7 +174,11 @@ const ListMedia = () => {
 
             {selectedImage && (
                 <div className="flex justify-end px-4 pt-10">
-                    <button className="px-5 py-2 rounded bg-[#2566b0] hover:bg-[#1d4f87] text-white cursor-pointer">
+                    <button
+                        type="button"
+                        onClick={() => onSelect(selectedImage)}
+                        className="px-5 py-2 rounded bg-[#2566b0] hover:bg-[#1d4f87] text-white cursor-pointer"
+                    >
                         Chọn
                     </button>
                 </div>
