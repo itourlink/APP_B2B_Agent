@@ -1,12 +1,20 @@
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import { useListTotalPriceForTourCustom } from "@/hooks/actions/useUser";
+import { useListTotalPriceForTourCustom, updTourCustomizedByRefeshPrice } from "@/hooks/actions/useUser";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useToastStore } from "@/zustand/useToastStore";
+import { useUser } from "@/hooks/actions/useAuth"
+import DetailTourPriceOverviewPopup from "./detail-tour-price-overview-popup";
+import { useState } from "react";
 
 interface DetailTourPriceProps {
     item?: any;
 }
 
 const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
+    const [isOverviewOpen, setIsOverviewOpen] = useState(false);
+    const { showToast } = useToastStore();
+    const { user } = useUser();
     const { data, isLoading } = useQuery({
         queryKey: [QUERY_KEYS.USER.LIST_TOTAL_PRICE_FOR_TOUR_CUSTOM, item?.strTourCustomizedGUID],
         queryFn: () =>
@@ -17,6 +25,37 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
     });
 
     const listData = data?.[0] ?? [];
+    const queryClient = useQueryClient();
+    const refreshPriceMutation = useMutation({
+        mutationFn: (payload: any) => updTourCustomizedByRefeshPrice(payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.USER.LIST_TOTAL_PRICE_FOR_TOUR_CUSTOM, item?.strTourCustomizedGUID],
+            })
+            showToast("success", "Cập nhật giá thành công")
+        },
+        onError: () => {
+            showToast("error", "Cập nhật giá thất bại")
+        }
+    })
+
+    const handleRecalculate = () => {
+        const payload = {
+            strUserGUID: user?.strUserGUID,
+            strTourCustomizedGUID: item?.strTourCustomizedGUID,
+        }
+        refreshPriceMutation.mutate(payload)
+    }
+
+    // const overviewMutation = useMutation({
+    //     mutationFn: (payload: any) => useGetSQLDataByTableConfig(payload),
+    //     onSuccess: () => {
+    //         queryClient.invalidateQueries({
+    //             queryKey: [QUERY_KEYS.USER.LIST_OVERVIEW_TOUR_CUSTOMIZE]
+    //         })
+    //     }
+    // })
+
 
     // Lấy số lượng khách từ data để hiển thị header
     const firstItem = listData[0];
@@ -28,10 +67,16 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
         <div className="space-y-4 pt-4 font-sans">
             <div className="flex items-center gap-4">
                 <h3 className="text-lg font-bold text-gray-800 uppercase">Total Price</h3>
-                <button className="px-4 py-1.5 bg-[#4a6fa5] text-white text-[11px] font-bold rounded uppercase hover:bg-[#3b5b7e] cursor-pointer transition-colors shadow-sm">
-                    Recalculate Price
+                <button
+                    onClick={handleRecalculate}
+                    disabled={refreshPriceMutation.isPending}
+                    className="px-4 py-1.5 bg-[#4a6fa5] text-white text-[11px] font-bold rounded uppercase hover:bg-[#3b5b7e] cursor-pointer transition-colors shadow-sm">
+                    {refreshPriceMutation.isPending ? "Đang tải..." : "Recalculate Price"}
                 </button>
-                <button className="px-4 py-1.5 bg-[#4a6fa5] text-white text-[11px] font-bold rounded uppercase hover:bg-[#3b5b7e] cursor-pointer transition-colors shadow-sm">
+
+                <button
+                    onClick={() => setIsOverviewOpen(true)}
+                    className="px-4 py-1.5 bg-[#4a6fa5] text-white text-[11px] font-bold rounded uppercase hover:bg-[#3b5b7e] cursor-pointer transition-colors shadow-sm">
                     Overview Price
                 </button>
             </div>
@@ -80,7 +125,19 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
                     </tbody>
                 </table>
             </div>
+
+            {
+                isOverviewOpen && (
+                    <DetailTourPriceOverviewPopup
+                        isOpen={isOverviewOpen}
+                        onClose={() => setIsOverviewOpen(false)}
+                        tourCustomizedGUID={item?.strTourCustomizedGUID}
+                    />
+                )
+            }
         </div>
+
+
     );
 };
 

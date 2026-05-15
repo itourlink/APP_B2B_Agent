@@ -113,6 +113,29 @@ export const updTourCustomizedForMarkup = async (body: any) => {
     );
     return res.data;
 };
+export const updTourCustomizedByRefeshPrice = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/UpdTourCustomizedByRefreshPrice",
+        body
+    );
+    return res.data;
+};
+export const useGetOverViewTourCustomized = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/GetOverViewTourCustomized",
+        body
+    )
+    return res.data;
+}
+export const useGetSQLDataByTableConfig = async (body: any) => {
+    const res = await apiClient.post(
+        "public/getSQLDataByTableConfig",
+        body
+    )
+    return res.data;
+}
+
+
 export const useFilterCompanyBankAccount = async (body: any) => {
     const res = await apiClient.post(
         "user/GetFilterCompanyBankAccount",

@@ -190,7 +190,6 @@ export const DetailTourContent = ({
 
                 {/* DETAIL */}
                 <DetailTourInEx item={item} />
-
                 <DetailTourPrice item={item} />
             </div>
 
