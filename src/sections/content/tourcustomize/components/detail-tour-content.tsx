@@ -1,16 +1,34 @@
 import { useState } from "react";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import { useAddDayTourCustomized, useListServiceTourCustomized } from "@/hooks/actions/useUser";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MapPin, Pen, Plus } from "lucide-react";
+import {
+    useAddDayTourCustomized,
+    useListServiceTourCustomized
+} from "@/hooks/actions/useUser";
+
+import {
+    keepPreviousData,
+    useMutation,
+    useQuery,
+    useQueryClient
+} from "@tanstack/react-query";
+
+import {
+    MapPin,
+    Pen,
+    Plus
+} from "lucide-react";
+
+import { useLocation } from "react-router-dom";
+
 import ListTour from "./list-tour";
 import DetailTourInEx from "./detail-tour-in-ex";
 import DetailTourPrice from "./detail-tour-price";
-import { useLocation } from "react-router-dom";
 import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 import ListDaySidebar from "./list-day-sidebar";
+
 import { useToastStore } from "@/zustand/useToastStore";
+
 import AddAccommodationD from "./add-accommodation-d";
 import AddImageD from "./add-image-d";
 import AddManuallyD from "./add-manually-d";
@@ -19,8 +37,8 @@ import AddShippingServicesD from "./add-shipping-services-d";
 import AddToursD from "./add-tours-d";
 
 interface DetailTourContentProps {
-    itemListData?: any
-    itemDetail?: any
+    itemListData?: any;
+    itemDetail?: any;
     onOpenChangeDay: () => void;
     isPopupOpen: boolean;
     setIsPopupOpen: (val: boolean) => void;
@@ -38,22 +56,31 @@ export const DetailTourContent = ({
     setHasChange,
     tourCustomizedGUID,
 }: DetailTourContentProps) => {
-    const { showToast } = useToastStore()
+
+    const { showToast } = useToastStore();
+
     const queryClient = useQueryClient();
+
     const location = useLocation();
+
     const item = location.state?.item;
+
     const [selectedService, setSelectedService] = useState<string | null>(null);
 
+    const [openManualPopup, setOpenManualPopup] = useState(false);
+
+    // =========================
+    // RENDER RIGHT CONTENT
+    // =========================
     const renderServiceContent = () => {
+
         switch (selectedService) {
+
             case "accommodation":
                 return <AddAccommodationD />;
 
             case "image":
                 return <AddImageD />;
-
-            case "manual":
-                return <AddManuallyD />;
 
             case "service":
                 return <AddServiceMenuD />;
@@ -69,41 +96,71 @@ export const DetailTourContent = ({
         }
     };
 
+    // =========================
+    // HANDLE SELECT MENU
+    // =========================
+    const handleSelectService = (value: string) => {
+
+        // MANUAL => OPEN POPUP
+        if (value === "manual") {
+
+            setOpenManualPopup(true);
+
+            return;
+        }
+
+        setSelectedService(value);
+    };
+
+    // =========================
     // CLOSE POPUP
+    // =========================
     const handleClosePopup = () => {
         setIsPopupOpen(false);
     };
 
-    // SAVE
+    // =========================
+    // SAVE POPUP
+    // =========================
     const handleSave = () => {
+
         setHasChange(false);
 
         setIsPopupOpen(false);
     };
 
+    // =========================
+    // GET DATA
+    // =========================
     const { data } = useQuery({
         queryKey: [
             QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
             item?.strTourCustomizedGUID,
         ],
+
         queryFn: () =>
             useListServiceTourCustomized({
                 strTourCustomizedGUID: item?.strTourCustomizedGUID,
                 strTourCustomizedDayGUID: null,
             }),
+
         placeholderData: keepPreviousData,
+
         enabled: !!item?.strTourCustomizedGUID,
     });
 
     const listData = data?.[0] ?? [];
 
+    // =========================
     // GROUP DAY
+    // =========================
     const groupByDay = (data: any[]) => {
+
         const map: Record<string, any[]> = {};
 
         data.forEach((item) => {
-            const key =
-                item?.strTourCustomizedDayGUID;
+
+            const key = item?.strTourCustomizedDayGUID;
 
             if (!map[key]) {
                 map[key] = [];
@@ -115,11 +172,18 @@ export const DetailTourContent = ({
         return Object.values(map);
     };
 
-    // useAddDayTourCustomized
-    const { mutate: useAddDayTourCustomizedApi, isPending: isLoading } = useMutation({
+    // =========================
+    // ADD DAY
+    // =========================
+    const {
+        mutate: useAddDayTourCustomizedApi,
+        isPending: isLoading
+    } = useMutation({
         mutationFn: useAddDayTourCustomized,
     });
+
     const handleAddTourNow = () => {
+
         const totalDay = groupByDay(listData).length;
 
         const payload = {
@@ -129,13 +193,16 @@ export const DetailTourContent = ({
         };
 
         useAddDayTourCustomizedApi(payload, {
+
             onSuccess: () => {
+
                 queryClient.invalidateQueries({
                     queryKey: [
                         QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
                         item?.strTourCustomizedGUID,
                     ],
                 });
+
                 queryClient.invalidateQueries({
                     queryKey: [
                         QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED
@@ -146,12 +213,14 @@ export const DetailTourContent = ({
             },
 
             onError: () => {
+
                 showToast("error", "Add day failed");
             },
         });
     };
 
     return (
+
         <div className="flex bg-gray-50 overflow-hidden font-sans h-full">
 
             {/* LEFT */}
@@ -202,17 +271,17 @@ export const DetailTourContent = ({
                 {/* LIST DAY */}
                 {groupByDay(listData).map(
                     (items: any[], index) => (
+
                         <div
                             key={index}
                             className="space-y-4"
                         >
+
                             <ListTour
                                 item={items}
                                 itemDetail={itemDetail ?? ""}
-                                onChange={(value) =>
-                                    setSelectedService(value)
-                                }
                                 itemListData={itemListData}
+                                onChange={handleSelectService}
                             />
 
                         </div>
@@ -221,38 +290,61 @@ export const DetailTourContent = ({
 
                 {/* DETAIL */}
                 <DetailTourInEx item={item} />
+
                 <DetailTourPrice item={item} />
             </div>
 
-            {/* POPUP */}
+            {/* CHANGE DAY POPUP */}
             <PanelPopup
                 open={isPopupOpen}
                 onClose={handleClosePopup}
                 title="Change Day Order"
                 className="w-[800px]"
             >
+
                 <ChangeDayOrder
                     strTourCustomizedGUID={
                         item?.strTourCustomizedGUID ||
                         tourCustomizedGUID
                     }
+
                     onChanged={(val) =>
                         setHasChange(val)
                     }
+
                     onClose={handleClosePopup}
+
                     onSave={handleSave}
+
                     hasChange={hasChange}
                 />
+            </PanelPopup>
+
+            {/* MANUAL POPUP */}
+            <PanelPopup
+                open={openManualPopup}
+                onClose={() => setOpenManualPopup(false)}
+                title="Add Manual Service"
+                className="w-[1000px]"
+            >
+
+                <AddManuallyD />
+
             </PanelPopup>
 
             {/* RIGHT */}
             <div className="hidden xl:block w-100 bg-gray-100 border-l border-gray-200 relative">
 
                 {selectedService ? (
+
                     <div className="absolute inset-0 bg-white z-10 animate-in fade-in duration-300 overflow-y-auto">
+
                         {renderServiceContent()}
+
                     </div>
+
                 ) : (
+
                     <>
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 space-y-2">
 
@@ -264,6 +356,7 @@ export const DetailTourContent = ({
                             <span className="text-sm font-medium tracking-tight">
                                 Map API Loading Area...
                             </span>
+
                         </div>
 
                         <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur px-2 py-1 rounded text-[10px] text-gray-500 border border-gray-100">
