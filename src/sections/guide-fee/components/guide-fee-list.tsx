@@ -103,21 +103,30 @@ const GuideFeeList = () => {
   });
 
   const { guideFeeData: guideData } = useListGuideFee(filters);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
 
   return (
     <section className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800">Phi huong dan</h2>
 
-        <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
-          <span className="text-sm text-gray-500 ml-2">Hien thi dang:</span>
-          <button className="p-1.5 bg-blue-600 text-white rounded-md shadow-sm">
-            <LayoutGrid size={18} />
-          </button>
-          <button className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
-            <List size={18} />
-          </button>
-        </div>
+       <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
+                    <span className="text-[12px] text-gray-500 ml-2">Hiển thị dạng:</span>
+                    <div className="flex gap-1">
+                        <button
+                            onClick={() => setViewMode("grid")}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                        >
+                            <LayoutGrid size={16} />
+                        </button>
+                        <button
+                            onClick={() => setViewMode("list")}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                        >
+                            <List size={16} />
+                        </button>
+                    </div>
+                </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
