@@ -51,7 +51,7 @@ const DetailTourPriceOverviewPopup = ({
   tourCustomizedGUID,
 }: DetailTourPriceOverviewPopupProps) => {
   const { user } = useUser();
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<number>();
 
   const { ctData: categoriesData = [], ctLoading: isCategoryLoading } = useListSQLData({
     strTableName: "CM37",
@@ -64,44 +64,41 @@ const DetailTourPriceOverviewPopup = ({
     if (!isOpen || !categoriesData.length) return;
 
     const currentExists = categoriesData.some(
-      (item: any) => String(item.intID) === selectedCategory
+      (item: any) => Number(item.intID) === selectedCategory
     );
 
     if (!selectedCategory || !currentExists) {
-      setSelectedCategory(String(categoriesData[0].intID));
+      setSelectedCategory(Number(categoriesData[0].intID));
     }
   }, [isOpen, categoriesData, selectedCategory]);
 
-      const {
-        data: overviewData,
-        isLoading: isOverviewLoading,
-      } = useQuery<OverviewResponse>({
-        queryKey: [
-          QUERY_KEYS.USER.LIST_OVERVIEW_TOUR_CUSTOMIZE,
-          tourCustomizedGUID,
-          selectedCategory,
-        ],
+  const {
+    data: overviewData,
+    isLoading: isOverviewLoading,
+  } = useQuery<OverviewResponse>({
+    queryKey: [
+      QUERY_KEYS.USER.LIST_OVERVIEW_TOUR_CUSTOMIZE,
+      tourCustomizedGUID,
+      selectedCategory,
+    ],
 
-        queryFn: () =>
-          useGetOverViewTourCustomized({
-            strTourCustomizedGUID: tourCustomizedGUID,
-            intEasiaCateID: selectedCategory,
-          }),
+    queryFn: () =>
+      useGetOverViewTourCustomized({
+        strTourCustomizedGUID: tourCustomizedGUID,
+        intEasiaCateID: selectedCategory,
+      }),
 
-        enabled:
-          isOpen &&
-          !!user?.strUserGUID &&
-          !!tourCustomizedGUID &&
-          !!selectedCategory,
+    enabled:
+      isOpen &&
+      !!user?.strUserGUID &&
+      !!tourCustomizedGUID &&
+      !!selectedCategory,
 
-        placeholderData: keepPreviousData,
-      });
+    placeholderData: keepPreviousData,
+  });
 
   const days = overviewData?.data?.[0] ?? [];
-  console.log("overviewData", overviewData);
-  console.log("days", days);
   const columns = overviewData?.data?.[1] ?? [];
-  console.log("columns", columns);
 
   const getCellValue = (day: OverviewDay, intColRef: number) => {
     const rawValue = day[`strCol${intColRef}`];
@@ -154,7 +151,7 @@ const DetailTourPriceOverviewPopup = ({
                 <div className="relative">
                   <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={(e) => setSelectedCategory(Number(e.target.value))}
                     disabled={isCategoryLoading || !categoriesData.length}
                     className="h-10 w-full cursor-pointer appearance-none rounded-md border border-gray-300 bg-white pl-3 pr-10 text-sm transition-all focus:border-[#4a6fa5] focus:outline-none focus:ring-2 focus:ring-[#4a6fa5]/20 disabled:cursor-not-allowed disabled:bg-gray-100"
                   >
@@ -211,9 +208,8 @@ const DetailTourPriceOverviewPopup = ({
                         {days.map((day, index) => (
                           <tr
                             key={day.intRowID}
-                            className={`border-b border-gray-100 transition-colors hover:bg-gray-50/50 ${
-                              index % 2 === 1 ? "bg-[#f8fbff]/50" : ""
-                            }`}
+                            className={`border-b border-gray-100 transition-colors hover:bg-gray-50/50 ${index % 2 === 1 ? "bg-[#f8fbff]/50" : ""
+                              }`}
                           >
                             <td className="px-6 py-4 font-medium text-gray-900">
                               <div
@@ -263,7 +259,7 @@ const DetailTourPriceOverviewPopup = ({
             </div>
           </div>
 
-  
+
         </div>
       </div>
     </div>
