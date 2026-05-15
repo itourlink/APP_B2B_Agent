@@ -26,8 +26,10 @@ export function RHFMultiSelect({
   placeholder = "Select...",
 }: Props) {
   const { control, clearErrors } = useFormContext();
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+
   const ref = useRef<HTMLDivElement>(null);
 
   const { errors } = useFormState({ name });
@@ -40,14 +42,18 @@ export function RHFMultiSelect({
         setOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Auto clear error
   useEffect(() => {
     if (error) {
       const t = setTimeout(() => clearErrors(name), 3000);
+
       return () => clearTimeout(t);
     }
   }, [error, name, clearErrors]);
@@ -57,25 +63,35 @@ export function RHFMultiSelect({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        const selectedValues: (string | number)[] = field.value || [];
+        const selectedValues: string[] =
+          typeof field.value === "string"
+            ? field.value.split(",").filter(Boolean)
+            : [];
 
         const filteredOptions = options.filter((opt) =>
           opt.label.toLowerCase().includes(search.toLowerCase())
         );
 
+        // FIX: keep value as csv string
         const toggleValue = (val: string | number) => {
-          if (selectedValues.includes(val)) {
-            field.onChange(selectedValues.filter((v) => v !== val));
+          const value = String(val);
+
+          let updatedValues: string[];
+
+          if (selectedValues.includes(value)) {
+            updatedValues = selectedValues.filter((v) => v !== value);
           } else {
-            field.onChange([...selectedValues, val]);
+            updatedValues = [...selectedValues, value];
           }
+
+          field.onChange(updatedValues.join(","));
         };
 
         return (
-          <div className="flex flex-col gap-1 w-full" ref={ref}>
+          <div className="flex flex-col gap-1 w-full relative" ref={ref}>
             {/* LABEL */}
             {label && (
-              <div className="flex gap-1 text-mdMedium text-gray-50 mb-2">
+              <div className="flex gap-1 text-mdMedium mb-1">
                 <span>{label.text}</span>
                 <span className="text-red-400">{label.icon}</span>
               </div>
@@ -85,8 +101,8 @@ export function RHFMultiSelect({
             <div
               onClick={() => setOpen(!open)}
               className={twMerge(
-                "flex items-center flex-wrap gap-2 text-white px-4 py-2 min-h-[48px] rounded-[10px] bg-[#404040]/40 cursor-pointer border",
-                error ? "border-red-500" : "border-[#404040]"
+                "flex items-center flex-wrap gap-2 text px-4 py-2 min-h-[48px] rounded-[10px] cursor-pointer border",
+                error ? "border-red-500" : "border-gray-300"
               )}
             >
               {/* SELECTED TAGS */}
@@ -94,14 +110,19 @@ export function RHFMultiSelect({
                 <span className="text-[#b7b9c0]">{placeholder}</span>
               ) : (
                 selectedValues.map((val) => {
-                  const opt = options.find((o) => o.value === val);
+                  // FIX: compare same type
+                  const opt = options.find(
+                    (o) => String(o.value) === val
+                  );
+
                   return (
                     <div
                       key={val}
-                      className="flex items-center gap-1 bg-[#303030] border border-gray-600 rounded-md px-2 py-1"
+                      className="flex items-center gap-1 bg- border border-gray-300 rounded-md px-2"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <span>{opt?.label}</span>
+
                       <X
                         size={14}
                         className="cursor-pointer"
@@ -128,22 +149,26 @@ export function RHFMultiSelect({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute  left-8 right-8 z-10 mt-20  bg-[#404040] border border-gray-600 rounded-xl shadow-xl max-h-60 overflow-auto"
+                  className="absolute left-0 right-0 top-full z-10 mt-2 bg-white border border-gray-300 rounded-xl shadow-xl max-h-60 overflow-auto"
                 >
                   {/* SEARCH BOX */}
-                  <div className="sticky top-0 bg-[#404040] p-2 border-b border-gray-600">
+                  <div className="sticky top-0 p-2 bg-white border-b border-gray-300">
                     <input
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search..."
-                      className="w-full px-3 py-2 rounded-md bg-[#2c2c2c] text-white outline-none"
+                      className="w-full px-3 py-2 rounded-md bg-gray-300 text-black outline-none"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
 
                   {/* OPTIONS */}
                   {filteredOptions.map((opt) => {
-                    const active = selectedValues.includes(opt.value);
+                    // FIX: compare same type
+                    const active = selectedValues.includes(
+                      String(opt.value)
+                    );
+
                     return (
                       <div
                         key={opt.value}
@@ -154,8 +179,8 @@ export function RHFMultiSelect({
                         className={twMerge(
                           "px-4 py-2 cursor-pointer",
                           active
-                            ? "bg-[#2ebdb1]/30 text-white"
-                            : "hover:bg-gray-600 hover:text-white"
+                            ? "bg-[#5f7eac] text-white border"
+                            : "hover:bg-gray-300 hover:text-white"
                         )}
                       >
                         {opt.label}
@@ -168,7 +193,9 @@ export function RHFMultiSelect({
 
             {/* ERROR */}
             {error && (
-              <div className="text-red-500 text-xs mt-1">{error.message}</div>
+              <div className="text-red-500 text-xs mt-1">
+                {error.message}
+              </div>
             )}
           </div>
         );

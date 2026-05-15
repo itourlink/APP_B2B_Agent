@@ -24,7 +24,7 @@ const ServiceMenu = ({ items, onChange }: Props) => {
                     <button
                         key={index}
                         onClick={() => onChange(item.label)}
-                        className="w-full flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150 group"
+                        className="w-full flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150 group cursor-pointer"
                     >
                         <span className={`${item.color || 'text-blue-700'} mr-4 group-hover:scale-110 transition-transform`}>
                             {item.icon}

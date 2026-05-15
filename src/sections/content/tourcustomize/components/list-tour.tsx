@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MapPin,
-  ChevronsUpDown,
   Menu,
   Trash2,
   RefreshCw,
@@ -49,6 +48,29 @@ const ListTour = ({
   onChange,
   itemListData
 }: Props) => {
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
 
   const [selectedPriceItemGUID, setSelectedPriceItemGUID] =
     useState("");
@@ -246,7 +268,7 @@ const ListTour = ({
         : val ?? "";
 
     const starOptions = String(
-      item?.strListEasiaCateID || ""
+      itemListData?.strListEasiaCateID || ""
     )
       .split(",")
       .filter(Boolean);
@@ -520,15 +542,13 @@ const ListTour = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-[#e9f2ff] text-[#4a83d4] p-1.5 rounded-md cursor-pointer hover:bg-[#d0e4ff] transition-colors">
+          {/* <div className="bg-[#e9f2ff] text-[#4a83d4] p-1.5 rounded-md cursor-pointer hover:bg-[#d0e4ff] transition-colors">
             <ChevronsUpDown size={18} />
-          </div>
+          </div> */}
 
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <button
-              onClick={() =>
-                setShowMenu(!showMenu)
-              }
+              onClick={() => setShowMenu(!showMenu)}
               className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
             >
               <Menu size={20} />

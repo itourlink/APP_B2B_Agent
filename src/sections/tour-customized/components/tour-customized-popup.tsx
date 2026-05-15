@@ -17,6 +17,8 @@ import { CircleX } from "lucide-react";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import BannerMediaField from "@/components/media/banner-media-field";
+import { CONFIG } from "@/config-global";
 
 
 export const Schema = z
@@ -67,7 +69,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     const router = useRouter()
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
-    const [preview, setPreview] = useState<string | null>(null);
     const AGENT_HOST_OPTIONS = coData
         ? [
             {
@@ -77,16 +78,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         ]
         : [];
 
-
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        const url = URL.createObjectURL(file);
-        setPreview(url);
-
-        methods.setValue("bannerImg", file);
-    };
 
     const { showToast } = useToastStore();
     const methods = useForm<SchemaType>({
@@ -111,11 +102,13 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             remark: "<p>Ghi chú</p>",
 
+            bannerImg: "",
+
             listLocation: "",
         }
     });
 
-    const { handleSubmit, formState: { isSubmitting } } = methods;
+    const { handleSubmit, formState: { isSubmitting }, setValue } = methods;
 
     const { mutate: addNewTourCustomizedApi, isPending: isLoading } = useMutation({
         mutationFn: addNewTourCustomized,
@@ -357,6 +350,25 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         if (parsed.length) setLocations(parsed);
     }, []);
 
+    const watchedBannerImg = methods.watch("bannerImg");
+
+    const [preview, setPreview] = useState(
+        watchedBannerImg
+            ? `${CONFIG.serverUrlSP}${String(watchedBannerImg).replace(/^\//, "")}`
+            : ""
+    );
+
+    useEffect(() => {
+        if (!watchedBannerImg) {
+            setPreview("");
+            return;
+        }
+
+        setPreview(
+            `${CONFIG.serverUrlSP}${String(watchedBannerImg).replace(/^\//, "")}`
+        );
+    }, [watchedBannerImg]);
+
     const renderForm = (
         <div className="bg-white rounded-4xl p-8 border border-gray-100 shadow-sm space-y-8 font-sans">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -420,11 +432,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     label={{ text: "No of Child" }}
                 />
 
-                <Field.Select
+                <Field.MultiSelect
                     name="category"
                     label={{ text: "Category", icon: <span className="text-red-500">*</span> }}
                     options={STARS2_OPTIONS}
-                    placeholder="Chọn hạng sao"
                 />
             </div>
 
@@ -529,39 +540,17 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             </div>
 
 
+            <BannerMediaField
+                title="Banner IMG"
+                value={preview}
+                onChange={(path) => {
+                    setPreview(
+                        `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
+                    );
 
-            <div className="space-y-2">
-                <label className="">Banner Img</label>
-
-                <label className="border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={handleUpload}
-                    />
-
-                    {preview ? (
-                        <img
-                            src={preview}
-                            alt="preview"
-                            className="w-full h-[200px] object-cover rounded-xl"
-                        />
-                    ) : (
-                        <>
-                            <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                                <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <span className="text-sm text-gray-400 font-medium">
-                                Nhấp để tải ảnh lên
-                            </span>
-                        </>
-                    )}
-                </label>
-            </div>
+                    setValue("bannerImg", path);
+                }}
+            />
 
             <div className="flex justify-end pt-4">
                 <button

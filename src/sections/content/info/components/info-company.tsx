@@ -99,7 +99,7 @@ const InfoCompany = () => {
     const methods =
         useForm<SchemaType>({
             resolver:
-                zodResolver(Schema),
+                zodResolver(Schema) as any,
             defaultValues,
         });
 

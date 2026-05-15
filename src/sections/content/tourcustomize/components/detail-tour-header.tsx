@@ -8,8 +8,6 @@ import DetailTourHeaderPopup from "./detail-tour-header-popup";
 import { ArrowLeft, Calendar, Copy, Play, SquarePen, Users } from "lucide-react";
 import { formatMoney } from "@/utils/format-number";
 
-
-
 interface HeaderProps {
     item?: any;
     onUpdate: () => void;
@@ -28,8 +26,6 @@ export const DetailTourHeader = ({
         update: false
     })
     const [openCustomerPopup, setOpenCustomerPopup] = useState(false);
-
-
 
     return (
         <div className={isLocked ? "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans opacity-50 pointer-events-none transition-opacity" : "w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between font-sans"}>
