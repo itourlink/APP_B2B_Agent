@@ -11,6 +11,12 @@ import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 import ListDaySidebar from "./list-day-sidebar";
 import { useToastStore } from "@/zustand/useToastStore";
+import AddAccommodationD from "./add-accommodation-d";
+import AddImageD from "./add-image-d";
+import AddManuallyD from "./add-manually-d";
+import AddServiceMenuD from "./add-service-menu-d";
+import AddShippingServicesD from "./add-shipping-services-d";
+import AddToursD from "./add-tours-d";
 
 interface DetailTourContentProps {
     itemListData?: any
@@ -37,6 +43,31 @@ export const DetailTourContent = ({
     const location = useLocation();
     const item = location.state?.item;
     const [selectedService, setSelectedService] = useState<string | null>(null);
+
+    const renderServiceContent = () => {
+        switch (selectedService) {
+            case "accommodation":
+                return <AddAccommodationD />;
+
+            case "image":
+                return <AddImageD />;
+
+            case "manual":
+                return <AddManuallyD />;
+
+            case "service":
+                return <AddServiceMenuD />;
+
+            case "shipping":
+                return <AddShippingServicesD />;
+
+            case "tours":
+                return <AddToursD />;
+
+            default:
+                return null;
+        }
+    };
 
     // CLOSE POPUP
     const handleClosePopup = () => {
@@ -219,7 +250,8 @@ export const DetailTourContent = ({
             <div className="hidden xl:block w-100 bg-gray-100 border-l border-gray-200 relative">
 
                 {selectedService ? (
-                    <div className="absolute inset-0 bg-white z-10 animate-in fade-in duration-300">
+                    <div className="absolute inset-0 bg-white z-10 animate-in fade-in duration-300 overflow-y-auto">
+                        {renderServiceContent()}
                     </div>
                 ) : (
                     <>

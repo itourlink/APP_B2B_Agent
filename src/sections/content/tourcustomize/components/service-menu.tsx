@@ -1,4 +1,4 @@
-import type  { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export interface IServiceMenuItem {
     icon: ReactNode;
@@ -23,7 +23,7 @@ const ServiceMenu = ({ items, onChange }: Props) => {
                 {items.map((item, index) => (
                     <button
                         key={index}
-                        onClick={() => onChange(item.label)}
+                        onClick={() => onChange(item.value)}
                         className="w-full flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150 group cursor-pointer"
                     >
                         <span className={`${item.color || 'text-blue-700'} mr-4 group-hover:scale-110 transition-transform`}>

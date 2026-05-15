@@ -1,4 +1,12 @@
-import { Bed, Car, ImageIcon, Landmark, Pencil, PlusCircle } from "lucide-react";
+import {
+  Bed,
+  Car,
+  ImageIcon,
+  Landmark,
+  Pencil,
+  PlusCircle,
+} from "lucide-react";
+
 import type { IServiceMenuItem } from "./service-menu";
 
 export const MENU_ITEMS: IServiceMenuItem[] = [
@@ -11,13 +19,13 @@ export const MENU_ITEMS: IServiceMenuItem[] = [
   {
     icon: <Landmark size={20} />,
     label: "Thêm Chuyến Tham quan",
-    value: "excursion",
+    value: "tours",
     color: "text-blue-700",
   },
   {
     icon: <Car size={20} />,
     label: "Thêm Dịch vụ Vận chuyển",
-    value: "transport",
+    value: "shipping",
     color: "text-blue-700",
   },
   {
@@ -29,7 +37,7 @@ export const MENU_ITEMS: IServiceMenuItem[] = [
   {
     icon: <PlusCircle size={20} />,
     label: "Thêm Dịch Vụ Đơn",
-    value: "single_service",
+    value: "service",
     color: "text-blue-700",
   },
   {
