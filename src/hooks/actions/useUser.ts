@@ -192,13 +192,6 @@ export const delTourCustomizedDayItemLink = async (body: any) => {
     );
     return res.data;
 };
-export const getListSupplierMappingPrice = async (body: any) => {
-    const res = await apiClient.post(
-        "supplier/GetListSupplierMappingPrice",
-        body
-    );
-    return res.data;
-};
 export const addTourCustomizedDayDestination = async (body: any) => {
     const res = await apiClient.post(
         "tourcustomized/AddTourCustomizedDayDestination",

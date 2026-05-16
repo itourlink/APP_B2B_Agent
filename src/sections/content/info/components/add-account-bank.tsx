@@ -78,9 +78,7 @@ const AddAccountBank = ({ onClose }: Props) => {
 
                 <div className="grid grid-cols-2 gap-6">
                     <Field.Text
-                        name="displayName"
-                        label={{ text: "Tên hiển thị", icon: <span className="text-red-500">*</span> }}
-                        placeholder="Nhập tên hiển thị"
+                        
                     />
 
                     <Field.Text

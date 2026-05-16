@@ -77,3 +77,156 @@ export const useGetlistCustomer = (filters: UseGetListCustomerFilters) => {
     refetch: query.refetch,
   };
 };
+
+
+
+const fetchGetListSupplierMappingPrice = async (body: any) => {
+  const res = await apiClient.post(
+    "supplier/GetListSupplierMappingPrice",
+    body
+  );
+  return res.data;
+};
+
+
+export const useGetlistSupplierMappingPrice = (filters?: any) => {
+
+  const { user } = useUser();
+
+  const page = filters?.page ?? 1;
+
+  const pageSize = filters?.pageSize ?? 10;
+
+  const query = useQuery({
+    queryKey: [
+      QUERY_KEYS.TOUR_CUSTOMER.LIST_SUP_MAP_PRICE,
+      page,
+      pageSize,
+      filters,
+    ],
+
+    queryFn: () =>
+      fetchGetListSupplierMappingPrice({
+        strSupplierMappingPriceGUID: null,
+        strCompanyGUID: null,
+        strSupplierGUID: null,
+        strPriceListGUID: null,
+        strPriceLevelGUID: null,
+        intComTypeID: 0,
+        intCateID: 1,
+        intBoatPriceTypeID: null,
+        intEasiaCateID: null,
+        strPriceRange: "",
+        dtmFilterDateFrom: "1/1/2025",
+        dtmFilterDateTo: "1/1/2025",
+        strFilterSupplierName: null,
+        strFilterItemTypeName: null,
+        strListCityCode: "VN00010001,",
+        intCurrencyView: 3,
+        intPaxCount: 15,
+
+        intCurPage: page,
+        intPageSize: pageSize,
+
+        strOrder: null,
+        tblsReturn: "[0]",
+        intTypeID: 1,
+      }),
+
+    enabled: !!user?.strUserGUID,
+
+    placeholderData: keepPreviousData,
+  });
+
+  const listData = query.data?.[0] ?? [];
+
+  const totalRecords =
+    listData?.[0]?.intTotalRecords || 0;
+
+  const totalPages = Math.ceil(
+    totalRecords / pageSize
+  );
+
+  return {
+    supListMapData: listData,
+    totalRecords,
+    totalPages,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    refetch: query.refetch,
+  };
+};
+
+
+export const fetchGetListTourPublish = async (body: any) => {
+  const res = await apiClient.post("Tour/GetListTourPublish", body);
+  return res.data;
+};
+
+
+export const useGetlistTourPublish = (filters?: any) => {
+
+  const { user } = useUser();
+
+  const page = filters?.page ?? 1;
+
+  const pageSize = filters?.pageSize ?? 10;
+
+  const query = useQuery({
+    queryKey: [
+      QUERY_KEYS.TOUR_CUSTOMER.LIST_TOUR_PUBLISH,
+      page,
+      pageSize,
+      filters,
+    ],
+
+    queryFn: () =>
+      fetchGetListTourPublish({
+        strTourGUID: null,
+        strCompanyOwnerGUID: null,
+        strCompanyPartnerGUID: "e824fd66-a3ca-46f4-a1be-ab7a0d1f6137",
+        strMemberPartnerGUID: "97d664c3-375c-42d6-b039-3d2a72414f60",
+        intLangID: 18,
+        strPriceLevelGUID: null,
+        intCateID: 19,
+        intProductID: 100,
+        strNoOfDayRange: null,
+        strFilterServiceName: null,
+        strListEasiaCateID: null,
+        strListTransportOptionID: null,
+        dtmFilterDateStart: "1/1/2025",
+        dtmFilterDateValidFrom: null,
+        dtmFilterDateValidTo: null,
+        strOrder: null,
+        strPriceFromRange: "",
+        intCurrencyView: null,
+        strLocationCode: "VN00010001,",
+        intCurPage: 1,
+        intPageSize: 10,
+        tblsReturn: "[0]",
+        intTotalPax: 15,
+      }),
+
+    enabled: !!user?.strUserGUID,
+
+    placeholderData: keepPreviousData,
+  });
+
+  const listData = query.data?.[0] ?? [];
+
+  const totalRecords =
+    listData?.[0]?.intTotalRecords || 0;
+
+  const totalPages = Math.ceil(
+    totalRecords / pageSize
+  );
+
+  return {
+    tourData: listData,
+    totalRecords,
+    totalPages,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    refetch: query.refetch,
+  };
+};

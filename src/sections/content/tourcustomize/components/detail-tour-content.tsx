@@ -15,20 +15,18 @@ import {
 import {
     MapPin,
     Pen,
-    Plus
+    Plus,
+    X
 } from "lucide-react";
 
 import { useLocation } from "react-router-dom";
-
 import ListTour from "./list-tour";
 import DetailTourInEx from "./detail-tour-in-ex";
 import DetailTourPrice from "./detail-tour-price";
 import PanelPopup from "@/components/popup/panel-popup";
 import ChangeDayOrder from "./change-day-order";
 import ListDaySidebar from "./list-day-sidebar";
-
 import { useToastStore } from "@/zustand/useToastStore";
-
 import AddAccommodationD from "./add-accommodation-d";
 import AddImageD from "./add-image-d";
 import AddManuallyD from "./add-manually-d";
@@ -333,13 +331,40 @@ export const DetailTourContent = ({
             </PanelPopup>
 
             {/* RIGHT */}
-            <div className="hidden xl:block w-100 bg-gray-100 border-l border-gray-200 relative">
+            <div className="hidden xl:block w-130 bg-gray-100 border-l border-gray-200 relative">
 
                 {selectedService ? (
 
                     <div className="absolute inset-0 bg-white z-10 animate-in fade-in duration-300 overflow-y-auto">
 
-                        {renderServiceContent()}
+                        {/* HEADER */}
+                        <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
+
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-800">
+                                    Service Detail
+                                </h3>
+
+                                <p className="text-[11px] text-gray-400">
+                                    {selectedService}
+                                </p>
+                            </div>
+
+                            {/* CLOSE */}
+                            <button
+                                onClick={() =>
+                                    setSelectedService(null)
+                                }
+                                className="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all cursor-pointer"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        {/* BODY */}
+                        <div className="p-4">
+                            {renderServiceContent()}
+                        </div>
 
                     </div>
 
