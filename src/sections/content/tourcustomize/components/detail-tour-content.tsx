@@ -29,10 +29,10 @@ import ListDaySidebar from "./list-day-sidebar";
 import { useToastStore } from "@/zustand/useToastStore";
 import AddAccommodationD from "./add-accommodation-d";
 import AddImageD from "./add-image-d";
-import AddManuallyD from "./add-manually-d";
 import AddServiceMenuD from "./add-service-menu-d";
 import AddShippingServicesD from "./add-shipping-services-d";
 import AddToursD from "./add-tours-d";
+import AddManual from "./add-manually-d";
 
 interface DetailTourContentProps {
     itemListData?: any;
@@ -97,13 +97,13 @@ export const DetailTourContent = ({
     // =========================
     // HANDLE SELECT MENU
     // =========================
-    const handleSelectService = (value: string) => {
+    const [selectedDay, setSelectedDay] = useState<any>(null);
+    const handleSelectService = (value: string, dayItems?: any) => {
 
         // MANUAL => OPEN POPUP
         if (value === "manual") {
-
             setOpenManualPopup(true);
-
+            setSelectedDay(dayItems?.[0]);
             return;
         }
 
@@ -217,6 +217,9 @@ export const DetailTourContent = ({
         });
     };
 
+   
+
+
     return (
 
         <div className="flex bg-gray-50 overflow-hidden font-sans h-full">
@@ -279,7 +282,7 @@ export const DetailTourContent = ({
                                 item={items}
                                 itemDetail={itemDetail ?? ""}
                                 itemListData={itemListData}
-                                onChange={handleSelectService}
+                                onChange={(val) => handleSelectService(val, items)}
                             />
 
                         </div>
@@ -321,12 +324,18 @@ export const DetailTourContent = ({
             {/* MANUAL POPUP */}
             <PanelPopup
                 open={openManualPopup}
-                onClose={() => setOpenManualPopup(false)}
-                title="Add Manual Service"
-                className="w-[1000px]"
+                onClose={() => {
+                    setOpenManualPopup(false);
+                    setSelectedDay(null);
+                }}
+                title={`Add Manual (Day ${selectedDay?.intDayOrder || ""}) `}
+                className="w-[900px]"
             >
 
-                <AddManuallyD />
+                <AddManual selectedDay={selectedDay} onClose={() => {
+                    setOpenManualPopup(false);
+                    setSelectedDay(null);
+                }} />
 
             </PanelPopup>
 

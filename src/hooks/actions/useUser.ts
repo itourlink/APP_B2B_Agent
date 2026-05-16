@@ -126,7 +126,17 @@ export const useGetOverViewTourCustomized = async (body: any) => {
         body
     )
     return res.data;
+}   
+export const AddTourCustomizedPriceItemByManual = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/AddTourCustomizedPriceItemByManual",
+        body
+    )
+    return res.data;
 }
+
+
+
 export const useGetSQLDataByTableConfig = async (body: any) => {
     const res = await apiClient.post(
         "public/getSQLDataByTableConfig",
