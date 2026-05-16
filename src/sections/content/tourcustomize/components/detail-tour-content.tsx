@@ -55,6 +55,7 @@ export const DetailTourContent = ({
     tourCustomizedGUID,
 }: DetailTourContentProps) => {
 
+    console.log("itemListData", itemListData)
     const { showToast } = useToastStore();
 
     const queryClient = useQueryClient();
@@ -217,7 +218,7 @@ export const DetailTourContent = ({
         });
     };
 
-   
+
 
 
     return (
@@ -332,10 +333,13 @@ export const DetailTourContent = ({
                 className="w-[900px]"
             >
 
-                <AddManual selectedDay={selectedDay} onClose={() => {
+                <AddManual strTourCustomizedDayGUID={itemListData?.strTourCustomizedGUID} selectedDay={selectedDay} onClose={() => {
                     setOpenManualPopup(false);
                     setSelectedDay(null);
-                }} />
+                }}
+
+
+                />
 
             </PanelPopup>
 
