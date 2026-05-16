@@ -62,7 +62,12 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
     const adultLabel = firstItem ? `Adult(${firstItem.intAdult})` : "Adult";
     // Giả sử lấy số lượng TPL Red từ đâu đó, ở đây tôi để mặc định theo hình là (3)
     const tplLabel = "TPL Red (3)";
+    // const [selectedDy, setSelectedDay] = useState<number | null>(null);
 
+
+
+
+    
     return (
         <div className="space-y-4 pt-4 font-sans">
             <div className="flex items-center gap-4">

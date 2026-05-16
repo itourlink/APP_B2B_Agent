@@ -1,5 +1,5 @@
 import apiClient from "@/axios";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const fetchListSQLData = async (body: any) => {
     const res = await apiClient.post("public/GetSQLDataByTableConfig", body);
@@ -10,17 +10,27 @@ export const useListSQLData = (filters?: {
     strTableName?: string;
     strFeildSelect?: string;
     strWhere?: string;
+    parameters?: number | string;
+    enabled?: boolean;
 }) => {
     const query = useQuery({
-        queryKey: ["list-city", filters],
+        queryKey: [
+            "sql-table-config",
+            filters?.strTableName ?? null,
+            filters?.strFeildSelect ?? null,
+            filters?.strWhere ?? null,
+            filters?.parameters ?? null,
+        ],
         queryFn: () =>
             fetchListSQLData({
                 strTableName: filters?.strTableName,
                 strFeildSelect: filters?.strFeildSelect,
                 strWhere: filters?.strWhere,
+                parameters: filters?.parameters,
             }),
-        enabled: !!filters?.strTableName,
-        placeholderData: keepPreviousData,
+        enabled: filters?.enabled ?? !!filters?.strTableName,
+        staleTime: Infinity,
+        gcTime: Infinity,
     });
 
     const listData = query.data ?? [];
@@ -28,6 +38,7 @@ export const useListSQLData = (filters?: {
     return {
         ctData: listData,
         ctLoading: query.isLoading,
+        ctFetching: query.isFetching,
         ctError: query.isError,
     };
 };
