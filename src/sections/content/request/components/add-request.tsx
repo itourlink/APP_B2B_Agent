@@ -5,7 +5,7 @@ import { z as zod } from "zod";
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
 import { ArrowLeft } from "lucide-react";
-import { COUNTRIES_OPTIONS, MEALS_OPTIONS, STARS_OPTIONS } from "@/utils/oprion-data";
+import { MEALS_OPTIONS, STARS_OPTIONS } from "@/utils/oprion-data";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useAddSaleRequest } from "@/hooks/actions/useUser";
@@ -14,6 +14,7 @@ import { useDebounce } from "@/hooks/components/use-debounce";
 import { useState } from "react";
 import { AgentHostSelect } from "./agent-host-select";
 import { listCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { useListCity } from "@/hooks/actions/useCity";
 
 const Schema = zod.object({
     agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
@@ -22,10 +23,8 @@ const Schema = zod.object({
     adults: zod.coerce.number().min(1, "Tối thiểu 1 người lớn").default(0),
     children: zod.coerce.number().default(0),
     nationality: zod.string().default("Vietnam"),
-    category: zod.array(zod.string())
-        .transform((val) => val.join(",")),
-    meal: zod.array(zod.string())
-        .transform((val) => val.join(",")),
+    category: zod.string(),
+    meal: zod.string(),
     destination: zod.string().min(1, "Điểm đến là bắt buộc"),
     title: zod.string().min(1, "Tiêu đề là bắt buộc"),
     specialNote: zod.string().default(""),
@@ -121,6 +120,18 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
     });
 
 
+    // quốc gia
+
+    const { ctData } = useListCity({
+        strTableName: "MC02",
+        strFeildSelect: "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
+        strWhere: "WHERE (IsActive=1)  ORDER BY MC02_CountryName ASC ",
+    })
+
+    const COUNTRY_OPTIONS = ctData.map((item: any) => ({
+        label: item.strName,
+        value: item.id,
+    }));
 
     const renderForm = (
         <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-6">
@@ -163,10 +174,10 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
                     type="number"
                     label={{ text: "No of Child", icon: <span className="text-red-500">*</span> }}
                 />
-                <Field.Select
+                <Field.SearchSelect
                     name="nationality"
                     label={{ text: "Nationality" }}
-                    options={COUNTRIES_OPTIONS}
+                    options={COUNTRY_OPTIONS}
                 />
                 <Field.MultiSelect
                     name="category"

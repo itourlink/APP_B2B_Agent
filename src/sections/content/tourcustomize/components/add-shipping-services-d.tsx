@@ -80,7 +80,6 @@ const AddShippingServicesD = () => {
         isLoading,
     } = useGetlistTourPublish(payload);
 
-    console.log("tourData", tourData);
 
     // SUBMIT
     const onSubmit = methods.handleSubmit(() => {

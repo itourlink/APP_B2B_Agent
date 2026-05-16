@@ -18,7 +18,6 @@ const ReportCommission = () => {
     const router = useRouter();
     const user = useUserStore((state) => state.user);
 
-    console.log("user", user)
     const [filters, setFilters] = useState({
         startTime: "",
         endTime: "",

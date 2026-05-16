@@ -150,7 +150,6 @@ const HotelDetail = () => {
                         <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                             <img
                                 onClick={() => {
-                                    console.log("Image clicked, opening popup...");
                                     setPreviewImage(
                                         getUrlImage(hotel?.strSupplierImage) ||
                                         "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image");

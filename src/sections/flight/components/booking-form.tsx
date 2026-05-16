@@ -164,7 +164,6 @@ const BookingCard: React.FC = () => {
         {/* Nút xác nhận cuối cùng */}
         <button 
           className="w-full rounded-xl bg-gradient-to-r from-[#2566b0] to-blue-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-100 transition-all hover:brightness-110 active:scale-[0.99]"
-          onClick={() => console.log({ departureDate: departureDate?.format("DD/MM/YYYY"), ...counts })}
         >
           Xác nhận đặt vé
         </button>

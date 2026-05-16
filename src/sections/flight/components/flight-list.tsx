@@ -7,16 +7,16 @@ import { getUrlImage } from '@/utils/format-image';
 
 // ─── FlightCard ───────────────────────────────────────────────────────────────
 
-const FlightCard = ({ flight }:  any ) => {
+const FlightCard = ({ flight }: any) => {
   const router = useRouter();
 
- 
+
   return (
     <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full min-h-[195px] group">
       {/* Image — left */}
       <div
         className="relative w-1/2 overflow-hidden bg-gray-100 cursor-pointer shrink-0"
-        // onClick={handleNavigate}
+      // onClick={handleNavigate}
       >
         <img
           src={getUrlImage(flight?.strSupplierImage)}
@@ -95,7 +95,7 @@ const FlightCard = ({ flight }:  any ) => {
 
 const FlightList = () => {
   const filters = {
-    page:1,
+    page: 1,
     pageSize: 15,
   };
 
@@ -103,32 +103,32 @@ const FlightList = () => {
 
   return (
     <section className="max-w-7xl mx-auto px-6  mb-10">
-    
-    {/* Header */}
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-2xl font-bold text-gray-800">
-        Chuyến bay nổi bật
-      </h2>
 
-      <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
-        <span className="text-sm text-gray-500 ml-2">Hiển thị dạng:</span>
-        <button className="p-1.5 bg-[#2566b0] text-white rounded-md shadow-sm">
-          <LayoutGrid size={18} />
-        </button>
-        <button className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
-          <List size={18} />
-        </button>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Chuyến bay nổi bật
+        </h2>
+
+        <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
+          <span className="text-sm text-gray-500 ml-2">Hiển thị dạng:</span>
+          <button className="p-1.5 bg-[#2566b0] text-white rounded-md shadow-sm cursor-pointer">
+            <LayoutGrid size={18} />
+          </button>
+          <button className="cursor-pointer p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
+            <List size={18} />
+          </button>
+        </div>
       </div>
-    </div>
 
-    {/* List */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {flightData.map((flight: any) => (
-        <FlightCard key={flight.strSupplierGUID} flight={flight} />
-      ))}
-    </div>
+      {/* List */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {flightData.map((flight: any) => (
+          <FlightCard key={flight.strSupplierGUID} flight={flight} />
+        ))}
+      </div>
 
-  </section>
+    </section>
   )
 }
 

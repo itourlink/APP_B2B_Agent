@@ -106,7 +106,7 @@ const AddToursD = () => {
     isLoading,
   } = useGetlistTourPublish(payload);
 
-  console.log("tourData", tourData);
+  ("tourData", tourData);
 
   // SUBMIT
   const onSubmit = methods.handleSubmit(() => {

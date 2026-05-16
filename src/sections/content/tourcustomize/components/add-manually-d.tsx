@@ -79,7 +79,6 @@ const resolveInitialCountryCode = (
 };
 
 const AddManual = ({ selectedDay, onClose, strTourCustomizedDayGUID }: AddManualProps) => {
-    console.log("strTourCustomizedDayGUID", strTourCustomizedDayGUID)
     const [isOvernight, setIsOvernight] = useState(false);
     const [isPriceByRoom, setIsPriceByRoom] = useState(false);
 

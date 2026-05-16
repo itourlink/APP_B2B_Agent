@@ -115,13 +115,13 @@ const GuideFeeList = () => {
                     <div className="flex gap-1">
                         <button
                             onClick={() => setViewMode("grid")}
-                            className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
                         >
                             <LayoutGrid size={16} />
                         </button>
                         <button
                             onClick={() => setViewMode("list")}
-                            className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
                         >
                             <List size={16} />
                         </button>

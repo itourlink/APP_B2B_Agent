@@ -55,7 +55,6 @@ export const DetailTourContent = ({
     tourCustomizedGUID,
 }: DetailTourContentProps) => {
 
-    console.log("itemListData", itemListData)
     const { showToast } = useToastStore();
 
     const queryClient = useQueryClient();
