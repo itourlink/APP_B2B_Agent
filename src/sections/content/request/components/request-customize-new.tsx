@@ -58,7 +58,7 @@ const RequestCustomizeNew = () => {
             field: "strRequestCode",
             headerName: "Mã yêu cầu",
             render: (_, row) => (
-                <button onClick={() => router.replaceParams(paths.content.detailRequestCustomize, { item: row })} className="cursor-pointer text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                <button onClick={() => router.replaceParams(paths.content.detailRequestCustomize, { item: row })} className="text-[#004b91] cursor-pointer text-xs font-mono bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {row?.strRequestCode || "---"}
                 </button>
             )
@@ -83,7 +83,7 @@ const RequestCustomizeNew = () => {
             field: "strCompanyName",
             headerName: "Công ty",
             render: (value) => (
-                <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm min-w-full">
+                <div className="flex items-center gap-2 font-semibold text-sm min-w-full">
                     <Building2 size={14} className="text-[#4e6d9a]" />
                     <span className="uppercase tracking-tight">{value}</span>
                 </div>

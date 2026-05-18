@@ -1,6 +1,6 @@
 import PrimaryButton from "@/components/button/primary-button";
 import CustomFilter from "@/components/form/custom-filter"
-import { Building2, Calendar, CheckCircle2, Copy, Edit3, RotateCcw, Search, Trash2, Users, XCircle } from "lucide-react";
+import { Building2, Calendar, CheckCircle2, Edit3, RotateCcw, Search, Trash2, Users, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import Pagination from "@/components/pagination/pagination";
@@ -117,16 +117,6 @@ const TourCancelledView = () => {
                             {row?.strServiceName ?? "---"}
                         </span>
                     </button>
-
-                    <Copy
-                        size={14}
-                        className="cursor-pointer hover:text-[#004b91]"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(row?.strServiceName ?? "");
-                            showToast("success", "Đã sao chép tên dịch vụ")
-                        }}
-                    />
                 </div>
             )
         },

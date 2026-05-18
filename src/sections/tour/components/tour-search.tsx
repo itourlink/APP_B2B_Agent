@@ -12,6 +12,7 @@ const TOUR_TYPE_OPTIONS = [
     { label: "Tour ghép", value: "group" },
     { label: "Tour riêng", value: "private" },
 ];
+
 const getTourSubOptions = (mainType: string) => {
     if (mainType === "group") {
         return [
@@ -73,17 +74,8 @@ const TourSearch = () => {
     const router = useRouter();
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
-    const [draftFilters2, setDraftFilters2] = useState<{
-        intNoOfAdult: number;
-        strListNoOfChild: string;
-        intNoOfSGLSup: number;
-        intNoOfTPLRec: number;
-        strLocationCode: string | null;
-        dtmFilterDateValidFrom: Date;
-        dtmFilterDateValidTo: Date | null;
-        strTourType: string;
-        strTourSubType: string;
-    }>(DEFAULT_FILTERS2);
+
+    const [draftFilters2, setDraftFilters2] = useState(DEFAULT_FILTERS2);
 
     const [selectedTourUrl, setSelectedTourUrl] = useState<string | null>(null);
 
@@ -92,12 +84,15 @@ const TourSearch = () => {
         pageSize: filters.pageSize,
         isTourSeries: filters.isTourSeries,
         strFilterDestinationName: filters.strFilterDestinationName,
+
+        // ADD THIS
+        ...draftFilters2,
     };
 
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
-        // TOUR → detail
+        // CASE 1: click TOUR -> detail
         if (selectedTourUrl) {
             router.replaceParams(paths.shop.tour.detail, {
                 item: {
@@ -107,10 +102,10 @@ const TourSearch = () => {
             return;
         }
 
-        // SEARCH LIST
+        // CASE 2: search list
         router.replaceParams(paths.shop.search, {
             isTourSeries: filters.isTourSeries,
-            isSearchTour: draftFilters2,
+            ...draftFilters2,
         });
     };
 
@@ -130,7 +125,9 @@ const TourSearch = () => {
                                 data={searchData}
                                 isLoading={searchLoading}
                                 onSelectDestination={(item: any) => {
-                                    const isTour = !!item?.strServiceNameUrl;
+                                    const isTour =
+                                        item?.strServiceNameUrl &&
+                                        !item?.strDestinationCode;
 
                                     setFilters((p: any) => ({
                                         ...p,
@@ -140,12 +137,12 @@ const TourSearch = () => {
 
                                     if (isTour) {
                                         setSelectedTourUrl(
-                                            item?.strServiceNameUrl
+                                            item.strServiceNameUrl
                                         );
 
                                         setDraftFilters2((prev) => ({
                                             ...prev,
-                                            strLocationCode: null,
+                                            strLocationCode: "",
                                         }));
                                     } else {
                                         setSelectedTourUrl(null);
@@ -153,7 +150,8 @@ const TourSearch = () => {
                                         setDraftFilters2((prev) => ({
                                             ...prev,
                                             strLocationCode:
-                                                item?.strDestinationCode,
+                                                item?.strDestinationCode ??
+                                                "VN0000",
                                         }));
                                     }
 
@@ -165,7 +163,12 @@ const TourSearch = () => {
 
                     { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
                     { type: "dateRange", keyStart: "start", keyEnd: "end" },
-                    { type: "tourType", key: "tourType", mainOptions: TOUR_TYPE_OPTIONS, getSubOptions: getTourSubOptions },
+                    {
+                        type: "tourType",
+                        key: "tourType",
+                        mainOptions: TOUR_TYPE_OPTIONS,
+                        getSubOptions: getTourSubOptions,
+                    },
                 ]}
                 values={filters}
                 onChange={(k, v) => {
@@ -207,6 +210,7 @@ const TourSearch = () => {
                                         : prev.dtmFilterDateValidTo,
                             }));
                         }
+
                         if (k === "tourType") {
                             setDraftFilters2((prev) => ({
                                 ...prev,

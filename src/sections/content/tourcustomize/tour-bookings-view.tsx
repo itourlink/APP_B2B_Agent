@@ -106,16 +106,6 @@ const TourBookingsView = () => {
                             {row?.strServiceName ?? "---"}
                         </span>
                     </button>
-
-                    <Copy
-                        size={14}
-                        className="cursor-pointer hover:text-[#004b91]"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(row?.strServiceName ?? "");
-                            showToast("success", "Đã sao chép tên dịch vụ")
-                        }}
-                    />
                 </div>
             )
         },
