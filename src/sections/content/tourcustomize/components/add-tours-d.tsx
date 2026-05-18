@@ -106,8 +106,6 @@ const AddToursD = () => {
     isLoading,
   } = useGetlistTourPublish(payload);
 
-  ("tourData", tourData);
-
   // SUBMIT
   const onSubmit = methods.handleSubmit(() => {
     setFilters((prev) => ({

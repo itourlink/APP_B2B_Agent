@@ -96,20 +96,21 @@ export const useGetlistSupplierMappingPrice = (filters?: any) => {
   const page = filters?.page ?? 1;
 
   const pageSize = filters?.pageSize ?? 10;
+  const strSupplierMappingPriceGUID = filters?.strSupplierMappingPriceGUID || null;
+  const strSupplierGUID = filters?.strSupplierGUID || null;
+  const tblsReturn = filters?.tblsReturn || null;
 
   const query = useQuery({
     queryKey: [
       QUERY_KEYS.TOUR_CUSTOMER.LIST_SUP_MAP_PRICE,
-      page,
-      pageSize,
       filters,
     ],
 
     queryFn: () =>
       fetchGetListSupplierMappingPrice({
-        strSupplierMappingPriceGUID: null,
+        strSupplierMappingPriceGUID: strSupplierMappingPriceGUID,
         strCompanyGUID: null,
-        strSupplierGUID: null,
+        strSupplierGUID: strSupplierGUID,
         strPriceListGUID: null,
         strPriceLevelGUID: null,
         intComTypeID: 0,
@@ -124,12 +125,10 @@ export const useGetlistSupplierMappingPrice = (filters?: any) => {
         strListCityCode: "VN00010001,",
         intCurrencyView: 3,
         intPaxCount: 15,
-
         intCurPage: page,
         intPageSize: pageSize,
-
         strOrder: null,
-        tblsReturn: "[0]",
+        tblsReturn: tblsReturn ?? "[0]",
         intTypeID: 1,
       }),
 

@@ -120,7 +120,7 @@ const colDefs: ColumnDef<any>[] = [
   {
     field: "action",
     headerName: "Thao tác",
-    render: (_: any, row: any) => (
+    render: (_: any) => (
       <button
         type="button"
         className="min-w-[60px] h-[42px] rounded-[4px] bg-[#e9edf2] px-4 text-[15px] font-medium text-[#2f5f9f] hover:bg-[#dfe6ee]"

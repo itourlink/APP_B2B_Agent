@@ -208,7 +208,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     }
 
 
-    const onINValid = (errors: any) => {
+    const onINValid = (_: any) => {
         showToast("error", "Vui lòng kiểm tra lại thông tin");
     }
     const onSubmit = handleSubmit(onValid, onINValid);
