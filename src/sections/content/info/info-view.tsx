@@ -5,15 +5,20 @@ import InfoCompany from "./components/info-company";
 import InfoPerson from "./components/info-person";
 import UserManagement from "./components/user-management";
 import { TabsPills } from "@/components/tab/tabspills";
+import { useTranslate } from "@/locales";
 
-const INFO_TABS = [
-    { id: "person", label: "Thông tin cá nhân", icon: User, component: InfoPerson },
-    { id: "company", label: "Thông tin công ty", icon: Building2, component: InfoCompany },
-    { id: "management", label: "Quản lý thành viên", icon: Users2, component: UserManagement },
-    { id: "bank", label: "Tài khoản ngân hàng", icon: CreditCard, component: BankAccount },
-];
 
 const InfoView = () => {
+    const { t } = useTranslate("info")
+
+    const INFO_TABS = [
+        { id: "person", label: t("personInfor"), icon: User, component: InfoPerson },
+        { id: "company", label: t("companyInfor"), icon: Building2, component: InfoCompany },
+        { id: "management", label: t("memberManage"), icon: Users2, component: UserManagement },
+        { id: "bank", label: t("bankAccount"), icon: CreditCard, component: BankAccount },
+    ];
+
+   
     const [activeTab, setActiveTab] = useState("person");
 
     const ActiveComponent = INFO_TABS.find((tab) => tab.id === activeTab)?.component || InfoPerson;
