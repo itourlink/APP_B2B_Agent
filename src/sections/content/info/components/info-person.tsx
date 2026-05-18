@@ -140,6 +140,12 @@ const InfoPerson = () => {
     });
   });
 
+  const [preview, setPreview] = useState(
+    user?.strAvatar
+      ? `${CONFIG.serverUrlSP}${user.strAvatar.replace(/^\//, "")}`
+      : ""
+  );
+
   if (userLoading) {
     return (
       <div className="w-full flex justify-center items-center py-10">
@@ -147,12 +153,6 @@ const InfoPerson = () => {
       </div>
     );
   }
-
-  const [preview, setPreview] = useState(
-    user?.strAvatar
-      ? `${CONFIG.serverUrlSP}${user.strAvatar.replace(/^\//, "")}`
-      : ""
-  );
 
   return (
     <div className="">
