@@ -71,7 +71,7 @@ const AddAccountBank = ({ onClose }: Props) => {
             },
         });
     });
-
+    
     return (
         <Form methods={methods} onSubmit={onSubmit}>
             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-6">

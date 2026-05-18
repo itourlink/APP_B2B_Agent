@@ -8,16 +8,12 @@ import { useEffect, useState } from "react";
 import PanelPopup from "@/components/popup/panel-popup";
 import ChangeIdUser from "./change-id-user";
 import ChangePasswordUser from "./change-password-user";
-import {
-  CURRENCYS_OPTIONS,
-  LANGUES_OPTIONS,
-  TITLES_OPTIONS,
-} from "../../../../utils/oprion-data";
 import { useUserStore } from "@/zustand/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 import { updMemberInfoProfile } from "@/hooks/actions/useUser";
 import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
+import { useTranslate } from "@/locales";
 
 const Schema = zod.object({
   avartarFile: zod.any().optional(),
@@ -60,6 +56,33 @@ const default_form_values: SchemaType = {
 };
 
 const InfoPerson = () => {
+  const { t } = useTranslate("info");
+
+  const titleOptions = [
+    { label: t("titleMr"), value: "2" },
+    { label: t("titleMs"), value: "3" },
+    { label: t("titleMrs"), value: "4" },
+  ];
+
+  const languageOptions = [
+    { label: t("selectOption"), value: "" },
+    { label: t("languageVietnamese"), value: "18" },
+    { label: t("languageEnglish"), value: "19" },
+    { label: t("languageFrench"), value: "20" },
+  ];
+
+  const currencyOptions = [
+    { label: t("selectOption"), value: "" },
+    { label: t("currencyVnd"), value: "1" },
+    { label: t("currencyUsd"), value: "2" },
+    { label: t("currencyEur"), value: "3" },
+    { label: t("currencyJpy"), value: "4" },
+    { label: t("currencyRub"), value: "5" },
+    { label: t("currencyAud"), value: "6" },
+    { label: t("currencyHkd"), value: "7" },
+    { label: t("currencyGbp"), value: "8" },
+  ];
+
   const user = useUserStore((state) => state.user);
 
   const userLoading = useUserStore((state) => state.loading);
@@ -132,10 +155,10 @@ const InfoPerson = () => {
 
     updMemberInfoProfileApi(payload, {
       onSuccess: () => {
-        showToast("success", "Cập nhật thành công");
+        showToast("success", t("updateSuccess"));
       },
       onError: () => {
-        showToast("error", "Cập nhật thất bại");
+        showToast("error", t("updateError"));
       },
     });
   });
@@ -149,7 +172,7 @@ const InfoPerson = () => {
   if (userLoading) {
     return (
       <div className="w-full flex justify-center items-center py-10">
-        Đang tải dữ liệu...
+        {t("loadingData")}
       </div>
     );
   }
@@ -159,12 +182,10 @@ const InfoPerson = () => {
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
           <BannerMediaField
-            title="Avatar"
+            title={t("avatar")}
             value={preview}
             onChange={(path) => {
-              setPreview(
-                `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
-              );
+              setPreview(`${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`);
 
               setValue("avartarFile", path);
             }}
@@ -174,102 +195,102 @@ const InfoPerson = () => {
             <Field.Select
               name="title"
               label={{
-                text: "Danh xưng",
+                text: t("title"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              options={TITLES_OPTIONS}
+              options={titleOptions}
             />
 
             <Field.Text
               name="firstName"
               label={{
-                text: "Tên",
+                text: t("firstName"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              placeholder="Nhập tên"
+              placeholder={t("enterFirstName")}
             />
 
             <Field.Text
               name="lastName"
               label={{
-                text: "Họ và đệm",
+                text: t("lastName"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              placeholder="Nhập họ"
+              placeholder={t("enterLastName")}
             />
 
             <Field.Text
               name="phone"
               label={{
-                text: "Di động",
+                text: t("phone"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              placeholder="Nhập số điện thoại"
+              placeholder={t("enterPhone")}
             />
 
             <Field.Text
               name="email"
               label={{
-                text: "Email",
+                text: t("email"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              placeholder="Nhập email"
+              placeholder={t("enterEmail")}
             />
 
             <div />
 
             <Field.Text
               name="position"
-              label={{ text: "Chức vụ" }}
-              placeholder="Nhập chức vụ"
+              label={{ text: t("position") }}
+              placeholder={t("enterPosition")}
             />
 
             <Field.Text
               name="company"
-              label={{ text: "Đơn vị công tác" }}
-              placeholder="Tên công ty"
+              label={{ text: t("company") }}
+              placeholder={t("enterCompany")}
             />
 
             <Field.Text
               name="skype"
-              label={{ text: "Skype" }}
-              placeholder="Link skype"
+              label={{ text: t("skype") }}
+              placeholder={t("enterSkype")}
             />
 
             <Field.Text
               name="facebook"
-              label={{ text: "Facebook" }}
-              placeholder="Link facebook"
+              label={{ text: t("facebook") }}
+              placeholder={t("enterFacebook")}
             />
 
             <Field.Text
               name="address"
-              label={{ text: "Địa chỉ" }}
-              placeholder="Nhập địa chỉ"
+              label={{ text: t("address") }}
+              placeholder={t("enterAddress")}
             />
 
             <Field.Select
               name="language"
               label={{
-                text: "Ngôn ngữ",
+                text: t("language"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              options={LANGUES_OPTIONS}
+              options={languageOptions}
             />
 
             <Field.Select
               name="currency"
               label={{
-                text: "Đơn vị tiền tệ (ĐVTT)",
+                text: t("currency"),
                 icon: <span className="text-red-500">*</span>,
               }}
-              options={CURRENCYS_OPTIONS}
+              options={currencyOptions}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700">
-              Giới thiệu bản thân
+              {t("bio")}
             </label>
             <div className="rounded-xl overflow-hidden border border-gray-200">
               <Field.Editor name="bio" />
@@ -277,7 +298,9 @@ const InfoPerson = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-700">Signature</label>
+            <label className="text-sm font-bold text-gray-700">
+              {t("signature")}
+            </label>
             <div className="rounded-xl overflow-hidden border border-gray-200">
               <Field.Editor name="signature" />
             </div>
@@ -289,7 +312,7 @@ const InfoPerson = () => {
               disabled={isSubmitting || isLoading}
               className="cursor-pointer w-full px-16 py-2.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
             >
-              {isSubmitting || isLoading ? "Đang lưu..." : "Lưu"}
+              {isSubmitting || isLoading ? t("saving") : t("save")}
             </button>
           </div>
         </div>
@@ -297,11 +320,9 @@ const InfoPerson = () => {
 
       {open.changeId && (
         <PanelPopup
-          title="Thay đổi tên đăng nhập"
+          title={t("changeUsername")}
           open={open.changeId}
-          onClose={() =>
-            setOpen((prev) => ({ ...prev, changeId: false }))
-          }
+          onClose={() => setOpen((prev) => ({ ...prev, changeId: false }))}
         >
           <ChangeIdUser />
         </PanelPopup>
@@ -309,16 +330,12 @@ const InfoPerson = () => {
 
       {open.changePw && (
         <PanelPopup
-          title="Đổi mật khẩu"
+          title={t("changePassword")}
           open={open.changePw}
-          onClose={() =>
-            setOpen((prev) => ({ ...prev, changePw: false }))
-          }
+          onClose={() => setOpen((prev) => ({ ...prev, changePw: false }))}
         >
           <ChangePasswordUser
-            onClose={() =>
-              setOpen((prev) => ({ ...prev, changePw: false }))
-            }
+            onClose={() => setOpen((prev) => ({ ...prev, changePw: false }))}
           />
         </PanelPopup>
       )}
