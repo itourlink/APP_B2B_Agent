@@ -17,6 +17,7 @@ import AuthUserInfo from "@/sections/auth/components/auth-user-info";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListMenu } from "@/hooks/actions/useMenu";
 import { buildMenu } from "@/components/header/data-menu";
+import { useEffect } from "react";
 
 const ShopHeader = () => {
     const router = useRouter();
@@ -28,7 +29,6 @@ const ShopHeader = () => {
         new URLSearchParams(location.search).get("company") || "";
 
     const { menuData } = useListMenu();
-
     const menu = buildMenu(menuData || []);
 
     const { user, userLoading } = useUser();
@@ -70,9 +70,31 @@ const ShopHeader = () => {
         });
     };
 
-    const hasActive = (menu || []).some(
+    const hasActive = menu?.some(
         (item) => item && isPathMatch(item)
     );
+
+    useEffect(() => {
+        if (!menu?.length) return;
+
+        const firstItem = menu[0];
+
+        if (!firstItem?.link) return;
+
+        if (!hasActive) {
+            const pathname = firstItem.link.split("?")[0];
+
+            const search = company
+                ? `?company=${company}`
+                : "";
+
+            router.replace({
+                pathname,
+                search,
+            });
+        }
+    }, [menu, hasActive, company]);
+
 
     const handleNavigate = (link?: string) => {
         if (!link) return;
@@ -91,13 +113,15 @@ const ShopHeader = () => {
         router.push(url);
     };
 
+    if (!menu?.length) return null;
+
     return (
         <div className="bg-white px-6 sticky top-0 left-0 w-full z-50 shadow h-30 flex flex-col justify-center gap-5">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-5">
                     <button
                         onClick={() =>
-                           window.location.href = "https://myagentmarket.itourlink.com"
+                            window.location.href = "https://myagentmarket.itourlink.com"
                         }
                         className="overflow-hidden w-10 cursor-pointer"
                     >
@@ -108,7 +132,7 @@ const ShopHeader = () => {
                         />
                     </button>
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
-                    
+
                     <button
                         onClick={() => window.location.href = "https://myagentmember.itourlink.com/agent"}
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"

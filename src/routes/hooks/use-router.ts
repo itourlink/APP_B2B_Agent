@@ -18,14 +18,28 @@ export function useRouter() {
 
       push: (href: string) => navigate(href),
 
-      replace: (href: string) =>
-        navigate(
-          {
-            pathname: href,
-            search: location.search, // 👈 giữ luôn
-          },
-          { replace: true }
-        ),
+      replace: (
+        href:
+          | string
+          | {
+            pathname: string;
+            search?: string;
+          }
+      ) => {
+        if (typeof href === "string") {
+          navigate(
+            {
+              pathname: href,
+              search: location.search,
+            },
+            { replace: true }
+          );
+
+          return;
+        }
+
+        navigate(href, { replace: true });
+      },
 
       replaceParams: (href: string, state?: any) =>
         navigate(

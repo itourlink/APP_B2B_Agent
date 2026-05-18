@@ -98,7 +98,6 @@ const InfoCard = ({ user, isLoading }: Props) => {
                             <span className="font-medium">{t("logout")}</span>
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
