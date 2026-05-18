@@ -183,7 +183,6 @@ const AddToursD = () => {
             <Search size={18} />
           </button>
         </div>
-
         {/* DATA */}
         <div className="space-y-3">
           {isLoading ? (
@@ -195,6 +194,7 @@ const AddToursD = () => {
                   key={index}
                   className="border rounded-xl p-4"
                 >
+                  
                   <div className="font-semibold">
                     {
                       item.strTourName
