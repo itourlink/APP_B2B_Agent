@@ -102,7 +102,7 @@ const FlightList = () => {
   const { flightData } = useListFlight(filters);
 
   return (
-    <section className="max-w-7xl mx-auto px-6  mb-10">
+    <section className="max-w-7xl mx-auto px-6  mb-10 mt-6 ">
 
       {/* Header */}
       <div className="flex justify-between items-center mb-6">

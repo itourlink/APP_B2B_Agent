@@ -34,6 +34,7 @@ const TourDetail = () => {
     const location = useLocation();
     const item = location.state;
 
+    console.log(item);
     const [filters] = useState({
         page: 1,
         pageSize: 1,
@@ -118,21 +119,21 @@ const TourDetail = () => {
                                     <div className="flex items-center gap-2 text-slate-500">
                                         <span className="text-sm font-semibold">Share:</span>
                                         {[
-                                            { 
-                                                Icon: Facebook, 
-                                                link: `https://www.facebook.com` 
+                                            {
+                                                Icon: Facebook,
+                                                link: `https://www.facebook.com`
                                             },
-                                            { 
-                                                Icon: Twitter, 
-                                                link: `https://twitter.com` 
+                                            {
+                                                Icon: Twitter,
+                                                link: `https://twitter.com`
                                             },
-                                            { 
-                                                Icon: Mail, 
-                                                link: `https://gmail.com` 
+                                            {
+                                                Icon: Mail,
+                                                link: `https://gmail.com`
                                             }
                                         ].map(({ Icon, link }, i) => (
-                                            <a 
-                                                key={i} 
+                                            <a
+                                                key={i}
                                                 href={link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"

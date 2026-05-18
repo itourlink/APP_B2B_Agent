@@ -31,7 +31,7 @@ export const TourCard = ({ tour }: any) => {
                     </div>
                     <div className="flex items-center gap-2">
                         <Clock size={14} className="text-gray-400" />
-                        <span>Thời lượng: {tour?.duration}</span>
+                        <span>Thời lượng: {tour?.intNoOfDay} Ngày / {Number(tour?.intNoOfDay) - 1} Đêm</span>
                     </div>
                     <div className="flex items-start gap-2">
                         <MapPin size={14} className="text-gray-400 mt-1 shrink-0" />

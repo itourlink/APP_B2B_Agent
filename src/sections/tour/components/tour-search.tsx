@@ -32,11 +32,6 @@ const getTourSubOptions = (mainType: string) => {
     return [{ label: "Tất cả", value: "all" }];
 };
 
-
-
-
-
-
 const DEFAULT_FILTERS = {
     page: 1,
     pageSize: 10,

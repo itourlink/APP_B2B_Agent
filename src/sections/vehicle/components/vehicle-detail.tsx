@@ -21,7 +21,7 @@ const VehicleDetail = () => {
     page: 1,
     pageSize: 1,
     strSupplierGUID: item?.strSupplierGUID,
-    
+
   });
 
   const vehicle = vdData?.[0]?.[0];
@@ -31,105 +31,105 @@ const VehicleDetail = () => {
 
 
   const [filters] = useState({
-  page: null,
-  pageSize: null,
-  strSupplierGUID: item?.strSupplierGUID,
-  tblsReturn: "[0][1][2]",
-});
-    const { mpData, mpLoading } = useListVehicleMappingPrice(filters);
-    
-  
-const colDefs: ColumnDef<any>[] = [
-  {
-    field: "No",
-    headerName: "STT",
-    render: (value: any) => (
-      <span className="text-[15px] text-[#2f3a4a]">{value ?? "-"}</span>
-    ),
-  },
-  {
-    field: "strItineraryName",
-    headerName: "Tên xe",
-    render: (value: any) => (
-      <div className="text-[15px] text-[#2f3a4a] leading-[22px] max-w-[220px]">
-        {value || "-"}
-      </div>
-    ),
-  },
-  {
-    field: "dtmDateStart",
-    headerName: "Ngày bắt đầu",
-    render: (value: any) => (
-      <input
-        type="text"
-        value={value || "16/04/2026"}
-        readOnly
-        className="h-[42px] w-[118px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
-      />
-    ),
-  },
-  {
-    field: "intQuantity",
-    headerName: "Số lượng",
-    render: (value: any) => (
-      <input
-        type="text"
-        value={value ?? 1}
-        readOnly
-        className="h-[42px] w-[60px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
-      />
-    ),
-  },
-  {
-    field: "strCarTypeName",
-    headerName: "Chọn xe",
-    render: (value: any, row: any) => (
-      <select
-        defaultValue={value || ""}
-        className="h-[42px] w-[150px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
-      >
-        <option value=""> </option>
+    page: null,
+    pageSize: null,
+    strSupplierGUID: item?.strSupplierGUID,
+    tblsReturn: "[0][1][2]",
+  });
+  const { mpData, mpLoading } = useListVehicleMappingPrice(filters);
 
-        {/* nếu sau này có list xe thì map ở đây */}
-        {row?.carOptions?.map((car: any, index: number) => (
-          <option key={index} value={car?.value}>
-            {car?.label}
-          </option>
-        ))}
-      </select>
-    ),
-  },
-  {
-    field: "dblPrice",
-    headerName: "Đơn giá",
-    render: (value: any) => (
-      <div className="text-[15px] text-[#2f3a4a] whitespace-nowrap">
-        ${value ?? 0}
-      </div>
-    ),
-  },
-  {
-    field: "dblTotalPrice",
-    headerName: "Tổng giá",
-    render: (value: any) => (
-      <div className="text-[15px] text-[#2f3a4a] whitespace-nowrap">
-        ${value ?? 0}
-      </div>
-    ),
-  },
-  {
-    field: "action",
-    headerName: "Thao tác",
-    render: (_: any) => (
-      <button
-        type="button"
-        className="min-w-[60px] h-[42px] rounded-[4px] bg-[#e9edf2] px-4 text-[15px] font-medium text-[#2f5f9f] hover:bg-[#dfe6ee]"
-      >
-        Chọn
-      </button>
-    ),
-  },
-];
+
+  const colDefs: ColumnDef<any>[] = [
+    {
+      field: "No",
+      headerName: "STT",
+      render: (value: any) => (
+        <span className="text-[15px] text-[#2f3a4a]">{value ?? "-"}</span>
+      ),
+    },
+    {
+      field: "strItineraryName",
+      headerName: "Tên xe",
+      render: (value: any) => (
+        <div className="text-[15px] text-[#2f3a4a] leading-[22px] max-w-[220px]">
+          {value || "-"}
+        </div>
+      ),
+    },
+    {
+      field: "dtmDateStart",
+      headerName: "Ngày bắt đầu",
+      render: (value: any) => (
+        <input
+          type="text"
+          value={value || "16/04/2026"}
+          readOnly
+          className="h-[42px] w-[118px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
+        />
+      ),
+    },
+    {
+      field: "intQuantity",
+      headerName: "Số lượng",
+      render: (value: any) => (
+        <input
+          type="text"
+          value={value ?? 1}
+          readOnly
+          className="h-[42px] w-[60px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
+        />
+      ),
+    },
+    {
+      field: "strCarTypeName",
+      headerName: "Chọn xe",
+      render: (value: any, row: any) => (
+        <select
+          defaultValue={value || ""}
+          className="h-[42px] w-[150px] rounded-[4px] border border-[#cfcfcf] bg-white px-3 text-[15px] text-[#5b6575] outline-none"
+        >
+          <option value=""> </option>
+
+          {/* nếu sau này có list xe thì map ở đây */}
+          {row?.carOptions?.map((car: any, index: number) => (
+            <option key={index} value={car?.value}>
+              {car?.label}
+            </option>
+          ))}
+        </select>
+      ),
+    },
+    {
+      field: "dblPrice",
+      headerName: "Đơn giá",
+      render: (value: any) => (
+        <div className="text-[15px] text-[#2f3a4a] whitespace-nowrap">
+          ${value ?? 0}
+        </div>
+      ),
+    },
+    {
+      field: "dblTotalPrice",
+      headerName: "Tổng giá",
+      render: (value: any) => (
+        <div className="text-[15px] text-[#2f3a4a] whitespace-nowrap">
+          ${value ?? 0}
+        </div>
+      ),
+    },
+    {
+      field: "action",
+      headerName: "Thao tác",
+      render: (_: any) => (
+        <button
+          type="button"
+          className="min-w-[60px] h-[42px] rounded-[4px] bg-[#e9edf2] px-4 text-[15px] font-medium text-[#2f5f9f] hover:bg-[#dfe6ee]"
+        >
+          Chọn
+        </button>
+      ),
+    },
+  ];
   return (
     <div className="max-w-[1400px] mx-auto px-6 pb-6 pt-[50px] bg-[#f8f9fa] min-h-screen flex flex-col lg:flex-row items-start gap-8 font-sans">
       {/* =========================================
@@ -190,7 +190,7 @@ const colDefs: ColumnDef<any>[] = [
                   <option>
                     {company?.strCompanyName || "Không có dữ liệu"}
                     {company?.dblPriceFrom !== null &&
-                    company?.dblPriceFrom !== undefined
+                      company?.dblPriceFrom !== undefined
                       ? ` (Giá từ: $${company.dblPriceFrom}/Xe)`
                       : ""}
                   </option>
@@ -261,10 +261,10 @@ const colDefs: ColumnDef<any>[] = [
             </div>
 
             <TableCore
-                        rowData={mpData ?? []}
-                        columnDefs={colDefs}
-                        loading={mpLoading}
-                      />
+              rowData={mpData ?? []}
+              columnDefs={colDefs}
+              loading={mpLoading}
+            />
 
             {/* <div className="mt-4 overflow-hidden rounded-tl-[16px] rounded-tr-[16px] border border-gray-200">
               <div className="overflow-x-auto">

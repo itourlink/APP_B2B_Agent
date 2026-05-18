@@ -41,14 +41,35 @@ export function useRouter() {
         navigate(href, { replace: true });
       },
 
-      replaceParams: (href: string, state?: any) =>
-        navigate(
-          {
-            pathname: href,
-            search: location.search,
+      replaceParams: (
+        href:
+          | string
+          | {
+            pathname: string;
+            search?: string;
           },
-          { replace: false, state }
-        ),
+        state?: any
+      ) => {
+        if (typeof href === "string") {
+          navigate(
+            {
+              pathname: href,
+              search: location.search,
+            },
+            {
+              replace: false,
+              state,
+            }
+          );
+
+          return;
+        }
+
+        navigate(href, {
+          replace: false,
+          state,
+        });
+      },
 
       replaceQuery: (
         href: string,
