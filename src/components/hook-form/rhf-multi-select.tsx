@@ -118,7 +118,7 @@ export function RHFMultiSelect({
                   return (
                     <div
                       key={val}
-                      className="flex items-center gap-1 bg- border border-gray-300 rounded-md px-2"
+                      className="flex items-center gap-1 bg-white border border-gray-300 rounded-md px-2"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <span>{opt?.label}</span>
@@ -179,8 +179,8 @@ export function RHFMultiSelect({
                         className={twMerge(
                           "px-4 py-2 cursor-pointer",
                           active
-                            ? "bg-[#5f7eac] text-white border"
-                            : "hover:bg-gray-300 hover:text-white"
+                            ? "bg-gray-200 text-gray-500"
+                            : "hover:bg-gray-100"
                         )}
                       >
                         {opt.label}

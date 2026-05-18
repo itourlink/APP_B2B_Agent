@@ -34,6 +34,7 @@ import AddDestination from "./add-destination";
 import DeleteDestination from "./del-destination";
 import UpdateNoOfDay from "./update-no-of-day";
 import { formatMoney } from "@/utils/format-number";
+import { tr } from "date-fns/locale";
 
 interface Props {
   item: any[];
@@ -428,6 +429,17 @@ const ListTour = ({
     useState(
       firstItem?.strDayTitle || ""
     );
+
+  const items = item ?? [];
+  const dayItems = items.filter(
+    (i) => i?.strDayShiftName !== "Night"
+  )
+
+  const nightItems = items.filter(
+    (i) => i?.strDayShiftName === "Night" 
+  )
+
+  const hasData = items.length > 0; 
   return (
     <div className="w-full bg-white font-sans">
       <div className="flex items-center gap-5">
@@ -612,45 +624,36 @@ const ListTour = ({
           </thead>
 
           <tbody>
-            {(item ?? [])
-              .filter(
-                (i) =>
-                  i?.strDayShiftName !==
-                  "Night"
-              )
-              .map((item, index) =>
-                renderRow(item, index)
-              )}
 
-            {item.some(
-              (i) =>
-                i?.strDayShiftName ===
-                "Night"
-            ) && (
-                <>
-                  <tr className="bg-blue-50">
-                    <td
-                      colSpan={9}
-                      className="px-4 py-2 text-[13px] font-bold text-gray-600"
-                    >
-                      Night
-                    </td>
-                  </tr>
+            {!hasData ? (
+              <tr>
+                <td
+                  colSpan={9}
+                  className="px-4 py-2 text-[13px] font-bold text-gray-600"
+                >
+                  Không có dữ liệu 
+                </td>
+              </tr>
+            ): (
+              <>
+                {dayItems.map((row, index) => renderRow(row, index))}
+                {nightItems.length > 0 && (
+                  <>
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="px-4 py-2 text-[13px] font-bold text-gray-600"
+                      >
+                        Night
+                      </td>
+                    </tr>
 
-                  {item
-                    .filter(
-                      (i) =>
-                        i?.strDayShiftName ===
-                        "Night"
-                    )
-                    .map((item, index) =>
-                      renderRow(
-                        item,
-                        index
-                      )
-                    )}
-                </>
-              )}
+                    {nightItems.map((row, index) => renderRow(row, index))}
+                  </>
+                )}
+              </>
+            )}
+
           </tbody>
         </table>
       </div>

@@ -10,8 +10,6 @@ export const useListSQLData = (filters?: {
     strTableName?: string;
     strFeildSelect?: string;
     strWhere?: string;
-    parameters?: number | string;
-    enabled?: boolean;
 }) => {
     const query = useQuery({
         queryKey: [
@@ -19,16 +17,14 @@ export const useListSQLData = (filters?: {
             filters?.strTableName ?? null,
             filters?.strFeildSelect ?? null,
             filters?.strWhere ?? null,
-            filters?.parameters ?? null,
         ],
         queryFn: () =>
             fetchListSQLData({
                 strTableName: filters?.strTableName,
                 strFeildSelect: filters?.strFeildSelect,
                 strWhere: filters?.strWhere,
-                parameters: filters?.parameters,
             }),
-        enabled: filters?.enabled ?? !!filters?.strTableName,
+        enabled: !!filters?.strTableName,
         staleTime: Infinity,
         gcTime: Infinity,
     });
