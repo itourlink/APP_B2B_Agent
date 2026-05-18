@@ -14,8 +14,10 @@ import CartIcon from "@/sections/cart/components/cart-icon";
 import TourCustomized from "@/sections/tour-customized/tour-customized";
 import { useListMenu } from "@/hooks/actions/useMenu";
 import { buildMenu } from "./data-menu";
+import { useTranslate } from "@/locales";
 
 const Header = () => {
+  const { t } = useTranslate("header")
   const { menuData } = useListMenu();
 
   const menu = buildMenu(menuData || []);
@@ -91,7 +93,7 @@ const Header = () => {
               `${paths.shop.salesChannel.list}?company=${company}`
             )
           } className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
-            Thiết lập kênh bán
+            {t("salesChannelSetup")}
           </button>
         </div>
         <div className="flex items-center">

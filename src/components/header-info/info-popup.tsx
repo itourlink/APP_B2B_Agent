@@ -8,6 +8,7 @@ import { useUserStore } from "@/zustand/useUserStore"
 import { AnimatePresence, motion } from "framer-motion"
 import { ClipboardList, LogOut, User } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export const InfoPopup = () => {
     const [open, setOpen] = useState(false)
@@ -52,6 +53,7 @@ interface Props {
     isLoading: boolean
 }
 const InfoCard = ({ user, isLoading }: Props) => {
+    const { t } = useTranslation("header")
     const router = useRouter()
 
     const handleLogout = async () => {
@@ -81,19 +83,19 @@ const InfoCard = ({ user, isLoading }: Props) => {
                     <div className="space-y-0.5">
                         <button onClick={() => router.push(paths.content.info)} className="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-gray-600 hover:bg-blue-50 hover:text-[#004b91] rounded-xl transition-all group">
                             <User size={16} className="text-gray-400 group-hover:text-[#004b91]" />
-                            <span className="font-medium">Thông tin</span>
+                            <span className="font-medium">{t("information")}</span>
                         </button>
 
                         <button onClick={() => router.push(paths.content.service)} className="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-gray-600 hover:bg-blue-50 hover:text-[#004b91] rounded-xl transition-all group">
                             <ClipboardList size={16} className="text-gray-400 group-hover:text-[#004b91]" />
-                            <span className="font-medium">Danh sách Đặt DV</span>
+                            <span className="font-medium">{t("serviceBookingList")}</span>
                         </button>
 
                         <div className="my-1 border-t border-gray-50" />
 
                         <button onClick={() => handleLogout()} className="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-50 rounded-xl transition-all group">
                             <LogOut size={16} className="text-red-400" />
-                            <span className="font-medium">Đăng xuất</span>
+                            <span className="font-medium">{t("logout")}</span>
                         </button>
                     </div>
 

@@ -8,8 +8,10 @@ import { InfoPopup } from "./info-popup";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useIsLoggedIn, useUserStore } from "@/zustand/useUserStore";
 import { CONFIG } from "@/config-global";
+import { useTranslate } from "@/locales";
 
 const Header = () => {
+  const { t } = useTranslate("header")
   const router = useRouter();
   useUser();
   const isLoggedIn = useIsLoggedIn();
@@ -33,7 +35,7 @@ const Header = () => {
               `${paths.shop.salesChannel.list}?company=${company}`
             )
           } className="hidden md:flex items-center gap-2 text-gray-500 hover:text-[#4a6fa5] font-medium text-[14px] cursor-pointer transition-all">
-            <span>Thiết lập kênh bán</span>
+            <span>{t("salesChannelSetup")}</span>
           </div>
         </div>
 
@@ -46,13 +48,13 @@ const Header = () => {
           </div>
 
           <button onClick={() => router.push(paths.content.agentHost)} className="cursor-pointer hidden lg:block bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white px-5 py-2 rounded-full font-bold text-[13px] shadow-sm shadow-blue-200 transition-all active:scale-95 uppercase tracking-wide">
-            List Agent Host
+            {t("listAgentHost")}
           </button>
 
           {
             !isLoading && !isLoggedIn ? (
               <button onClick={() => window.location.href = `${CONFIG.serverUrl}auth/login`} className="cursor-pointer hidden lg:block bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white px-5 py-2 rounded-full font-bold text-[13px] shadow-sm shadow-blue-200 transition-all active:scale-95 uppercase tracking-wide">
-                Đăng nhập
+                {t("login")}
               </button>
             )
               : (
