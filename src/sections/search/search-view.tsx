@@ -4,6 +4,7 @@ import { TourListCard } from "./tour-list-card";
 import TourSeriesCard from "./tour-series-card";
 import { useSearchHotel } from "@/hooks/actions/useHotel";
 import { HotelCard } from "../hotel/components/hotel-list";
+import SearchFilter from "./search-filter";
 
 const SearchView = () => {
     const location = useLocation();
@@ -45,111 +46,118 @@ const SearchView = () => {
     );
 
     return (
-        <div className="mt-20 max-w-7xl m-auto">
+        <div className="mt-20 m-auto grid grid-cols-2">
+            <div className="">
+                <SearchFilter />
+            </div>
 
-            {/* ===== TOUR SERIES ===== */}
-            {isSeries ? (
-                <>
-                    <div className="text-2xl font-semibold mb-10">
-                        {tsLoading
-                            ? "Đang tìm kiếm..."
-                            : `Tìm thấy ${tsData?.[0]?.intTotalRecords || 0} dữ liệu`}
-                    </div>
+            <div className="">
 
-                    {tsError && (
-                        <div className="text-red-500 text-center py-10">
-                            Có lỗi xảy ra. Vui lòng thử lại!
+                {isSeries ? (
+                    <>
+                        <div className="text-2xl font-semibold mb-10">
+                            {tsLoading
+                                ? "Đang tìm kiếm..."
+                                : `Tìm thấy ${tsData?.[0]?.intTotalRecords || 0} dữ liệu`}
                         </div>
-                    )}
 
-                    {tsLoading && (
+                        {tsError && (
+                            <div className="text-red-500 text-center py-10">
+                                Có lỗi xảy ra. Vui lòng thử lại!
+                            </div>
+                        )}
+
+                        {tsLoading && (
+                            <div className="grid grid-cols-1 gap-6">
+                                {Array.from({ length: 4 }).map((_, i) => (
+                                    <TourSeriesCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-1 gap-6">
-                            {Array.from({ length: 4 }).map((_, i) => (
-                                <TourSeriesCardSkeleton key={i} />
-                            ))}
+                            {!tsLoading &&
+                                !tsError &&
+                                tsData?.map((tour: any) => (
+                                    <TourSeriesCard
+                                        key={tour?.strTourGUID}
+                                        tour={tour}
+                                    />
+                                ))}
                         </div>
-                    )}
+                    </>
+                ) : isSearchHotel ? (
+                    <>
+                        {/* ===== HOTEL ===== */}
 
-                    <div className="grid grid-cols-1 gap-6">
-                        {!tsLoading &&
-                            !tsError &&
-                            tsData?.map((tour: any) => (
-                                <TourSeriesCard
-                                    key={tour?.strTourGUID}
-                                    tour={tour}
-                                />
-                            ))}
-                    </div>
-                </>
-            ) : isSearchHotel ? (
-                <>
-                    {/* ===== HOTEL ===== */}
-
-                    <div className="text-2xl font-semibold mb-10">
-                        {hotelLoading ? "Đang tìm kiếm..." : ""}
-                    </div>
-
-                    {hotelError && (
-                        <div className="text-red-500 text-center py-10">
-                            Có lỗi xảy ra. Vui lòng thử lại!
+                        <div className="text-2xl font-semibold mb-10">
+                            {hotelLoading ? "Đang tìm kiếm..." : ""}
                         </div>
-                    )}
 
-                    {hotelLoading && (
+                        {hotelError && (
+                            <div className="text-red-500 text-center py-10">
+                                Có lỗi xảy ra. Vui lòng thử lại!
+                            </div>
+                        )}
+
+                        {hotelLoading && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {Array.from({ length: 8 }).map((_, i) => (
+                                    <HotelCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <HotelCardSkeleton key={i} />
-                            ))}
+                            {!hotelLoading &&
+                                !hotelError &&
+                                hotelData?.map((hotel: any) => (
+                                    <HotelCard
+                                        key={hotel?.strSupplierGUID}
+                                        hotel={hotel}
+                                    />
+                                ))}
                         </div>
-                    )}
+                    </>
+                ) : (
+                    <>
+                        {/* ===== TOUR NORMAL ===== */}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {!hotelLoading &&
-                            !hotelError &&
-                            hotelData?.map((hotel: any) => (
-                                <HotelCard
-                                    key={hotel?.strSupplierGUID}
-                                    hotel={hotel}
-                                />
-                            ))}
-                    </div>
-                </>
-            ) : (
-                <>
-                    {/* ===== TOUR NORMAL ===== */}
-
-                    <div className="text-2xl font-semibold mb-10">
-                        {tdpLoading
-                            ? "Đang tìm kiếm..."
-                            : `Tìm thấy ${tdpData?.[0]?.intTotalRecords || 0} dữ liệu`}
-                    </div>
-
-                    {tdpError && (
-                        <div className="text-red-500 text-center py-10">
-                            Có lỗi xảy ra. Vui lòng thử lại!
+                        <div className="text-2xl font-semibold mb-10">
+                            {tdpLoading
+                                ? "Đang tìm kiếm..."
+                                : `Tìm thấy ${tdpData?.[0]?.intTotalRecords || 0} dữ liệu`}
                         </div>
-                    )}
 
-                    {tdpLoading && (
+                        {tdpError && (
+                            <div className="text-red-500 text-center py-10">
+                                Có lỗi xảy ra. Vui lòng thử lại!
+                            </div>
+                        )}
+
+                        {tdpLoading && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {Array.from({ length: 8 }).map((_, i) => (
+                                    <TourCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <TourCardSkeleton key={i} />
-                            ))}
+                            {!tdpLoading &&
+                                !tdpError &&
+                                tdpData?.map((tour: any) => (
+                                    <TourListCard
+                                        key={tour?.strTourGUID}
+                                        tour={tour}
+                                    />
+                                ))}
                         </div>
-                    )}
+                    </>
+                )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {!tdpLoading &&
-                            !tdpError &&
-                            tdpData?.map((tour: any) => (
-                                <TourListCard
-                                    key={tour?.strTourGUID}
-                                    tour={tour}
-                                />
-                            ))}
-                    </div>
-                </>
-            )}
+            </div>
+
         </div>
     );
 };
