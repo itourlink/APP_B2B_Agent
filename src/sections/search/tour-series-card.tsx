@@ -1,4 +1,5 @@
 import { getUrlImage } from "@/utils/format-image";
+import { isValidValue } from "@/utils/utilts";
 import { Calendar, Flag, Clock, MapPin, Users } from "lucide-react";
 
 const TourSeriesCard = ({ tour }: any) => {
@@ -7,8 +8,8 @@ const TourSeriesCard = ({ tour }: any) => {
             {/* Left Side: Image */}
             <div className="w-1/3">
                 <img
-                    src={getUrlImage(tour?.strTourImageUrl)}
-                    alt={tour?.strTourName}
+                    src={getUrlImage(isValidValue(tour?.strTourImageUrl))}
+                    alt={isValidValue(tour?.strTourName)}
                     className="w-full h-full object-cover rounded-xl"
                 />
             </div>
@@ -17,17 +18,21 @@ const TourSeriesCard = ({ tour }: any) => {
             <div className="flex-1 flex flex-col justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-gray-800 uppercase mb-4">
-                        {tour?.strTourName}
+                        {isValidValue(tour?.strTourName)}
                     </h2>
 
                     <div className="flex gap-4 mb-4">
                         <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48">
-                            <option>{tour?.strEasiaCateName}</option>
+                            <option>
+                                {isValidValue(tour?.strEasiaCateName)}
+                            </option>
                         </select>
 
                         <div className="border border-gray-300 rounded px-3 py-1 text-sm flex items-center gap-2 bg-white w-48">
                             <Calendar size={14} />
-                            <span>{tour?.dtmDateStarted}</span>
+                            <span>
+                                {isValidValue(tour?.dtmDateStarted)}
+                            </span>
                         </div>
                     </div>
 
@@ -37,48 +42,58 @@ const TourSeriesCard = ({ tour }: any) => {
                             <span>
                                 Bởi:{" "}
                                 <span className="font-medium">
-                                    {tour?.strOwnerCompanyName}
+                                    {isValidValue(tour?.strOwnerCompanyName)}
                                 </span>
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <Users size={16} />
-                            <span>Tổng: {tour?.intPaxMax}</span>
+                            <span>
+                                Tổng: {isValidValue(tour?.intPaxMax)}
+                            </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <Clock size={16} />
                             <span>
-                                Thời lượng: {tour?.intNoOfDay} Days
+                                Thời lượng:{" "}
+                                {isValidValue(tour?.intNoOfDay)} Days
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <span className="font-bold">
-                                Đã bán: {tour?.intTotalPaxUsed}
+                                Đã bán:{" "}
+                                {isValidValue(tour?.intTotalPaxUsed)}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <MapPin size={16} />
                             <span>
-                                Các điểm đến: {tour?.strListTourDestinationName}
+                                Các điểm đến:{" "}
+                                {isValidValue(
+                                    tour?.strListTourDestinationName
+                                )}
                             </span>
                         </div>
 
                         <div className="space-y-1">
                             <div className="text-blue-600 font-bold">
-                                + Trống: {tour?.intTotalPaxRemain}
+                                + Trống:{" "}
+                                {isValidValue(tour?.intTotalPaxRemain)}
                             </div>
+
                             <div className="text-blue-600 font-bold">
-                                + Giữ chỗ: {tour?.intTotalPaxHold}
+                                + Giữ chỗ:{" "}
+                                {isValidValue(tour?.intTotalPaxHold)}
                             </div>
                         </div>
                     </div>
 
                     <span className="inline-block mt-4 px-3 py-1 bg-blue-100 text-blue-500 rounded-full text-xs font-medium">
-                        Tour hằng ngày
+                        {isValidValue(tour?.strTourTypeName) || "Tour hằng ngày"}
                     </span>
                 </div>
             </div>
@@ -88,8 +103,9 @@ const TourSeriesCard = ({ tour }: any) => {
                 <div className="text-gray-700 font-bold text-lg mb-1">
                     Giá :
                 </div>
+
                 <div className="text-blue-600 text-3xl font-extrabold mb-4">
-                    ${tour?.dblTotalPrice}
+                    ${isValidValue(tour?.dblTotalPrice)}
                 </div>
 
                 <button className="w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors">

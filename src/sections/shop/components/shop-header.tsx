@@ -28,6 +28,23 @@ const ShopHeader = () => {
     const company =
         new URLSearchParams(location.search).get("company") || "";
 
+    // ===== SEARCH =====
+    const searchType =
+        new URLSearchParams(location.search).get("type") || "tour";
+
+    const isSearchPage = pathname === paths.shop.search;
+
+    const searchMenuMap: Record<string, string> = {
+        tour: paths.shop.tour.list,
+        hotel: paths.shop.hotel.list,
+        boat: paths.shop.boat.list,
+        vehicle: paths.shop.vehicle.list,
+        restaurant: paths.shop.restaurant.list,
+        guide: paths.shop.guide.list,
+        flight: paths.shop.flight.list,
+        voucher: paths.shop.voucher.list,
+    };
+
     const { menuData } = useListMenu();
     const menu = buildMenu(menuData || []);
 
@@ -65,6 +82,11 @@ const ShopHeader = () => {
     };
 
     const isPathMatch = (item: any) => {
+        // SEARCH PAGE => KHÔNG CHECK MATCH THƯỜNG
+        if (isSearchPage) {
+            return false;
+        }
+
         return item.match?.some((p: string) => {
             return pathname === p || pathname.startsWith(p + "/");
         });
@@ -76,6 +98,9 @@ const ShopHeader = () => {
 
     useEffect(() => {
         if (!menu?.length) return;
+
+        // SEARCH PAGE => KHÔNG REDIRECT
+        if (isSearchPage) return;
 
         const firstItem = menu[0];
 
@@ -93,8 +118,13 @@ const ShopHeader = () => {
                 search,
             });
         }
-    }, [menu, hasActive, company]);
-
+    }, [
+        menu,
+        hasActive,
+        company,
+        isSearchPage,
+        router,
+    ]);
 
     const handleNavigate = (link?: string) => {
         if (!link) return;
@@ -121,7 +151,8 @@ const ShopHeader = () => {
                 <div className="flex items-center gap-5">
                     <button
                         onClick={() =>
-                            window.location.href = "https://myagentmarket.itourlink.com"
+                            window.location.href =
+                            "https://myagentmarket.itourlink.com"
                         }
                         className="overflow-hidden w-10 cursor-pointer"
                     >
@@ -131,14 +162,19 @@ const ShopHeader = () => {
                             className="w-full h-full object-contain"
                         />
                     </button>
+
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
 
                     <button
-                        onClick={() => window.location.href = "https://myagentmember.itourlink.com/agent"}
+                        onClick={() =>
+                            window.location.href =
+                            "https://myagentmember.itourlink.com/agent"
+                        }
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                     >
                         Member
                     </button>
+
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
 
                     <button
@@ -190,25 +226,24 @@ const ShopHeader = () => {
             </div>
 
             <div className="flex items-center gap-5 overflow-x-auto">
-                {(menu || []).map((item, index) => {
+                {(menu || []).map((item) => {
                     if (!item) return null;
 
-                    const isMatch = isPathMatch(item);
-
-                    const isActive =
-                        isMatch || (!hasActive && index === 0);
+                    const isActive = isSearchPage
+                        ? item.link === searchMenuMap[searchType]
+                        : isPathMatch(item);
 
                     return (
                         <div
                             key={item.id}
                             onClick={() => handleNavigate(item.link)}
                             className={`
-                flex items-center gap-2 p-1 cursor-pointer transition-all whitespace-nowrap
-                ${isActive
+                                flex items-center gap-2 p-1 cursor-pointer transition-all whitespace-nowrap
+                                ${isActive
                                     ? "text-[#2566b0] font-semibold"
                                     : "text-gray-700 hover:text-[#2566b0] font-semibold"
                                 }
-              `}
+                            `}
                         >
                             <div>{item.icon}</div>
 

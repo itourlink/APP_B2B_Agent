@@ -12,72 +12,80 @@ import { paths } from "@/routes/paths";
 
 export const menuConfigByGUID: Record<string, any> = {
   "1b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.tour.list),
+    link: paths.shop.tour.list,
     match: [
       paths.shop.tour.list,
       paths.shop.tour.detail,
+      paths.shop.search, // ADD
     ],
     icon: <TourIcon width="18px" height="18px" />,
   },
 
   "2b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.hotel.list),
+    link: paths.shop.hotel.list,
     match: [
       paths.shop.hotel.list,
       paths.shop.hotel.detail,
+      paths.shop.search, // ADD
     ],
     icon: <HotelIcon width="18px" height="18px" />,
   },
 
   "3b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.boat.list),
+    link: paths.shop.boat.list,
     match: [
       paths.shop.boat.list,
       paths.shop.boat.detail,
+      paths.shop.search, // ADD
     ],
     icon: <BoatIcon width="18px" height="18px" />,
   },
 
   "4b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.vehicle.list),
+    link: paths.shop.vehicle.list,
     match: [
       paths.shop.vehicle.list,
       paths.shop.vehicle.detail,
+      paths.shop.search, // ADD
     ],
     icon: <TransportIcon width="18px" height="18px" />,
   },
 
   "5b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.voucher.list),
+    link: paths.shop.voucher.list,
     match: [
       paths.shop.voucher.list,
+      paths.shop.search, // ADD
     ],
     icon: <VoucherIcon width="18px" height="18px" />,
   },
 
   "6b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.restaurant.list),
+    link: paths.shop.restaurant.list,
     match: [
       paths.shop.restaurant.list,
       paths.shop.restaurant.detail,
+      paths.shop.search, // ADD
     ],
     icon: <RestaurantIcon width="18px" height="18px" />,
   },
 
   "7b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.guide.list),
+    link: paths.shop.guide.list,
     match: [
       paths.shop.guide.list,
       paths.shop.guide.detail,
+      paths.shop.search, // ADD
     ],
     icon: <GuidefeeIcon width="18px" height="18px" />,
   },
 
   "8b7a2657-18eb-4703-8573-fa43b8dda001": {
-    link: (paths.shop.flight.list),
+    link: paths.shop.flight.list,
     match: [
       paths.shop.flight.list,
       paths.shop.flight.detail,
+      paths.shop.search, // ADD
     ],
     icon: <FlightIcon width="18px" height="18px" />,
   },

@@ -3,36 +3,44 @@ import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
 import { formatPrice } from '@/utils/format-number';
+import { isValidValue } from '@/utils/utilts';
 import { Building2, MapPin, Star, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 
 export const HotelCard = ({ hotel }: any) => {
-    const router = useRouter()
+    const router = useRouter();
+
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full group">
             <div className="relative h-44 overflow-hidden">
                 <img
-                    src={getUrlImage(hotel?.strSupplierImage)}
-                    alt={hotel?.strSupplierName}
+                    src={getUrlImage(isValidValue(hotel?.strSupplierImage))}
+                    alt={isValidValue(hotel?.strSupplierName)}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
                 <h3 className="text-gray-800 font-bold text-[15px] leading-tight uppercase mb-4 h-12 line-clamp-2">
-                    {hotel?.strSupplierName}
+                    {isValidValue(hotel?.strSupplierName)}
                 </h3>
 
                 <div className="space-y-2.5 mb-4 text-[13px] text-gray-600">
                     <div className="flex items-center gap-2">
                         <Building2 size={14} className="text-gray-400 shrink-0" />
+
                         <span>Khách sạn</span>
+
                         <div className="flex items-center ml-1">
                             {[...Array(5)].map((_, i) => (
                                 <Star
                                     key={i}
                                     size={14}
-                                    className={i < hotel.intEasiaCateID ? "fill-orange-400 text-orange-400" : "text-gray-300"}
+                                    className={
+                                        i < Number(isValidValue(hotel?.intEasiaCateID, 0))
+                                            ? "fill-orange-400 text-orange-400"
+                                            : "text-gray-300"
+                                    }
                                 />
                             ))}
                         </div>
@@ -40,7 +48,10 @@ export const HotelCard = ({ hotel }: any) => {
 
                     <div className="flex items-start gap-2">
                         <MapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
-                        <span className="line-clamp-3 leading-relaxed">{hotel?.strSupplierAddr}</span>
+
+                        <span className="line-clamp-3 leading-relaxed">
+                            {isValidValue(hotel?.strSupplierAddr)}
+                        </span>
                     </div>
                 </div>
 
@@ -48,6 +59,7 @@ export const HotelCard = ({ hotel }: any) => {
                     <div className="absolute inset-0 flex items-center" aria-hidden="true">
                         <div className="w-full border-t border-gray-100"></div>
                     </div>
+
                     <div className="relative flex justify-center">
                         <span className="bg-gray-50 px-3 text-[11px] font-bold text-gray-900 italic tracking-wider">
                             Tăng giá/Giảm giá
@@ -57,12 +69,23 @@ export const HotelCard = ({ hotel }: any) => {
 
                 <div className="mt-auto flex items-end justify-between">
                     <div>
-                        <p className="text-[11px] text-gray-500 mb-0.5">Giá từ</p>
+                        <p className="text-[11px] text-gray-500 mb-0.5">
+                            Giá từ
+                        </p>
+
                         <p className="text-[#2563eb] font-bold text-xl leading-none">
-                            {formatPrice(hotel?.dblPriceFrom)}
+                            {formatPrice(isValidValue(hotel?.dblPriceFrom, 0))}
                         </p>
                     </div>
-                    <button onClick={() => router.replaceParams(paths.shop.hotel.detail, { item: hotel })} className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all">
+
+                    <button
+                        onClick={() =>
+                            router.replaceParams(paths.shop.hotel.detail, {
+                                item: hotel,
+                            })
+                        }
+                        className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                    >
                         Xem chi tiết
                     </button>
                 </div>
@@ -72,13 +95,14 @@ export const HotelCard = ({ hotel }: any) => {
 };
 
 export const HotelCardList = ({ hotel }: any) => {
-    const router = useRouter()
+    const router = useRouter();
+
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-48 group">
             <div className="relative w-72 overflow-hidden shrink-0">
                 <img
-                    src={getUrlImage(hotel?.strSupplierImage)}
-                    alt={hotel?.strSupplierName}
+                    src={getUrlImage(isValidValue(hotel?.strSupplierImage))}
+                    alt={isValidValue(hotel?.strSupplierName)}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
             </div>
@@ -87,14 +111,19 @@ export const HotelCardList = ({ hotel }: any) => {
                 <div>
                     <div className="flex justify-between items-start mb-2">
                         <h3 className="text-gray-800 font-bold text-lg leading-tight uppercase line-clamp-1">
-                            {hotel?.strSupplierName}
+                            {isValidValue(hotel?.strSupplierName)}
                         </h3>
+
                         <div className="flex items-center">
                             {[...Array(5)].map((_, i) => (
                                 <Star
                                     key={i}
                                     size={14}
-                                    className={i < hotel.intEasiaCateID ? "fill-orange-400 text-orange-400" : "text-gray-300"}
+                                    className={
+                                        i < Number(isValidValue(hotel?.intEasiaCateID, 0))
+                                            ? "fill-orange-400 text-orange-400"
+                                            : "text-gray-300"
+                                    }
                                 />
                             ))}
                         </div>
@@ -102,26 +131,44 @@ export const HotelCardList = ({ hotel }: any) => {
 
                     <div className="space-y-2 text-[14px] text-gray-600">
                         <div className="flex items-center gap-2">
-                            <Building2 size={16} className="text-gray-400 shrink-0" />
+                            <Building2
+                                size={16}
+                                className="text-gray-400 shrink-0"
+                            />
+
                             <span>Khách sạn</span>
                         </div>
 
                         <div className="flex items-start gap-2">
-                            <MapPin size={16} className="text-gray-400 mt-0.5 shrink-0" />
-                            <span className="line-clamp-2 leading-relaxed">{hotel?.strSupplierAddr}</span>
+                            <MapPin
+                                size={16}
+                                className="text-gray-400 mt-0.5 shrink-0"
+                            />
+
+                            <span className="line-clamp-2 leading-relaxed">
+                                {isValidValue(hotel?.strSupplierAddr)}
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex items-end justify-between pt-4 border-t border-gray-50">
                     <div>
-                        <p className="text-[12px] text-gray-500 mb-0.5">Giá từ</p>
+                        <p className="text-[12px] text-gray-500 mb-0.5">
+                            Giá từ
+                        </p>
+
                         <p className="text-[#2563eb] font-bold text-2xl leading-none">
-                            {formatPrice(hotel?.dblPriceFrom)}
+                            {formatPrice(isValidValue(hotel?.dblPriceFrom, 0))}
                         </p>
                     </div>
-                    <button 
-                        onClick={() => router.replaceParams(paths.shop.hotel.detail, { item: hotel })} 
+
+                    <button
+                        onClick={() =>
+                            router.replaceParams(paths.shop.hotel.detail, {
+                                item: hotel,
+                            })
+                        }
                         className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
                     >
                         Xem chi tiết
@@ -137,28 +184,43 @@ const HotelList = () => {
         page: 1,
         pageSize: 15,
         strSupplierGUID: null,
-        tblsReturn: "[0]"
+        tblsReturn: "[0]",
     });
 
-    const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
+    const { hotelData, hotelLoading, hotelError } =
+        useListHotel(filters);
+
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
     return (
         <div className="max-w-7xl mx-auto p-6 bg-white min-h-screen">
             <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-800">Khách Sạn Nổi Bật</h2>
+                <h2 className="text-2xl font-bold text-gray-800">
+                    Khách Sạn Nổi Bật
+                </h2>
 
                 <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
-                    <span className="text-[12px] text-gray-500 ml-2">Hiển thị dạng:</span>
+                    <span className="text-[12px] text-gray-500 ml-2">
+                        Hiển thị dạng:
+                    </span>
+
                     <div className="flex gap-1">
                         <button
                             onClick={() => setViewMode("grid")}
-                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid"
+                                    ? "bg-[#2566b0] text-white shadow-sm"
+                                    : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <LayoutGrid size={16} />
                         </button>
+
                         <button
                             onClick={() => setViewMode("list")}
-                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-[#2566b0] text-white shadow-sm" : "text-gray-400 hover:bg-gray-200"}`}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list"
+                                    ? "bg-[#2566b0] text-white shadow-sm"
+                                    : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <List size={16} />
                         </button>
@@ -166,7 +228,6 @@ const HotelList = () => {
                 </div>
             </div>
 
-            {/* LOADING */}
             {hotelLoading && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {[...Array(8)].map((_, i) => (
@@ -175,10 +236,8 @@ const HotelList = () => {
                 </div>
             )}
 
-            {/* ERROR */}
             {hotelError && <HotelError />}
 
-            {/* DATA */}
             {!hotelLoading && !hotelError && (
                 <div
                     className={
@@ -187,13 +246,19 @@ const HotelList = () => {
                             : "flex flex-col gap-4"
                     }
                 >
-                    {hotelData?.map((hotel: any) => (
+                    {hotelData?.map((hotel: any) =>
                         viewMode === "grid" ? (
-                            <HotelCard key={hotel?.strSupplierGUID} hotel={hotel} />
+                            <HotelCard
+                                key={isValidValue(hotel?.strSupplierGUID)}
+                                hotel={hotel}
+                            />
                         ) : (
-                            <HotelCardList key={hotel?.strSupplierGUID} hotel={hotel} />
+                            <HotelCardList
+                                key={isValidValue(hotel?.strSupplierGUID)}
+                                hotel={hotel}
+                            />
                         )
-                    ))}
+                    )}
                 </div>
             )}
         </div>
@@ -202,7 +267,6 @@ const HotelList = () => {
 
 export default HotelList;
 
-
 const HotelCardSkeleton = () => (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden p-4 animate-pulse">
         <div className="h-44 bg-gray-200 rounded mb-4" />
@@ -210,6 +274,7 @@ const HotelCardSkeleton = () => (
         <div className="h-3 bg-gray-200 rounded w-1/2 mb-4" />
         <div className="h-3 bg-gray-200 rounded w-full mb-2" />
         <div className="h-3 bg-gray-200 rounded w-5/6 mb-4" />
+
         <div className="flex justify-between items-center">
             <div className="h-6 bg-gray-200 rounded w-1/3" />
             <div className="h-6 bg-gray-200 rounded w-1/4" />
