@@ -248,11 +248,18 @@ const fetchListTourSeries = async (body: any) => {
 export const useListTourSeries = (filters?: {
     page?: number,
     pageSize?: number,
+
+    intCateID?: string | null
+    intProductID?: string | null
+
     intNoOfAdult?: number
     strListNoOfChild?: string
+
     intNoOfSGLSup?: number
     intNoOfTPLRec?: number
+
     strLocationCode?: string | null
+
     dtmFilterDateValidFrom?: string
     dtmFilterDateValidTo?: string
 }) => {
@@ -266,30 +273,67 @@ export const useListTourSeries = (filters?: {
         queryFn: () =>
             fetchListTourSeries({
                 strTourGUID: null,
-                strCompanyOwnerGUID: coData?.strCompanyGUID,
-                strCompanyPartnerGUID: user?.strCompanyGUID,
-                strMemberPartnerGUID: user?.strUserGUID,
+
+                strCompanyOwnerGUID:
+                    coData?.strCompanyGUID,
+
+                strCompanyPartnerGUID:
+                    user?.strCompanyGUID,
+
+                strMemberPartnerGUID:
+                    user?.strUserGUID,
+
                 intLangID: user?.intLangID,
+
                 strPriceLevelGUID: null,
-                intCateID: null,
-                intProductID: null,
+
+                intCateID:
+                    filters?.intCateID ?? null,
+
+                intProductID:
+                    filters?.intProductID ?? null,
+
                 strNoOfDayRange: null,
+
                 strFilterServiceName: null,
+
                 strListEasiaCateID: null,
+
                 strListTransportOptionID: null,
+
                 dtmFilterDateStart: null,
-                dtmFilterDateValidFrom: filters?.dtmFilterDateValidFrom,
-                dtmFilterDateValidTo: filters?.dtmFilterDateValidTo,
-                intNoOfAdult: filters?.intNoOfAdult,
-                strListNoOfChild: filters?.strListNoOfChild,
-                intNoOfSGLSup: filters?.intNoOfSGLSup,
-                intNoOfTPLRec: filters?.intNoOfTPLRec,
+
+                dtmFilterDateValidFrom:
+                    filters?.dtmFilterDateValidFrom,
+
+                dtmFilterDateValidTo:
+                    filters?.dtmFilterDateValidTo,
+
+                intNoOfAdult:
+                    filters?.intNoOfAdult,
+
+                strListNoOfChild:
+                    filters?.strListNoOfChild,
+
+                intNoOfSGLSup:
+                    filters?.intNoOfSGLSup,
+
+                intNoOfTPLRec:
+                    filters?.intNoOfTPLRec,
+
                 strOrder: null,
+
                 strPriceFromRange: null,
+
                 intCurrencyView: 1,
-                strLocationCode: filters?.strLocationCode,
+
+                strLocationCode:
+                    filters?.strLocationCode,
+
                 intCurPage: page,
+
                 intPageSize: pageSize,
+
                 tblsReturn: "[0]"
             }),
         enabled: !!user && !!coData,

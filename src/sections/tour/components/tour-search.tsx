@@ -80,32 +80,36 @@ const TourSearch = () => {
     const [selectedTourUrl, setSelectedTourUrl] = useState<string | null>(null);
 
     const searchPayload = {
-        page: filters.page,
-        pageSize: filters.pageSize,
-        isTourSeries: filters.isTourSeries,
-        strFilterDestinationName: filters.strFilterDestinationName,
+        intCurPage: filters.page,
+        intPageSize: filters.pageSize,
 
-        // ADD THIS
+        isTourSeries: filters.isTourSeries,
+        strFilterDestinationName:
+            filters.strFilterDestinationName,
+
         ...draftFilters2,
     };
 
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
-        // CASE 1: click TOUR -> detail
+        // CLICK TOUR => DETAIL
         if (selectedTourUrl) {
             router.replaceParams(paths.shop.tour.detail, {
                 item: {
                     strServiceNameUrl: selectedTourUrl,
                 },
             });
+
             return;
         }
 
-        // CASE 2: search list
+        // CLICK DESTINATION => SEARCH LIST
         router.replaceParams(paths.shop.search, {
             isTourSeries: filters.isTourSeries,
-            ...draftFilters2,
+            isSearchTour: {
+                ...draftFilters2,
+            },
         });
     };
 
@@ -125,9 +129,7 @@ const TourSearch = () => {
                                 data={searchData}
                                 isLoading={searchLoading}
                                 onSelectDestination={(item: any) => {
-                                    const isTour =
-                                        item?.strServiceNameUrl &&
-                                        !item?.strDestinationCode;
+                                    const isTour = item?.__type === "tour";
 
                                     setFilters((p: any) => ({
                                         ...p,
@@ -136,9 +138,7 @@ const TourSearch = () => {
                                     }));
 
                                     if (isTour) {
-                                        setSelectedTourUrl(
-                                            item.strServiceNameUrl
-                                        );
+                                        setSelectedTourUrl(item?.strServiceNameUrl);
 
                                         setDraftFilters2((prev) => ({
                                             ...prev,
@@ -150,8 +150,7 @@ const TourSearch = () => {
                                         setDraftFilters2((prev) => ({
                                             ...prev,
                                             strLocationCode:
-                                                item?.strDestinationCode ??
-                                                "VN0000",
+                                                item?.strDestinationCode ?? "VN0000",
                                         }));
                                     }
 

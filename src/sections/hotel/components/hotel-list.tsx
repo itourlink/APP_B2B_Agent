@@ -37,7 +37,7 @@ export const HotelCard = ({ hotel }: any) => {
                                     key={i}
                                     size={14}
                                     className={
-                                        i < Number(isValidValue(hotel?.intEasiaCateID, 0))
+                                        i < Number(isValidValue(hotel?.intEasiaCateID))
                                             ? "fill-orange-400 text-orange-400"
                                             : "text-gray-300"
                                     }
@@ -74,7 +74,7 @@ export const HotelCard = ({ hotel }: any) => {
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-xl leading-none">
-                            {formatPrice(isValidValue(hotel?.dblPriceFrom, 0))}
+                            {formatPrice(isValidValue(hotel?.dblPriceFrom))}
                         </p>
                     </div>
 
@@ -120,7 +120,7 @@ export const HotelCardList = ({ hotel }: any) => {
                                     key={i}
                                     size={14}
                                     className={
-                                        i < Number(isValidValue(hotel?.intEasiaCateID, 0))
+                                        i < Number(isValidValue(hotel?.intEasiaCateID))
                                             ? "fill-orange-400 text-orange-400"
                                             : "text-gray-300"
                                     }
@@ -159,7 +159,7 @@ export const HotelCardList = ({ hotel }: any) => {
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-2xl leading-none">
-                            {formatPrice(isValidValue(hotel?.dblPriceFrom, 0))}
+                            {formatPrice(isValidValue(hotel?.dblPriceFrom))}
                         </p>
                     </div>
 
@@ -208,8 +208,8 @@ const HotelList = () => {
                         <button
                             onClick={() => setViewMode("grid")}
                             className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
                                 }`}
                         >
                             <LayoutGrid size={16} />
@@ -218,8 +218,8 @@ const HotelList = () => {
                         <button
                             onClick={() => setViewMode("list")}
                             className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
                                 }`}
                         >
                             <List size={16} />

@@ -48,7 +48,12 @@ const TourLocationDes = ({ data = [], isLoading, onSelectDestination }: Props) =
                     </div>
 
                     <button
-                        onClick={() => onSelectDestination?.(destination)} 
+                        onClick={() =>
+                            onSelectDestination?.({
+                                ...destination,
+                                __type: "destination",
+                            })
+                        }
                         className="flex gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
                     >
                         <MapPin className="text-[#2566b0] mt-1" size={18} />
@@ -72,7 +77,12 @@ const TourLocationDes = ({ data = [], isLoading, onSelectDestination }: Props) =
                         {tours.map((tour, index) => (
                             <button
                                 key={index}
-                                onClick={() => onSelectDestination?.(tour)}
+                                onClick={() =>
+                                    onSelectDestination?.({
+                                        ...tour,
+                                        __type: "tour",
+                                    })
+                                }
                                 className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
                             >
                                 <Flag className="text-[#2566b0] mt-1" size={18} />
