@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useUser } from "@/hooks/actions/useAuth";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { AddTourCustomizedPriceItemByManual } from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -79,6 +80,7 @@ const resolveInitialCountryCode = (
 };
 
 const AddManual = ({ selectedDay, onClose, strTourCustomizedDayGUID }: AddManualProps) => {
+    const { t } = useTranslate("tourcustomize");
     const [isOvernight, setIsOvernight] = useState(false);
     const [isPriceByRoom, setIsPriceByRoom] = useState(false);
 
@@ -107,8 +109,6 @@ const AddManual = ({ selectedDay, onClose, strTourCustomizedDayGUID }: AddManual
             strFeildSelect:
                 "MC02_CountryCode AS code, MC02_CountryName AS strName",
             strWhere: "WHERE (IsActive=1) ORDER BY MC02_CountryName ASC",
-            parameters: -1,
-            enabled: true,
         });
 
     const { ctData: regionData = [], ctLoading: isRegionLoading } =
@@ -122,8 +122,6 @@ AND MC03_RegionCode LIKE '%${countryCode}%'
 AND MC03.IsActive=1
 ORDER BY MC03_RegionName`
                 : "",
-            parameters: -1,
-            enabled: !!countryCode,
         });
 
     const { ctData: cityData = [], ctLoading: isCityLoading } = useListSQLData({
@@ -136,8 +134,6 @@ AND MC04_CityCode LIKE '%${regionCode}%'
 AND MC04.IsActive=1
 ORDER BY MC04_CityName`
             : "",
-        parameters: -1,
-        enabled: !!regionCode,
     });
 
     const countryOptions = useMemo<SelectOption[]>(
@@ -218,22 +214,22 @@ ORDER BY MC04_CityName`
     });
     const onSubmit = methods.handleSubmit(async (values) => {
         if (!user?.strUserGUID) {
-            showToast("error", "Khong tim thay user");
+            showToast("error", t("manualMissingUser"));
             return;
         }
 
         if (!values.countryCode) {
-            showToast("error", "Vui long chon country");
+            showToast("error", t("manualSelectCountryError"));
             return;
         }
 
         if (!values.serviceName.trim()) {
-            showToast("error", "Vui long nhap service name");
+            showToast("error", t("manualEnterServiceName"));
             return;
         }
 
         if (!values.supplierName.trim()) {
-            showToast("error", "Vui long nhap supplier name");
+            showToast("error", t("manualEnterSupplierName"));
             return;
         }
         const payload = {
@@ -274,7 +270,7 @@ ORDER BY MC04_CityName`
         try {
             await AddTourCustomizedPriceItemByManualApi(payload);
 
-            showToast("success", "Add manual successfully");
+            showToast("success", t("manualAddSuccess"));
 
             await queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
@@ -298,7 +294,7 @@ ORDER BY MC04_CityName`
             setIsPriceByRoom(false);
             onClose?.();
         } catch (error) {
-            showToast("error", "Add manual failed");
+            showToast("error", t("manualAddError"));
         }
     });
     return (
@@ -308,7 +304,7 @@ ORDER BY MC04_CityName`
                     <div className="grid grid-cols-4 gap-x-6 gap-y-5">
                         <div className="col-span-3">
                             <label className="mb-1 block text-sm text-gray-700">
-                                Location <span className="text-red-500">*</span>
+                                {t("location")} <span className="text-red-500">*</span>
                             </label>
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -317,8 +313,8 @@ ORDER BY MC04_CityName`
                                     options={countryOptions}
                                     placeholder={
                                         isCountryLoading
-                                            ? "Loading countries..."
-                                            : "-- Chon Quoc gia/Country --"
+                                            ? t("loadingCountries")
+                                            : t("selectCountryOption")
                                     }
                                 />
 
@@ -328,8 +324,8 @@ ORDER BY MC04_CityName`
                                     disabled={!countryCode}
                                     placeholder={
                                         isRegionLoading
-                                            ? "Loading regions..."
-                                            : "-- Chon Vung/Region --"
+                                            ? t("loadingRegions")
+                                            : t("selectRegionOption")
                                     }
                                 />
 
@@ -339,8 +335,8 @@ ORDER BY MC04_CityName`
                                     disabled={!regionCode}
                                     placeholder={
                                         isCityLoading
-                                            ? "Loading cities..."
-                                            : "-- Chon Dia danh/City --"
+                                            ? t("loadingCities")
+                                            : t("selectCityOption")
                                     }
                                 />
                             </div>
@@ -348,20 +344,20 @@ ORDER BY MC04_CityName`
 
                         <div className="col-span-1">
                             <label className="mb-1 block text-sm text-gray-700">
-                                Unit <span className="text-red-500">*</span>
+                                {t("unit")} <span className="text-red-500">*</span>
                             </label>
                             <select
                                 {...methods.register("unitId")}
                                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             >
-                                <option value="1">Per Pax</option>
-                                <option value="2">Per Group</option>
+                                <option value="1">{t("perPax")}</option>
+                                <option value="2">{t("perGroup")}</option>
                             </select>
                         </div>
 
                         <div className="col-span-3">
                             <label className="mb-1 block text-sm text-gray-700">
-                                Service name <span className="text-red-500">*</span>
+                                {t("serviceName")} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -372,7 +368,7 @@ ORDER BY MC04_CityName`
 
                         <div className="col-span-1">
                             <label className="mb-1 block text-sm text-gray-700">
-                                Tên nhà cung cấp <span className="text-red-500">*</span>
+                                {t("supplierName")} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -385,7 +381,7 @@ ORDER BY MC04_CityName`
                             <div className="flex items-start gap-8">
                                 <div>
                                     <label className="mb-2 block text-sm text-gray-700">
-                                        Is Overnight
+                                        {t("isOvernight")}
                                     </label>
                                     <button
                                         type="button"
@@ -403,7 +399,7 @@ ORDER BY MC04_CityName`
                                 {isOvernight && (
                                     <div>
                                         <label className="mb-2 block text-sm text-gray-700">
-                                            Is Price By Room
+                                            {t("isPriceByRoom")}
                                         </label>
                                         <button
                                             type="button"
@@ -423,7 +419,7 @@ ORDER BY MC04_CityName`
 
                         <div className="col-span-4 mt-1">
                             <label className="mb-1 block text-sm text-gray-700">
-                                Mô tả
+                                {t("description")}
                             </label>
                             <textarea
                                 {...methods.register("remark")}
@@ -435,13 +431,13 @@ ORDER BY MC04_CityName`
 
                     <div className="mt-6 rounded-3xl border border-gray-300 p-5">
                         <h3 className="mb-5 text-[18px] font-semibold text-gray-800">
-                            Price
+                            {t("price")}
                         </h3>
 
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
                             <div>
                                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                                    Currency
+                                    {t("currency")}
                                 </label>
                                 <select
                                     {...methods.register("currencyId")}
@@ -452,7 +448,7 @@ ORDER BY MC04_CityName`
 
                             <div>
                                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                                    Don gia <span className="text-red-500">*</span>
+                                    {t("unitPrice")} <span className="text-red-500">*</span>
                                 </label>
 
                                 <Field.Text
@@ -467,7 +463,7 @@ ORDER BY MC04_CityName`
                                 <>
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-gray-700">
-                                            {isPriceByRoom ? "SGL" : "Sgl Sup"}
+                                            {isPriceByRoom ? "SGL" : t("sglSup")}
                                         </label>
 
                                         <Field.Text
@@ -480,7 +476,7 @@ ORDER BY MC04_CityName`
 
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-gray-700">
-                                            {isPriceByRoom ? "TPL" : "Tpl Reduction"}
+                                            {isPriceByRoom ? "TPL" : t("tplReduction")}
                                         </label>
 
                                         <Field.Text
@@ -503,7 +499,7 @@ ORDER BY MC04_CityName`
                         disabled={isSaving}
                         className="cursor-pointer rounded bg-[#004a99] px-10 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#003875] focus:outline-none"
                     >
-                        {isSaving ? "Đang lưu..." : "Lưu"}
+                        {isSaving ? t("saving") : t("save")}
                     </button>
                 </div>
             </div>

@@ -1,40 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  MapPin,
-  Menu,
-  Trash2,
-  RefreshCw,
-  Plus,
-  Pen,
-  X,
-} from "lucide-react";
-
-import ServiceMenu, {
-} from "./service-menu";
-
-import { getUrlImage } from "@/utils/format-image";
-import { isValidValue } from "@/utils/utilts";
-
-import {
-  updTourCustomizedDayItemCate,
-  delTourCustomizedDayItemLink,
-  updTourCustomizedDay,
-} from "@/hooks/actions/useUser";
-
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { MapPin, Menu, Pen, Plus, Trash2, X } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import {
+  delTourCustomizedDayItemLink,
+  updTourCustomizedDay,
+  updTourCustomizedDayItemCate,
+} from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
+import { formatMoney } from "@/utils/format-number";
+import { getUrlImage } from "@/utils/format-image";
+import { isValidValue } from "@/utils/utilts";
 import { useToastStore } from "@/zustand/useToastStore";
-import { MENU_ITEMS } from "./menu-data-add";
-import DeleteServicePopup from "./delete-service-popup";
+
 import AddDestination from "./add-destination";
 import DeleteDestination from "./del-destination";
+import DeleteServicePopup from "./delete-service-popup";
+import { getMenuItems } from "./menu-data-add";
+import ServiceMenu from "./service-menu";
 import UpdateNoOfDay from "./update-no-of-day";
-import { formatMoney } from "@/utils/format-number";
-import { tr } from "date-fns/locale";
 
 interface Props {
   item: any[];
@@ -43,22 +28,15 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-const ListTour = ({
-  item,
-  itemDetail,
-  onChange,
-  itemListData
-}: Props) => {
-
+const ListTour = ({ item, itemDetail, onChange, itemListData }: Props) => {
+  const { t } = useTranslate("tourcustomize");
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const queryClient = useQueryClient();
+  const { showToast } = useToastStore();
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node)
-      ) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowMenu(false);
       }
     };
@@ -66,43 +44,30 @@ const ListTour = ({
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  const [selectedPriceItemGUID, setSelectedPriceItemGUID] =
-    useState("");
-
-  const queryClient = useQueryClient();
-
-  const { showToast } = useToastStore();
-
-  const [showMenu, setShowMenu] =
-    useState(false);
-
+  const [selectedPriceItemGUID, setSelectedPriceItemGUID] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
   const [open, setOpen] = useState({
     del: false,
     destination: false,
     deleteDestination: false,
-    updateNoOfDay: false
+    updateNoOfDay: false,
   });
-
   const [locItem, setLocItem] = useState<any>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const [isEditTitle, setIsEditTitle] = useState(false);
 
-  const [deleteItem, setDeleteItem] =
-    useState<any>(null);
+  const parseLocations = (value: string) => {
+    if (!value) return [];
 
-  const parseLocations = (str: string) => {
-    if (!str) return [];
-
-    return str
+    return value
       .split("#")
       .filter(Boolean)
-      .map((item) => {
-        const parts = item.split("!");
+      .map((entry) => {
+        const parts = entry.split("!");
 
         return {
           id: parts[0] || "",
@@ -113,25 +78,18 @@ const ListTour = ({
   };
 
   const firstItem = item?.[0];
-
-
-  const locations = parseLocations(
-    String(firstItem?.strListLocation)
-  );
-
+  const [dayTitle, setDayTitle] = useState(firstItem?.strDayTitle || "");
+  const locations = parseLocations(String(firstItem?.strListLocation));
+  const menuItems = getMenuItems(t);
 
   const { mutate: updTourCustomizedDayApi, isPending: isLoading } = useMutation({
     mutationFn: updTourCustomizedDay,
   });
 
   const handleUpdateNameDay = () => {
-
     const payload = {
-      strTourCustomizedDayGUID:
-        firstItem?.strTourCustomizedDayGUID,
-
+      strTourCustomizedDayGUID: firstItem?.strTourCustomizedDayGUID,
       strDayTitle: dayTitle,
-
       strDayContent: null,
       strDayImageUrl: null,
       strDayImageSubTwo: null,
@@ -139,92 +97,54 @@ const ListTour = ({
       strDayImagesSubFour: null,
     };
 
-    updTourCustomizedDayApi(
-      payload,
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            {
-              queryKey: [
-                QUERY_KEYS.USER
-                  .LIST_SERVICE_TOUR_CUSTOMIZED,
-              ],
-            }
-          );
+    updTourCustomizedDayApi(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
+        });
 
-          queryClient.invalidateQueries(
-            {
-              queryKey: [
-                QUERY_KEYS.USER
-                  .LIST_TOUR_CUSTOMIZED,
-              ],
-            }
-          );
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED],
+        });
 
-          setIsEditTitle(false);
+        setIsEditTitle(false);
+        showToast("success", t("updateTourSuccess"));
+      },
+      onError: () => {
+        showToast("error", t("updateTourError"));
+      },
+    });
+  };
 
-          showToast(
-            "success",
-            "Update tour thành công"
-          );
-        },
-
-        onError: () => {
-          showToast(
-            "error",
-            "Update tour thất bại"
-          );
-        },
-      }
-    );
-  }
-
-  // UPDATE CATEGORY
   const {
     mutateAsync: upTourCateAPI,
     isPending: isupdLoading,
   } = useMutation({
     mutationFn: updTourCustomizedDayItemCate,
-
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          QUERY_KEYS.USER
-            .LIST_SERVICE_TOUR_CUSTOMIZED,
-        ],
+        queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
       });
     },
   });
 
-  // DELETE SERVICE
-  const {
-    mutateAsync: delTourAPI,
-    isPending: isDeleteLoading,
-  } = useMutation({
-    mutationFn:
-      delTourCustomizedDayItemLink,
+  const { mutateAsync: delTourAPI, isPending: isDeleteLoading } = useMutation({
+    mutationFn: delTourCustomizedDayItemLink,
   });
 
-  // HANDLE DELETE
   const handleDelete = async () => {
     if (!deleteItem) return;
 
     const payload = {
-      strTourCustomizedPriceItemGUID:
-        deleteItem?.strTourCustomizedPriceItemGUID,
-
-      intDayOrder:
-        deleteItem?.intDayOrder,
+      strTourCustomizedPriceItemGUID: deleteItem?.strTourCustomizedPriceItemGUID,
+      intDayOrder: deleteItem?.intDayOrder,
     };
 
     try {
       await delTourAPI(payload);
 
       queryClient.invalidateQueries({
-        queryKey: [
-          QUERY_KEYS.USER
-            .LIST_SERVICE_TOUR_CUSTOMIZED,
-        ],
+        queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
       });
 
       setOpen((prev) => ({
@@ -233,16 +153,9 @@ const ListTour = ({
       }));
 
       setDeleteItem(null);
-
-      showToast(
-        "success",
-        "Delete service successfully"
-      );
+      showToast("success", t("deleteServiceSuccess"));
     } catch (error) {
-      showToast(
-        "error",
-        "Delete service failed"
-      );
+      showToast("error", t("deleteServiceError"));
     }
   };
 
@@ -259,195 +172,130 @@ const ListTour = ({
     return true;
   };
 
-  const renderRow = (
-    item: any,
-    index: number
-  ) => {
-    const safe = (val: any) =>
-      typeof val === "object"
-        ? ""
-        : val ?? "";
+  const renderRow = (row: any, index: number) => {
+    const safe = (val: any) => (typeof val === "object" ? "" : val ?? "");
 
-    const starOptions = String(
-      itemListData?.strListEasiaCateID || ""
-    )
+    const starOptions = String(itemListData?.strListEasiaCateID || "")
       .split(",")
       .filter(Boolean);
 
     return (
       <tr
-        key={item?.id ?? index}
-        className="border-b border-gray-50 hover:bg-gray-50 transition-colors group"
+        key={row?.id ?? index}
+        className="group border-b border-gray-50 transition-colors hover:bg-gray-50"
       >
-        <td className="px-4 py-4 text-[13px] text-gray-600">
-          {index + 1}
-        </td>
+        <td className="px-4 py-4 text-[13px] text-gray-600">{index + 1}</td>
 
         <td className="px-4 py-4">
-          <div className="w-[100px] h-[60px] rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+          <div className="h-[60px] w-[100px] overflow-hidden rounded-lg border border-gray-100 shadow-sm">
             <img
-              src={getUrlImage(
-                String(item?.strImage ?? "")
-              )}
-              alt={safe(
-                item?.strSupplierName
-              )}
-              className="w-full h-full object-cover"
+              src={getUrlImage(String(row?.strImage ?? ""))}
+              alt={safe(row?.strSupplierName)}
+              className="h-full w-full object-cover"
             />
-
           </div>
         </td>
 
         <td className="px-4 py-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-bold text-[#333] uppercase tracking-tight">
-                {safe(
-                  item?.strSupplierName
-                )}
+              <span className="text-[14px] font-bold uppercase tracking-tight text-[#333]">
+                {safe(row?.strSupplierName)}
               </span>
-
-              <RefreshCw
-                size={14}
-                className="text-[#0057a8] rotate-90"
-              />
             </div>
 
-            <div className="text-[12px] text-gray-500">
-              ({safe(item?.strCateName)})
-            </div>
+            <div className="text-[12px] text-gray-500">({safe(row?.strCateName)})</div>
+
             <select
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
-              value={String(
-                item?.strListEasiaCateID || ""
-              )}
-              onChange={(e) => {
-                const value =
-                  e.target.value;
-
+              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
+              value={String(row?.strListEasiaCateID || "")}
+              onChange={(event) => {
                 upTourCateAPI({
-                  strTourCustomizedGUID:
-                    itemDetail?.strAgentHostServiceItemGUID,
-
+                  strTourCustomizedGUID: itemDetail?.strAgentHostServiceItemGUID,
                   strTourCustomizedPriceItemGUID:
-                    item?.strTourCustomizedPriceItemGUID,
-
-                  strListEasiaCateID:
-                    value,
+                    row?.strTourCustomizedPriceItemGUID,
+                  strListEasiaCateID: event.target.value,
                 });
               }}
               disabled={isupdLoading}
             >
-              <option value="">
-                Select star
-              </option>
+              <option value="">{t("selectStar")}</option>
 
               {starOptions.map((star) => (
-                <option
-                  key={star}
-                  value={star}
-                >
-                  {"⭐".repeat(
-                    Number(star)
-                  )}
+                <option key={star} value={star}>
+                  {"*".repeat(Number(star))}
                 </option>
               ))}
             </select>
           </div>
         </td>
 
-        <td className="px-4 py-4 text-[13px] text-gray-700 font-medium">
-          {safe(item?.strServiceNameMain)}
+        <td className="px-4 py-4 text-[13px] font-medium text-gray-700">
+          {safe(row?.strServiceNameMain)}
         </td>
 
         <td className="px-4 py-4 text-[13px] text-gray-700">
           <div className="flex items-center gap-2">
-            <div className="">
-              {safe(item?.intNoOfDay)}
-            </div>
-            <button onClick={() => {
-              setSelectedPriceItemGUID(
-                item?.strTourCustomizedPriceItemGUID
-              );
-
-              setOpen((prev) => ({
-                ...prev,
-                updateNoOfDay: true,
-              }));
-            }} className="cursor-pointer"><Pen size={16} />
+            <div>{safe(row?.intNoOfDay)}</div>
+            <button
+              onClick={() => {
+                setSelectedPriceItemGUID(row?.strTourCustomizedPriceItemGUID);
+                setOpen((prev) => ({
+                  ...prev,
+                  updateNoOfDay: true,
+                }));
+              }}
+              className="cursor-pointer"
+            >
+              <Pen size={16} />
             </button>
           </div>
         </td>
 
-        <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
-          {safe(item?.strQuantity)}
+        <td className="px-4 py-4 text-right text-[14px] font-bold text-gray-800">
+          {formatMoney(row?.strQuantity)}
         </td>
 
-        <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
-          {formatMoney(
-            item?.dblPriceCost
-          )}
+        <td className="px-4 py-4 text-right text-[14px] font-bold text-gray-800">
+          {formatMoney(row?.dblPriceCost)}
         </td>
 
-        <td className="px-4 py-4 text-[14px] text-gray-800 font-bold text-right">
-
-          {formatMoney(
-            item?.dblPriceCostUnit
-          )}
+        <td className="px-4 py-4 text-right text-[14px] font-bold text-gray-800">
+          {formatMoney(row?.dblPriceCostUnit)}
         </td>
 
         <td className="px-4 py-4">
           <div className="flex justify-center">
-            {hasDeleteId(
-              item?.strTourCustomizedPriceItemGUID
-            ) && (
-                <button
-                  onClick={() => {
-
-                    setDeleteItem(item);
-
-                    setOpen((prev) => ({
-                      ...prev,
-                      del: true,
-                    }));
-                  }}
-                  className="cursor-pointer bg-[#f2f4f7] p-2 rounded-md hover:bg-red-50 hover:text-red-600 transition-all text-gray-500"
-                >
-                  <Trash2 size={18} />
-                </button>
-              )}
+            {hasDeleteId(row?.strTourCustomizedPriceItemGUID) && (
+              <button
+                onClick={() => {
+                  setDeleteItem(row);
+                  setOpen((prev) => ({
+                    ...prev,
+                    del: true,
+                  }));
+                }}
+                className="cursor-pointer rounded-md bg-[#f2f4f7] p-2 text-gray-500 transition-all hover:bg-red-50 hover:text-red-600"
+              >
+                <Trash2 size={18} />
+              </button>
+            )}
           </div>
         </td>
       </tr>
     );
   };
 
-  const [isEditTitle, setIsEditTitle] =
-    useState(false);
-
-  const [dayTitle, setDayTitle] =
-    useState(
-      firstItem?.strDayTitle || ""
-    );
-
   const items = item ?? [];
-  const dayItems = items.filter(
-    (i) => i?.strDayShiftName !== "Night"
-  )
+  const dayItems = items.filter((entry) => entry?.strDayShiftName !== "Night");
+  const nightItems = items.filter((entry) => entry?.strDayShiftName === "Night");
+  const hasData = items.length > 0;
 
-  const nightItems = items.filter(
-    (i) => i?.strDayShiftName === "Night" 
-  )
-
-  const hasData = items.length > 0; 
   return (
     <div className="w-full bg-white font-sans">
       <div className="flex items-center gap-5">
         <h3 className="text-lg font-bold text-gray-800">
-          Ngày{" "}
-          {isValidValue(
-            firstItem?.intDayOrder
-          )}
+          {t("day")} {isValidValue(firstItem?.intDayOrder)}
         </h3>
 
         <div className="flex items-center gap-2">
@@ -455,32 +303,24 @@ const ListTour = ({
             <>
               <input
                 value={dayTitle}
-                onChange={(e) =>
-                  setDayTitle(e.target.value)
-                }
-                className="border rounded px-2 py-1 text-lg font-bold outline-none"
+                onChange={(event) => setDayTitle(event.target.value)}
+                className="rounded border px-2 py-1 text-lg font-bold outline-none"
               />
 
-              {/* Đồng ý */}
               <button
                 disabled={isLoading}
-                onClick={() => handleUpdateNameDay()}
-                className="text-green-600 hover:text-green-700 border w-10 rounded-2xl cursor-pointer"
+                onClick={handleUpdateNameDay}
+                className="w-10 cursor-pointer rounded-2xl border text-green-600 hover:text-green-700"
               >
                 ✓
               </button>
 
-              {/* Huỷ */}
               <button
                 onClick={() => {
-                  setDayTitle(
-                    firstItem?.strDayTitle ||
-                    ""
-                  );
-
+                  setDayTitle(firstItem?.strDayTitle || "");
                   setIsEditTitle(false);
                 }}
-                className="text-red-500 hover:text-red-600 border w-10 rounded-2xl cursor-pointer"
+                className="w-10 cursor-pointer rounded-2xl border text-red-500 hover:text-red-600"
               >
                 ✕
               </button>
@@ -488,51 +328,42 @@ const ListTour = ({
           ) : (
             <>
               <h3 className="text-lg font-bold text-gray-800">
-                {isValidValue(
-                  firstItem?.strDayTitle
-                )}
+                {isValidValue(firstItem?.strDayTitle)}
               </h3>
 
               <button
-                onClick={() =>
-                  setIsEditTitle(true)
-                }
-                className="text-gray-500 hover:text-[#2566b0] cursor-pointer"
+                onClick={() => setIsEditTitle(true)}
+                className="cursor-pointer text-gray-500 hover:text-[#2566b0]"
               >
                 <Pen size={16} />
               </button>
             </>
           )}
         </div>
-
       </div>
 
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+      <div className="flex items-center justify-between border-b border-gray-100 px-4 py-2">
         <div className="flex items-center gap-4 text-gray-700">
-          <MapPin
-            size={20}
-            className="fill-current"
-          />
+          <MapPin size={20} className="fill-current" />
 
-          <div className="flex flex-wrap gap-2 items-center">
-            {locations.map((loc: any, idx) => (
+          <div className="flex flex-wrap items-center gap-2">
+            {locations.map((location: any, index) => (
               <span
-                key={idx}
-                className="border border-[#4a6fa5] p-1 rounded-sm text-[#4a6fa5] flex items-center gap-2"
+                key={index}
+                className="flex items-center gap-2 rounded-sm border border-[#4a6fa5] p-1 text-[#4a6fa5]"
               >
-                <div className="">
-                  {loc.name}
-                </div>
+                <div>{location.name}</div>
                 <button
                   type="button"
                   className="cursor-pointer"
                   onClick={() => {
-                    setLocItem(loc.id);
+                    setLocItem(location.id);
                     setOpen((prev) => ({
                       ...prev,
                       deleteDestination: true,
                     }));
-                  }}>
+                  }}
+                >
                   <X size={18} />
                 </button>
               </span>
@@ -545,31 +376,26 @@ const ListTour = ({
                   destination: true,
                 }))
               }
-              className="cursor-pointer bg-[#e9f2ff] text-[#4a83d4] p-1 rounded-md hover:bg-[#d0e4ff]"
+              className="cursor-pointer rounded-md bg-[#e9f2ff] p-1 text-[#4a83d4] hover:bg-[#d0e4ff]"
             >
               <Plus size={18} />
             </div>
-
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* <div className="bg-[#e9f2ff] text-[#4a83d4] p-1.5 rounded-md cursor-pointer hover:bg-[#d0e4ff] transition-colors">
-            <ChevronsUpDown size={18} />
-          </div> */}
-
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
+              className="cursor-pointer text-gray-400 transition-colors hover:text-gray-600"
             >
               <Menu size={20} />
             </button>
 
             {showMenu && (
-              <div className="absolute left-[-200px] top-full mt-2 z-50">
+              <div className="absolute left-[-200px] top-full z-50 mt-2">
                 <ServiceMenu
-                  items={MENU_ITEMS}
+                  items={menuItems}
                   onChange={(value) => {
                     onChange(value);
                     setShowMenu(false);
@@ -584,57 +410,48 @@ const ListTour = ({
       <div className="w-full overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="text-[12px] text-gray-500 font-medium border-b border-gray-100 uppercase tracking-tight">
-              <th className="px-4 py-3 text-left w-12 font-normal">
-                STT
+            <tr className="border-b border-gray-100 text-[12px] font-medium uppercase tracking-tight text-gray-500">
+              <th className="w-12 px-4 py-3 text-left font-normal">
+                {t("serialNumber")}
               </th>
-
-              <th className="px-4 py-3 text-left w-24 font-normal">
-                Image
+              <th className="w-24 px-4 py-3 text-left font-normal">
+                {t("image")}
               </th>
-
               <th className="px-4 py-3 text-left font-normal uppercase">
-                Service
+                {t("service")}
               </th>
-
               <th className="px-4 py-3 text-left font-normal uppercase">
-                Description
+                {t("description")}
               </th>
-
               <th className="px-4 py-3 text-left font-normal uppercase">
-                No Of Days
+                {t("noOfDays")}
               </th>
-
               <th className="px-4 py-3 text-left font-normal uppercase">
-                Quantity
+                {t("quantity")}
               </th>
-
               <th className="px-4 py-3 text-right font-normal uppercase">
-                Price
+                {t("price")}
               </th>
-
               <th className="px-4 py-3 text-right font-normal uppercase">
-                Price per pax
+                {t("pricePerPax")}
               </th>
-
-              <th className="px-4 py-3 text-center w-20 font-normal uppercase">
-                Thao tác
+              <th className="w-20 px-4 py-3 text-center font-normal uppercase">
+                {t("actions")}
               </th>
             </tr>
           </thead>
 
           <tbody>
-
             {!hasData ? (
               <tr>
                 <td
                   colSpan={9}
                   className="px-4 py-2 text-[13px] font-bold text-gray-600"
                 >
-                  Không có dữ liệu 
+                  {t("noData")}
                 </td>
               </tr>
-            ): (
+            ) : (
               <>
                 {dayItems.map((row, index) => renderRow(row, index))}
                 {nightItems.length > 0 && (
@@ -644,7 +461,7 @@ const ListTour = ({
                         colSpan={3}
                         className="px-4 py-2 text-[13px] font-bold text-gray-600"
                       >
-                        Night
+                        {t("night")}
                       </td>
                     </tr>
 
@@ -653,12 +470,10 @@ const ListTour = ({
                 )}
               </>
             )}
-
           </tbody>
         </table>
       </div>
 
-      {/* DELETE POPUP */}
       <DeleteServicePopup
         open={open.del}
         loading={isDeleteLoading}
@@ -668,7 +483,6 @@ const ListTour = ({
             ...prev,
             del: false,
           }));
-
           setDeleteItem(null);
         }}
       />
@@ -681,13 +495,10 @@ const ListTour = ({
             destination: false,
           }));
         }}
-        strUserGUID={
-          itemDetail?.strUserGUID
-        }
-        strTourCustomizedDayGUID={
-          firstItem?.strTourCustomizedDayGUID
-        }
+        strUserGUID={itemDetail?.strUserGUID}
+        strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}
       />
+
       <DeleteDestination
         open={open.deleteDestination}
         onClose={() => {
@@ -699,6 +510,7 @@ const ListTour = ({
         strTourCustomizedDayGUID={firstItem?.strTourCustomizedDayGUID}
         strCityGUID={locItem}
       />
+
       <UpdateNoOfDay
         open={open.updateNoOfDay}
         onClose={() => {
@@ -707,9 +519,7 @@ const ListTour = ({
             updateNoOfDay: false,
           }));
         }}
-        strTourCustomizedPriceItemGUID={
-          selectedPriceItemGUID
-        }
+        strTourCustomizedPriceItemGUID={selectedPriceItemGUID}
         item={itemListData}
       />
     </div>

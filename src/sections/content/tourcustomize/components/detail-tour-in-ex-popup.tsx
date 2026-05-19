@@ -12,6 +12,7 @@ import {
   useListTourCustomizedInExService,
   useUpdTourCustomizedInExclude,
 } from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useUserStore } from "@/zustand/useUserStore";
 
@@ -80,90 +81,6 @@ export const mapApiListToPopupData = (
   excludeItems: listData.filter((entry) => !entry?.isInclude).map(mapPopupItem),
 });
 
-const renderSection = (
-  title: string,
-  items: DetailTourInExPopupItem[],
-  loading: boolean,
-  error: boolean,
-  onToggle: (index: number, checked: boolean) => void,
-  onContentChange: (index: number, value: string) => void
-) => {
-  return (
-    <div className={sectionCardClassName}>
-      <div className="mb-3 text-[15px] font-semibold text-gray-800">{title}</div>
-
-      <div className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-center gap-x-3 border-b border-gray-200 px-1 pb-2 text-[12px] font-semibold text-[#2f69b1]">
-        <div>
-          <input
-            type="checkbox"
-            checked
-            readOnly
-            className="h-3.5 w-3.5 cursor-default accent-[#1677ff]"
-          />
-        </div>
-        <div>Supplier type</div>
-        <div>Content</div>
-      </div>
-
-      <div className="mt-2 space-y-2">
-        {loading ? (
-          [...Array(4)].map((_, index) => (
-            <div
-              key={`${title}-loading-${index}`}
-              className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-start gap-x-3 rounded-lg px-1 py-1"
-            >
-              <div className="pt-2">
-                <div className="h-3.5 w-3.5 animate-pulse rounded-sm bg-gray-200" />
-              </div>
-
-              <div className="pt-2">
-                <div className="h-4 w-20 animate-pulse rounded bg-gray-200" />
-              </div>
-
-              <div className="h-[62px] animate-pulse rounded-md bg-gray-100" />
-            </div>
-          ))
-        ) : error ? (
-          <div className="px-1 py-6 text-center text-sm text-red-500">
-            Failed to load data
-          </div>
-        ) : items.length === 0 ? (
-          <div className="px-1 py-6 text-center text-sm text-gray-500">
-            No data
-          </div>
-        ) : (
-          items.map((item, index) => (
-            <div
-              key={item.id}
-              className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-start gap-x-3 rounded-lg px-1 py-1"
-            >
-              <div className="pt-2">
-                <input
-                  type="checkbox"
-                  checked={item.checked ?? false}
-                  onChange={(event) => onToggle(index, event.target.checked)}
-                  className="h-3.5 w-3.5 accent-[#1677ff]"
-                />
-              </div>
-
-              <div className="pt-2 text-[12px] font-medium text-gray-700">
-                {item.supplierType}
-              </div>
-
-              <textarea
-                value={item.content}
-                onChange={(event) => onContentChange(index, event.target.value)}
-                className={textareaClassName}
-                rows={3}
-              />
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
 const DetailTourInExPopup = ({
   open,
   onClose,
@@ -171,6 +88,7 @@ const DetailTourInExPopup = ({
   onSave,
   loading,
 }: DetailTourInExPopupProps) => {
+  const { t } = useTranslate("tourcustomize");
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
   const { showToast } = useToastStore();
@@ -186,7 +104,7 @@ const DetailTourInExPopup = ({
     queryKey: getTourCustomizedInExQueryKey(strTourCustomizedGUID),
     queryFn: () =>
       useListTourCustomizedInExService({
-        strTourCustomizedGUID: strTourCustomizedGUID,
+        strTourCustomizedGUID,
         IsSelected: null,
       }),
     placeholderData: keepPreviousData,
@@ -213,7 +131,7 @@ const DetailTourInExPopup = ({
 
   const handleSave = async () => {
     if (!user?.strUserGUID || !strTourCustomizedGUID) {
-      showToast("error", "Missing user or tour information");
+      showToast("error", t("missingUserOrTourInfo"));
       return;
     }
 
@@ -242,17 +160,17 @@ const DetailTourInExPopup = ({
     try {
       let latestResponseList: DetailTourInExApiItem[] | null = null;
 
-      for (const item of changedItems) {
+      for (const draftItem of changedItems) {
         const response = (await updateInExcludeAsync({
           strUserGUID: user.strUserGUID,
           strTourCustomizedGUID,
-          strTourCustomizedInExcludeGUID: item.id,
-          strInExName: item.content,
+          strTourCustomizedInExcludeGUID: draftItem.id,
+          strInExName: draftItem.content,
           IsRefresh: true,
         })) as UpdateResponse;
 
         if (response?.isSuccess === false) {
-          throw new Error(response?.message || "Update failed");
+          throw new Error(response?.message || t("updateError"));
         }
 
         const nextListData = Array.isArray(response?.data?.[0])
@@ -288,42 +206,120 @@ const DetailTourInExPopup = ({
       });
 
       onSave?.(nextData);
-      showToast("success", "Cập nhật thành công");
+      showToast("success", t("updateSuccess"));
       onClose();
     } catch (saveError: any) {
-      showToast("error", saveError?.message || "Cập nhật thất bại");
+      showToast("error", saveError?.message || t("updateError"));
     }
   };
 
   const isTableLoading = isLoading || isFetching;
   const isCheckboxInteractive = false;
 
+  const renderSection = (
+    title: string,
+    items: DetailTourInExPopupItem[],
+    sectionLoading: boolean,
+    sectionError: boolean,
+    onToggle: (index: number, checked: boolean) => void,
+    onContentChange: (index: number, value: string) => void
+  ) => (
+    <div className={sectionCardClassName}>
+      <div className="mb-3 text-[15px] font-semibold text-gray-800">{title}</div>
+
+      <div className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-center gap-x-3 border-b border-gray-200 px-1 pb-2 text-[12px] font-semibold text-[#2f69b1]">
+        <div>
+          <input
+            type="checkbox"
+            checked
+            readOnly
+            className="h-3.5 w-3.5 cursor-default accent-[#1677ff]"
+          />
+        </div>
+        <div>{t("supplierType")}</div>
+        <div>{t("content")}</div>
+      </div>
+
+      <div className="mt-2 space-y-2">
+        {sectionLoading ? (
+          [...Array(4)].map((_, index) => (
+            <div
+              key={`${title}-loading-${index}`}
+              className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-start gap-x-3 rounded-lg px-1 py-1"
+            >
+              <div className="pt-2">
+                <div className="h-3.5 w-3.5 animate-pulse rounded-sm bg-gray-200" />
+              </div>
+
+              <div className="pt-2">
+                <div className="h-4 w-20 animate-pulse rounded bg-gray-200" />
+              </div>
+
+              <div className="h-[62px] animate-pulse rounded-md bg-gray-100" />
+            </div>
+          ))
+        ) : sectionError ? (
+          <div className="px-1 py-6 text-center text-sm text-red-500">
+            {t("loadDataError")}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="px-1 py-6 text-center text-sm text-gray-500">
+            {t("noData")}
+          </div>
+        ) : (
+          items.map((item, index) => (
+            <div
+              key={item.id}
+              className="grid grid-cols-[28px_110px_minmax(0,1fr)] items-start gap-x-3 rounded-lg px-1 py-1"
+            >
+              <div className="pt-2">
+                <input
+                  type="checkbox"
+                  checked={item.checked ?? false}
+                  onChange={(event) => onToggle(index, event.target.checked)}
+                  className="h-3.5 w-3.5 accent-[#1677ff]"
+                />
+              </div>
+
+              <div className="pt-2 text-[12px] font-medium text-gray-700">
+                {item.supplierType}
+              </div>
+
+              <textarea
+                value={item.content}
+                onChange={(event) => onContentChange(index, event.target.value)}
+                className={textareaClassName}
+                rows={3}
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <PanelPopup
       open={open}
       onClose={onClose}
-      title="Update Include/Exclude"
+      title={t("updateIncludeExclude")}
       className="w-[1150px] max-w-[96vw]"
       footer={
         <div className="flex items-center justify-between gap-3">
-          {/* <div className="text-xs text-gray-500">
-            Checkbox state is read-only until the backend exposes a save field for it.
-          </div> */}
-
           <button
             type="button"
             onClick={() => void handleSave()}
             disabled={loading || isTableLoading || isSaving}
             className="cursor-pointer rounded bg-[#004b91] px-5 py-2 text-[13px] font-semibold text-white transition hover:bg-[#003d75] disabled:opacity-50"
           >
-            {loading || isSaving ? "Lưu..." : "Lưu"}
+            {loading || isSaving ? t("saving") : t("save")}
           </button>
         </div>
       }
     >
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         {renderSection(
-          "Include",
+          t("include"),
           includeDraft,
           isTableLoading,
           !!error,
@@ -346,7 +342,7 @@ const DetailTourInExPopup = ({
         )}
 
         {renderSection(
-          "Exclude",
+          t("exclude"),
           excludeDraft,
           isTableLoading,
           !!error,

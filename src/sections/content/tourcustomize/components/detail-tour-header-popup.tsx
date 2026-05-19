@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,11 +10,11 @@ import {
   RefreshCcw,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import PanelPopup from "@/components/popup/panel-popup";
 import { useGetlistCustomer } from "@/hooks/actions/useTourCustomized";
 import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
+import { useTranslate } from "@/locales";
 
 import DeleteCustomer from "./del-customer";
 import DetailTourHeaderPopupAdd from "./detail-tour-header-popup-add";
@@ -28,11 +29,11 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
 const DISABLED_ACTION_BUTTON_CLASS =
-  "flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-[#34495e] opacity-50 cursor-not-allowed";
+  "flex h-10 w-10 cursor-not-allowed items-center justify-center rounded bg-gray-100 text-[#34495e] opacity-50";
 const EDIT_ACTION_BUTTON_CLASS =
-  "flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-[#34495e] transition hover:bg-blue-50 hover:text-[#004b91] cursor-pointer";
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded bg-gray-100 text-[#34495e] transition hover:bg-blue-50 hover:text-[#004b91]";
 const DELETE_ACTION_BUTTON_CLASS =
-  "flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-[#34495e] transition hover:bg-red-50 hover:text-red-600 cursor-pointer";
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded bg-gray-100 text-[#34495e] transition hover:bg-red-50 hover:text-red-600";
 
 const normalizeText = (value?: string | null) => value?.trim() || null;
 
@@ -48,7 +49,10 @@ const getRoomName = (customer: ITourCustomizedCustomer) =>
   customer?.strSGLDBLName ||
   "";
 
-const formatCustomerDate = (value?: string | number | null) => {
+const formatCustomerDate = (
+  value: string | number | null | undefined,
+  localeCode: string
+) => {
   if (!value) return "---";
 
   if (typeof value === "string") {
@@ -57,15 +61,18 @@ const formatCustomerDate = (value?: string | number | null) => {
       const dotNetDate = new Date(Number(match[1]));
       return Number.isNaN(dotNetDate.getTime())
         ? "---"
-        : dotNetDate.toLocaleDateString("vi-VN");
+        : dotNetDate.toLocaleDateString(localeCode);
     }
   }
 
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "---" : date.toLocaleDateString("vi-VN");
+  return Number.isNaN(date.getTime()) ? "---" : date.toLocaleDateString(localeCode);
 };
 
 const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) => {
+  const { t, currentLang } = useTranslate("tourcustomize");
+  const localeCode = currentLang.value === "vi" ? "vi-VN" : "en-US";
+
   const [openPopup, setOpenPopup] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
@@ -153,8 +160,6 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
     refetch();
   };
 
-
-
   const pageCount = Math.max(totalPages, 1);
   const isEmpty = !isLoading && tourCustomer.length === 0;
   const displayFrom = totalRecords === 0 ? 0 : (page - 1) * pageSize + 1;
@@ -163,14 +168,12 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
       ? 0
       : Math.min((page - 1) * pageSize + tourCustomer.length, totalRecords);
 
-
-
   return (
     <div className="w-full">
       <div className="px-5 py-5">
         <div className="mb-5">
           <label className="mb-2 block text-lg font-semibold text-gray-700">
-            Customer name
+            {t("customerName")}
           </label>
 
           <div className="flex items-center gap-2">
@@ -183,7 +186,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
                   handleApplyFilter();
                 }
               }}
-              placeholder="Search customer name"
+              placeholder={t("searchCustomerName")}
               className="h-11 w-[245px] rounded border border-gray-300 px-3 outline-none focus:border-blue-600"
             />
 
@@ -193,7 +196,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
               className="flex h-11 items-center gap-2 rounded bg-[#004b91] px-4 font-semibold text-white hover:bg-[#003f7a]"
             >
               <Filter size={22} fill="white" />
-              Filter
+              {t("filter")}
             </button>
 
             <button
@@ -211,31 +214,31 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
             <thead>
               <tr className="bg-[#2f69b1] text-white">
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  STT
+                  {t("serialNumber")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Customer <br /> name
+                  {t("customer")} <br /> {t("name")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Room <br /> name
+                  {t("room")} <br /> {t("name")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Date Of <br /> Birth
+                  {t("dateOfBirth")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Passport
+                  {t("passport")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Visa expiry date
+                  {t("visaExpiryDate")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Contact <br /> detail
+                  {t("contactDetail")}
                 </th>
                 <th className="px-3 py-3 text-left text-base font-semibold">
-                  Email
+                  {t("email")}
                 </th>
                 <th className="px-3 py-3 text-center text-base font-semibold">
-                  Actions
+                  {t("actions")}
                 </th>
               </tr>
             </thead>
@@ -243,20 +246,14 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td
-                    colSpan={9}
-                    className="px-3 py-10 text-center text-base text-gray-500"
-                  >
-                    Loading customer data...
+                  <td colSpan={9} className="px-3 py-10 text-center text-base text-gray-500">
+                    {t("loadingCustomerData")}
                   </td>
                 </tr>
               ) : isEmpty ? (
                 <tr>
-                  <td
-                    colSpan={9}
-                    className="px-3 py-10 text-center text-base text-gray-500"
-                  >
-                    No customer data
+                  <td colSpan={9} className="px-3 py-10 text-center text-base text-gray-500">
+                    {t("noCustomerData")}
                   </td>
                 </tr>
               ) : (
@@ -278,7 +275,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
                     </td>
 
                     <td className="px-3 py-5 align-top text-base">
-                      {formatCustomerDate(customer?.dtmDateOfBirth)}
+                      {formatCustomerDate(customer?.dtmDateOfBirth, localeCode)}
                     </td>
 
                     <td className="px-3 py-5 align-top text-base">
@@ -286,7 +283,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
                     </td>
 
                     <td className="px-3 py-5 align-top text-base">
-                      {formatCustomerDate(customer?.dtmPassportExpireDate)}
+                      {formatCustomerDate(customer?.dtmPassportExpireDate, localeCode)}
                     </td>
 
                     <td className="px-3 py-5 align-top text-base">
@@ -297,7 +294,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
                       {customer?.strEmail || "---"}
                     </td>
 
-                    <td className="px-3 py-5 text-center align-top">
+                    <td className="px-3 py-5 align-top text-center">
                       <div className="flex items-center justify-center gap-2">
                         <button
                           type="button"
@@ -311,14 +308,6 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
                         >
                           <Edit size={18} />
                         </button>
-
-                        {/* <button
-                          type="button"
-                          disabled
-                          className={DISABLED_ACTION_BUTTON_CLASS}
-                        >
-                          <Copy size={18} />
-                        </button> */}
 
                         <button
                           type="button"
@@ -418,21 +407,21 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
         </div>
 
         {isFetching && !isLoading && (
-          <p className="mt-3 text-sm text-gray-500">Refreshing customer data...</p>
+          <p className="mt-3 text-sm text-gray-500">{t("refreshingCustomerData")}</p>
         )}
 
         <button
           type="button"
           onClick={() => setOpenPopup(true)}
-          className="cursor-pointer mt-10 flex h-11 items-center gap-2 rounded bg-[#2869bd] px-4 text-lg font-semibold text-white hover:bg-[#1f5ca8]"
+          className="mt-10 flex h-11 cursor-pointer items-center gap-2 rounded bg-[#2869bd] px-4 text-lg font-semibold text-white hover:bg-[#1f5ca8]"
         >
           <Plus size={26} />
-          Add new
+          {t("addNew")}
         </button>
       </div>
 
       <PanelPopup
-        title="Add new customer"
+        title={t("addNewCustomer")}
         open={openPopup}
         onClose={() => setOpenPopup(false)}
         className="w-[700px] max-w-[95vw]"
@@ -443,7 +432,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
               onClick={() => setOpenPopup(false)}
               className="h-10 rounded-lg border border-gray-300 px-6 font-semibold text-gray-700 transition hover:bg-gray-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
 
             <button
@@ -451,7 +440,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
               form={addCustomerFormId}
               className="h-10 rounded-lg bg-[#004b91] px-7 font-semibold text-white transition hover:bg-[#003f7a]"
             >
-              Save
+              {t("save")}
             </button>
           </div>
         }
@@ -466,7 +455,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
       </PanelPopup>
 
       <PanelPopup
-        title="Update customer"
+        title={t("updateCustomer")}
         open={!!editingCustomer}
         onClose={() => setEditingCustomer(null)}
         className="w-[700px] max-w-[95vw]"
@@ -477,7 +466,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
               onClick={() => setEditingCustomer(null)}
               className="h-10 rounded-lg border border-gray-300 px-6 font-semibold text-gray-700 transition hover:bg-gray-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
 
             <button
@@ -485,7 +474,7 @@ const DetailTourHeaderPopup = ({ strTourCustomizedGUID, strTourCode }: Props) =>
               form={updateCustomerFormId}
               className="h-10 rounded-lg bg-[#004b91] px-7 font-semibold text-white transition hover:bg-[#003f7a]"
             >
-              Save
+              {t("save")}
             </button>
           </div>
         }

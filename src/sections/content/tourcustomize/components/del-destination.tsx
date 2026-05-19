@@ -1,9 +1,10 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import PanelPopup from "@/components/popup/panel-popup";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useDelTourCustomizedDayDestination } from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   open: boolean;
@@ -20,7 +21,7 @@ const DeleteDestination = ({
   strCityGUID,
   locationName,
 }: Props) => {
-
+  const { t } = useTranslate("tourcustomize");
   const { showToast } = useToastStore();
   const queryClient = useQueryClient();
 
@@ -33,7 +34,7 @@ const DeleteDestination = ({
 
   const handleDelete = async () => {
     if (!strTourCustomizedDayGUID || !strCityGUID) {
-      showToast("error", "Thiếu thông tin điểm đến để xóa");
+      showToast("error", t("deleteDestinationMissing"));
       return;
     }
 
@@ -45,18 +46,13 @@ const DeleteDestination = ({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: [
-          QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
-        ],
+        queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
       });
 
-      showToast("success", "Delete destination successfully");
+      showToast("success", t("deleteDestinationSuccess"));
       onClose();
     } catch (error: any) {
-      showToast(
-        "error",
-        error?.message || "Delete destination failed"
-      );
+      showToast("error", error?.message || t("deleteDestinationError"));
     }
   };
 
@@ -64,7 +60,7 @@ const DeleteDestination = ({
     <PanelPopup
       open={open}
       onClose={onClose}
-      title="Delete Destination"
+      title={t("deleteDestination")}
       className="w-[500px]"
       footer={
         <div className="flex justify-end gap-3">
@@ -73,7 +69,7 @@ const DeleteDestination = ({
             onClick={onClose}
             className="cursor-pointer rounded-lg border px-4 py-2"
           >
-            Cancel
+            {t("cancel")}
           </button>
 
           <button
@@ -82,18 +78,16 @@ const DeleteDestination = ({
             disabled={isLoading}
             className="cursor-pointer rounded-lg bg-[#c62828] px-4 py-2 text-white disabled:opacity-50"
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {isLoading ? t("deleting") : t("delete")}
           </button>
         </div>
       }
     >
       <div className="space-y-2 text-sm text-gray-700">
-        <p>Bạn có chắc muốn xóa điểm đến này khỏi ngày hiện tại?</p>
+        <p>{t("deleteDestinationConfirm")}</p>
 
         {locationName && (
-          <p className="font-semibold text-gray-900">
-            {locationName}
-          </p>
+          <p className="font-semibold text-gray-900">{locationName}</p>
         )}
       </div>
     </PanelPopup>

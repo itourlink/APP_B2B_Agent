@@ -1,15 +1,16 @@
+import { useEffect } from "react";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
-import {  updateTourCustomizedCustomer} from "@/hooks/actions/useTourCustomized";
+import { updateTourCustomizedCustomer } from "@/hooks/actions/useTourCustomized";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCity } from "@/hooks/actions/useCity";
 import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
+import { useTranslate } from "@/locales";
 import { TITLES_OPTIONS } from "@/utils/oprion-data";
 import { useToastStore } from "@/zustand/useToastStore";
 
@@ -29,23 +30,19 @@ const textareaClassName =
 
 const labelClassName = "mb-2 block text-sm font-semibold text-gray-700";
 
-const schema = z.object({
-  intSaluteID: z.string().default("2"),
-  strFirstName: z.string().trim().min(1, "First name is required"),
-  strLastName: z.string().trim().min(1, "Last name is required"),
-  strEmail: z
-    .union([z.string().trim().email("Invalid email"), z.literal("")])
-    .default(""),
-  strPhoneNumber: z.string().trim().default(""),
-  strCountryGUID: z.string().default(""),
-  dtmDateOfBirth: z.string().default(""),
-  strPassNum: z.string().trim().default(""),
-  dtmPassportExpireDate: z.string().default(""),
-  strContactDetail: z.string().trim().default(""),
-  strRemark: z.string().trim().default(""),
-});
-
-type SchemaType = z.infer<typeof schema>;
+type SchemaType = {
+  intSaluteID: string;
+  strFirstName: string;
+  strLastName: string;
+  strEmail: string;
+  strPhoneNumber: string;
+  strCountryGUID: string;
+  dtmDateOfBirth: string;
+  strPassNum: string;
+  dtmPassportExpireDate: string;
+  strContactDetail: string;
+  strRemark: string;
+};
 
 const normalizeEmpty = (value?: string | null) => {
   const normalized = value?.trim();
@@ -66,9 +63,7 @@ const formatDateForInput = (value?: string | number | null) => {
   }
 
   const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toISOString().slice(0, 10);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
 };
 
 const UpdateCustomer = ({
@@ -78,9 +73,26 @@ const UpdateCustomer = ({
   customer,
   strTourCode,
 }: Props) => {
+  const { t } = useTranslate("tourcustomize");
   const queryClient = useQueryClient();
   const { user } = useUser();
   const { showToast } = useToastStore();
+
+  const schema = z.object({
+    intSaluteID: z.string().default("2"),
+    strFirstName: z.string().trim().min(1, t("firstNameRequired")),
+    strLastName: z.string().trim().min(1, t("lastNameRequired")),
+    strEmail: z
+      .union([z.string().trim().email(t("invalidEmail")), z.literal("")])
+      .default(""),
+    strPhoneNumber: z.string().trim().default(""),
+    strCountryGUID: z.string().default(""),
+    dtmDateOfBirth: z.string().default(""),
+    strPassNum: z.string().trim().default(""),
+    dtmPassportExpireDate: z.string().default(""),
+    strContactDetail: z.string().trim().default(""),
+    strRemark: z.string().trim().default(""),
+  });
 
   const { ctData } = useListCity({
     strTableName: "MC02",
@@ -129,9 +141,7 @@ const UpdateCustomer = ({
       strCountryGUID: customer?.strCountryGUID || "",
       dtmDateOfBirth: formatDateForInput(customer?.dtmDateOfBirth),
       strPassNum: customer?.strPassNum || "",
-      dtmPassportExpireDate: formatDateForInput(
-        customer?.dtmPassportExpireDate
-      ),
+      dtmPassportExpireDate: formatDateForInput(customer?.dtmPassportExpireDate),
       strContactDetail: customer?.strContactDetail || "",
       strRemark: customer?.strRemark || "",
     });
@@ -139,7 +149,7 @@ const UpdateCustomer = ({
 
   const onSubmit = handleSubmit((data) => {
     if (!user?.strUserGUID || !customer?.strCustomerGUID) {
-      showToast("error", "Missing user or customer information");
+      showToast("error", t("missingUserOrCustomerInfo"));
       return;
     }
 
@@ -162,20 +172,14 @@ const UpdateCustomer = ({
     updateCustomerApi(payload, {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: [
-            QUERY_KEYS.TOUR_CUSTOMER.LIST_TOUR_CUSTOMER,
-            strTourCode,
-          ],
+          queryKey: [QUERY_KEYS.TOUR_CUSTOMER.LIST_TOUR_CUSTOMER, strTourCode],
         });
-        showToast("success", "Update customer successfully");
+        showToast("success", t("updateCustomerSuccess"));
         onSuccess?.();
         onClose();
       },
       onError: (error: any) => {
-        showToast(
-          "error",
-          error?.message || "Update customer failed"
-        );
+        showToast("error", error?.message || t("updateCustomerError"));
       },
     });
   });
@@ -184,7 +188,7 @@ const UpdateCustomer = ({
     <form id={formId} onSubmit={onSubmit} className="w-full">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label className={labelClassName}>Salute</label>
+          <label className={labelClassName}>{t("salute")}</label>
           <select
             {...register("intSaluteID")}
             className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm text-gray-700 outline-none transition focus:border-[#004b91] md:max-w-[110px]"
@@ -199,55 +203,45 @@ const UpdateCustomer = ({
 
         <div>
           <label className={labelClassName}>
-            First name <span className="text-red-500">*</span>
+            {t("firstName")} <span className="text-red-500">*</span>
           </label>
           <input {...register("strFirstName")} className={inputClassName} />
           {errors.strFirstName && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.strFirstName.message}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{errors.strFirstName.message}</p>
           )}
         </div>
 
         <div>
           <label className={labelClassName}>
-            Last name <span className="text-red-500">*</span>
+            {t("lastName")} <span className="text-red-500">*</span>
           </label>
           <input {...register("strLastName")} className={inputClassName} />
           {errors.strLastName && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.strLastName.message}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{errors.strLastName.message}</p>
           )}
         </div>
 
         <div>
-          <label className={labelClassName}>Email</label>
-          <input
-            type="email"
-            {...register("strEmail")}
-            className={inputClassName}
-          />
+          <label className={labelClassName}>{t("email")}</label>
+          <input type="email" {...register("strEmail")} className={inputClassName} />
           {errors.strEmail && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.strEmail.message}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{errors.strEmail.message}</p>
           )}
         </div>
 
         <div>
-          <label className={labelClassName}>Phone number</label>
+          <label className={labelClassName}>{t("phoneNumber")}</label>
           <input {...register("strPhoneNumber")} className={inputClassName} />
         </div>
 
         <div>
-          <label className={labelClassName}>Country</label>
+          <label className={labelClassName}>{t("country")}</label>
           <div className="relative">
             <select
               {...register("strCountryGUID")}
               className="h-10 w-full appearance-none rounded-lg border border-gray-300 px-3 pr-10 text-sm text-gray-700 outline-none transition focus:border-[#004b91]"
             >
-              <option value="">Select country</option>
+              <option value="">{t("selectCountryPlaceholder")}</option>
               {ctData.map((country: any) => (
                 <option key={country.id} value={country.id}>
                   {country.text || country.strName}
@@ -262,7 +256,7 @@ const UpdateCustomer = ({
         </div>
 
         <div>
-          <label className={labelClassName}>Date of birth</label>
+          <label className={labelClassName}>{t("dateOfBirth")}</label>
           <input
             type="date"
             {...register("dtmDateOfBirth")}
@@ -271,12 +265,12 @@ const UpdateCustomer = ({
         </div>
 
         <div>
-          <label className={labelClassName}>Passport</label>
+          <label className={labelClassName}>{t("passport")}</label>
           <input {...register("strPassNum")} className={inputClassName} />
         </div>
 
         <div>
-          <label className={labelClassName}>Visa expiry date</label>
+          <label className={labelClassName}>{t("visaExpiryDate")}</label>
           <input
             type="date"
             {...register("dtmPassportExpireDate")}
@@ -285,15 +279,12 @@ const UpdateCustomer = ({
         </div>
 
         <div className="md:col-span-2">
-          <label className={labelClassName}>Contact detail</label>
-          <textarea
-            {...register("strContactDetail")}
-            className={textareaClassName}
-          />
+          <label className={labelClassName}>{t("contactDetail")}</label>
+          <textarea {...register("strContactDetail")} className={textareaClassName} />
         </div>
 
         <div className="md:col-span-2">
-          <label className={labelClassName}>More info</label>
+          <label className={labelClassName}>{t("moreInfo")}</label>
           <textarea {...register("strRemark")} className={textareaClassName} />
         </div>
       </div>

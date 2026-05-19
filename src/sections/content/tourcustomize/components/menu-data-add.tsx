@@ -9,40 +9,42 @@ import {
 
 import type { IServiceMenuItem } from "./service-menu";
 
-export const MENU_ITEMS: IServiceMenuItem[] = [
+type TranslateFn = (key: string) => string;
+
+export const getMenuItems = (t: TranslateFn): IServiceMenuItem[] => [
   {
     icon: <Bed size={20} />,
-    label: "Thêm chỗ nghỉ",
+    label: t("menuAddAccommodation"),
     value: "accommodation",
     color: "text-blue-700",
   },
   {
     icon: <Landmark size={20} />,
-    label: "Thêm Chuyến Tham quan",
+    label: t("menuAddTours"),
     value: "tours",
     color: "text-blue-700",
   },
   {
     icon: <Car size={20} />,
-    label: "Thêm Dịch vụ Vận chuyển",
+    label: t("menuAddTransportation"),
     value: "shipping",
     color: "text-blue-700",
   },
   {
     icon: <Pencil size={20} />,
-    label: "Thêm Thủ Công",
+    label: t("menuAddManual"),
     value: "manual",
     color: "text-blue-700",
   },
   {
     icon: <PlusCircle size={20} />,
-    label: "Thêm Dịch Vụ Đơn",
+    label: t("menuAddSingleService"),
     value: "service",
     color: "text-blue-700",
   },
   {
     icon: <ImageIcon size={20} />,
-    label: "Add Image",
+    label: t("menuAddImage"),
     value: "image",
     color: "text-blue-700",
   },

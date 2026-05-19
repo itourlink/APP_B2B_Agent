@@ -1,4 +1,5 @@
 import { Popup } from "@/components/popup/popup";
+import { useTranslate } from "@/locales";
 import AddTourCustomize from "../../info/components/add-tour-customize";
 
 interface CreatedDayPopupProps {
@@ -21,12 +22,13 @@ const CreatedDayPopup = ({
   intDayOrder,
   onAddLocalDay,
 }: CreatedDayPopupProps) => {
+  const { t } = useTranslate("tourcustomize");
 
   return (
     <Popup
       open={open}
       onClose={onClose}
-      title="Created Day"
+      title={t("createdDay")}
       className="w-[450px]"
     >
       <div className="p-1 font-sans">
