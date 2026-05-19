@@ -104,8 +104,17 @@ const TourSearch = () => {
             return;
         }
 
+        console.log("draftFilters2", draftFilters2);
+
         // CLICK DESTINATION => SEARCH LIST
         router.replaceParams(paths.shop.search, {
+            isTourSeries: filters.isTourSeries,
+            isSearchTour: {
+                ...draftFilters2,
+            },
+        });
+
+        console.log({
             isTourSeries: filters.isTourSeries,
             isSearchTour: {
                 ...draftFilters2,

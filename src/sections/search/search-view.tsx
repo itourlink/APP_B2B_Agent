@@ -14,12 +14,10 @@ const SearchView = () => {
     const isSearchHotel = state?.isSearchHotel;
 
     // REMOVE KEY KHÔNG CẦN
-    const searchTourPayload = {
-        ...state,
-    };
+    const searchTourPayload = state?.isSearchTour || {};
 
-    delete searchTourPayload?.isTourSeries;
-    delete searchTourPayload?.isSearchHotel;
+    // delete searchTourPayload?.isTourSeries;
+    // delete searchTourPayload?.isSearchHotel;
 
     // ===== TOUR SERIES =====
     const { tsData, tsLoading, tsError } = useListTourSeries(
