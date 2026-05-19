@@ -8,7 +8,7 @@ const TourView = () => {
     return (
         <div className="relative">
             <BannerSlider slides={slidesTour} />
-            <div className="absolute left-1/2 -translate-x-1/2 top-[550px] z-50 w-full">
+            <div className="sticky top-30 z-50 mt-[-50px]">
                 <TourSearch />
             </div>
             <div className="mt-20">
