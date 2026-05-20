@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Funnel, MapPin, X } from "lucide-react";
-import { Form, Field, } from "@/components/hook-form";
-import { useForm } from "react-hook-form"
-import { useListCity } from "@/hooks/actions/useCity";
-// import { useFetchAddServiceMenuMappingPrice } from "@/hooks/actions/useAddServiceMenu";
+import { useForm } from "react-hook-form";
 
+import { Field, Form } from "@/components/hook-form";
+import { useListCity } from "@/hooks/actions/useCity";
+import { useTranslate } from "@/locales";
 
 const AddServiceMenuD = () => {
+  const { t } = useTranslate("tourcustomize");
   const methods = useForm({
     defaultValues: {
       serviceType: "1",
@@ -22,9 +23,7 @@ const AddServiceMenuD = () => {
   const { watch, setValue } = methods;
   const selectedCountryCode = watch("country");
 
-  const {
-    ctData: countryData = [],
-  } = useListCity({
+  const { ctData: countryData = [] } = useListCity({
     strTableName: "MC02",
     strWhere: "WHERE IsActive=1 ORDER BY MC02_CountryName",
     strFeildSelect:
@@ -42,17 +41,12 @@ const AddServiceMenuD = () => {
     value: item.code,
   }));
 
-  // const { vehicleData, vehicleLoading } = useFetchAddServiceMenuMappingPrice({ page: 1, pageSize: 10 });
-
-  const {
-    ctData: cityData = [],
-  } = useListCity({
+  const { ctData: cityData = [] } = useListCity({
     strTableName: "MC04",
     strWhere: selectedCountryCode
       ? `WHERE IsActive=1 AND MC04_CityCode LIKE '%${selectedCountryCode}%' ORDER BY MC04_CityName`
       : "WHERE 1=0",
-    strFeildSelect:
-      "MC04_CityCode AS code, MC04_CityName AS strName",
+    strFeildSelect: "MC04_CityCode AS code, MC04_CityName AS strName",
   });
 
   const cityOptions = cityData.map((item: any) => ({
@@ -64,19 +58,19 @@ const AddServiceMenuD = () => {
     setValue("cities", "");
   }, [selectedCountryCode, setValue]);
 
-  const selectedCitiesCodes = (watch("cities") ?? "")
-    .split(",")
-    .filter(Boolean);
+  const selectedCitiesCodes = (watch("cities") ?? "").split(",").filter(Boolean);
 
-  const selectedCitiesNames = cityData
-    ?.filter((c: any) => selectedCitiesCodes.includes(c.code))
-    .map((c: any) => c.strName) || [];
+  const selectedCitiesNames =
+    cityData
+      ?.filter((city: any) => selectedCitiesCodes.includes(city.code))
+      .map((city: any) => city.strName) || [];
+
   return (
     <Form methods={methods}>
       <div className="bg-white px-2 pb-4 pt-1 text-[13px] text-gray-700">
         <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
           <h2 className="text-[20px] font-normal text-gray-800">
-            Add Single Service for Day 1
+            {t("addSingleServiceForDay", { day: 1 })}
           </h2>
 
           <button
@@ -89,37 +83,26 @@ const AddServiceMenuD = () => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Field.Select name="serviceType"
+            <Field.Select
+              name="serviceType"
               options={[
-                { label: "Boat (Day cruise)", value: "1" },
-                { label: "Restaurant", value: "2" },
-                { label: "Transport", value: "3" }]}
+                { label: t("boatDayCruise"), value: "1" },
+                { label: t("restaurant"), value: "2" },
+                { label: t("transportation"), value: "3" },
+              ]}
             />
           </div>
 
-          <div >
-            <Field.Text name="displayName" placeholder="Name" />
+          <div>
+            <Field.Text name="displayName" placeholder={t("name")} />
           </div>
-
-          {/* <input
-          type="text"
-          placeholder="Name"
-          className="h-7 flex-1 rounded border border-gray-300 px-2 text-[12px] text-gray-700 outline-none placeholder:text-gray-400"
-        /> */}
 
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded bg-[#0d4d92] text-white  cursor-pointer"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded bg-[#0d4d92] text-white"
           >
             <Funnel size={18} />
           </button>
-
-          {/* <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded border border-[#0d4d92] text-[#0d4d92]"
-        >
-          <Link2 size={18} />
-        </button> */}
         </div>
 
         {isEditLoc ? (
@@ -127,28 +110,39 @@ const AddServiceMenuD = () => {
             <div className="w-[180px]">
               <Field.SearchSelect name="country" options={countryOptions} />
             </div>
+
             <div className="flex-1">
               <Field.MultiSelect name="cities" options={cityOptions} />
             </div>
-            <button type="button" onClick={() => setIsEditLoc(false)} className="text-gray-400 hover:text-gray-600 transition">
+
+            <button
+              type="button"
+              onClick={() => setIsEditLoc(false)}
+              className="text-gray-400 transition hover:text-gray-600"
+            >
               <X size={16} />
             </button>
           </div>
         ) : (
-          <div 
-            className="mb-2 flex items-center gap-1 text-[12px] text-[#0d4d92] cursor-pointer hover:opacity-80 transition"
+          <div
+            className="mb-2 flex cursor-pointer items-center gap-1 text-[12px] text-[#0d4d92] transition hover:opacity-80"
             onClick={() => setIsEditLoc(true)}
           >
             <MapPin size={13} className="fill-[#0d4d92]" />
             <span>
-              {selectedCountry ? selectedCountry.strName : "Vietnam"}: {selectedCitiesNames.length > 0 ? selectedCitiesNames.join(", ") : "Ha Noi"}
+              {selectedCountry ? selectedCountry.strName : t("defaultCountry")}:
+              {" "}
+              {selectedCitiesNames.length > 0
+                ? selectedCitiesNames.join(", ")
+                : t("defaultCity")}
             </span>
           </div>
         )}
 
         <div className="mb-3 grid grid-cols-[190px_1fr_1fr] gap-2">
-          <Field.Select name="category"
-            placeholder="Select Category"
+          <Field.Select
+            name="category"
+            placeholder={t("selectCategory")}
             options={[
               { label: "*", value: "1" },
               { label: "**", value: "2" },
@@ -156,16 +150,16 @@ const AddServiceMenuD = () => {
               { label: "****", value: "4" },
               { label: "*****", value: "5" },
               { label: "******", value: "6" },
-              { label: "*******", value: "7" }]} />
+              { label: "*******", value: "7" },
+            ]}
+          />
 
           <div>
-            {/* <CalendarDays size={13} className="mr-2 text-gray-500" /> */}
-            <Field.Text name="from" placeholder="From" />
+            <Field.Text name="from" placeholder={t("from")} />
           </div>
 
           <div>
-            {/* <CalendarDays size={13} className="mr-2 text-gray-500" /> */}
-            <Field.Text name="to" placeholder="To" />
+            <Field.Text name="to" placeholder={t("to")} />
           </div>
         </div>
 
@@ -173,47 +167,18 @@ const AddServiceMenuD = () => {
           <table className="w-full border-collapse text-[12px]">
             <thead>
               <tr className="border-b border-gray-200 text-[#3b6ea8]">
-                <th className="py-2 text-left font-normal">STT</th>
-                <th className="py-2 text-left font-normal">Tên dịch vụ</th>
-                <th className="py-2 text-left font-normal">Price</th>
+                <th className="py-2 text-left font-normal">{t("serialNumber")}</th>
+                <th className="py-2 text-left font-normal">{t("serviceName")}</th>
+                <th className="py-2 text-left font-normal">{t("price")}</th>
               </tr>
             </thead>
 
-            {/* <tbody>
-              {vehicleLoading ? (
-                <tr>
-                  <td colSpan={3} className="py-4 text-center text-gray-500">
-                    Đang tải dữ liệu dịch vụ...
-                  </td>
-                </tr>
-              ) : vehicleData && vehicleData.length > 0 ? (
-                vehicleData.map((item: any, index: number) => (
-                  <tr key={item.strSupplierMappingPriceGUID || index} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-2 text-gray-700 px-2">{index + 1}</td>
-                    <td className="py-2 px-2 font-medium">{item.strSupplierName || item.strItemName || "N/A"}</td>
-                    <td className="py-2 px-2 text-[#0d4d92] font-semibold">
-                      {item.dblPriceCost ? item.dblPriceCost.toLocaleString() : "Liên hệ"}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="py-4 text-gray-700 text-center" colSpan={3}>
-                    Không có dữ liệu
-                  </td>
-                </tr>
-              )}
-            </tbody> */}
-
             <tbody>
-               
-                  <tr className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-2 text-gray-700 px-2">1</td>
-                    <td className="py-2 px-2 font-medium">Test</td>
-                    <td className="py-2 px-2 text-[#0d4d92] font-semibold">
-                      10000
-                    </td>
-                  </tr>
+              <tr className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="px-2 py-2 text-gray-700">1</td>
+                <td className="px-2 py-2 font-medium">{t("service")}</td>
+                <td className="px-2 py-2 font-semibold text-[#0d4d92]">10000</td>
+              </tr>
             </tbody>
           </table>
         </div>

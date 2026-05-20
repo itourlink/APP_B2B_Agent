@@ -1,3 +1,5 @@
+import { useTranslate } from "@/locales";
+
 type ReportPriceVariant = "agency" | "selling";
 
 type ReportPriceTabProps = {
@@ -24,24 +26,29 @@ const SaveIcon = () => (
 );
 
 const AGENCY_SUMMARY = [
-  "Sub Total: $13,125,000",
-  "Voucher: $0",
-  "Price Total: $13,125,000",
-  "Total Commission: $600,000",
+  { labelKey: "subTotalPrice", value: 13125000 },
+  { labelKey: "voucher", value: 0 },
+  { labelKey: "totalPrice", value: 13125000 },
+  { labelKey: "totalCommission", value: 600000 },
 ];
 
 const ReportPriceTab = ({ variant }: ReportPriceTabProps) => {
+  const { t, currentLang } = useTranslate("reportfinance");
+  const formatCurrency = (val: number) => {
+    return `${new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(val)} ${t("currencySymbol")}`;
+  };
+
   if (variant === "selling") {
     return (
       <div className="relative min-h-[100px]">
         <div className="absolute top-0 right-0 text-[18px] font-semibold text-red-500">
-          Sub Total: $13,650,000
+          {t("subTotalPrice")}: {formatCurrency(13650000)}
         </div>
 
         <div className="absolute right-0 bottom-0">
           <button className="flex cursor-pointer items-center rounded-md bg-[#6e97c5] px-5 py-2 text-sm text-white transition-colors hover:bg-[#5e87b6]">
             <SaveIcon />
-            Luu
+            {t("save")}
           </button>
         </div>
       </div>
@@ -51,8 +58,10 @@ const ReportPriceTab = ({ variant }: ReportPriceTabProps) => {
   return (
     <div className="relative min-h-[100px]">
       <div className="absolute top-0 right-0 space-y-1 text-right text-[18px] font-semibold text-red-500">
-        {AGENCY_SUMMARY.map((summaryItem) => (
-          <div key={summaryItem}>{summaryItem}</div>
+        {AGENCY_SUMMARY.map((item, idx) => (
+          <div key={idx}>
+            {t(item.labelKey)}: {formatCurrency(item.value)}
+          </div>
         ))}
       </div>
     </div>
@@ -60,3 +69,4 @@ const ReportPriceTab = ({ variant }: ReportPriceTabProps) => {
 };
 
 export default ReportPriceTab;
+

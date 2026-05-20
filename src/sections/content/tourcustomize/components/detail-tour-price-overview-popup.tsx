@@ -6,6 +6,7 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useGetOverViewTourCustomized } from "@/hooks/actions/useUser";
 import { useListSQLData } from "@/hooks/actions/useSql";
+import { useTranslate } from "@/locales";
 import { formatMoney } from "@/utils/format-number";
 
 interface DetailTourPriceOverviewPopupProps {
@@ -50,6 +51,7 @@ const DetailTourPriceOverviewPopup = ({
   onClose,
   tourCustomizedGUID,
 }: DetailTourPriceOverviewPopupProps) => {
+  const { t } = useTranslate("tourcustomize");
   const { user } = useUser();
   const [selectedCategory, setSelectedCategory] = useState<number>();
 
@@ -129,7 +131,7 @@ const DetailTourPriceOverviewPopup = ({
         <div className="relative flex max-h-[calc(100vh-48px)] w-full max-w-6xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
           <div className="flex shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6 py-4">
             <h2 className="select-none text-xl font-bold text-[#4a6fa5]">
-              Overview Price
+              {t("overviewPrice")}
             </h2>
 
             <button
@@ -145,7 +147,7 @@ const DetailTourPriceOverviewPopup = ({
             <div className="space-y-6">
               <div className="flex max-w-[240px] flex-col gap-1.5">
                 <label className="ml-1 text-[12px] font-medium text-gray-500">
-                  Category
+                  {t("category")}
                 </label>
 
                 <div className="relative">
@@ -156,7 +158,9 @@ const DetailTourPriceOverviewPopup = ({
                     className="h-10 w-full cursor-pointer appearance-none rounded-md border border-gray-300 bg-white pl-3 pr-10 text-sm transition-all focus:border-[#4a6fa5] focus:outline-none focus:ring-2 focus:ring-[#4a6fa5]/20 disabled:cursor-not-allowed disabled:bg-gray-100"
                   >
                     <option value="" disabled>
-                      {isCategoryLoading ? "Loading categories..." : "Select category"}
+                      {isCategoryLoading
+                        ? t("loadingCategories")
+                        : t("selectCategoryPlaceholder")}
                     </option>
 
                     {categoriesData.map((category: any) => (
@@ -179,7 +183,7 @@ const DetailTourPriceOverviewPopup = ({
                   <thead>
                     <tr className="bg-[#3b66a0] text-white">
                       <th className="px-6 py-3.5 text-[14px] font-semibold">
-                        Description
+                        {t("description")}
                       </th>
 
                       {columns.map((column) => (
@@ -200,7 +204,7 @@ const DetailTourPriceOverviewPopup = ({
                           colSpan={columns.length + 1}
                           className="px-6 py-8 text-center text-gray-400"
                         >
-                          Loading...
+                          {t("loading")}
                         </td>
                       </tr>
                     ) : days.length > 0 ? (
@@ -231,7 +235,7 @@ const DetailTourPriceOverviewPopup = ({
                         ))}
 
                         <tr className="bg-gray-50/80">
-                          <td className="px-6 py-4 font-bold text-gray-900">Sum</td>
+                          <td className="px-6 py-4 font-bold text-gray-900">{t("sum")}</td>
 
                           {totalByColumn.map((total, index) => (
                             <td
@@ -249,7 +253,7 @@ const DetailTourPriceOverviewPopup = ({
                           colSpan={columns.length + 1}
                           className="px-6 py-8 text-center text-gray-400"
                         >
-                          No data
+                          {t("noData")}
                         </td>
                       </tr>
                     )}

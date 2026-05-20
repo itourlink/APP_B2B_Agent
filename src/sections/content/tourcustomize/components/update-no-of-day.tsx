@@ -1,185 +1,164 @@
 import { useEffect, useState } from "react";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import PanelPopup from "@/components/popup/panel-popup";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import {
-    addTourCustomizedSerByListDays,
-    useListServiceTourCustomized,
+  addTourCustomizedSerByListDays,
+  useListServiceTourCustomized,
 } from "@/hooks/actions/useUser";
-
+import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
 
-import {
-    keepPreviousData,
-    useMutation,
-    useQuery,
-    useQueryClient,
-} from "@tanstack/react-query";
-
-
 interface Props {
-    open: boolean;
-    onClose: () => void;
-    strTourCustomizedPriceItemGUID: string;
-    item?: any;
+  open: boolean;
+  onClose: () => void;
+  strTourCustomizedPriceItemGUID: string;
+  item?: any;
 }
 
 const UpdateNoOfDay = ({
-    open,
-    onClose,
-    strTourCustomizedPriceItemGUID,
-    item,
+  open,
+  onClose,
+  strTourCustomizedPriceItemGUID,
+  item,
 }: Props) => {
-    const { showToast } = useToastStore();
+  const { t } = useTranslate("tourcustomize");
+  const { showToast } = useToastStore();
+  const queryClient = useQueryClient();
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
-    const queryClient = useQueryClient();
+  const {
+    mutateAsync: addTourCustomizedSerByListDaysApi,
+    isPending: isLoading,
+  } = useMutation({
+    mutationFn: addTourCustomizedSerByListDays,
+  });
 
-    const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const groupByDay = (data: any[]) => {
+    const map: Record<string, any[]> = {};
 
-    const {
-        mutateAsync: addTourCustomizedSerByListDaysApi,
-        isPending: isLoading,
-    } = useMutation({
-        mutationFn: addTourCustomizedSerByListDays,
+    data.forEach((dataItem) => {
+      const key = dataItem?.strTourCustomizedDayGUID;
+
+      if (!map[key]) {
+        map[key] = [];
+      }
+
+      map[key].push(dataItem);
     });
 
-    const groupByDay = (data: any[]) => {
-        const map: Record<string, any[]> = {};
+    return Object.values(map);
+  };
 
-        data.forEach((item) => {
-            const key = item?.strTourCustomizedDayGUID;
+  const { data } = useQuery({
+    queryKey: [
+      QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+      item?.strTourCustomizedGUID,
+    ],
+    queryFn: () =>
+      useListServiceTourCustomized({
+        strTourCustomizedGUID: item?.strTourCustomizedGUID || "",
+        strTourCustomizedDayGUID: null,
+      }),
+    placeholderData: keepPreviousData,
+    enabled: !!item?.strTourCustomizedGUID,
+  });
 
-            if (!map[key]) {
-                map[key] = [];
-            }
+  const listData = data?.[0] ?? [];
+  const groupedDays = groupByDay(listData);
 
-            map[key].push(item);
-        });
+  useEffect(() => {
+    if (!listData?.length || !strTourCustomizedPriceItemGUID) return;
 
-        return Object.values(map);
-    };
+    const selected = listData
+      .filter(
+        (entry: any) =>
+          entry?.strTourCustomizedPriceItemGUID === strTourCustomizedPriceItemGUID
+      )
+      .map((entry: any) => String(entry?.intDayOrder));
 
-    const { data } = useQuery({
-        queryKey: [
-            QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
-            item?.strTourCustomizedGUID,
-        ],
+    setSelectedDays(selected);
+  }, [listData, strTourCustomizedPriceItemGUID]);
 
-        queryFn: () =>
-            useListServiceTourCustomized({
-                strTourCustomizedGUID:
-                    item?.strTourCustomizedGUID || "",
-
-                strTourCustomizedDayGUID: null,
-            }),
-
-        placeholderData: keepPreviousData,
-
-        enabled: !!item?.strTourCustomizedGUID,
-    });
-
-    const listData = data?.[0] ?? [];
-
-    const groupedDays = groupByDay(listData);
-
-    useEffect(() => {
-        if (!listData?.length || !strTourCustomizedPriceItemGUID) return;
-
-        const selected = listData
-            .filter(
-                (x: any) =>
-                    x?.strTourCustomizedPriceItemGUID ===
-                    strTourCustomizedPriceItemGUID
-            )
-            .map((x: any) => String(x?.intDayOrder));
-
-        setSelectedDays(selected);
-    }, [listData, strTourCustomizedPriceItemGUID]);
-
-    const handleToggleDay = (day: string) => {
-        setSelectedDays((prev) =>
-            prev.includes(day)
-                ? prev.filter((id) => id !== day)
-                : [...prev, day]
-        );
-    };
-
-    const handleUpdate = async () => {
-        const payload = {
-            strTourCustomizedPriceItemGUID,
-            strListDays: selectedDays.join(","),
-        };
-
-        addTourCustomizedSerByListDaysApi(payload, {
-            onSuccess: () => {
-                queryClient.invalidateQueries({
-                    queryKey: [
-                        QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
-                    ],
-                });
-
-                showToast("success", "Cập nhật thành công");
-
-                onClose();
-            },
-
-            onError: () => {
-                showToast("error", "Cập nhật thất bại");
-            },
-        });
-    };
-
-    return (
-        <PanelPopup
-            open={open}
-            onClose={onClose}
-            title="Update List Days"
-            footer={
-                <button
-                    type="button"
-                    onClick={handleUpdate}
-                    disabled={isLoading}
-                    className="cursor-pointer rounded-lg bg-[#4a6fa5] hover:bg-[#3b5b7e] px-4 py-2 text-white disabled:opacity-50"
-                >
-                    {isLoading ? "Lưu..." : "Lưu"}
-                </button>
-            }
-        >
-            <div className="space-y-4 text-sm text-gray-700">
-                <p className="text-[15px] font-semibold">
-                    REGULAR RESTAURANTS
-                </p>
-
-                <div className="flex flex-col gap-4">
-                    {groupedDays.map((dayItems: any[]) => {
-                        const firstItem = dayItems?.[0];
-
-                        const dayOrder = String(firstItem?.intDayOrder);
-
-                        return (
-                            <label
-                                key={dayOrder}
-                                className="flex items-center gap-3 cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={selectedDays.includes(dayOrder)}
-                                    onChange={() =>
-                                        handleToggleDay(dayOrder)
-                                    }
-                                    className="w-4 h-4"
-                                />
-
-                                <span className="font-medium text-[14px]">
-                                    Day {dayOrder}
-                                </span>
-                            </label>
-                        );
-                    })}
-                </div>
-            </div>
-        </PanelPopup>
+  const handleToggleDay = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((id) => id !== day) : [...prev, day]
     );
+  };
+
+  const handleUpdate = async () => {
+    const payload = {
+      strTourCustomizedPriceItemGUID,
+      strListDays: selectedDays.join(","),
+    };
+
+    addTourCustomizedSerByListDaysApi(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED],
+        });
+
+        showToast("success", t("updateSuccess"));
+        onClose();
+      },
+      onError: () => {
+        showToast("error", t("updateError"));
+      },
+    });
+  };
+
+  return (
+    <PanelPopup
+      open={open}
+      onClose={onClose}
+      title={t("updateListDays")}
+      footer={
+        <button
+          type="button"
+          onClick={handleUpdate}
+          disabled={isLoading}
+          className="cursor-pointer rounded-lg bg-[#4a6fa5] px-4 py-2 text-white hover:bg-[#3b5b7e] disabled:opacity-50"
+        >
+          {isLoading ? t("saving") : t("save")}
+        </button>
+      }
+    >
+      <div className="space-y-4 text-sm text-gray-700">
+        <p className="text-[15px] font-semibold">{t("regularRestaurants")}</p>
+
+        <div className="flex flex-col gap-4">
+          {groupedDays.map((dayItems: any[]) => {
+            const firstItem = dayItems?.[0];
+            const dayOrder = String(firstItem?.intDayOrder);
+
+            return (
+              <label
+                key={dayOrder}
+                className="flex cursor-pointer items-center gap-3"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedDays.includes(dayOrder)}
+                  onChange={() => handleToggleDay(dayOrder)}
+                  className="h-4 w-4"
+                />
+
+                <span className="text-[14px] font-medium">
+                  {t("dayWithNumber", { number: dayOrder })}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+    </PanelPopup>
+  );
 };
 
 export default UpdateNoOfDay;

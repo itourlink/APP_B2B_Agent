@@ -13,8 +13,10 @@ import type { IReportCommission } from "@/hooks/interfaces/user";
 import { fDateTime } from "@/utils/format-time";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
+import { useTranslate } from "@/locales";
 
 const ReportCommission = () => {
+    const { t, currentLang } = useTranslate("reportfinance");
     const router = useRouter();
     const user = useUserStore((state) => state.user);
 
@@ -118,12 +120,12 @@ const ReportCommission = () => {
     const colDefs: ColumnDef<IReportCommission>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-400 font-medium">{value}</span>,
         },
         {
             field: "strCompanyName",
-            headerName: "Tên nhà cung cấp",
+            headerName: t("providerName"),
             render: (_, row) => (
                 <div className="space-y-0.5 py-1 min-w-50 text-xs">
                     <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm">
@@ -135,7 +137,7 @@ const ReportCommission = () => {
         },
         {
             field: "No",
-            headerName: "Mã Booking/Tên nhóm",
+            headerName: t("bookingCodeAndGroup"),
             render: (_, row) => (
                 <div className="min-w-45">
                     <button onClick={() => router.replaceParams(paths.content.detailReportFinance, { item: row })} className="text-[#004b91] font-medium text-sm hover:underline cursor-pointer">
@@ -150,7 +152,7 @@ const ReportCommission = () => {
         },
         {
             field: "No",
-            headerName: "Ngày bắt đầu - Ngày kết thúc",
+            headerName: t("dateStartAndEnd"),
             render: (_, row) => (
                 <div className="text-xs text-gray-600 flex items-center gap-1.5 min-w-[180px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -160,7 +162,7 @@ const ReportCommission = () => {
         },
         {
             field: "intTotalPax",
-            headerName: "Tổng số Pax",
+            headerName: t("totalPax"),
             render: (value) => (
                 <div className="flex items-center gap-1.5 text-sm font-bold text-gray-700">
                     <Users size={14} /> {value} pax
@@ -170,19 +172,19 @@ const ReportCommission = () => {
 
         {
             field: "dblPayableTotal",
-            headerName: "Hoa hồng",
+            headerName: t("commission"),
             render: (value) => (
                 <div className="flex items-center gap-1 text-orange-600 min-w-25">
                     <Banknote size={14} />
-                    {value ? `${new Intl.NumberFormat('vi-VN').format(value)} đ` : "---"}
+                    {value ? `${new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(value)} ${t("currencySymbol")}` : "---"}
                 </div>
             )
         },
         {
             field: "strPaymentStatusName",
-            headerName: "Trạng thái hoa hồng",
+            headerName: t("commissionStatus"),
             render: (value) => {
-                const isPaid = value === "Đã thanh toán";
+                const isPaid = value === "Đã thanh toán" || value === "Paid";
                 return (
                     <span className={`px-3 py-1 rounded-2xl text-[11px] font-medium ${isPaid ? "bg-green-50 text-green-600 border border-green-100" : "bg-orange-50 text-orange-600 border border-orange-100"
                         }`}>
@@ -201,17 +203,17 @@ const ReportCommission = () => {
                     {
                         keySearch: "nameProvider",
                         value: filters.nameProvider,
-                        placeHoder: "Tên nhà cung cấp",
+                        placeHoder: t("searchProvider"),
                     },
                     {
                         keySearch: "idOrder",
                         value: filters.idOrder,
-                        placeHoder: "Mã đặt",
+                        placeHoder: t("searchBooking"),
                     },
                     {
                         keySearch: "nameGroup",
                         value: filters.nameGroup,
-                        placeHoder: "Tên Nhóm",
+                        placeHoder: t("searchGroup"),
                     },
                 ]}
                 time={{
@@ -227,21 +229,21 @@ const ReportCommission = () => {
 
                 <div className="flex gap-2 mt-3">
                     <PrimaryButton
-                        text="Tìm kiếm"
+                        text={t("search")}
                         onClick={handleSearch}
                         className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<Search size={18} />}
                     />
 
                     <PrimaryButton
-                        text="Reset"
+                        text={t("reset")}
                         onClick={handleReset}
                         className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<RotateCcw size={18} />}
                     />
                 </div>
 
-                <SummaryBadge label="Tổng hoa hồng" value={dblSumPayableAmount} />
+                <SummaryBadge label={t("totalCommission")} value={dblSumPayableAmount} />
 
             </div>
 
@@ -264,4 +266,4 @@ const ReportCommission = () => {
     )
 }
 
-export default ReportCommission
+export default ReportCommission

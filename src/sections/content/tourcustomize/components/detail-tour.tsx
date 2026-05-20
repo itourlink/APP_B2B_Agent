@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import UpdateTour from "./update-tour";
-import { DetailTourHeader } from "./detail-tour-header";
-import { DetailTourContent } from "./detail-tour-content";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
 
-export const DetailTour = () => {
+import { DetailTourContent } from "./detail-tour-content";
+import { DetailTourHeader } from "./detail-tour-header";
+import UpdateTour from "./update-tour";
 
+export const DetailTour = () => {
   const location = useLocation();
   const item = location.state?.item;
 
   const [isUpdate, setIsUpdate] = useState(false);
-
-  // 1. Quản lý trạng thái Popup & Thay đổi tập trung tại cha
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [hasChange, setHasChange] = useState(false);
 
@@ -30,13 +29,15 @@ export const DetailTour = () => {
         strOrder: "intVersionID DESC",
         intCurPage: null,
         intPageSize: null,
-        tblsReturn: "[0]"
+        tblsReturn: "[0]",
       }),
     placeholderData: keepPreviousData,
   });
+
   const listData = data?.[0]?.[0] ?? [];
+
   return (
-    <div className={isPopupOpen ? "overflow-hidden h-screen" : "mt-30"}>
+    <div className={isPopupOpen ? "h-screen overflow-hidden" : "mt-30"}>
       <DetailTourHeader
         item={listData}
         onUpdate={() => setIsUpdate(true)}
@@ -50,7 +51,6 @@ export const DetailTour = () => {
           itemListData={listData ?? ""}
           itemDetail={item ?? ""}
           onOpenChangeDay={() => setIsPopupOpen(true)}
-          // onUpdateDays={setDays}
           isPopupOpen={isPopupOpen}
           setIsPopupOpen={setIsPopupOpen}
           hasChange={hasChange}
@@ -61,6 +61,3 @@ export const DetailTour = () => {
     </div>
   );
 };
-
-
-

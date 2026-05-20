@@ -3,8 +3,8 @@ import { Search, RotateCcw, FileDown, Lightbulb, Clock, CheckCircle, Plane, Flag
 import PrimaryButton from "@/components/button/primary-button";
 import CustomFilter from "@/components/form/custom-filter";
 import { TabsPills } from "@/components/tab/tabspills";
+import { useTranslate } from "@/locales";
 
-// Import 6 component con của bạn
 import ServicePropose from "./components/service-propose";
 import ServiceReservationHold from "./components/service-reservation-hold";
 import ServiceBooked from "./components/service-booked";
@@ -14,15 +14,16 @@ import ServiceCancel from "./components/service-cancel";
 import { useToastStore } from "@/zustand/useToastStore";
 
 const SERVICE_TABS = [
-    { id: "suggest", label: "Đề xuất", icon: Lightbulb, component: ServicePropose },
-    { id: "hold", label: "Đang giữ chỗ", icon: Clock, component: ServiceReservationHold },
-    { id: "booked", label: "Đã Đặt", icon: CheckCircle, component: ServiceBooked },
-    { id: "moving", label: "Đang đi/Đang di chuyển", icon: Plane, component: ServiceMoving },
-    { id: "done", label: "Kết thúc", icon: FlagIcon, component: ServiceDone },
-    { id: "cancel", label: "Hủy", icon: XCircle, component: ServiceCancel },
+    { id: "suggest", labelKey: "tabPropose", icon: Lightbulb, component: ServicePropose },
+    { id: "hold", labelKey: "tabHold", icon: Clock, component: ServiceReservationHold },
+    { id: "booked", labelKey: "tabBooked", icon: CheckCircle, component: ServiceBooked },
+    { id: "moving", labelKey: "tabMoving", icon: Plane, component: ServiceMoving },
+    { id: "done", labelKey: "tabDone", icon: FlagIcon, component: ServiceDone },
+    { id: "cancel", labelKey: "tabCancel", icon: XCircle, component: ServiceCancel },
 ];
 
 const ServiceView = () => {
+    const { t } = useTranslate("service");
     const [activeTab, setActiveTab] = useState("suggest");
     const { showToast } = useToastStore()
     const [filters, setFilters] = useState({
@@ -35,6 +36,10 @@ const ServiceView = () => {
     const [appliedFilters, setAppliedFilters] = useState(filters);
 
     const ActiveComponent = SERVICE_TABS.find((tab) => tab.id === activeTab)?.component || ServicePropose;
+    const serviceTabs = SERVICE_TABS.map(({ labelKey, ...tab }) => ({
+        ...tab,
+        label: t(labelKey),
+    }));
 
     const onChangeFilters = (key: string, value: string | number) => {
         let newValue: string | number = value;
@@ -81,7 +86,7 @@ const ServiceView = () => {
                     {
                         keySearch: "idOrder",
                         value: filters.idOrder,
-                        placeHoder: "Mã đặt mua",
+                        placeHoder: t("orderCodePlaceholder"),
                     },
                 ]}
                 time={{
@@ -94,21 +99,21 @@ const ServiceView = () => {
 
             <div className="flex gap-2 mt-3">
                 <PrimaryButton
-                    text="Tìm kiếm"
+                    text={t("search")}
                     onClick={handleSearch}
                     className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit text-white"
                     prefixIcon={<Search size={18} />}
                 />
 
                 <PrimaryButton
-                    text="Reset"
+                    text={t("reset")}
                     onClick={handleReset}
                     className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
                     prefixIcon={<RotateCcw size={18} />}
                 />
                 <PrimaryButton
-                    text="Export Excel"
-                    onClick={() => showToast("info", "Sắp ra mắt")}
+                    text={t("exportExcel")}
+                    onClick={() => showToast("info", t("comingSoon"))}
                     className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
                     prefixIcon={<FileDown size={18} />}
                 />
@@ -116,7 +121,7 @@ const ServiceView = () => {
 
             <div className="space-y-6 pt-4">
                 <TabsPills
-                    tabs={SERVICE_TABS}
+                    tabs={serviceTabs}
                     activeTab={activeTab}
                     onChange={setActiveTab}
                 />

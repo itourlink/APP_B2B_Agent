@@ -33,7 +33,9 @@ const Header = () => {
       localStorage.setItem("company", company);
     }
 
+
     window.location.href = `${CONFIG.serverUrl}auth/login`;
+
   };
 
   const renderAuthGroup = () => {

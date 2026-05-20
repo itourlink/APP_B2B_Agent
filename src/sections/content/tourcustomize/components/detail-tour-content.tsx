@@ -1,407 +1,297 @@
 import { useState } from "react";
-import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useLocation } from "react-router-dom";
+import { MapPin, Pen, Plus, X } from "lucide-react";
 import {
-    useAddDayTourCustomized,
-    useListServiceTourCustomized
-} from "@/hooks/actions/useUser";
-
-import {
-    keepPreviousData,
-    useMutation,
-    useQuery,
-    useQueryClient
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 
-import {
-    MapPin,
-    Pen,
-    Plus,
-    X
-} from "lucide-react";
-
-import { useLocation } from "react-router-dom";
-import ListTour from "./list-tour";
-import DetailTourInEx from "./detail-tour-in-ex";
-import DetailTourPrice from "./detail-tour-price";
 import PanelPopup from "@/components/popup/panel-popup";
-import ChangeDayOrder from "./change-day-order";
-import ListDaySidebar from "./list-day-sidebar";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import {
+  useAddDayTourCustomized,
+  useListServiceTourCustomized,
+} from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
+
 import AddAccommodationD from "./add-accommodation-d";
 import AddImageD from "./add-image-d";
+import AddManual from "./add-manually-d";
 import AddServiceMenuD from "./add-service-menu-d";
 import AddShippingServicesD from "./add-shipping-services-d";
 import AddToursD from "./add-tours-d";
-import AddManual from "./add-manually-d";
+import ChangeDayOrder from "./change-day-order";
+import DetailTourInEx from "./detail-tour-in-ex";
+import DetailTourPrice from "./detail-tour-price";
+import ListDaySidebar from "./list-day-sidebar";
+import ListTour from "./list-tour";
 
 interface DetailTourContentProps {
-    itemListData?: any;
-    itemDetail?: any;
-    onOpenChangeDay: () => void;
-    isPopupOpen: boolean;
-    setIsPopupOpen: (val: boolean) => void;
-    hasChange: boolean;
-    setHasChange: (val: boolean) => void;
-    tourCustomizedGUID: string;
+  itemListData?: any;
+  itemDetail?: any;
+  onOpenChangeDay: () => void;
+  isPopupOpen: boolean;
+  setIsPopupOpen: (val: boolean) => void;
+  hasChange: boolean;
+  setHasChange: (val: boolean) => void;
+  tourCustomizedGUID: string;
 }
 
 export const DetailTourContent = ({
-    itemListData,
-    itemDetail,
-    isPopupOpen,
-    setIsPopupOpen,
-    hasChange,
-    setHasChange,
-    tourCustomizedGUID,
+  itemListData,
+  itemDetail,
+  isPopupOpen,
+  setIsPopupOpen,
+  hasChange,
+  setHasChange,
+  tourCustomizedGUID,
 }: DetailTourContentProps) => {
+  const { t } = useTranslate("tourcustomize");
+  const { showToast } = useToastStore();
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const item = location.state?.item;
 
-    const { showToast } = useToastStore();
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [openManualPopup, setOpenManualPopup] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<any>(null);
 
-    const queryClient = useQueryClient();
+  const renderServiceContent = () => {
+    switch (selectedService) {
+      case "accommodation":
+        return <AddAccommodationD />;
+      case "image":
+        return <AddImageD />;
+      case "service":
+        return <AddServiceMenuD />;
+      case "shipping":
+        return <AddShippingServicesD />;
+      case "tours":
+        return <AddToursD />;
+      default:
+        return null;
+    }
+  };
 
-    const location = useLocation();
+  const handleSelectService = (value: string, dayItems?: any) => {
+    if (value === "manual") {
+      setOpenManualPopup(true);
+      setSelectedDay(dayItems?.[0]);
+      return;
+    }
 
-    const item = location.state?.item;
+    setSelectedService(value);
+  };
 
-    const [selectedService, setSelectedService] = useState<string | null>(null);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
 
-    const [openManualPopup, setOpenManualPopup] = useState(false);
+  const handleSave = () => {
+    setHasChange(false);
+    setIsPopupOpen(false);
+  };
 
-    // =========================
-    // RENDER RIGHT CONTENT
-    // =========================
-    const renderServiceContent = () => {
+  const { data } = useQuery({
+    queryKey: [
+      QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
+      item?.strTourCustomizedGUID,
+    ],
+    queryFn: () =>
+      useListServiceTourCustomized({
+        strTourCustomizedGUID: item?.strTourCustomizedGUID,
+        strTourCustomizedDayGUID: null,
+      }),
+    placeholderData: keepPreviousData,
+    enabled: !!item?.strTourCustomizedGUID,
+  });
 
-        switch (selectedService) {
+  const listData = data?.[0] ?? [];
 
-            case "accommodation":
-                return <AddAccommodationD />;
+  const groupByDay = (sourceData: any[]) => {
+    const map: Record<string, any[]> = {};
 
-            case "image":
-                return <AddImageD />;
+    sourceData.forEach((dataItem) => {
+      const key = dataItem?.strTourCustomizedDayGUID;
 
-            case "service":
-                return <AddServiceMenuD />;
+      if (!map[key]) {
+        map[key] = [];
+      }
 
-            case "shipping":
-                return <AddShippingServicesD />;
+      map[key].push(dataItem);
+    });
 
-            case "tours":
-                return <AddToursD />;
+    return Object.values(map);
+  };
 
-            default:
-                return null;
-        }
+  const {
+    mutate: useAddDayTourCustomizedApi,
+    isPending: isLoading,
+  } = useMutation({
+    mutationFn: useAddDayTourCustomized,
+  });
+
+  const handleAddTourNow = () => {
+    const totalDay = groupByDay(listData).length;
+
+    const payload = {
+      strTourCustomizedGUID: item?.strTourCustomizedGUID,
+      intDayOrder: totalDay + 1,
+      strDayTitle: t("dayWithNumber", { number: totalDay + 1 }),
     };
 
-    // =========================
-    // HANDLE SELECT MENU
-    // =========================
-    const [selectedDay, setSelectedDay] = useState<any>(null);
-    const handleSelectService = (value: string, dayItems?: any) => {
-
-        // MANUAL => OPEN POPUP
-        if (value === "manual") {
-            setOpenManualPopup(true);
-            setSelectedDay(dayItems?.[0]);
-            return;
-        }
-
-        setSelectedService(value);
-    };
-
-    // =========================
-    // CLOSE POPUP
-    // =========================
-    const handleClosePopup = () => {
-        setIsPopupOpen(false);
-    };
-
-    // =========================
-    // SAVE POPUP
-    // =========================
-    const handleSave = () => {
-
-        setHasChange(false);
-
-        setIsPopupOpen(false);
-    };
-
-    // =========================
-    // GET DATA
-    // =========================
-    const { data } = useQuery({
-        queryKey: [
+    useAddDayTourCustomizedApi(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [
             QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
             item?.strTourCustomizedGUID,
-        ],
-
-        queryFn: () =>
-            useListServiceTourCustomized({
-                strTourCustomizedGUID: item?.strTourCustomizedGUID,
-                strTourCustomizedDayGUID: null,
-            }),
-
-        placeholderData: keepPreviousData,
-
-        enabled: !!item?.strTourCustomizedGUID,
-    });
-
-    const listData = data?.[0] ?? [];
-
-    // =========================
-    // GROUP DAY
-    // =========================
-    const groupByDay = (data: any[]) => {
-
-        const map: Record<string, any[]> = {};
-
-        data.forEach((item) => {
-
-            const key = item?.strTourCustomizedDayGUID;
-
-            if (!map[key]) {
-                map[key] = [];
-            }
-
-            map[key].push(item);
+          ],
         });
 
-        return Object.values(map);
-    };
-
-    // =========================
-    // ADD DAY
-    // =========================
-    const {
-        mutate: useAddDayTourCustomizedApi,
-        isPending: isLoading
-    } = useMutation({
-        mutationFn: useAddDayTourCustomized,
-    });
-
-    const handleAddTourNow = () => {
-
-        const totalDay = groupByDay(listData).length;
-
-        const payload = {
-            strTourCustomizedGUID: item?.strTourCustomizedGUID,
-            intDayOrder: totalDay + 1,
-            strDayTitle: `Day ${totalDay + 1}`,
-        };
-
-        useAddDayTourCustomizedApi(payload, {
-
-            onSuccess: () => {
-
-                queryClient.invalidateQueries({
-                    queryKey: [
-                        QUERY_KEYS.USER.LIST_SERVICE_TOUR_CUSTOMIZED,
-                        item?.strTourCustomizedGUID,
-                    ],
-                });
-
-                queryClient.invalidateQueries({
-                    queryKey: [
-                        QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED
-                    ],
-                });
-
-                showToast("success", "Add day success");
-            },
-
-            onError: () => {
-
-                showToast("error", "Add day failed");
-            },
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED],
         });
-    };
 
+        showToast("success", t("addDaySuccess"));
+      },
+      onError: () => {
+        showToast("error", t("addDayError"));
+      },
+    });
+  };
 
+  return (
+    <div className="flex h-full overflow-hidden bg-gray-50 font-sans">
+      <div
+        className={
+          isPopupOpen
+            ? "flex w-20 flex-col items-center gap-4 border-r border-gray-100 bg-white py-6 opacity-50 transition-opacity pointer-events-none lg:w-48"
+            : "flex w-20 flex-col items-center gap-4 border-r border-gray-100 bg-white py-6 lg:w-48"
+        }
+      >
+        <ListDaySidebar item={item ?? ""} />
 
+        <button
+          onClick={() => setIsPopupOpen(true)}
+          className="group flex h-12 w-12 items-center justify-center gap-2 rounded-xl bg-blue-50 text-[#004b91] transition-all hover:bg-blue-100 lg:h-10 lg:w-40"
+        >
+          <Pen size={18} />
 
-    return (
+          <span className="hidden text-xs font-bold uppercase tracking-tight lg:inline">
+            {t("editDay")}
+          </span>
+        </button>
 
-        <div className="flex bg-gray-50 overflow-hidden font-sans h-full">
+        <button
+          className="group flex h-12 w-12 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 text-gray-400 transition-all hover:border-[#004b91] hover:text-[#004b91] lg:h-10 lg:w-40"
+          onClick={handleAddTourNow}
+        >
+          <Plus size={18} />
 
-            {/* LEFT */}
-            <div
-                className={
-                    isPopupOpen
-                        ? "w-20 lg:w-48 bg-white border-r border-gray-100 flex flex-col items-center py-6 gap-4 opacity-50 transition-opacity pointer-events-none"
-                        : "w-20 lg:w-48 bg-white border-r border-gray-100 flex flex-col items-center py-6 gap-4"
-                }
-            >
+          <span className="hidden text-xs font-bold uppercase tracking-tight lg:inline">
+            {isLoading ? t("loading") : t("addDay")}
+          </span>
+        </button>
+      </div>
 
-                <ListDaySidebar item={item ?? ""} />
+      <div
+        className={
+          isPopupOpen
+            ? "pointer-events-none flex-1 overflow-hidden space-y-6 bg-white px-8 py-6"
+            : "flex-1 space-y-6 overflow-y-auto bg-white px-8 py-6"
+        }
+      >
+        {groupByDay(listData).map((items: any[], index) => (
+          <div key={index} className="space-y-4">
+            <ListTour
+              item={items}
+              itemDetail={itemDetail ?? ""}
+              itemListData={itemListData}
+              onChange={(val) => handleSelectService(val, items)}
+            />
+          </div>
+        ))}
 
-                {/* CHANGE DAY */}
-                <button
-                    onClick={() => setIsPopupOpen(true)}
-                    className="w-12 h-12 lg:w-40 lg:h-10 flex items-center justify-center gap-2 bg-blue-50 text-[#004b91] rounded-xl hover:bg-blue-100 transition-all group cursor-pointer"
-                >
-                    <Pen size={18} />
+        <DetailTourInEx item={item} />
+        <DetailTourPrice item={item} />
+      </div>
 
-                    <span className="hidden lg:inline text-xs font-bold uppercase tracking-tight">
-                        Chỉnh sửa ngày
-                    </span>
-                </button>
+      <PanelPopup
+        open={isPopupOpen}
+        onClose={handleClosePopup}
+        title={t("changeDayOrder")}
+        className="w-[800px]"
+      >
+        <ChangeDayOrder
+          strTourCustomizedGUID={item?.strTourCustomizedGUID || tourCustomizedGUID}
+          onChanged={(val) => setHasChange(val)}
+          onClose={handleClosePopup}
+          onSave={handleSave}
+          hasChange={hasChange}
+        />
+      </PanelPopup>
 
-                {/* ADD DAY */}
-                <button
-                    className="cursor-pointer w-12 h-12 lg:w-40 lg:h-10 flex items-center justify-center gap-2 border border-dashed border-gray-300 text-gray-400 rounded-xl hover:border-[#004b91] hover:text-[#004b91] transition-all group"
-                    onClick={handleAddTourNow}
-                >
-                    <Plus size={18} />
+      <PanelPopup
+        open={openManualPopup}
+        onClose={() => {
+          setOpenManualPopup(false);
+          setSelectedDay(null);
+        }}
+        title={t("addManualTitle", { day: selectedDay?.intDayOrder || "" })}
+        className="w-[900px]"
+      >
+        <AddManual
+          strTourCustomizedDayGUID={itemListData?.strTourCustomizedGUID}
+          selectedDay={selectedDay}
+          onClose={() => {
+            setOpenManualPopup(false);
+            setSelectedDay(null);
+          }}
+        />
+      </PanelPopup>
 
-                    <span className="hidden lg:inline text-xs font-bold uppercase tracking-tight">
-                        {isLoading ? "Add Day..." : "Add Day"}
-                    </span>
-                </button>
+      <div className="relative hidden w-130 border-l border-gray-200 bg-gray-100 xl:block">
+        {selectedService ? (
+          <div className="animate-in absolute inset-0 z-10 overflow-y-auto bg-white fade-in duration-300">
+            <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-800">
+                  {t("serviceDetail")}
+                </h3>
+
+                <p className="text-[11px] text-gray-400">{selectedService}</p>
+              </div>
+
+              <button
+                onClick={() => setSelectedService(null)}
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-200 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+              >
+                <X size={18} />
+              </button>
             </div>
 
-            {/* CONTENT */}
-            <div
-                className={
-                    isPopupOpen
-                        ? "flex-1 overflow-hidden px-8 py-6 space-y-6 bg-white pointer-events-none"
-                        : "flex-1 overflow-y-auto px-8 py-6 space-y-6 bg-white"
-                }
-            >
+            <div className="p-4">{renderServiceContent()}</div>
+          </div>
+        ) : (
+          <>
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 text-gray-400">
+              <MapPin size={48} strokeWidth={1} />
 
-                {/* LIST DAY */}
-                {groupByDay(listData).map(
-                    (items: any[], index) => (
-
-                        <div
-                            key={index}
-                            className="space-y-4"
-                        >
-
-                            <ListTour
-                                item={items}
-                                itemDetail={itemDetail ?? ""}
-                                itemListData={itemListData}
-                                onChange={(val) => handleSelectService(val, items)}
-                            />
-
-                        </div>
-                    )
-                )}
-
-                {/* DETAIL */}
-                <DetailTourInEx item={item} />
-
-                <DetailTourPrice item={item} />
+              <span className="text-sm font-medium tracking-tight">
+                {t("mapApiLoadingArea")}
+              </span>
             </div>
 
-            {/* CHANGE DAY POPUP */}
-            <PanelPopup
-                open={isPopupOpen}
-                onClose={handleClosePopup}
-                title="Change Day Order"
-                className="w-[800px]"
-            >
-
-                <ChangeDayOrder
-                    strTourCustomizedGUID={
-                        item?.strTourCustomizedGUID ||
-                        tourCustomizedGUID
-                    }
-
-                    onChanged={(val) =>
-                        setHasChange(val)
-                    }
-
-                    onClose={handleClosePopup}
-
-                    onSave={handleSave}
-
-                    hasChange={hasChange}
-                />
-            </PanelPopup>
-
-            {/* MANUAL POPUP */}
-            <PanelPopup
-                open={openManualPopup}
-                onClose={() => {
-                    setOpenManualPopup(false);
-                    setSelectedDay(null);
-                }}
-                title={`Add Manual (Day ${selectedDay?.intDayOrder || ""}) `}
-                className="w-[900px]"
-            >
-
-                <AddManual strTourCustomizedDayGUID={itemListData?.strTourCustomizedGUID} selectedDay={selectedDay} onClose={() => {
-                    setOpenManualPopup(false);
-                    setSelectedDay(null);
-                }}
-
-
-                />
-
-            </PanelPopup>
-
-            {/* RIGHT */}
-            <div className="hidden xl:block w-130 bg-gray-100 border-l border-gray-200 relative">
-
-                {selectedService ? (
-
-                    <div className="absolute inset-0 bg-white z-10 animate-in fade-in duration-300 overflow-y-auto">
-
-                        {/* HEADER */}
-                        <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
-
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-800">
-                                    Service Detail
-                                </h3>
-
-                                <p className="text-[11px] text-gray-400">
-                                    {selectedService}
-                                </p>
-                            </div>
-
-                            {/* CLOSE */}
-                            <button
-                                onClick={() =>
-                                    setSelectedService(null)
-                                }
-                                className="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all cursor-pointer"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        {/* BODY */}
-                        <div className="p-4">
-                            {renderServiceContent()}
-                        </div>
-
-                    </div>
-
-                ) : (
-
-                    <>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 space-y-2">
-
-                            <MapPin
-                                size={48}
-                                strokeWidth={1}
-                            />
-
-                            <span className="text-sm font-medium tracking-tight">
-                                Map API Loading Area...
-                            </span>
-
-                        </div>
-
-                        <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur px-2 py-1 rounded text-[10px] text-gray-500 border border-gray-100">
-                            © OpenStreetMap contributors
-                        </div>
-                    </>
-                )}
+            <div className="absolute bottom-4 right-4 rounded border border-gray-100 bg-white/80 px-2 py-1 text-[10px] text-gray-500 backdrop-blur">
+              © OpenStreetMap contributors
             </div>
-        </div>
-    );
+          </>
+        )}
+      </div>
+    </div>
+  );
 };

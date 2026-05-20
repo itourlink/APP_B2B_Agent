@@ -12,6 +12,7 @@ import { useUserStore } from "@/zustand/useUserStore";
 import type { IServicePropose } from "@/hooks/interfaces/user";
 import PanelPopup from "@/components/popup/panel-popup";
 import ListPayable from "./list-payable";
+import { useTranslate } from "@/locales";
 
 interface Props {
     appliedFilters?: {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const ServicePropose = ({ appliedFilters }: Props) => {
+    const { t } = useTranslate("service");
     const user = useUserStore((state) => state.user);
     const router = useRouter()
     const [item, setItem] = useState<IServicePropose | null>(null);
@@ -66,13 +68,13 @@ const ServicePropose = ({ appliedFilters }: Props) => {
     const colDefs: ColumnDef<IServicePropose>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span>{value}</span>
         },
 
         {
             field: "strAgentHostServiceItemCode",
-            headerName: "Mã",
+            headerName: t("code"),
             render: (value) => (
                 <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {value || "---"}
@@ -82,7 +84,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "strServiceName",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => {
                 return (
                     <button onClick={() => router.replaceParams(paths.content.detailService, { item: row })} className="min-w-80 cursor-pointer">
@@ -97,7 +99,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "No",
-            headerName: "Đại lý / Công ty",
+            headerName: t("agentCompany"),
             render: (_, row) => (
                 <div className="space-y-1 py-1 min-w-50">
                     <div className="flex items-center gap-1.5 font-medium text-gray-700">
@@ -113,7 +115,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "No",
-            headerName: "Quy mô",
+            headerName: t("groupSize"),
             render: (_, row) => (
                 <div className="bg-gray-50 p-2 rounded-lg border border-gray-100 min-w-[100px]">
                     <div
@@ -126,7 +128,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="min-w-[100px] flex justify-center">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -139,7 +141,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPaymentAmount",
-            headerName: "Phải trả",
+            headerName: t("payable"),
             render: (_, row) => (
                 <button onClick={() => {
                     setItem(row)
@@ -155,7 +157,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPriceTotalAgentCom",
-            headerName: "Hoa hồng",
+            headerName: t("commission"),
             render: (value) => (
                 <div className="flex items-center gap-1 text-orange-600 min-w-[100px]">
                     <Banknote size={14} />
@@ -166,7 +168,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "dtmDateDeadline",
-            headerName: "Thời hạn",
+            headerName: t("deadline"),
             render: (value) => (
                 <div className={`text-xs min-w-[150px] ${value ? "" : "text-gray-500"} flex items-center gap-1.5`}>
                     <Calendar size={13} className="text-gray-400" />{value ? fDateTime(value) : "---"}
@@ -176,7 +178,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
 
         {
             field: "dtmCreatedDate",
-            headerName: "Ngày đặt",
+            headerName: t("bookingDate"),
             render: (value) => (
                 <div className={`text-xs min-w-[150px] ${value ? "" : "text-gray-500"} flex items-center gap-1.5`}>
                     <Calendar size={13} className="text-gray-400" />{value ? fDateTime(value) : "---"}
@@ -204,7 +206,7 @@ const ServicePropose = ({ appliedFilters }: Props) => {
             )}
 
             {open.payable && (
-                <PanelPopup title='List Payable' open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
+                <PanelPopup title={t("listPayable")} open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
                     <ListPayable item={item} />
                 </PanelPopup>
             )}

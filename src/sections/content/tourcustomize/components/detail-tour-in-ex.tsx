@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Pen } from "lucide-react";
 
 import { useListTourCustomizedInExService } from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 
 import DetailTourInExPopup, {
   getTourCustomizedInExQueryKey,
@@ -18,6 +19,7 @@ const SkeletonItem = () => (
 );
 
 const DetailTourInEx = ({ item }: DetailTourInExProps) => {
+  const { t } = useTranslate("tourcustomize");
   const [openPopup, setOpenPopup] = useState(false);
 
   const { data, isLoading, error } = useQuery({
@@ -44,7 +46,7 @@ const DetailTourInEx = ({ item }: DetailTourInExProps) => {
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
         <h3 className="text-lg font-bold text-gray-800">
-          Bao Gồm / Không Bao Gồm
+          {t("includedExcluded")}
         </h3>
 
         <button
@@ -58,12 +60,10 @@ const DetailTourInEx = ({ item }: DetailTourInExProps) => {
 
       <div className="grid grid-cols-2 gap-8 text-[13px] leading-relaxed">
         <div className="space-y-2">
-          <p className="font-bold text-gray-700">Bao Gồm:</p>
+          <p className="font-bold text-gray-700">{t("included")}</p>
 
           {error ? (
-            <div className="text-sm text-red-500">
-              Có lỗi xảy ra, vui lòng thử lại.
-            </div>
+            <div className="text-sm text-red-500">{t("tryAgainMessage")}</div>
           ) : isLoading ? (
             <div className="space-y-2">
               {[...Array(5)].map((_, index) => (
@@ -71,9 +71,9 @@ const DetailTourInEx = ({ item }: DetailTourInExProps) => {
               ))}
             </div>
           ) : includeList.length === 0 ? (
-            <div className="text-sm text-gray-500">No data</div>
+            <div className="text-sm text-gray-500">{t("noData")}</div>
           ) : (
-            <ul className="list-disc list-inside space-y-1 pl-2 text-gray-600">
+            <ul className="list-inside list-disc space-y-1 pl-2 text-gray-600">
               {includeList.map((entry) => (
                 <li key={entry.excludeID}>
                   {entry?.strInExName || entry?.include}
@@ -84,12 +84,10 @@ const DetailTourInEx = ({ item }: DetailTourInExProps) => {
         </div>
 
         <div className="space-y-2">
-          <p className="font-bold text-gray-700">Không Bao Gồm:</p>
+          <p className="font-bold text-gray-700">{t("excluded")}</p>
 
           {error ? (
-            <div className="text-sm text-red-500">
-              Có lỗi xảy ra, vui lòng thử lại.
-            </div>
+            <div className="text-sm text-red-500">{t("tryAgainMessage")}</div>
           ) : isLoading ? (
             <div className="space-y-2">
               {[...Array(5)].map((_, index) => (
@@ -97,9 +95,9 @@ const DetailTourInEx = ({ item }: DetailTourInExProps) => {
               ))}
             </div>
           ) : excludeList.length === 0 ? (
-            <div className="text-sm text-gray-500">No data</div>
+            <div className="text-sm text-gray-500">{t("noData")}</div>
           ) : (
-            <ul className="list-disc list-inside space-y-1 pl-2 text-gray-600">
+            <ul className="list-inside list-disc space-y-1 pl-2 text-gray-600">
               {excludeList.map((entry) => (
                 <li key={entry.excludeID}>
                   {entry?.strInExName || entry?.include}

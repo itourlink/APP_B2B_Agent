@@ -184,7 +184,7 @@ const TourCancelledView = () => {
       render: (value) => (
         <div className="min-w-[100px]">
           {value ? new Intl.NumberFormat("vi-VN").format(value) : "0"}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencyVnd")}</span>
         </div>
       ),
     },

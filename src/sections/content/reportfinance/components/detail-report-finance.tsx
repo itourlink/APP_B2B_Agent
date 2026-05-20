@@ -14,22 +14,24 @@ import ReportPriceTab from "./report-price-tab";
 import { TabsPills } from "@/components/tab/tabspills";
 import BookingServiceActions from "./booking-service-actions";
 import ListCustomer from "./list-customer";
+import { useTranslate } from "@/locales";
 
 const REPORT_TABS = [
   {
     id: "agency",
-    label: "Giá đại lý",
+    labelKey: "tabAgencyPrice",
     icon: Clock,
     component: ReportPriceTab,
   },
   {
     id: "selling",
-    label: "Giá bán",
+    labelKey: "tabSellingPrice",
     icon: ClipboardCheck,
     component: ReportPriceTab,
   },
 ];
 const DetailReportFinance = () => {
+  const { t, currentLang } = useTranslate("reportfinance");
   const [open, setOpen] = useState({
     video: false,
   });
@@ -64,7 +66,7 @@ const DetailReportFinance = () => {
   const colDefs: ColumnDef<any>[] = [
     {
       field: "strGroupName",
-      headerName: "Booking Code",
+      headerName: t("bookingCode"),
       render: (value) => (
         <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
           {value || "---"}
@@ -73,67 +75,67 @@ const DetailReportFinance = () => {
     },
     {
       field: "dblPriceSubTotal",
-      headerName: "Sub Total Price",
+      headerName: t("subTotalPrice"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat("vi-VN").format(
+          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
             Number.isFinite(Number(value)) ? Number(value) : 0,
           )}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
     },
     {
       field: "dblPriceDiscount",
-      headerName: "Total Discount",
+      headerName: t("totalDiscount"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat("vi-VN").format(
+          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
             Number.isFinite(Number(value)) ? Number(value) : 0,
           )}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
     },
     {
       field: "dblPriceTotal",
-      headerName: "Tổng Giá",
+      headerName: t("totalPrice"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat("vi-VN").format(
+          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
             Number.isFinite(Number(value)) ? Number(value) : 0,
           )}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
     },
     {
       field: "dblPricePaid",
-      headerName: "Total Paid",
+      headerName: t("totalPaid"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat("vi-VN").format(
+          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
             Number.isFinite(Number(value)) ? Number(value) : 0,
           )}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
     },
     {
       field: "dblPriceBalance",
-      headerName: "Total Balance",
+      headerName: t("totalBalance"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat("vi-VN").format(
+          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
             Number.isFinite(Number(value)) ? Number(value) : 0,
           )}{" "}
-          <span className="text-[10px] align-top">đ</span>
+          <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
     },
     {
       field: "strOrderStatusName",
-      headerName: "Booking Status",
+      headerName: t("bookingStatus"),
       render: (value) => {
         return (
           <span
@@ -150,7 +152,7 @@ const DetailReportFinance = () => {
     },
     {
       field: "dtmBookingDate",
-      headerName: "Booked On",
+      headerName: t("bookedOn"),
       render: (value) => (
         <div className="text-xs text-gray-500 flex items-center gap-1.5">
           <Calendar size={13} className="text-gray-400" />
@@ -162,6 +164,11 @@ const DetailReportFinance = () => {
 
   const [activeTab, setActiveTab] = useState("agency");
 
+  const reportTabs = REPORT_TABS.map(({ labelKey, ...tab }) => ({
+    ...tab,
+    label: t(labelKey),
+  }));
+
   return (
     <div className="max-w-7xl mx-auto bg-[#f8fafc] min-h-screen">
       <button
@@ -171,7 +178,7 @@ const DetailReportFinance = () => {
         <div className="p-1.5 rounded-full group-hover:bg-blue-50 transition-colors">
           <ArrowLeft size={20} />
         </div>
-        <span className="text-sm font-medium">Quay lại</span>
+        <span className="text-sm font-medium">{t("back")}</span>
       </button>
 
       <div className="space-y-5 mt-2">
@@ -179,7 +186,7 @@ const DetailReportFinance = () => {
           <div className="flex flex-col font-sans">
             <div className="flex items-center gap-1.5">
               <h2 className="text-lg font-bold text-gray-800">
-                Booking Detail
+                {t("bookingDetail")}
               </h2>
             </div>
           </div>
@@ -188,7 +195,7 @@ const DetailReportFinance = () => {
               onClick={() => setOpen((prev) => ({ ...prev, video: true }))}
               className="cursor-pointer w-full px-10 py-1.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
             >
-              Video Helper
+              {t("videoHelper")}
             </button>
           </div>
         </div>
@@ -207,14 +214,14 @@ const DetailReportFinance = () => {
           )}
         </div>
         <h2 className="text-lg font-bold text-gray-800 mb-6">
-          Thông tin chung
+          {t("generalInfo")}
         </h2>
 
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="grid grid-cols-3 gap-y-6">
             <div className="space-y-1">
               <div className="text-xs text-gray-400 font-medium uppercase">
-                Group size
+                {t("groupSize")}
               </div>
               <div className="text-[15px] text-gray-700 font-semibold">
                 {item?.intTotalPax}
@@ -222,16 +229,16 @@ const DetailReportFinance = () => {
             </div>
             <div className="space-y-1">
               <div className="text-xs text-gray-400 font-medium uppercase">
-                Payable
+                {t("payable")}
               </div>
               <div className="text-[15px] text-gray-700 font-semibold">
                 {" "}
-                {new Intl.NumberFormat("vi-VN").format(
+                {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
                   Number.isFinite(Number(item?.dblPriceTotal))
                     ? Number(item?.dblPriceTotal)
                     : 0,
                 )}
-                <span className="text-[10px] align-top">đ</span>
+                <span className="text-[10px] align-top">{t("currencySymbol")}</span>
               </div>
             </div>
           </div>
@@ -241,18 +248,18 @@ const DetailReportFinance = () => {
           {/* Hàng 1: title + action */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[28px] font-semibold text-[#1f2937]">
-              List Booking Services
+              {t("listBookingServices")}
             </h2>
 
             <button className="bg-[#0057a8] hover:bg-[#00498d] text-white px-6 py-2.5 rounded-[16px] text-sm font-medium transition-colors">
-              Send Booking
+              {t("sendBooking")}
             </button>
           </div>
 
           {/* Hàng 2: tabs */}
           <div className="mb-0 ">
             <TabsPills
-              tabs={REPORT_TABS}
+              tabs={reportTabs}
               activeTab={activeTab}
               onChange={setActiveTab}
               className="bg-transparent p-0 rounded-none shadow-none border-0"
@@ -283,7 +290,7 @@ const DetailReportFinance = () => {
                 "
             // onClick={handleCancel}
           >
-            Cancellation Booking
+            {t("cancellationBooking")}
           </button>
         </div>
       </div>
@@ -299,3 +306,4 @@ const DetailReportFinance = () => {
 };
 
 export default DetailReportFinance;
+

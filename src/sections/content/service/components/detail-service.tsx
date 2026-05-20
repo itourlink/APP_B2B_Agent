@@ -14,8 +14,10 @@ import { useListAgentHostServiceItem } from '@/hooks/actions/useUser';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { IServiceDetailTable } from '@/hooks/interfaces/user';
 import { useToastStore } from '@/zustand/useToastStore';
+import { useTranslate } from '@/locales';
 
 const DetailService = () => {
+    const { t } = useTranslate("service");
     const { showToast } = useToastStore()
     const location = useLocation()
     const item = location.state.item
@@ -57,7 +59,7 @@ const DetailService = () => {
     const colDefs: ColumnDef<IServiceDetailTable>[] = [
         {
             field: "strServiceName",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => {
 
                 return (
@@ -69,7 +71,7 @@ const DetailService = () => {
         },
         {
             field: "dtmDateFrom",
-            headerName: "Ngày bắt đầu - Ngày kết thúc",
+            headerName: t("dateRange"),
             render: (_, row) => (
                 <div className="text-xs text-gray-500 flex items-center gap-1.5 min-w-[170px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -80,7 +82,7 @@ const DetailService = () => {
 
         {
             field: "dblQuantity",
-            headerName: "Số lượng",
+            headerName: t("quantity"),
             render: (value) => (
                 <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
                     {value}
@@ -89,7 +91,7 @@ const DetailService = () => {
         },
         {
             field: "dblPrice",
-            headerName: "Đơn giá",
+            headerName: t("unitPrice"),
             render: (value) => (
                 <div className="">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -101,7 +103,7 @@ const DetailService = () => {
         },
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -114,20 +116,20 @@ const DetailService = () => {
 
         {
             field: "dblPrice",
-            headerName: "Thao tác",
+            headerName: t("actions"),
             render: (_) => (
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => showToast("info", "Sắp ra mắt")}
+                        onClick={() => showToast("info", t("comingSoon"))}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Chỉnh sửa"
+                        title={t("edit")}
                     >
                         <Edit3 size={18} />
                     </button>
                     <button
-                        onClick={() => showToast("info", "Sắp ra mắt")}
+                        onClick={() => showToast("info", t("comingSoon"))}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Xóa"
+                        title={t("delete")}
                     >
                         <Trash2 size={18} />
                     </button>
@@ -145,7 +147,7 @@ const DetailService = () => {
                 <div className="p-1.5 rounded-full group-hover:bg-blue-50 transition-colors">
                     <ArrowLeft size={20} />
                 </div>
-                <span className="text-sm font-medium">Quay lại</span>
+                <span className="text-sm font-medium">{t("back")}</span>
             </button>
 
             <div className="space-y-5 mt-2">
@@ -163,29 +165,29 @@ const DetailService = () => {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h2 className="text-lg font-bold text-gray-800 mb-6">Thông tin chung</h2>
+                    <h2 className="text-lg font-bold text-gray-800 mb-6">{t("generalInformation")}</h2>
 
                     <div className="grid grid-cols-3 gap-y-6">
 
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Agent host</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("agentHost")}</div>
                             <div className="text-[15px] text-gray-800 font-semibold uppercase tracking-tight">
                                 {item?.strAgentHostName}
                             </div>
                         </div>
 
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Group size</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("groupSize")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">{item?.intAdultsInService}</div>
                         </div>
 
                         <div className="space-y-1 text-right">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Status</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("status")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">{item?.strBookingStatusName}</div>
                         </div>
 
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Total price</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("totalPrice")}</div>
                             <button
                                 onClick={() => setOpen((prev) => ({ ...prev, payable: true }))}
                                 className="cursor-pointer text-[15px] text-[#0066b2] font-semibold underline decoration-blue-200 underline-offset-4"
@@ -195,7 +197,7 @@ const DetailService = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Đã thanh toán</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("paid")}</div>
                             <button
                                 onClick={() => setOpen((prev) => ({ ...prev, paid: true }))}
                                 className="cursor-pointer text-[15px] text-[#0066b2] font-semibold underline decoration-blue-200 underline-offset-4"
@@ -205,7 +207,7 @@ const DetailService = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Hoa hồng</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("commission")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">
                                 {new Intl.NumberFormat('vi-VN').format(item?.dblPriceAgentCom)} <span className="text-[10px] align-top">đ</span>
                             </div>
@@ -216,7 +218,7 @@ const DetailService = () => {
 
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <div className="p-6 pb-2">
-                        <h2 className="text-lg font-bold text-gray-800">Danh sách đặt dịch vụ</h2>
+                        <h2 className="text-lg font-bold text-gray-800">{t("serviceBookingList")}</h2>
                     </div>
 
                     <TableCore
@@ -228,23 +230,23 @@ const DetailService = () => {
 
                 <div className="flex justify-end pt-4">
                     <button
-                        onClick={() => showToast("info", "Sắp ra mắt")}
+                        onClick={() => showToast("info", t("comingSoon"))}
                         className="cursor-pointer w-fit px-16 py-2.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
                     >
 
-                        Hủy đặt dịch vụ
+                        {t("cancelServiceBooking")}
                     </button>
                 </div>
             </div>
 
 
             {open.payable && (
-                <PanelPopup title='List Payable' open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
+                <PanelPopup title={t("listPayable")} open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
                     <ListPayable item={item} />
                 </PanelPopup>
             )}
             {open.paid && (
-                <PanelPopup title='List Paid' open={open.paid} onClose={() => setOpen((prev) => ({ ...prev, paid: false }))}>
+                <PanelPopup title={t("listPaid")} open={open.paid} onClose={() => setOpen((prev) => ({ ...prev, paid: false }))}>
                     <ListPaid item={item} />
                 </PanelPopup>
             )}
