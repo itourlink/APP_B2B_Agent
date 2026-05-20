@@ -20,8 +20,8 @@ type Props = {
 
     seriesFilter: any;
     setSeriesFilter: any;
-    onApply?: () => void;
 
+    onApply?: () => void;
 };
 
 export default function SearchFilter({
@@ -42,6 +42,42 @@ export default function SearchFilter({
     const setCurrentFilter =
         isSeries ? setSeriesFilter : setTourFilter;
 
+    const priceValue =
+        Number(
+            currentFilter?.strPriceFromRange?.split(",")?.[1]
+        ) || 250;
+
+    const dayValue =
+        Number(
+            currentFilter?.strNoOfDayRange?.split(",")?.[1]
+        ) || 10;
+
+    const resetFilter = () => {
+        setCurrentFilter({
+            intCateID: null,
+            intProductID: null,
+
+            strNoOfDayRange: null,
+            strFilterServiceName: null,
+            strListEasiaCateID: null,
+            strListTransportOptionID: null,
+
+            strLocationCode: null,
+
+            dtmFilterDateValidFrom: null,
+            dtmFilterDateValidTo: null,
+
+            strPriceFromRange: null,
+
+            ...(isSeries && {
+                intNoOfAdult: undefined,
+                strListNoOfChild: undefined,
+                intNoOfSGLSup: undefined,
+                intNoOfTPLRec: undefined,
+            }),
+        });
+    };
+
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sticky top-31 h-fit text-sm">
 
@@ -52,24 +88,7 @@ export default function SearchFilter({
                 </h3>
 
                 <button
-                    onClick={() => {
-                        setCurrentFilter({
-                            intCateID: null,
-                            intProductID: null,
-
-                            strNoOfDayRange: null,
-                            strFilterServiceName: null,
-                            strListEasiaCateID: null,
-                            strListTransportOptionID: null,
-
-                            strLocationCode: null,
-
-                            dtmFilterDateValidFrom: null,
-                            dtmFilterDateValidTo: null,
-
-                            strPriceFromRange: null,
-                        });
-                    }}
+                    onClick={resetFilter}
                     className="text-xs text-blue-500 hover:underline cursor-pointer"
                 >
                     Đặt lại
@@ -99,7 +118,7 @@ export default function SearchFilter({
             </div>
 
             {/* PRICE */}
-            <div className="mb-3">
+            <div className="mb-4">
                 <h4 className="text-xs font-medium mb-2">
                     Giá tối đa (USD)
                 </h4>
@@ -109,33 +128,30 @@ export default function SearchFilter({
                     min={0}
                     max={500}
                     step={5}
-                    value={
-                        Number(
-                            currentFilter?.strPriceFromRange?.split(";")?.[1]
-                        ) || 250
-                    }
+                    value={priceValue}
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            strPriceFromRange: `0;${e.target.value}`,
+                            // FIX DẤU ,
+                            strPriceFromRange: `0,${e.target.value}`,
                         }))
                     }
-                    className="w-full"
+                    className="w-full accent-blue-600 cursor-pointer"
                 />
 
                 <div className="flex justify-between text-[10px] mt-1 text-gray-500">
                     <span>0</span>
 
                     <span>
-                        {Number(
-                            currentFilter?.strPriceFromRange?.split(";")?.[1]
-                        ) || 250}
+                        {priceValue}
                     </span>
+
+                    <span>500</span>
                 </div>
             </div>
 
             {/* DAY */}
-            <div className="mb-3">
+            <div className="mb-4">
                 <h4 className="text-xs font-medium mb-2">
                     Số ngày
                 </h4>
@@ -144,28 +160,26 @@ export default function SearchFilter({
                     type="range"
                     min={1}
                     max={30}
-                    value={
-                        Number(
-                            currentFilter?.strNoOfDayRange?.split(";")?.[1]
-                        ) || 10
-                    }
+                    step={1}
+                    value={dayValue}
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            strNoOfDayRange: `1;${e.target.value}`,
+                            // FIX DẤU ,
+                            strNoOfDayRange: `1,${e.target.value}`,
                         }))
                     }
-                    className="w-full"
+                    className="w-full accent-blue-600 cursor-pointer"
                 />
 
                 <div className="flex justify-between text-[10px] mt-1 text-gray-500">
                     <span>1</span>
 
                     <span>
-                        {Number(
-                            currentFilter?.strNoOfDayRange?.split(";")?.[1]
-                        ) || 10}
+                        {dayValue}
                     </span>
+
+                    <span>30</span>
                 </div>
             </div>
 
@@ -177,6 +191,7 @@ export default function SearchFilter({
 
                 <div className="space-y-1 max-h-30 overflow-auto">
                     {transportList.map((item) => {
+
                         const selected =
                             currentFilter?.strListTransportOptionID
                                 ?.split(",")
@@ -185,12 +200,13 @@ export default function SearchFilter({
                         return (
                             <label
                                 key={item}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-2 cursor-pointer"
                             >
                                 <input
                                     type="checkbox"
                                     checked={selected}
                                     onChange={(e) => {
+
                                         const current =
                                             currentFilter?.strListTransportOptionID
                                                 ?.split(",")
@@ -221,7 +237,7 @@ export default function SearchFilter({
                 </div>
             </div>
 
-            {/* STAR UI ONLY */}
+            {/* STAR UI */}
             <div className="mb-4">
                 <h4 className="text-xs font-medium mb-2">
                     Số sao
@@ -231,7 +247,7 @@ export default function SearchFilter({
                     {[5, 4, 3, 2, 1].map((star) => (
                         <label
                             key={star}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 cursor-pointer"
                         >
                             <input
                                 type="checkbox"
@@ -252,9 +268,10 @@ export default function SearchFilter({
                 </div>
             </div>
 
+            {/* APPLY */}
             <button
                 onClick={onApply}
-                className="w-full h-9 rounded-lg bg-blue-600 text-white text-sm"
+                className="w-full h-9 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition"
             >
                 Chấp nhận
             </button>
