@@ -34,6 +34,7 @@ const SearchView = () => {
     };
 
 
+
     // ================= TOUR FILTER STATE =================
     const [tourFilter, setTourFilter] = useState({
         intCateID: null as number | null,
@@ -76,6 +77,12 @@ const SearchView = () => {
         dtmFilterDateValidTo: null as string | null,
     });
 
+
+    // ================= TEMP FILTER =================
+    const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
+
+    const [tempSeriesFilter, setTempSeriesFilter] =
+        useState(seriesFilter);
 
     // ================= API =================
 
@@ -174,7 +181,26 @@ const SearchView = () => {
 
                 {/* FILTER */}
                 <div className="lg:col-span-3">
-                    <SearchFilter />
+
+                    <SearchFilter
+                        isSeries={isSeries}
+
+                        tourFilter={tempTourFilter}
+                        setTourFilter={setTempTourFilter}
+
+                        seriesFilter={tempSeriesFilter}
+                        setSeriesFilter={setTempSeriesFilter}
+
+                        onApply={() => {
+                            if (isSeries) {
+                                setSeriesFilter(tempSeriesFilter);
+                                setPageSeries(1);
+                            } else {
+                                setTourFilter(tempTourFilter);
+                                setPageTour(1);
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* CONTENT */}
