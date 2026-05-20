@@ -103,10 +103,10 @@ export const useListTourPublish = (filters?: {
     strFilterServiceName?: string | null;
     strListEasiaCateID?: string | null;
     strListTransportOptionID?: string | null;
-    strLocationCode?: string | null,
-    dtmFilterDateValidFrom?: string | null,
-    dtmFilterDateValidTo?: string | null,
-    strPriceFromRange?: string | null,
+    strLocationCode?: string | null;
+    dtmFilterDateValidFrom?: string | null;
+    dtmFilterDateValidTo?: string | null;
+    strPriceFromRange?: string | null;
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -116,6 +116,14 @@ export const useListTourPublish = (filters?: {
         pageSize = filters?.pageSize ?? null,
         intCateID,
         intProductID,
+        strNoOfDayRange,
+        strFilterServiceName,
+        strListEasiaCateID,
+        strListTransportOptionID,
+        strLocationCode,
+        dtmFilterDateValidFrom,
+        dtmFilterDateValidTo,
+        strPriceFromRange,
     } = filters || {};
 
     const query = useQuery({
@@ -128,19 +136,21 @@ export const useListTourPublish = (filters?: {
                 strMemberPartnerGUID: user?.strUserGUID,
                 intLangID: user?.intLangID,
                 strPriceLevelGUID: null,
+
                 intCateID,
                 intProductID,
-                strNoOfDayRange: null,
-                strFilterServiceName: null,
-                strListEasiaCateID: null,
-                strListTransportOptionID: null,
+                strNoOfDayRange,
+                strFilterServiceName,
+                strListEasiaCateID,
+                strListTransportOptionID,
+                strLocationCode,
+                dtmFilterDateValidFrom,
+                dtmFilterDateValidTo,
+                strPriceFromRange,
+
                 dtmFilterDateStart: null,
-                dtmFilterDateValidFrom: filters?.dtmFilterDateValidFrom,
-                dtmFilterDateValidTo: filters?.dtmFilterDateValidTo,
                 strOrder: null,
-                strPriceFromRange: null,
                 intCurrencyView: 1,
-                strLocationCode: filters?.strLocationCode,
                 intCurPage: page,
                 intPageSize: pageSize,
                 tblsReturn: "[0]",
@@ -152,6 +162,7 @@ export const useListTourPublish = (filters?: {
 
     const listData = query.data?.[0] ?? [];
     const totalRecords = listData?.[0]?.intTotalRecords || 0;
+
     const totalPages =
         typeof pageSize === "number" && pageSize > 0
             ? Math.ceil(totalRecords / pageSize)
@@ -251,27 +262,56 @@ const fetchListTourSeries = async (body: any) => {
 };
 
 export const useListTourSeries = (filters?: {
-    page?: number,
-    pageSize?: number,
+    page?: number;
+    pageSize?: number;
 
-    intCateID?: string | null
-    intProductID?: string | null
+    intCateID?: string | null;
+    intProductID?: string | null;
 
-    intNoOfAdult?: number
-    strListNoOfChild?: string
+    strNoOfDayRange?: string | null;
+    strFilterServiceName?: string | null;
+    strListEasiaCateID?: string | null;
+    strListTransportOptionID?: string | null;
+    strPriceFromRange?: string | null;
 
-    intNoOfSGLSup?: number
-    intNoOfTPLRec?: number
+    intNoOfAdult?: number;
+    strListNoOfChild?: string;
 
-    strLocationCode?: string | null
+    intNoOfSGLSup?: number;
+    intNoOfTPLRec?: number;
 
-    dtmFilterDateValidFrom?: string
-    dtmFilterDateValidTo?: string
+    strLocationCode?: string | null;
+
+    dtmFilterDateValidFrom?: string | null;
+    dtmFilterDateValidTo?: string | null;
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
-    const page = filters?.page ?? 1;
-    const pageSize = filters?.pageSize ?? 10;
+
+    const {
+        page = 1,
+        pageSize = 10,
+
+        intCateID,
+        intProductID,
+
+        strNoOfDayRange,
+        strFilterServiceName,
+        strListEasiaCateID,
+        strListTransportOptionID,
+        strPriceFromRange,
+
+        intNoOfAdult,
+        strListNoOfChild,
+
+        intNoOfSGLSup,
+        intNoOfTPLRec,
+
+        strLocationCode,
+
+        dtmFilterDateValidFrom,
+        dtmFilterDateValidTo,
+    } = filters || {};
 
     const query = useQuery({
         queryKey: [QUERY_KEYS.TOUR.LIST_TOUR_SERIES, filters],
@@ -288,58 +328,43 @@ export const useListTourSeries = (filters?: {
                 strMemberPartnerGUID:
                     user?.strUserGUID,
 
-                intLangID: user?.intLangID,
+                intLangID:
+                    user?.intLangID,
 
                 strPriceLevelGUID: null,
 
-                intCateID:
-                    filters?.intCateID ?? null,
+                intCateID,
+                intProductID,
 
-                intProductID:
-                    filters?.intProductID ?? null,
-
-                strNoOfDayRange: null,
-
-                strFilterServiceName: null,
-
-                strListEasiaCateID: null,
-
-                strListTransportOptionID: null,
+                strNoOfDayRange,
+                strFilterServiceName,
+                strListEasiaCateID,
+                strListTransportOptionID,
 
                 dtmFilterDateStart: null,
 
-                dtmFilterDateValidFrom:
-                    filters?.dtmFilterDateValidFrom,
+                dtmFilterDateValidFrom,
+                dtmFilterDateValidTo,
 
-                dtmFilterDateValidTo:
-                    filters?.dtmFilterDateValidTo,
+                intNoOfAdult,
+                strListNoOfChild,
 
-                intNoOfAdult:
-                    filters?.intNoOfAdult,
-
-                strListNoOfChild:
-                    filters?.strListNoOfChild,
-
-                intNoOfSGLSup:
-                    filters?.intNoOfSGLSup,
-
-                intNoOfTPLRec:
-                    filters?.intNoOfTPLRec,
+                intNoOfSGLSup,
+                intNoOfTPLRec,
 
                 strOrder: null,
 
-                strPriceFromRange: null,
+                strPriceFromRange,
 
                 intCurrencyView: 1,
 
-                strLocationCode:
-                    filters?.strLocationCode,
+                strLocationCode,
 
                 intCurPage: page,
 
                 intPageSize: pageSize,
 
-                tblsReturn: "[0]"
+                tblsReturn: "[0]",
             }),
         enabled: !!user && !!coData,
         placeholderData: keepPreviousData,
@@ -348,6 +373,7 @@ export const useListTourSeries = (filters?: {
     const listData = query.data?.[0] ?? [];
     const totalRecords = listData?.[0]?.intTotalRecords || 0;
     const totalPages = Math.ceil(totalRecords / pageSize);
+
     return {
         tsData: listData,
         totalRecords,
