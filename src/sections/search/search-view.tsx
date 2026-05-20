@@ -33,19 +33,51 @@ const SearchView = () => {
         return Math.ceil(totalRecords / pageSize);
     };
 
+
+    // ================= TOUR FILTER STATE =================
+    const [tourFilter, setTourFilter] = useState({
+        intCateID: null as number | null,
+        intProductID: null as number | null,
+
+        strNoOfDayRange: null as string | null,
+        strFilterServiceName: null as string | null,
+        strListEasiaCateID: null as string | null,
+        strListTransportOptionID: null as string | null,
+
+        strLocationCode: null as string | null,
+
+        dtmFilterDateValidFrom: null as string | null,
+        dtmFilterDateValidTo: null as string | null,
+
+        strPriceFromRange: null as string | null,
+    });
+
+    // ================= SERIES FILTER STATE =================
+    const [seriesFilter, setSeriesFilter] = useState({
+        intCateID: null as string | null,
+        intProductID: null as string | null,
+
+        strNoOfDayRange: null as string | null,
+        strFilterServiceName: null as string | null,
+        strListEasiaCateID: null as string | null,
+        strListTransportOptionID: null as string | null,
+
+        strPriceFromRange: null as string | null,
+
+        intNoOfAdult: undefined as number | undefined,
+        strListNoOfChild: undefined as string | undefined,
+
+        intNoOfSGLSup: undefined as number | undefined,
+        intNoOfTPLRec: undefined as number | undefined,
+
+        strLocationCode: null as string | null,
+
+        dtmFilterDateValidFrom: null as string | null,
+        dtmFilterDateValidTo: null as string | null,
+    });
+
+
     // ================= API =================
-    const {
-        tsData,
-        tsLoading,
-    } = useListTourSeries(
-        isSeries
-            ? {
-                ...searchTourPayload,
-                page: pageSeries,
-                pageSize,
-            }
-            : null
-    );
 
     const {
         tdpData,
@@ -56,6 +88,21 @@ const SearchView = () => {
                 ...searchTourPayload,
                 page: pageTour,
                 pageSize,
+                ...tourFilter,
+            }
+            : null
+    );
+
+    const {
+        tsData,
+        tsLoading,
+    } = useListTourSeries(
+        isSeries
+            ? {
+                ...searchTourPayload,
+                page: pageSeries,
+                pageSize,
+                ...seriesFilter,
             }
             : null
     );
