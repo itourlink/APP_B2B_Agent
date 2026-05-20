@@ -33,16 +33,14 @@ const AGENCY_SUMMARY = [
 ];
 
 const ReportPriceTab = ({ variant }: ReportPriceTabProps) => {
-  const { t, currentLang } = useTranslate("reportfinance");
-  const formatCurrency = (val: number) => {
-    return `${new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(val)} ${t("currencySymbol")}`;
-  };
+  const { t } = useTranslate("reportfinance");
+
 
   if (variant === "selling") {
     return (
       <div className="relative min-h-[100px]">
         <div className="absolute top-0 right-0 text-[18px] font-semibold text-red-500">
-          {t("subTotalPrice")}: {formatCurrency(13650000)}
+          {t("subTotalPrice")}: {t("currencySymbol")}13,650,000
         </div>
 
         <div className="absolute right-0 bottom-0">
@@ -60,7 +58,7 @@ const ReportPriceTab = ({ variant }: ReportPriceTabProps) => {
       <div className="absolute top-0 right-0 space-y-1 text-right text-[18px] font-semibold text-red-500">
         {AGENCY_SUMMARY.map((item, idx) => (
           <div key={idx}>
-            {t(item.labelKey)}: {formatCurrency(item.value)}
+            {t(item.labelKey)}: {(item.value)}
           </div>
         ))}
       </div>

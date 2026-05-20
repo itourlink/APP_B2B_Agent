@@ -12,9 +12,10 @@ import { useUserStore } from "@/zustand/useUserStore";
 import type { IReportCost } from "@/hooks/interfaces/user";
 import { fDateTime } from "@/utils/format-time";
 import { useTranslate } from "@/locales";
+import { isValidValue } from "@/utils/utilts";
 
 const ReportCost = () => {
-    const { t, currentLang } = useTranslate("reportfinance");
+    const { t } = useTranslate("reportfinance");
     const user = useUserStore((state) => state.user);
     const [filters, setFilters] = useState({
         startTime: "",
@@ -156,9 +157,7 @@ const ReportCost = () => {
             headerName: t("payablePrice"),
             render: (value) => (
                 <div className={`${value > 0 ? "text-red-500" : "text-green-600"} min-w-[100px]`}>
-                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-                        Number.isFinite(Number(value)) ? Number(value) : 0
-                    )}{" "}
+                    {isValidValue(value) ?? 0}
                     <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
@@ -235,4 +234,4 @@ const ReportCost = () => {
     )
 }
 
-export default ReportCost
+export default ReportCost

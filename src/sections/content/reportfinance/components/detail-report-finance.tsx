@@ -15,6 +15,7 @@ import { TabsPills } from "@/components/tab/tabspills";
 import BookingServiceActions from "./booking-service-actions";
 import ListCustomer from "./list-customer";
 import { useTranslate } from "@/locales";
+import { isValidValue } from "@/utils/utilts";
 
 const REPORT_TABS = [
   {
@@ -31,7 +32,7 @@ const REPORT_TABS = [
   },
 ];
 const DetailReportFinance = () => {
-  const { t, currentLang } = useTranslate("reportfinance");
+  const { t } = useTranslate("reportfinance");
   const [open, setOpen] = useState({
     video: false,
   });
@@ -78,9 +79,7 @@ const DetailReportFinance = () => {
       headerName: t("subTotalPrice"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-            Number.isFinite(Number(value)) ? Number(value) : 0,
-          )}{" "}
+          {isValidValue(value) ?? 0}
           <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
@@ -90,9 +89,7 @@ const DetailReportFinance = () => {
       headerName: t("totalDiscount"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-            Number.isFinite(Number(value)) ? Number(value) : 0,
-          )}{" "}
+          {isValidValue(value) ?? 0}
           <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
@@ -102,9 +99,7 @@ const DetailReportFinance = () => {
       headerName: t("totalPrice"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-            Number.isFinite(Number(value)) ? Number(value) : 0,
-          )}{" "}
+          {isValidValue(value) ?? 0}
           <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
@@ -114,9 +109,7 @@ const DetailReportFinance = () => {
       headerName: t("totalPaid"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-            Number.isFinite(Number(value)) ? Number(value) : 0,
-          )}{" "}
+          {isValidValue(value) ?? 0}
           <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
@@ -126,9 +119,7 @@ const DetailReportFinance = () => {
       headerName: t("totalBalance"),
       render: (value) => (
         <div className="">
-          {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-            Number.isFinite(Number(value)) ? Number(value) : 0,
-          )}{" "}
+          {isValidValue(value) ?? 0}
           <span className="text-[10px] align-top">{t("currencySymbol")}</span>
         </div>
       ),
@@ -139,11 +130,10 @@ const DetailReportFinance = () => {
       render: (value) => {
         return (
           <span
-            className={`min-w-[100px] text-center px-3 py-1 rounded-2xl text-[11px] font-medium ${
-              value
-                ? "bg-green-50 text-green-600 border border-green-100"
-                : "bg-orange-50 text-orange-600 border border-orange-100"
-            }`}
+            className={`min-w-[100px] text-center px-3 py-1 rounded-2xl text-[11px] font-medium ${value
+              ? "bg-green-50 text-green-600 border border-green-100"
+              : "bg-orange-50 text-orange-600 border border-orange-100"
+              }`}
           >
             {value}
           </span>
@@ -233,11 +223,7 @@ const DetailReportFinance = () => {
               </div>
               <div className="text-[15px] text-gray-700 font-semibold">
                 {" "}
-                {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-                  Number.isFinite(Number(item?.dblPriceTotal))
-                    ? Number(item?.dblPriceTotal)
-                    : 0,
-                )}
+                {isValidValue(item?.dblPriceTotal) ?? 0}
                 <span className="text-[10px] align-top">{t("currencySymbol")}</span>
               </div>
             </div>
@@ -288,7 +274,7 @@ const DetailReportFinance = () => {
                 hover:bg-gray-100
                 transition
                 "
-            // onClick={handleCancel}
+          // onClick={handleCancel}
           >
             {t("cancellationBooking")}
           </button>

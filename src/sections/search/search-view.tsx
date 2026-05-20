@@ -45,7 +45,7 @@ const SearchView = () => {
     const {
         tsData,
         tsLoading,
-        tsError,
+        // tsError,
     } = useListTourSeries(
         isSeries ? { ...searchTourPayload, page: pageSeries, pageSize } : null
     );
@@ -53,7 +53,7 @@ const SearchView = () => {
     const {
         tdpData,
         tdpLoading,
-        tdpError,
+        // tdpError,
     } = useListTourPublish(
         !isSeries && !isSearchHotel
             ? { ...searchTourPayload, page: pageTour, pageSize }
@@ -63,7 +63,7 @@ const SearchView = () => {
     const {
         searchData: hotelData,
         searchLoading,
-        searchError,
+        // searchError,
     } = useSearchHotel(
         isSearchHotel
             ? { ...isSearchHotel, page: pageHotel, pageSize }
@@ -234,7 +234,7 @@ const SearchView = () => {
 
     // ================= LOADING =================
     const loading = tsLoading || tdpLoading || searchLoading;
-    const error = tsError || tdpError || searchError;
+    // const error = tsError || tdpError || searchError;
 
     const resultCount = isSeries
         ? filteredSeriesData.length

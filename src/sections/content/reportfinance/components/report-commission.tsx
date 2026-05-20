@@ -16,7 +16,7 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { useTranslate } from "@/locales";
 
 const ReportCommission = () => {
-    const { t, currentLang } = useTranslate("reportfinance");
+    const { t } = useTranslate("reportfinance");
     const router = useRouter();
     const user = useUserStore((state) => state.user);
 
@@ -176,7 +176,7 @@ const ReportCommission = () => {
             render: (value) => (
                 <div className="flex items-center gap-1 text-orange-600 min-w-25">
                     <Banknote size={14} />
-                    {value ? `${new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(value)} ${t("currencySymbol")}` : "---"}
+                    {value ? `${t("currencySymbol")}` : "---"}
                 </div>
             )
         },
@@ -266,4 +266,4 @@ const ReportCommission = () => {
     )
 }
 
-export default ReportCommission
+export default ReportCommission

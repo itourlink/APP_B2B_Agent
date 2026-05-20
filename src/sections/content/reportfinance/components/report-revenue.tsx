@@ -14,9 +14,10 @@ import { fDateTime } from "@/utils/format-time";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useTranslate } from "@/locales";
+import { isValidValue } from "@/utils/utilts";
 
 const ReportRevenue = () => {
-    const { t, currentLang } = useTranslate("reportfinance");
+    const { t } = useTranslate("reportfinance");
     const router = useRouter();
     const user = useUserStore((state) => state.user);
     const [filters, setFilters] = useState({
@@ -166,9 +167,7 @@ const ReportRevenue = () => {
             headerName: t("totalPrice"),
             render: (value) => (
                 <div className="min-w-[100px] flex justify-center">
-                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-                        Number.isFinite(Number(value)) ? Number(value) : 0
-                    )}{" "}
+                    {isValidValue(value) ?? 0}
                     <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
@@ -178,9 +177,7 @@ const ReportRevenue = () => {
             headerName: t("amountReceived"),
             render: (value) => (
                 <div className="">
-                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
-                        Number.isFinite(Number(value)) ? Number(value) : 0
-                    )}{" "}
+                    {isValidValue(value) ?? 0}
                     <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
