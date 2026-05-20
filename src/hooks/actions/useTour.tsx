@@ -99,9 +99,14 @@ export const useListTourPublish = (filters?: {
     pageSize?: number | null;
     intCateID?: number | null;
     intProductID?: number | null;
+    strNoOfDayRange?: string | null;
+    strFilterServiceName?: string | null;
+    strListEasiaCateID?: string | null;
+    strListTransportOptionID?: string | null;
     strLocationCode?: string | null,
     dtmFilterDateValidFrom?: string | null,
     dtmFilterDateValidTo?: string | null,
+    strPriceFromRange?: string | null,
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -121,7 +126,7 @@ export const useListTourPublish = (filters?: {
                 strCompanyOwnerGUID: coData?.strCompanyGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 strMemberPartnerGUID: user?.strUserGUID,
-                intLangID: null,
+                intLangID: user?.intLangID,
                 strPriceLevelGUID: null,
                 intCateID,
                 intProductID,

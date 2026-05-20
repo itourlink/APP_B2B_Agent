@@ -8,10 +8,10 @@ import { useSearchHotel } from "@/hooks/actions/useHotel";
 import { HotelCard } from "../hotel/components/hotel-list";
 import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
-import TourSeriesCard from "./tour-series-card";
 import { isValidValue } from "@/utils/utilts";
 import { getUrlImage } from "@/utils/format-image";
 import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
+import Pagination from "@/components/pagination/pagination";
 
 const SearchView = () => {
     const location = useLocation();
@@ -22,6 +22,12 @@ const SearchView = () => {
 
     const searchTourPayload = state?.isSearchTour || {};
 
+    const [pageSeries, setPageSeries] = useState(1);
+    const [pageTour, setPageTour] = useState(1);
+    const [pageHotel, setPageHotel] = useState(1);
+
+    const pageSize = 5;
+
     // ================= FILTER STATE =================
     const [filters, setFilters] = useState({
         keyword: "",
@@ -30,22 +36,50 @@ const SearchView = () => {
         star: [] as number[],
         transport: [] as string[],
     });
+    const getTotalPages = (listData: any, pageSize: number) => {
+        const totalRecords = listData?.[0]?.intTotalRecords || 0;
+        return Math.ceil(totalRecords / pageSize);
+    };
 
     // ================= API =================
-    const { tsData, tsLoading, tsError } =
-        useListTourSeries(isSeries ? searchTourPayload : null);
+    const {
+        tsData,
+        tsLoading,
+        tsError,
+    } = useListTourSeries(
+        isSeries ? { ...searchTourPayload, page: pageSeries, pageSize } : null
+    );
 
-    const { tdpData, tdpLoading, tdpError } =
-        useListTourPublish(
-            !isSeries && !isSearchHotel ? searchTourPayload : null
-        );
+    const {
+        tdpData,
+        tdpLoading,
+        tdpError,
+    } = useListTourPublish(
+        !isSeries && !isSearchHotel
+            ? { ...searchTourPayload, page: pageTour, pageSize }
+            : null
+    );
 
-    const { searchData: hotelData, searchLoading, searchError } =
-        useSearchHotel(
-            isSearchHotel
-                ? { ...isSearchHotel, page: 1, pageSize: 20 }
-                : undefined
-        );
+    const {
+        searchData: hotelData,
+        searchLoading,
+        searchError,
+    } = useSearchHotel(
+        isSearchHotel
+            ? { ...isSearchHotel, page: pageHotel, pageSize }
+            : undefined
+    );
+
+
+    const tsTotalPages = getTotalPages(tsData, pageSize);
+    const tourTotalPages = getTotalPages(tdpData, pageSize);
+    const hotelTotalPages = getTotalPages(hotelData, pageSize);
+
+    useEffect(() => {
+        setPageSeries(1);
+        setPageTour(1);
+        setPageHotel(1);
+    }, [filters, isSeries, isSearchHotel]);
 
     // ================= RAW DATA =================
     const rawData = useMemo(() => {
@@ -54,6 +88,28 @@ const SearchView = () => {
         return tdpData || [];
     }, [tsData, tdpData, hotelData, isSeries, isSearchHotel]);
 
+    useEffect(() => {
+        const totalPages = getTotalPages(tsData, pageSize);
+
+        if (pageSeries > totalPages && totalPages > 0) {
+            setPageSeries(1);
+        }
+    }, [tsData, pageSeries]);
+
+    useEffect(() => {
+        const totalPages = getTotalPages(tdpData, pageSize);
+
+        if (pageTour > totalPages && totalPages > 0) {
+            setPageTour(1);
+        }
+    }, [tdpData, pageTour]);
+    useEffect(() => {
+        const totalPages = getTotalPages(hotelData, pageSize);
+
+        if (pageHotel > totalPages && totalPages > 0) {
+            setPageHotel(1);
+        }
+    }, [hotelData, pageHotel]);
     // ================= NORMALIZE SERIES (FIX CORE BUG) =================
     const normalizedSeries = useMemo(() => {
         if (!isSeries) return [];
@@ -349,6 +405,13 @@ const SearchView = () => {
                         ))}
                     </div>
 
+                    {isSeries && (
+                        <Pagination
+                            currentPage={pageSeries}
+                            onPageChange={setPageSeries}
+                            totalPages={tsTotalPages || 1}
+                        />
+                    )}
 
                     {/* HOTEL */}
                     {!loading && isSearchHotel && (
@@ -362,6 +425,14 @@ const SearchView = () => {
                         </div>
                     )}
 
+                    {isSearchHotel && (
+                        <Pagination
+                            currentPage={pageHotel}
+                            onPageChange={setPageHotel}
+                            totalPages={hotelTotalPages || 1}
+                        />
+                    )}
+
                     {/* TOUR */}
                     {!loading && !isSeries && !isSearchHotel && (
                         <div className="grid grid-cols-3 gap-6">
@@ -372,6 +443,14 @@ const SearchView = () => {
                                 />
                             ))}
                         </div>
+                    )}
+
+                    {!isSeries && !isSearchHotel && (
+                        <Pagination
+                            currentPage={pageTour}
+                            onPageChange={setPageTour}
+                            totalPages={tourTotalPages || 1}
+                        />
                     )}
                 </div>
             </div>
