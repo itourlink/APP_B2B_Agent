@@ -1,15 +1,23 @@
 import { Star } from "lucide-react";
 
 const transportList = [
-    "Vietnam Airline",
-    "VietJet",
-    "Bamboo",
-    "Motorbike",
-    "Car",
-    "Limousine",
-    "Flight",
-    "Canoe",
-    "Boat",
+    { label: "Vietnam Airline", value: "1" },
+    { label: "VietJet", value: "2" },
+    { label: "Bamboo", value: "3" },
+    { label: "Motorbike", value: "4" },
+    { label: "Car", value: "5" },
+    { label: "Limousine", value: "6" },
+    { label: "Flight", value: "7" },
+    { label: "Canoe", value: "8" },
+    { label: "Boat", value: "9" },
+];
+
+const starList = [
+    { label: 5, value: "5" },
+    { label: 4, value: "4" },
+    { label: 3, value: "3" },
+    { label: 2, value: "2" },
+    { label: 1, value: "1" },
 ];
 
 type Props = {
@@ -132,7 +140,6 @@ export default function SearchFilter({
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            // FIX DẤU ,
                             strPriceFromRange: `0,${e.target.value}`,
                         }))
                     }
@@ -165,7 +172,6 @@ export default function SearchFilter({
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            // FIX DẤU ,
                             strNoOfDayRange: `1,${e.target.value}`,
                         }))
                     }
@@ -195,11 +201,11 @@ export default function SearchFilter({
                         const selected =
                             currentFilter?.strListTransportOptionID
                                 ?.split(",")
-                                ?.includes(item);
+                                ?.includes(item.value);
 
                         return (
                             <label
-                                key={item}
+                                key={item.value}
                                 className="flex items-center gap-2 cursor-pointer"
                             >
                                 <input
@@ -214,9 +220,9 @@ export default function SearchFilter({
 
                                         const updated =
                                             e.target.checked
-                                                ? [...current, item]
+                                                ? [...current, item.value]
                                                 : current.filter(
-                                                    (x: string) => x !== item
+                                                    (x: string) => x !== item.value
                                                 );
 
                                         setCurrentFilter((prev: any) => ({
@@ -229,7 +235,7 @@ export default function SearchFilter({
                                 />
 
                                 <span className="text-xs">
-                                    {item}
+                                    {item.label}
                                 </span>
                             </label>
                         );
@@ -237,34 +243,65 @@ export default function SearchFilter({
                 </div>
             </div>
 
-            {/* STAR UI */}
+            {/* STAR */}
             <div className="mb-4">
                 <h4 className="text-xs font-medium mb-2">
                     Số sao
                 </h4>
 
                 <div className="space-y-1">
-                    {[5, 4, 3, 2, 1].map((star) => (
-                        <label
-                            key={star}
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <input
-                                type="checkbox"
-                                className="w-3 h-3"
-                            />
+                    {starList.map((item) => {
 
-                            <div className="flex">
-                                {Array.from({ length: star }).map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={12}
-                                        className="fill-orange-400 text-orange-400"
-                                    />
-                                ))}
-                            </div>
-                        </label>
-                    ))}
+                        const selected =
+                            currentFilter?.strListEasiaCateID
+                                ?.split(",")
+                                ?.includes(item.value);
+
+                        return (
+                            <label
+                                key={item.value}
+                                className="flex items-center gap-2 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={selected}
+                                    onChange={(e) => {
+
+                                        const current =
+                                            currentFilter?.strListEasiaCateID
+                                                ?.split(",")
+                                                ?.filter(Boolean) || [];
+
+                                        const updated =
+                                            e.target.checked
+                                                ? [...current, item.value]
+                                                : current.filter(
+                                                    (x: string) => x !== item.value
+                                                );
+
+                                        setCurrentFilter((prev: any) => ({
+                                            ...prev,
+                                            strListEasiaCateID:
+                                                updated.join(","),
+                                        }));
+                                    }}
+                                    className="w-3 h-3"
+                                />
+
+                                <div className="flex">
+                                    {Array.from({
+                                        length: item.label,
+                                    }).map((_, i) => (
+                                        <Star
+                                            key={i}
+                                            size={12}
+                                            className="fill-orange-400 text-orange-400"
+                                        />
+                                    ))}
+                                </div>
+                            </label>
+                        );
+                    })}
                 </div>
             </div>
 
