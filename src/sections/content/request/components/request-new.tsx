@@ -10,8 +10,10 @@ import { useListBookingRequest } from "@/hooks/actions/useUser";
 import { fDateTime } from "@/utils/format-time";
 import { useUserStore } from "@/zustand/useUserStore";
 import Pagination from "@/components/pagination/pagination";
+import { useTranslate } from "@/locales";
 
 const RequestNew = () => {
+  const { t } = useTranslate("request");
   const router = useRouter()
   const [filters, setFilters] = useState({
     idRequest: ""
@@ -94,7 +96,7 @@ const RequestNew = () => {
             {
               keySearch: "idRequest",
               value: filters.idRequest,
-              placeHoder: "Mã yêu cầu",
+              placeHoder: t("requestCode"),
             },
 
           ]}
@@ -103,14 +105,14 @@ const RequestNew = () => {
 
         <div className="flex gap-2">
           <PrimaryButton
-            text="Tìm kiếm"
+            text={t("search")}
             onClick={handleSearch}
             className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-6 py-2 text-sm w-fit font-medium text-white shadow-sm transition-all"
             prefixIcon={<Search size={18} />}
           />
 
           <PrimaryButton
-            text="Reset"
+            text={t("reset")}
             onClick={handleReset}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg px-6 py-2 text-sm w-fit font-medium transition-all border border-gray-200"
             prefixIcon={<RotateCcw size={18} />}
@@ -197,7 +199,7 @@ const RequestNew = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <span>Category:</span>
+                      <span>{t("category")}:</span>
                       <Tag size={14} className="text-yellow-500 fill-yellow-500" />
                       <span>
                         {getCategory(item.strType)}

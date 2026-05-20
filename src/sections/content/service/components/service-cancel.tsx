@@ -7,6 +7,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useListAgentHostServiceItem } from "@/hooks/actions/useUser";
 import { useUserStore } from "@/zustand/useUserStore";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useTranslate } from "@/locales";
 
 interface Props {
     appliedFilters?: {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ServiceCancel = ({ appliedFilters }: Props) => {
+    const { t } = useTranslate("service");
     const user = useUserStore((state) => state.user);
     const [page, setPage] = useState(1);
     const pageSize = 5;
@@ -57,13 +59,13 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
     const colDefs: ColumnDef<any>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-400 font-medium">{value}</span>,
         },
 
         {
             field: "strAgentHostServiceItemCode",
-            headerName: "Mã",
+            headerName: t("code"),
             render: (value) => (
                 <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {value || "---"}
@@ -73,7 +75,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "No",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => {
                 const parser = new DOMParser();
                 const htmlDoc = parser.parseFromString(row.strType, "text/html");
@@ -88,10 +90,10 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
                         </div>
                         <div className="text-[11px] flex gap-2">
                             <span className="text-gray-500 font-bold text-xs italic">
-                                Category: <span className="text-yellow-500 not-italic">{categoryText}</span>
+                                {t("category")}: <span className="text-yellow-500 not-italic">{categoryText}</span>
                             </span>
                             <span className="text-gray-500 font-bold text-xs italic">
-                                Join Type: <span className="text-gray-800 not-italic">{joinTypeText}</span>
+                                {t("joinType")}: <span className="text-gray-800 not-italic">{joinTypeText}</span>
                             </span>
                         </div>
                         <div className="text-xs text-brand-600 mt-1 flex items-center gap-1">
@@ -104,7 +106,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "agentHost",
-            headerName: "Tên máy chủ đại lý",
+            headerName: t("agentHost"),
             render: (_, row) => (
                 <div className="space-y-1 py-1 min-w-50">
                     <div className="flex items-center gap-1.5 font-medium text-gray-700">
@@ -120,7 +122,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "groupSize",
-            headerName: "Quy mô nhóm",
+            headerName: t("groupSize"),
             render: (_, row) => (
                 <div className="bg-gray-50 p-2 rounded-lg border border-gray-100 min-w-[100px]">
                     <div
@@ -133,7 +135,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -147,7 +149,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPaymentAmount",
-            headerName: "Tổng Số Tiền Phải Trả",
+            headerName: t("payable"),
             render: (value) => (
                 <div className={`min-w-[100px] ${value > 0 ? "text-red-500" : "text-gray-800"}`}>
                     {new Intl.NumberFormat("vi-VN").format(value)}{" "}
@@ -158,7 +160,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPricePaid",
-            headerName: "Tổng đã trả",
+            headerName: t("paid"),
             render: (value) => (
                 <div className="min-w-[100px] text-green-600">
                     {new Intl.NumberFormat("vi-VN").format(value || 0)}{" "}
@@ -169,7 +171,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPriceTotalAgentCom",
-            headerName: "Tổng Tiền Hoa Hồng",
+            headerName: t("commission"),
             render: (value) => (
                 <div className="flex items-center gap-1 text-orange-600 min-w-[100px]">
                     <Banknote size={14} />
@@ -180,7 +182,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dtmDateDeadline",
-            headerName: "Thời hạn",
+            headerName: t("deadline"),
             render: (_, row) => {
                 const createdDate = row.dtmCreatedDate ? new Date(row.dtmCreatedDate) : null;
                 const deadlineDate = row.dtmDateDeadline ? new Date(row.dtmDateDeadline) : null;
@@ -194,10 +196,10 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
                     >
                         <Calendar size={13} className="text-gray-400" />
                         {isExpired
-                            ? "Đã hết hạn"
+                            ? t("expired")
                             : row.dtmDateDeadline
                                 ? fDateTime(row.dtmDateDeadline)
-                                : "Không có"}
+                                : t("none")}
                     </div>
                 );
             },
@@ -205,7 +207,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
 
         {
             field: "dtmCreatedDate",
-            headerName: "Ngày đặt",
+            headerName: t("bookingDate"),
             render: (value) => (
                 <div className="text-xs text-gray-500 flex items-center gap-1.5 min-w-[150px]">
                     <Calendar size={13} className="text-gray-400" />

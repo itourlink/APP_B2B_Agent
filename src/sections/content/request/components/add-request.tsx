@@ -15,24 +15,38 @@ import { useState } from "react";
 import { AgentHostSelect } from "./agent-host-select";
 import { listCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useListCity } from "@/hooks/actions/useCity";
+import { useTranslate } from "@/locales";
 
-const Schema = zod.object({
-    agentHost: zod.string().min(1, "Vui lòng chọn Agent Host"),
-    dateStart: zod.string().min(1, "Ngày bắt đầu là bắt buộc"),
-    duration: zod.coerce.number().min(1, "Thời lượng phải lớn hơn 0").default(0),
-    adults: zod.coerce.number().min(1, "Tối thiểu 1 người lớn").default(0),
+type SchemaType = {
+    agentHost: string;
+    dateStart: string;
+    duration: number;
+    adults: number;
+    children: number;
+    nationality: string;
+    category: string;
+    meal: string;
+    destination: string;
+    title: string;
+    specialNote: string;
+};
+
+const createSchema = (t: (key: string) => string) => zod.object({
+    agentHost: zod.string().min(1, t("agentHostRequired")),
+    dateStart: zod.string().min(1, t("dateStartRequired")),
+    duration: zod.coerce.number().min(1, t("durationMinimum")).default(0),
+    adults: zod.coerce.number().min(1, t("adultMinimum")).default(0),
     children: zod.coerce.number().default(0),
     nationality: zod.string().default("Vietnam"),
     category: zod.string(),
     meal: zod.string(),
-    destination: zod.string().min(1, "Điểm đến là bắt buộc"),
-    title: zod.string().min(1, "Tiêu đề là bắt buộc"),
+    destination: zod.string().min(1, t("destinationRequired")),
+    title: zod.string().min(1, t("titleRequired")),
     specialNote: zod.string().default(""),
 });
 
-type SchemaType = zod.infer<typeof Schema>;
-
 const AddRequest = ({ onBack }: { onBack: () => void }) => {
+    const { t } = useTranslate("request");
     const { showToast } = useToastStore();
     const user = useUserStore((state) => state.user);
     const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +84,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
     const listData = data?.pages.flatMap(page => page[0]) ?? [];
 
     const methods = useForm<SchemaType>({
-        resolver: zodResolver(Schema) as any,
+        resolver: zodResolver(createSchema((key) => t(key))) as any,
         defaultValues: {
             agentHost: "",
             duration: 0,
@@ -111,10 +125,10 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
                     queryKey: [QUERY_KEYS.USER.LIST_SALE_REQUEST],
                 });
                 onBack();
-                showToast("success", "Thêm yêu cầu thành công");
+                showToast("success", t("addRequestSuccess"));
             },
             onError: () => {
-                showToast("error", "Thêm yêu cầu thất bại");
+                showToast("error", t("addRequestError"));
             },
         });
     });
@@ -139,7 +153,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <AgentHostSelect
                     name="agentHost"
-                    label="Agent Host"
+                    label={t("agentHost")}
                     data={listData}
                     isLoading={isLoading}
                     searchTerm={searchTerm}
@@ -150,57 +164,57 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
                 />
                 <Field.Text
                     name="title"
-                    label={{ text: "Title", icon: <span className="text-red-500">*</span> }}
-                    placeholder="Tiêu đề yêu cầu..."
+                    label={{ text: t("requestTitle"), icon: <span className="text-red-500">*</span> }}
+                    placeholder={t("requestTitlePlaceholder")}
                 />
                 <Field.Text
                     name="dateStart"
                     type="date"
-                    label={{ text: "Date Start", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("dateStart"), icon: <span className="text-red-500">*</span> }}
                 />
                 <Field.Text
                     name="duration"
                     type="number"
-                    label={{ text: "Thời lượng", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("duration"), icon: <span className="text-red-500">*</span> }}
                 />
 
                 <Field.Text
                     name="adults"
                     type="number"
-                    label={{ text: "No of Adults", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("adults"), icon: <span className="text-red-500">*</span> }}
                 />
                 <Field.Text
                     name="children"
                     type="number"
-                    label={{ text: "No of Child", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("children"), icon: <span className="text-red-500">*</span> }}
                 />
                 <Field.SearchSelect
                     name="nationality"
-                    label={{ text: "Nationality" }}
+                    label={{ text: t("nationality") }}
                     options={COUNTRY_OPTIONS}
                 />
                 <Field.MultiSelect
                     name="category"
-                    label={{ text: "Danh mục", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("category"), icon: <span className="text-red-500">*</span> }}
                     options={STARS_OPTIONS}
                 />
                 <Field.MultiSelect
                     name="meal"
-                    label={{ text: "Meal", icon: <span className="text-red-500">*</span> }}
+                    label={{ text: t("meal"), icon: <span className="text-red-500">*</span> }}
                     options={MEALS_OPTIONS}
                 />
 
                 <Field.Text
                     name="destination"
-                    label={{ text: "Destination", icon: <span className="text-red-500">*</span> }}
-                    placeholder="Nhập điểm đến..."
+                    label={{ text: t("destination"), icon: <span className="text-red-500">*</span> }}
+                    placeholder={t("destinationPlaceholder")}
                 />
 
 
                 <Field.Text
                     name="specialNote"
-                    label={{ text: "SpecialNote" }}
-                    placeholder="Nhập ghi chú đặc biệt..."
+                    label={{ text: t("specialNote") }}
+                    placeholder={t("specialNotePlaceholder")}
                 />
             </div>
 
@@ -210,7 +224,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
                     disabled={isSubmitting || isLoading}
                     className="cursor-pointer w-full px-16 py-2.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
                 >
-                    {isSubmitting || isLoading ? "Đang lưu..." : "Lưu"}
+                    {isSubmitting || isLoading ? t("saving") : t("save")}
                 </button>
             </div>
         </div>
@@ -224,7 +238,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
                 <div className="p-1.5 rounded-full group-hover:bg-blue-50 transition-colors">
                     <ArrowLeft size={20} />
                 </div>
-                <span className="text-sm font-medium">Quay lại</span>
+                <span className="text-sm font-medium">{t("back")}</span>
             </button>
 
             <Form methods={methods} onSubmit={onSubmit}>

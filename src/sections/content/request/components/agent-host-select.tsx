@@ -1,8 +1,10 @@
 import { ChevronDown, MapPin, Search } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { useTranslate } from "@/locales";
 
 export const AgentHostSelect = ({ name, label, data, isLoading, searchTerm, setSearchTerm, fetchNextPage, hasNextPage, isFetchingNextPage }: any) => {
+    const { t } = useTranslate("request");
     const { control, setValue } = useFormContext();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -36,7 +38,7 @@ export const AgentHostSelect = ({ name, label, data, isLoading, searchTerm, setS
                                     }`}
                             >
                                 <span className={`truncate ${selectedItem ? "text-gray-900" : "text-gray-400"}`}>
-                                    {selectedItem ? selectedItem.strCompanyName : "Select ..."}
+                                    {selectedItem ? selectedItem.strCompanyName : t("selectPlaceholder")}
                                 </span>
                                 <ChevronDown size={18} className={`text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                             </div>
@@ -52,18 +54,18 @@ export const AgentHostSelect = ({ name, label, data, isLoading, searchTerm, setS
                                                 <input
                                                     autoFocus
                                                     className="w-full pl-9 pr-3 py-1.5 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                                                    placeholder="Tìm kiếm..."
+                                                    placeholder={t("searchPlaceholder")}
                                                     value={searchTerm}
-                                                    onChange={(e) => setSearchTerm(e.target.value)} // Cập nhật searchTerm ở AddRequest
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="overflow-y-auto flex-1 custom-scrollbar" onScroll={handleScroll}>
                                             {isLoading ? (
-                                                <div className="p-4 text-center text-sm text-gray-500">Đang tải...</div>
+                                                <div className="p-4 text-center text-sm text-gray-500">{t("loading")}</div>
                                             ) : data.length === 0 ? (
-                                                <div className="p-4 text-center text-sm text-gray-500">Không có kết quả</div>
+                                                <div className="p-4 text-center text-sm text-gray-500">{t("noResults")}</div>
                                             ) : (
                                                 data.map((item: any) => (
                                                     <div
@@ -89,7 +91,7 @@ export const AgentHostSelect = ({ name, label, data, isLoading, searchTerm, setS
                             )}
                             {isFetchingNextPage && (
                                 <div className="p-2 text-center text-[10px] text-gray-400 italic">
-                                    Đang tải thêm...
+                                    {t("loadingMore")}
                                 </div>
                             )}
                             {error && <p className="text-[11px] text-red-500 mt-1">{error.message}</p>}

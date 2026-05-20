@@ -12,8 +12,10 @@ import { useUserStore } from "@/zustand/useUserStore";
 import type { ISaleRequest } from "@/hooks/interfaces/user";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import { useTranslate } from "@/locales";
 
 const RequestCustomizeNew = () => {
+    const { t } = useTranslate("request");
     const user = useUserStore((state) => state.user);
     const router = useRouter()
     const [page, setPage] = useState(1);
@@ -49,14 +51,14 @@ const RequestCustomizeNew = () => {
     const colDefs: ColumnDef<ISaleRequest>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-400 font-medium">{value}</span>
 
         },
 
         {
             field: "strRequestCode",
-            headerName: "Mã yêu cầu",
+            headerName: t("requestCode"),
             render: (_, row) => (
                 <button onClick={() => router.replaceParams(paths.content.detailRequestCustomize, { item: row })} className="cursor-pointer text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {row?.strRequestCode || "---"}
@@ -66,7 +68,7 @@ const RequestCustomizeNew = () => {
 
         {
             field: "strRequestTitle",
-            headerName: "Tiêu đề yêu cầu",
+            headerName: t("requestTitle"),
             render: (value) => (
                 <div className="flex items-center gap-2 py-1 min-w-full">
                     <div className="p-1.5 bg-gray-50 text-gray-500 rounded-md">
@@ -81,7 +83,7 @@ const RequestCustomizeNew = () => {
 
         {
             field: "strCompanyName",
-            headerName: "Công ty",
+            headerName: t("company"),
             render: (value) => (
                 <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm min-w-full">
                     <Building2 size={14} className="text-[#4e6d9a]" />
@@ -92,7 +94,7 @@ const RequestCustomizeNew = () => {
 
         {
             field: "dblTotalPrice",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -105,7 +107,7 @@ const RequestCustomizeNew = () => {
 
         {
             field: "dtmCreatedDate",
-            headerName: "Ngày tạo",
+            headerName: t("createdDate"),
             render: (value) => (
                 <div className="text-xs text-gray-500 flex items-center gap-1.5 min-w-42.5">
                     <Calendar size={13} className="text-gray-400" />
@@ -121,7 +123,7 @@ const RequestCustomizeNew = () => {
                 <>
                     <div className="pt-4">
                         <PrimaryButton
-                            text="Thêm yêu cầu"
+                            text={t("addRequest")}
                             isLoading={false}
                             className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg w-fit text-sm font-medium transition shadow-sm"
                             prefixIcon={<PlusCircle size={18} />}

@@ -9,8 +9,10 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/hooks/actions/query-keys';
 import { useListRequestMessage, useListServiceItemBySaleReq } from '@/hooks/actions/useUser';
 import { isValidValue } from '@/utils/utilts';
+import { useTranslate } from '@/locales';
 
 const DetailRequestCustomize = () => {
+    const { t } = useTranslate("request");
     const { showToast } = useToastStore();
     const router = useRouter();
     const location = useLocation();
@@ -53,12 +55,12 @@ const DetailRequestCustomize = () => {
     const colDefs: ColumnDef<any>[] = [
         {
             field: "stt",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span>{value}</span>
         },
         {
             field: "strServiceName",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => (
                 <div className="min-w-[250px]">
                     <div className="font-bold text-[#004b91] uppercase text-sm leading-tight">
@@ -73,7 +75,7 @@ const DetailRequestCustomize = () => {
         },
         {
             field: "No",
-            headerName: "Ngày Từ - Ngày Đến",
+            headerName: t("dateRange"),
             render: (_, row) => (
                 <div className="text-xs text-gray-600 flex items-center gap-1.5 min-w-[180px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -83,7 +85,7 @@ const DetailRequestCustomize = () => {
         },
         {
             field: "intTotalPax",
-            headerName: "Tổng số khách",
+            headerName: t("totalGuests"),
             render: (value) => (
                 <div className="bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 inline-block font-medium">
                     {value}
@@ -92,7 +94,7 @@ const DetailRequestCustomize = () => {
         },
         {
             field: "dblTotalPrice",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="text-gray-700">
                     {new Intl.NumberFormat('vi-VN').format(value)}{" "}
@@ -111,30 +113,30 @@ const DetailRequestCustomize = () => {
                 <div className="p-1.5 rounded-full group-hover:bg-blue-50 transition-colors">
                     <ArrowLeft size={20} />
                 </div>
-                <span className="text-sm font-medium">Quay lại</span>
+                <span className="text-sm font-medium">{t("back")}</span>
             </button>
             <div className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative">
                         <div className="flex justify-between items-center mb-6">
                             <div className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                Thông tin bên nhận
+                                {t("recipientInfo")}
                                 <MessageCircle size={20} className="text-white fill-[#004b91] p-0.5 rounded" />
                             </div>
                             {!isCancel && (
                                 <div className="flex justify-end">
                                     <button
-                                        onClick={() => showToast("info", "Sắp ra mắt")}
+                                        onClick={() => showToast("info", t("comingSoon"))}
                                         className="cursor-pointer w-full px-10 py-1.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
                                     >
-                                        Hủy
+                                        {t("cancel")}
                                     </button>
                                 </div>
                             )}
                         </div>
 
                         <div className="grid grid-cols-1 gap-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Công ty</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("company")}</div>
                             <div className="text-sm text-gray-800 font-semibold uppercase">
                                 {item?.strCompanyName}
                             </div>
@@ -142,23 +144,23 @@ const DetailRequestCustomize = () => {
 
                         <div className="grid grid-cols-3 gap-y-6 mt-6">
                             <div className="space-y-1">
-                                <div className="text-xs text-gray-400 font-medium uppercase">Mã yêu cầu</div>
+                                <div className="text-xs text-gray-400 font-medium uppercase">{t("requestCode")}</div>
                                 <div className="text-[15px] text-gray-800 font-semibold">{item?.strRequestCode}</div>
                             </div>
                             <div className="space-y-1">
-                                <div className="text-xs text-gray-400 font-medium uppercase">Tổng số khách</div>
+                                <div className="text-xs text-gray-400 font-medium uppercase">{t("totalGuests")}</div>
                                 <div className="text-[15px] text-gray-800 font-semibold">{item?.intTotalPax}</div>
                             </div>
                             <div className="space-y-1">
-                                <div className="text-xs text-gray-400 font-medium uppercase">Tổng số ngày</div>
+                                <div className="text-xs text-gray-400 font-medium uppercase">{t("totalDays")}</div>
                                 <div className="text-[15px] text-gray-800 font-semibold">{item?.intDuration}</div>
                             </div>
                             <div className="space-y-1">
-                                <div className="text-xs text-gray-400 font-medium uppercase">Ngày gửi yêu cầu</div>
+                                <div className="text-xs text-gray-400 font-medium uppercase">{t("requestSentDate")}</div>
                                 <div className="text-[15px] text-gray-800 font-semibold">{fDateTime(item?.dtmCreatedDate)}</div>
                             </div>
                             <div className="space-y-1">
-                                <div className="text-xs text-gray-400 font-medium uppercase">Tổng giá</div>
+                                <div className="text-xs text-gray-400 font-medium uppercase">{t("totalPrice")}</div>
                                 <div className="text-[15px] text-gray-800 font-semibold">
                                     {new Intl.NumberFormat('vi-VN').format(
                                         isNaN(Number(item?.dblTotalPrice)) ? 0 : Number(item?.dblTotalPrice)
@@ -169,7 +171,7 @@ const DetailRequestCustomize = () => {
                     </div>
 
                     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full">
-                        <h2 className="text-lg font-bold text-gray-800 mb-4">Thông tin trao đổi</h2>
+                        <h2 className="text-lg font-bold text-gray-800 mb-4">{t("exchangeInfo")}</h2>
 
                         <div className="space-y-4 overflow-y-auto max-h-[200px] pr-2 custom-scrollbar">
                             {isLoading ? (
@@ -186,12 +188,12 @@ const DetailRequestCustomize = () => {
                                 ))
                             ) : isError ? (
                                 <div className="flex flex-col items-center justify-center py-6 text-red-500 bg-red-50 rounded-xl border border-red-100">
-                                    <div className="text-xs font-medium">Đã có lỗi xảy ra khi tải dữ liệu</div>
+                                    <div className="text-xs font-medium">{t("loadDataError")}</div>
                                     <button
                                         onClick={() => window.location.reload()}
                                         className="mt-2 text-[10px] underline hover:text-red-700"
                                     >
-                                        Thử lại
+                                        {t("tryAgain")}
                                     </button>
                                 </div>
                             ) : listData.length > 0 ? (
@@ -213,7 +215,7 @@ const DetailRequestCustomize = () => {
                                 ))
                             ) : (
                                 <div className="text-gray-400 text-sm italic py-4 text-center">
-                                    Không có dữ liệu trao đổi
+                                    {t("noExchangeData")}
                                 </div>
                             )}
                         </div>
@@ -223,7 +225,7 @@ const DetailRequestCustomize = () => {
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-5">
                 <div className="p-6 pb-2">
-                    <h2 className="text-lg font-bold text-gray-800">Danh sách dịch vụ</h2>
+                    <h2 className="text-lg font-bold text-gray-800">{t("serviceList")}</h2>
                 </div>
                 <TableCore
                     rowData={listServices ?? []}

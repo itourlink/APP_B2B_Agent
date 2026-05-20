@@ -5,12 +5,14 @@ import { fDateTime } from "@/utils/format-time";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslate } from "@/locales";
 
 interface Props {
     item: any;
 }
 
 const ListPaid = ({ item }: Props) => {
+    const { t } = useTranslate("service");
     const [page, setPage] = useState(1);
     const pageSize = 5;
     const { data, isLoading } = useQuery({
@@ -34,7 +36,7 @@ const ListPaid = ({ item }: Props) => {
     const colDefs: ColumnDef<any>[] = [
         {
             field: "strBookingPaymentTermGUID",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (_, __, rowIndex) => (
                 <span className="text-gray-400 font-medium">
                     {rowIndex + 1}
@@ -44,7 +46,7 @@ const ListPaid = ({ item }: Props) => {
 
         {
             field: "dblPriceCharge",
-            headerName: "Payable",
+            headerName: t("payable"),
             render: (value) => (
                 <div className="font-semibold text-gray-800 min-w-[100px]">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -57,7 +59,7 @@ const ListPaid = ({ item }: Props) => {
 
         {
             field: "dtmDateTo",
-            headerName: "Deadline",
+            headerName: t("deadline"),
             render: (value) => (
                 <div className="text-xs text-gray-500 flex items-center justify-center gap-1.5 min-w-[170px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -68,7 +70,7 @@ const ListPaid = ({ item }: Props) => {
 
         {
             field: "dtmCreatedDate",
-            headerName: "Create Date",
+            headerName: t("createdDate"),
             render: (value) => (
                 <div className="text-xs text-gray-500 flex items-center justify-center gap-1.5 min-w-[170px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -79,7 +81,7 @@ const ListPaid = ({ item }: Props) => {
 
         {
             field: "strPaymentTermCode",
-            headerName: "Payment Method",
+            headerName: t("paymentMethod"),
             render: (value) => (
                 <span className="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
                     {value || "---"}
@@ -93,7 +95,7 @@ const ListPaid = ({ item }: Props) => {
 
             <div className="flex justify-between items-center mb-6">
                 <div className="space-y-1">
-                    <div className="text-xs text-gray-400 font-medium uppercase">Service Name</div>
+                    <div className="text-xs text-gray-400 font-medium uppercase">{t("serviceName")}</div>
                     <div className="text-[15px] text-gray-800 font-semibold uppercase tracking-tight">
                         {item?.strServiceName}
                     </div>
@@ -101,7 +103,7 @@ const ListPaid = ({ item }: Props) => {
 
 
                 <div className="space-y-1">
-                    <div className="text-xs text-gray-400 font-medium uppercase">Agent host</div>
+                    <div className="text-xs text-gray-400 font-medium uppercase">{t("agentHost")}</div>
                     <div className="text-[15px] text-gray-800 font-semibold uppercase tracking-tight">
                         {item?.strAgentHostName}
                     </div>

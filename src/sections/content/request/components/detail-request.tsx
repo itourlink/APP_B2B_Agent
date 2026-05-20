@@ -7,8 +7,10 @@ import { fDateTime } from '@/utils/format-time';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Calendar, MessageSquare } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useTranslate } from '@/locales';
 
 const DetailRequest = () => {
+    const { t } = useTranslate("request");
     const router = useRouter();
     const location = useLocation()
     const item = location.state
@@ -26,7 +28,7 @@ const DetailRequest = () => {
     const colDefs: ColumnDef<any>[] = [
         {
             field: "stt",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (_, __, rowIndex) => (
                 <span className="text-gray-400 font-medium">
                     {rowIndex + 1}
@@ -35,7 +37,7 @@ const DetailRequest = () => {
         },
         {
             field: "strServiceName",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => {
 
                 return (
@@ -51,7 +53,7 @@ const DetailRequest = () => {
         },
         {
             field: "strType",
-            headerName: "Kiểu",
+            headerName: t("type"),
             render: (value) => (
                 <div className="flex justify-center min-w-25">
                     <div className="flex items-center gap-1 text-gray-700 italic">
@@ -62,7 +64,7 @@ const DetailRequest = () => {
         },
         {
             field: "intQuantity",
-            headerName: "Tổng số khách",
+            headerName: t("totalGuests"),
             render: (value) => (
                 <div className="flex justify-center min-w-20">
                     <span className="bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full text-xs font-medium">
@@ -73,7 +75,7 @@ const DetailRequest = () => {
         },
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -94,7 +96,7 @@ const DetailRequest = () => {
                 <div className="p-1.5 rounded-full group-hover:bg-blue-50 transition-colors">
                     <ArrowLeft size={20} />
                 </div>
-                <span className="text-sm font-medium">Quay lại</span>
+                <span className="text-sm font-medium">{t("back")}</span>
             </button>
 
             <div className="space-y-5">
@@ -102,46 +104,46 @@ const DetailRequest = () => {
                     <div className="flex justify-between items-start">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
-                                <h2 className="text-lg font-bold text-gray-800">Thông tin bên nhận</h2>
+                                <h2 className="text-lg font-bold text-gray-800">{t("recipientInfo")}</h2>
                                 <div className="p-1.5 bg-[#4a6fa5] rounded-lg text-white">
                                     <MessageSquare size={16} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-x-20">
                                 <div className="text-sm">
-                                    <span className="text-gray-400 font-medium">Công ty</span>
+                                    <span className="text-gray-400 font-medium">{t("company")}</span>
                                     <div className="mt-1 text-[#004b91] font-semibold uppercase">{listDataCompany?.strCompanyName}</div>
                                 </div>
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className="text-xs text-gray-400 font-normal uppercase tracking-wider">Trạng thái: </span>
+                            <span className="text-xs text-gray-400 font-normal uppercase tracking-wider">{t("status")}: </span>
                             <span className="text-xs font-bold text-gray-600">{listDataCompany?.strRequestProcessName}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h2 className="text-lg font-bold text-gray-800 mb-6">Thông tin yêu cầu</h2>
+                    <h2 className="text-lg font-bold text-gray-800 mb-6">{t("requestInfo")}</h2>
                     <div className="grid grid-cols-3 gap-y-6">
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Mã yêu cầu</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("requestCode")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">{listDataCompany?.strBookingRequestCode}</div>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Tổng số khách</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("totalGuests")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">{Number(listDataCompany?.intAdult) + Number(listDataCompany?.intChildren)}</div>
                         </div>
                         <div className="space-y-1 text-right">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Tổng số ngày</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("totalDays")}</div>
                             <div className="text-[15px] text-gray-700 font-semibold">{listDataCompany?.intNoOfDay}</div>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Ngày gửi yêu cầu</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("requestSentDate")}</div>
                             <div className="text-[15px] text-gray-700 font-normal">{fDateTime(listDataCompany?.dtmCreatedDate)}</div>
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium uppercase">Tổng Giá</div>
+                            <div className="text-xs text-gray-400 font-medium uppercase">{t("totalPrice")}</div>
                             <div className="text-gray-700">
                                 {new Intl.NumberFormat('vi-VN').format(listDataCompany?.dblPriceTotal)} <span className="text-[10px] align-top">đ</span>
                             </div>
@@ -151,7 +153,7 @@ const DetailRequest = () => {
 
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <div className="p-6 pb-2">
-                        <h2 className="text-lg font-bold text-gray-800">Danh sách dịch vụ</h2>
+                        <h2 className="text-lg font-bold text-gray-800">{t("serviceList")}</h2>
                     </div>
 
                     <TableCore
@@ -163,9 +165,9 @@ const DetailRequest = () => {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h2 className="text-lg font-bold text-gray-800 mb-4">Booking Request</h2>
+                    <h2 className="text-lg font-bold text-gray-800 mb-4">{t("bookingRequest")}</h2>
                     <div className="p-4 bg-gray-50 rounded-xl text-sm text-gray-600 font-normal leading-relaxed italic">
-                        Không có dữ liệu
+                        {t("noData")}
                     </div>
                 </div>
             </div>

@@ -13,8 +13,10 @@ import type { IReportRevenue } from "@/hooks/interfaces/user";
 import { fDateTime } from "@/utils/format-time";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import { useTranslate } from "@/locales";
 
 const ReportRevenue = () => {
+    const { t, currentLang } = useTranslate("reportfinance");
     const router = useRouter();
     const user = useUserStore((state) => state.user);
     const [filters, setFilters] = useState({
@@ -100,12 +102,12 @@ const ReportRevenue = () => {
     const colDefs: ColumnDef<IReportRevenue>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-400 font-medium">{value}</span>,
         },
         {
             field: "strCompanyName",
-            headerName: "Tên nhà cung cấp",
+            headerName: t("providerName"),
             render: (_, row) => (
                 <div className="space-y-0.5 py-1 min-w-50 text-xs">
                     <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm">
@@ -117,7 +119,7 @@ const ReportRevenue = () => {
         },
         {
             field: "No",
-            headerName: "Mã Booking/Tên nhóm",
+            headerName: t("bookingCodeAndGroup"),
             render: (_, row) => (
                 <div className="min-w-45">
                     <button onClick={() => router.replaceParams(paths.content.detailReportFinance, { item: row })} className="text-[#004b91] font-medium text-sm hover:underline cursor-pointer">
@@ -132,7 +134,7 @@ const ReportRevenue = () => {
         },
         {
             field: "dtmDateFrom",
-            headerName: "Ngày bắt đầu",
+            headerName: t("dateStart"),
             render: (value) => (
                 <div className="text-xs text-gray-600 flex items-center gap-1.5 min-w-[170px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -142,7 +144,7 @@ const ReportRevenue = () => {
         },
         {
             field: "dtmDateTo",
-            headerName: "Ngày kết thúc",
+            headerName: t("dateEnd"),
             render: (value) => (
                 <div className="text-xs text-gray-600 flex items-center gap-1.5 min-w-[170px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -152,7 +154,7 @@ const ReportRevenue = () => {
         },
         {
             field: "intTotalPax",
-            headerName: "Tổng số Pax",
+            headerName: t("totalPax"),
             render: (value) => (
                 <div className="flex items-center gap-1.5 text-sm font-bold text-gray-700">
                     <Users size={14} /> {value} pax
@@ -161,31 +163,31 @@ const ReportRevenue = () => {
         },
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="min-w-[100px] flex justify-center">
-                    {new Intl.NumberFormat('vi-VN').format(
+                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
                         Number.isFinite(Number(value)) ? Number(value) : 0
                     )}{" "}
-                    <span className="text-[10px] align-top">đ</span>
+                    <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
         },
         {
             field: "dblPayableTotal",
-            headerName: "Số tiền nhận được",
+            headerName: t("amountReceived"),
             render: (value) => (
                 <div className="">
-                    {new Intl.NumberFormat('vi-VN').format(
+                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
                         Number.isFinite(Number(value)) ? Number(value) : 0
                     )}{" "}
-                    <span className="text-[10px] align-top">đ</span>
+                    <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
         },
         {
             field: "strPayableStatusName",
-            headerName: "Trạng thái trả tiền",
+            headerName: t("paymentStatus"),
             render: (value) => {
                 const isFull = value !== "Not Paid";
                 return (
@@ -206,17 +208,17 @@ const ReportRevenue = () => {
                     {
                         keySearch: "nameProvider",
                         value: filters.nameProvider,
-                        placeHoder: "Tên nhà cung cấp",
+                        placeHoder: t("searchProvider"),
                     },
                     {
                         keySearch: "idOrder",
                         value: filters.idOrder,
-                        placeHoder: "Mã đặt",
+                        placeHoder: t("searchBooking"),
                     },
                     {
                         keySearch: "nameGroup",
                         value: filters.nameGroup,
-                        placeHoder: "Tên Nhóm",
+                        placeHoder: t("searchGroup"),
                     },
                 ]}
                 time={{
@@ -231,21 +233,21 @@ const ReportRevenue = () => {
 
                 <div className="flex gap-2 mt-3">
                     <PrimaryButton
-                        text="Tìm kiếm"
+                        text={t("search")}
                         onClick={handleSearch}
                         className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<Search size={18} />}
                     />
 
                     <PrimaryButton
-                        text="Reset"
+                        text={t("reset")}
                         onClick={handleReset}
                         className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<RotateCcw size={18} />}
                     />
                 </div>
 
-                <SummaryBadge label="Tổng doanh thu" value={0} />
+                <SummaryBadge label={t("totalRevenue")} value={0} />
 
             </div>
 
@@ -269,4 +271,5 @@ const ReportRevenue = () => {
 }
 
 export default ReportRevenue
+
 

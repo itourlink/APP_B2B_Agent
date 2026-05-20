@@ -13,6 +13,7 @@ import { Banknote, Building2, Calendar, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import ListPayable from "./list-payable";
 import ListPaid from "./list-paid";
+import { useTranslate } from "@/locales";
 
 interface Props {
     appliedFilters?: {
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const ServiceBooked = ({ appliedFilters }: Props) => {
+    const { t } = useTranslate("service");
     const user = useUserStore((state) => state.user);
     const router = useRouter();
     const [item, setItem] = useState<IServiceBooked | null>(null);
@@ -69,12 +71,12 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
     const colDefs: ColumnDef<IServiceBooked>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-500 font-medium">{value}</span>,
         },
         {
             field: "strAgentHostServiceItemCode",
-            headerName: "Mã",
+            headerName: t("code"),
             render: (value) => (
                 <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {value || "---"}
@@ -83,7 +85,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "No",
-            headerName: "Tỷ lệ",
+            headerName: t("bookingRate"),
             render: (value) => (
                 <div className="relative flex items-center justify-center w-10 h-10">
                     <svg className="w-full h-full transform -rotate-90">
@@ -98,7 +100,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "strServiceName",
-            headerName: "Tên dịch vụ",
+            headerName: t("serviceName"),
             render: (_, row) => {
 
                 return (
@@ -113,7 +115,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "No",
-            headerName: "Tên máy chủ đại lý",
+            headerName: t("agentHost"),
             render: (_, row) => (
                 <div className="space-y-1 py-1 min-w-50">
                     <div className="flex items-center gap-1.5 font-medium text-gray-700">
@@ -128,14 +130,14 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "strBookingSubStatusName",
-            headerName: "Trạng thái",
+            headerName: t("status"),
             render: (value) => (
                 <span className="text-xs text-gray-700 whitespace-nowrap">{value}</span>
             )
         },
         {
             field: "No",
-            headerName: "Quy mô nhóm",
+            headerName: t("groupSize"),
             render: (_, row) => (
                 <div className="bg-gray-50 p-2 rounded-lg border border-gray-100 min-w-[100px]">
                     <div
@@ -147,7 +149,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "dblPriceTotal",
-            headerName: "Tổng giá",
+            headerName: t("totalPrice"),
             render: (value) => (
                 <div className="min-w-[100px] flex justify-center">
                     {new Intl.NumberFormat('vi-VN').format(
@@ -160,7 +162,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "dblPaymentAmount",
-            headerName: "Tổng Số Tiền Phải Trả",
+            headerName: t("payable"),
             render: (_, row) => (
                 <button onClick={() => {
                     setItem(row)
@@ -176,7 +178,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
 
         {
             field: "dblPricePaid",
-            headerName: "Tổng đã trả",
+            headerName: t("paid"),
             render: (_, row) => (
                 <button onClick={() => {
                     setItem(row)
@@ -189,7 +191,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "dblPriceTotalAgentCom",
-            headerName: "Tổng Tiền Hoa Hồng",
+            headerName: t("commission"),
             render: (value) => (
                 <div className="flex items-center gap-1 text-orange-600 min-w-[100px]">
                     <Banknote size={14} />
@@ -199,7 +201,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
         },
         {
             field: "dtmCreatedDate",
-            headerName: "Ngày đặt",
+            headerName: t("bookingDate"),
             render: (value) => (
                 <div className="text-xs text-gray-500 flex items-center gap-1.5 min-w-[150px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -227,12 +229,12 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
                 />
             )}
             {open.payable && (
-                <PanelPopup title='List Payable' open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
+                <PanelPopup title={t("listPayable")} open={open.payable} onClose={() => setOpen((prev) => ({ ...prev, payable: false }))}>
                     <ListPayable item={item} />
                 </PanelPopup>
             )}
             {open.paid && (
-                <PanelPopup title='List Paid' open={open.paid} onClose={() => setOpen((prev) => ({ ...prev, paid: false }))}>
+                <PanelPopup title={t("listPaid")} open={open.paid} onClose={() => setOpen((prev) => ({ ...prev, paid: false }))}>
                     <ListPaid item={item} />
                 </PanelPopup>
             )}

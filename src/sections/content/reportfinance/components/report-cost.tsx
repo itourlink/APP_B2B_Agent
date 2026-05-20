@@ -11,8 +11,10 @@ import { useReportPayableBookingItemByAgent } from "@/hooks/actions/useUser";
 import { useUserStore } from "@/zustand/useUserStore";
 import type { IReportCost } from "@/hooks/interfaces/user";
 import { fDateTime } from "@/utils/format-time";
+import { useTranslate } from "@/locales";
 
 const ReportCost = () => {
+    const { t, currentLang } = useTranslate("reportfinance");
     const user = useUserStore((state) => state.user);
     const [filters, setFilters] = useState({
         startTime: "",
@@ -100,12 +102,12 @@ const ReportCost = () => {
     const colDefs: ColumnDef<IReportCost>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("serialNumber"),
             render: (value) => <span className="text-gray-400 font-medium">{value}</span>,
         },
         {
             field: "strAgentHostName",
-            headerName: "Tên máy chủ đại lý",
+            headerName: t("agentHostName"),
             render: (value) => (
                 <div className="space-y-0.5 py-1 min-w-50 text-xs">
                     <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm">
@@ -117,7 +119,7 @@ const ReportCost = () => {
         },
         {
             field: "No",
-            headerName: "Mã đặt chỗ/Tên nhóm",
+            headerName: t("bookingCodeAndGroup"),
             render: (_, row) => (
                 <div className="min-w-full">
                     <div className="text-[#004b91] font-medium text-sm hover:underline cursor-pointer">
@@ -132,7 +134,7 @@ const ReportCost = () => {
         },
         {
             field: "strPaymentBookingPeriodCode",
-            headerName: "Mã tiền gửi",
+            headerName: t("depositCode"),
             render: (value) => (
                 <span className="text-xs font-mono text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100">
                     {value || "---"}
@@ -141,7 +143,7 @@ const ReportCost = () => {
         },
         {
             field: "No",
-            headerName: "Ngày Từ - Ngày Đến",
+            headerName: t("dateFromAndTo"),
             render: (_, row) => (
                 <div className="text-xs text-gray-600 flex items-center gap-1.5 min-w-[180px]">
                     <Calendar size={13} className="text-gray-400" />
@@ -151,13 +153,13 @@ const ReportCost = () => {
         },
         {
             field: "dblPayableAmount",
-            headerName: "Giá phải trả",
+            headerName: t("payablePrice"),
             render: (value) => (
                 <div className={`${value > 0 ? "text-red-500" : "text-green-600"} min-w-[100px]`}>
-                    {new Intl.NumberFormat('vi-VN').format(
+                    {new Intl.NumberFormat(currentLang === 'vi' ? 'vi-VN' : 'en-US').format(
                         Number.isFinite(Number(value)) ? Number(value) : 0
                     )}{" "}
-                    <span className="text-[10px] align-top">đ</span>
+                    <span className="text-[10px] align-top">{t("currencySymbol")}</span>
                 </div>
             ),
         },
@@ -171,17 +173,17 @@ const ReportCost = () => {
                     {
                         keySearch: "nameProvider",
                         value: filters.nameProvider,
-                        placeHoder: "Tên nhà cung cấp",
+                        placeHoder: t("searchProvider"),
                     },
                     {
                         keySearch: "idOrder",
                         value: filters.idOrder,
-                        placeHoder: "Mã đặt",
+                        placeHoder: t("searchBooking"),
                     },
                     {
                         keySearch: "nameGroup",
                         value: filters.nameGroup,
-                        placeHoder: "Tên Nhóm",
+                        placeHoder: t("searchGroup"),
                     },
                 ]}
                 time={{
@@ -196,21 +198,21 @@ const ReportCost = () => {
 
                 <div className="flex gap-2 mt-3">
                     <PrimaryButton
-                        text="Tìm kiếm"
+                        text={t("search")}
                         onClick={handleSearch}
                         className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<Search size={18} />}
                     />
 
                     <PrimaryButton
-                        text="Reset"
+                        text={t("reset")}
                         onClick={handleReset}
                         className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
                         prefixIcon={<RotateCcw size={18} />}
                     />
                 </div>
 
-                <SummaryBadge label="Tổng chi phí" value={dblSumPayableAmount} />
+                <SummaryBadge label={t("totalCost")} value={dblSumPayableAmount} />
 
             </div>
 
@@ -233,4 +235,4 @@ const ReportCost = () => {
     )
 }
 
-export default ReportCost
+export default ReportCost

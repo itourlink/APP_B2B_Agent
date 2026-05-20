@@ -1,3 +1,5 @@
+import { useTranslate } from "@/locales";
+
 interface PassengerItem {
   intSaluteID: number | object;
   strSaluteName: string;
@@ -45,14 +47,16 @@ const Field = ({ label, value }: { label: string; value?: string }) => {
 };
 
 const ListCustomer = ({ customers = [], loading = false }: ListCustomerProps) => {
+  const { t } = useTranslate("reportfinance");
+
   if (loading) {
     return (
       <div className="w-full">
         <h2 className="mb-4 text-[18px] font-semibold text-[#222]">
-          List Customer
+          {t("listCustomer")}
         </h2>
         <div className="rounded-[10px] bg-white px-5 py-8 shadow-sm border border-[#f0f0f0] text-center text-gray-400">
-          Loading...
+          {t("loading")}
         </div>
       </div>
     );
@@ -62,10 +66,10 @@ const ListCustomer = ({ customers = [], loading = false }: ListCustomerProps) =>
     return (
       <div className="w-full">
         <h2 className="mb-4 text-[18px] font-semibold text-[#222]">
-          List Customer
+          {t("listCustomer")}
         </h2>
         <div className="rounded-[10px] bg-white px-5 py-8 shadow-sm border border-[#f0f0f0] text-center text-gray-400">
-          No customer data
+          {t("noCustomerData")}
         </div>
       </div>
     );
@@ -74,15 +78,15 @@ const ListCustomer = ({ customers = [], loading = false }: ListCustomerProps) =>
   return (
     <div className="w-full">
       <h2 className="mb-4 text-[18px] font-semibold text-[#222]">
-        List Customer
+        {t("listCustomer")}
       </h2>
 
       <div className="rounded-[10px] bg-white px-5 py-4 shadow-sm border border-[#f0f0f0]">
         {customers.map((customer, index) => {
           const isLeader = customer.IsLeader;
           const label = isLeader
-            ? "Trưởng đoàn"
-            : `Khách ${index + 1}`;
+            ? t("leader")
+            : `${t("customer")} ${index + 1}`;
 
           return (
             <div key={customer.strPassengerGUID || index} className={index !== 0 ? "mt-10" : ""}>
@@ -95,28 +99,28 @@ const ListCustomer = ({ customers = [], loading = false }: ListCustomerProps) =>
 
               {isLeader ? (
                 <div className="grid grid-cols-4 gap-x-10 gap-y-3">
-                  <Field label="Salute" value={toStr(customer.strSaluteName)} />
-                  <Field label="First Name" value={toStr(customer.strPassengerFirstName)} />
-                  <Field label="Last Name" value={toStr(customer.strPassengerLastName)} />
-                  <Field label="Age" value={toStr(customer.strAgeName)} />
+                  <Field label={t("salute")} value={toStr(customer.strSaluteName)} />
+                  <Field label={t("firstName")} value={toStr(customer.strPassengerFirstName)} />
+                  <Field label={t("lastName")} value={toStr(customer.strPassengerLastName)} />
+                  <Field label={t("age")} value={toStr(customer.strAgeName)} />
 
-                  <Field label="Date Of Birth" value={toStr(customer.dtmPassengerBirthday)} />
-                  <Field label="Country" value={toStr(customer.strCountryName)} />
-                  <Field label="Email" value={toStr(customer.strPassengerEmail)} />
-                  <Field label="Phone" value={toStr(customer.strPassengerPhone)} />
+                  <Field label={t("dateOfBirth")} value={toStr(customer.dtmPassengerBirthday)} />
+                  <Field label={t("country")} value={toStr(customer.strCountryName)} />
+                  <Field label={t("email")} value={toStr(customer.strPassengerEmail)} />
+                  <Field label={t("phone")} value={toStr(customer.strPassengerPhone)} />
 
                   <div className="col-span-4">
-                    <Field label="Remark" value={toStr(customer.strRemark)} />
+                    <Field label={t("remark")} value={toStr(customer.strRemark)} />
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-x-16 gap-y-3 max-w-[760px]">
-                  <Field label="Salute" value={toStr(customer.strSaluteName)} />
-                  <Field label="First Name" value={toStr(customer.strPassengerFirstName)} />
-                  <Field label="Last Name" value={toStr(customer.strPassengerLastName)} />
+                  <Field label={t("salute")} value={toStr(customer.strSaluteName)} />
+                  <Field label={t("firstName")} value={toStr(customer.strPassengerFirstName)} />
+                  <Field label={t("lastName")} value={toStr(customer.strPassengerLastName)} />
 
-                  <Field label="Age" value={toStr(customer.strAgeName)} />
-                  <Field label="Date Of Birth" value={toStr(customer.dtmPassengerBirthday)} />
+                  <Field label={t("age")} value={toStr(customer.strAgeName)} />
+                  <Field label={t("dateOfBirth")} value={toStr(customer.dtmPassengerBirthday)} />
                 </div>
               )}
             </div>
@@ -127,4 +131,4 @@ const ListCustomer = ({ customers = [], loading = false }: ListCustomerProps) =>
   );
 };
 
-export default ListCustomer;
+export default ListCustomer;
