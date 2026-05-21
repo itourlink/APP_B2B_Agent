@@ -1,4 +1,6 @@
 import { Star } from "lucide-react";
+import { useState } from "react";
+import ReactSlider from "react-slider";
 
 const transportList = [
     { label: "Vietnam Airline", value: "1" },
@@ -44,24 +46,22 @@ export default function SearchFilter({
     onApply,
 }: Props) {
 
+    const [priceRange, setPriceRange] = useState([0, 250]);
+    const [dayRange, setDayRange] = useState([1, 10]);
+
     const currentFilter =
         isSeries ? seriesFilter : tourFilter;
 
     const setCurrentFilter =
         isSeries ? setSeriesFilter : setTourFilter;
 
-    const priceValue =
-        Number(
-            currentFilter?.strPriceFromRange?.split(",")?.[1]
-        ) || 250;
-
-    const dayValue =
-        Number(
-            currentFilter?.strNoOfDayRange?.split(",")?.[1]
-        ) || 10;
-
     const resetFilter = () => {
-        setCurrentFilter({
+        setPriceRange([0, 250]);
+        setDayRange([1, 10]);
+
+        setCurrentFilter((prev: any) => ({
+            ...prev,
+
             intCateID: null,
             intProductID: null,
 
@@ -70,20 +70,26 @@ export default function SearchFilter({
             strListEasiaCateID: null,
             strListTransportOptionID: null,
 
-            strLocationCode: null,
+            strPriceFromRange: null,
+
+            // FIX
+            strLocationCode:
+                prev?.strLocationCode ?? "VN0000",
 
             dtmFilterDateValidFrom: null,
             dtmFilterDateValidTo: null,
 
-            strPriceFromRange: null,
+            // ...(isSeries && {
+            intNoOfAdult: 2,
+            strListNoOfChild: "",
+            intNoOfSGLSup: 0,
+            intNoOfTPLRec: 0,
+            // }),
+        }));
 
-            ...(isSeries && {
-                intNoOfAdult: undefined,
-                strListNoOfChild: undefined,
-                intNoOfSGLSup: undefined,
-                intNoOfTPLRec: undefined,
-            }),
-        });
+        setTimeout(() => {
+            onApply?.();
+        }, 0);
     };
 
     return (
@@ -128,32 +134,41 @@ export default function SearchFilter({
             {/* PRICE */}
             <div className="mb-4">
                 <h4 className="text-xs font-medium mb-2">
-                    Giá tối đa (USD)
+                    Giá (USD)
                 </h4>
 
-                <input
-                    type="range"
+                <ReactSlider
+                    className="w-full h-2"
+                    thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
+                    trackClassName="h-2 rounded"
+                    value={priceRange}
                     min={0}
                     max={500}
                     step={5}
-                    value={priceValue}
-                    onChange={(e) =>
+                    onChange={(value: any) => {
+                        setPriceRange(value);
+
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            strPriceFromRange: `0,${e.target.value}`,
-                        }))
-                    }
-                    className="w-full accent-blue-600 cursor-pointer"
+                            strPriceFromRange: `${value[0]},${value[1]}`,
+                        }));
+                    }}
+                    renderTrack={(props: any, state: any) => (
+                        <div
+                            {...props}
+                            className={`
+                h-2 rounded
+                ${state.index === 1
+                                    ? "bg-blue-600"
+                                    : "bg-slate-200"}
+            `}
+                        />
+                    )}
                 />
 
-                <div className="flex justify-between text-[10px] mt-1 text-gray-500">
-                    <span>0</span>
-
-                    <span>
-                        {priceValue}
-                    </span>
-
-                    <span>500</span>
+                <div className="flex justify-between text-[10px] mt-2 text-gray-500">
+                    <span>{priceRange[0]}</span>
+                    <span>{priceRange[1]}</span>
                 </div>
             </div>
 
@@ -163,29 +178,39 @@ export default function SearchFilter({
                     Số ngày
                 </h4>
 
-                <input
-                    type="range"
+                <ReactSlider
+                    className="w-full h-2"
+                    thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
+                    trackClassName="h-2 rounded"
+                    value={dayRange}
                     min={1}
                     max={30}
                     step={1}
-                    value={dayValue}
-                    onChange={(e) =>
+                    onChange={(value: any) => {
+                        setDayRange(value);
+
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            strNoOfDayRange: `1,${e.target.value}`,
-                        }))
-                    }
-                    className="w-full accent-blue-600 cursor-pointer"
+                            strNoOfDayRange: `${value[0]},${value[1]}`,
+                        }));
+                    }}
+                    renderTrack={(props: any, state: any) => (
+                        <div
+                            {...props}
+                            className={`
+                    h-2 rounded
+                    ${state.index === 1
+                                    ? "bg-blue-600"
+                                    : "bg-slate-200"}
+                `}
+                        />
+                    )}
                 />
 
-                <div className="flex justify-between text-[10px] mt-1 text-gray-500">
-                    <span>1</span>
+                <div className="flex justify-between text-[10px] mt-2 text-gray-500">
+                    <span>{dayRange[0]} ngày</span>
 
-                    <span>
-                        {dayValue}
-                    </span>
-
-                    <span>30</span>
+                    <span>{dayRange[1]} ngày</span>
                 </div>
             </div>
 
@@ -308,7 +333,7 @@ export default function SearchFilter({
             {/* APPLY */}
             <button
                 onClick={onApply}
-                className="w-full h-9 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition"
+                className="w-full h-9 rounded-lg bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-sm transition cursor-pointer"
             >
                 Chấp nhận
             </button>

@@ -104,8 +104,6 @@ const TourSearch = () => {
             return;
         }
 
-        console.log("draftFilters2", draftFilters2);
-
         // CLICK DESTINATION => SEARCH LIST
         router.replaceParams(paths.shop.search, {
             isTourSeries: filters.isTourSeries,
@@ -169,8 +167,8 @@ const TourSearch = () => {
                         ),
                     },
 
-                    { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
                     { type: "dateRange", keyStart: "start", keyEnd: "end" },
+                    { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
                     {
                         type: "tourType",
                         key: "tourType",

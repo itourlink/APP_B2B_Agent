@@ -106,10 +106,10 @@ const SearchView = () => {
     } = useListTourSeries(
         isSeries
             ? {
+                ...seriesFilter,
                 ...searchTourPayload,
                 page: pageSeries,
                 pageSize,
-                ...seriesFilter,
             }
             : null
     );
@@ -173,7 +173,10 @@ const SearchView = () => {
     // ================= LOADING =================
     const loading = tsLoading || tdpLoading || searchLoading;
 
-    const resultCount = rawData?.length || 0;
+    const resultCount = rawData?.[0]?.intTotalRecords || 0;
+
+    console.log("page", pageSeries);
+    console.log("tsData length", tsData?.length);
 
     return (
         <div className="mt-20 max-w-7xl mx-auto px-4 pb-10">
@@ -221,159 +224,161 @@ const SearchView = () => {
                     {/* SERIES */}
                     {!loading && isSeries && (
                         <div className="grid gap-6">
-                            {rawData.map((item: any) => (
-                                <div
-                                    key={item?.strTourGUID}
-                                    className="max-w-4xl mx-auto border border-gray-200 rounded-2xl p-6 flex gap-6 bg-white shadow-sm font-sans"
-                                >
-                                    {/* IMAGE */}
-                                    <div className="w-1/3">
-                                        <img
-                                            src={getUrlImage(
-                                                isValidValue(item?.strTourImageUrl)
-                                            )}
-                                            alt={isValidValue(item?.strTourName)}
-                                            className="w-full h-full object-cover rounded-xl"
-                                        />
-                                    </div>
+                            {rawData?.map((item: any) => {
+                                return (
+                                    <div
+                                        key={item?.strTourGUID}
+                                        className="max-w-4xl mx-auto border border-gray-200 rounded-2xl p-6 flex gap-6 bg-white shadow-sm font-sans"
+                                    >
+                                        {/* IMAGE */}
+                                        <div className="w-1/3">
+                                            <img
+                                                src={getUrlImage(
+                                                    isValidValue(item?.strTourImageUrl)
+                                                )}
+                                                alt={isValidValue(item?.strTourName)}
+                                                className="w-full h-full object-cover rounded-xl"
+                                            />
+                                        </div>
 
-                                    {/* CONTENT */}
-                                    <div className="flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <h2 className="text-xl font-bold text-gray-800 uppercase mb-4">
-                                                {isValidValue(item?.strTourName)}
-                                            </h2>
+                                        {/* CONTENT */}
+                                        <div className="flex-1 flex flex-col justify-between">
+                                            <div>
+                                                <h2 className="text-xl font-bold text-gray-800 uppercase mb-4">
+                                                    {isValidValue(item?.strTourName)}
+                                                </h2>
 
-                                            <div className="flex gap-4 mb-4">
-                                                <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48">
-                                                    <option>
-                                                        {isValidValue(
-                                                            item?.strEasiaCateName
-                                                        )}
-                                                    </option>
-                                                </select>
-
-                                                <div className="border border-gray-300 rounded px-3 py-1 text-sm flex items-center gap-2 bg-white w-48">
-                                                    <Calendar size={14} />
-
-                                                    <span>
-                                                        {isValidValue(
-                                                            item?.dtmDateStarted
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
-                                                <div className="flex items-center gap-2">
-                                                    <Flag size={16} />
-
-                                                    <span>
-                                                        Bởi:
-                                                        <span className="font-medium ml-1">
+                                                <div className="flex gap-4 mb-4">
+                                                    <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48">
+                                                        <option>
                                                             {isValidValue(
-                                                                item?.strOwnerCompanyName
+                                                                item?.strEasiaCateName
+                                                            )}
+                                                        </option>
+                                                    </select>
+
+                                                    <div className="border border-gray-300 rounded px-3 py-1 text-sm flex items-center gap-2 bg-white w-48">
+                                                        <Calendar size={14} />
+
+                                                        <span>
+                                                            {isValidValue(
+                                                                item?.dtmDateStarted
                                                             )}
                                                         </span>
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <Users size={16} />
-
-                                                    <span>
-                                                        Tổng:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.intPaxMax
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <Clock size={16} />
-
-                                                    <span>
-                                                        Thời lượng:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.intNoOfDay
-                                                        )} Days
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold">
-                                                        Đã bán:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.intTotalPaxUsed
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <MapPin size={16} />
-
-                                                    <span>
-                                                        Các điểm đến:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.strListTourDestinationName
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                <div className="space-y-1">
-                                                    <div className="text-blue-600 font-bold">
-                                                        + Trống:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.intTotalPaxRemain
-                                                        )}
-                                                    </div>
-
-                                                    <div className="text-blue-600 font-bold">
-                                                        + Giữ chỗ:
-                                                        {" "}
-                                                        {isValidValue(
-                                                            item?.intTotalPaxHold
-                                                        )}
                                                     </div>
                                                 </div>
+
+                                                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
+                                                    <div className="flex items-center gap-2">
+                                                        <Flag size={16} />
+
+                                                        <span>
+                                                            Bởi:
+                                                            <span className="font-medium ml-1">
+                                                                {isValidValue(
+                                                                    item?.strOwnerCompanyName
+                                                                )}
+                                                            </span>
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Users size={16} />
+
+                                                        <span>
+                                                            Tổng:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.intPaxMax
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Clock size={16} />
+
+                                                        <span>
+                                                            Thời lượng:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.intNoOfDay
+                                                            )} Days
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-bold">
+                                                            Đã bán:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.intTotalPaxUsed
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <MapPin size={16} />
+
+                                                        <span>
+                                                            Các điểm đến:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.strListTourDestinationName
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="space-y-1">
+                                                        <div className="text-blue-600 font-bold">
+                                                            + Trống:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.intTotalPaxRemain
+                                                            )}
+                                                        </div>
+
+                                                        <div className="text-blue-600 font-bold">
+                                                            + Giữ chỗ:
+                                                            {" "}
+                                                            {isValidValue(
+                                                                item?.intTotalPaxHold
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <span className="inline-block mt-4 px-3 py-1 bg-blue-100 text-blue-500 rounded-full text-xs font-medium">
+                                                    {isValidValue(
+                                                        item?.strTourTypeName
+                                                    ) || "Tour hằng ngày"}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* PRICE */}
+                                        <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
+                                            <div className="text-gray-700 font-bold text-lg mb-1">
+                                                Giá :
                                             </div>
 
-                                            <span className="inline-block mt-4 px-3 py-1 bg-blue-100 text-blue-500 rounded-full text-xs font-medium">
+                                            <div className="text-blue-600 text-3xl font-extrabold mb-4">
+                                                $
                                                 {isValidValue(
-                                                    item?.strTourTypeName
-                                                ) || "Tour hằng ngày"}
-                                            </span>
+                                                    item?.dblTotalPrice
+                                                )}
+                                            </div>
+
+                                            <button className="w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors">
+                                                Đặt Ngay
+                                            </button>
+
+                                            <button className="mt-2 text-xs font-bold text-black uppercase bg-gray-100 px-2 py-1 rounded shadow-inner">
+                                                Tăng giá/Giảm giá
+                                            </button>
                                         </div>
                                     </div>
-
-                                    {/* PRICE */}
-                                    <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
-                                        <div className="text-gray-700 font-bold text-lg mb-1">
-                                            Giá :
-                                        </div>
-
-                                        <div className="text-blue-600 text-3xl font-extrabold mb-4">
-                                            $
-                                            {isValidValue(
-                                                item?.dblTotalPrice
-                                            )}
-                                        </div>
-
-                                        <button className="w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors">
-                                            Đặt Ngay
-                                        </button>
-
-                                        <button className="mt-2 text-xs font-bold text-black uppercase bg-gray-100 px-2 py-1 rounded shadow-inner">
-                                            Tăng giá/Giảm giá
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
 
