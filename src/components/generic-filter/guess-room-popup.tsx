@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ages = Array.from({ length: 17 }, (_, i) => i + 1);
@@ -140,7 +141,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                         </div>
                     ) : (
                         <div className="text-sm text-gray-500">
-                            {rooms} Room
+                            {rooms} Room <ChevronDownIcon className="w-4 h-4 inline-block" />
                         </div>
                     )}
                 </div>

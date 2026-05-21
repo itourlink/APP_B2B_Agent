@@ -47,7 +47,7 @@ const DatePopup = ({ isOpen, value, onApply }: Props) => {
 
                 <button
                     onClick={() => onApply(temp)}
-                    className="px-4 py-2 bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white rounded-lg"
+                    className="cursor-pointer px-4 py-2 bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white rounded-lg"
                 >
                     Apply
                 </button>

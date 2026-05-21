@@ -252,12 +252,12 @@ const SearchView = () => {
                     )}
 
                     {/* SERIES */}
-                    {!loading && isSeries && (
+                    {!!isSeries && (
                         <div className="grid gap-6">
-                            {rawData?.map((item: any) => {
+                            {rawData?.map((item: any, index: number) => {
                                 return (
                                     <div
-                                        key={item?.strTourGUID}
+                                        key={index}
                                         className="max-w-4xl mx-auto border border-gray-200 rounded-2xl p-6 flex gap-6 bg-white shadow-sm font-sans"
                                     >
                                         {/* IMAGE */}

@@ -237,7 +237,7 @@ const TourDetail = () => {
                 {/* RIGHT */}
                 <div className="relative">
                     <div className="sticky top-32">
-                        <BookingForm />
+                        <BookingForm item={ListData} />
                     </div>
                 </div>
             </div>
