@@ -9,28 +9,19 @@ const today = new Date();
 
 const TOUR_TYPE_OPTIONS = [
     { label: "Tất cả", value: "all" },
-    { label: "Tour ghép", value: "group" },
-    { label: "Tour riêng", value: "private" },
+    { label: "Tour hằng ngày", value: "18" },
+    { label: "Tour trọn gói", value: "19" },
+    { label: "Tour cố định", value: "33" },
 ];
 
-const getTourSubOptions = (mainType: string) => {
-    if (mainType === "group") {
-        return [
-            { label: "Tất cả", value: "all" },
-            { label: "Hàng ngày", value: "daily" },
-            { label: "Theo lịch", value: "schedule" },
-        ];
-    }
-
-    if (mainType === "private") {
-        return [
-            { label: "Tất cả", value: "all" },
-            { label: "VIP", value: "vip" },
-            { label: "Standard", value: "standard" },
-        ];
-    }
-
-    return [{ label: "Tất cả", value: "all" }];
+const getTourSubOptions = () => {
+    return [
+        { label: "Tất cả", value: "all" },
+        { label: "FIT", value: "1" },
+        { label: "GIT", value: "2" },
+        { label: "Excursion", value: "100" },
+        { label: "Transports Packages", value: "101" },
+    ];
 };
 
 const DEFAULT_FILTERS = {
@@ -220,8 +211,11 @@ const TourSearch = () => {
                         if (k === "tourType") {
                             setDraftFilters2((prev) => ({
                                 ...prev,
-                                strTourType: v?.mainType,
-                                strTourSubType: v?.subType,
+                                strTourType:
+                                    v?.mainType === "all" ? null : v?.mainType,
+
+                                strTourSubType:
+                                    v?.subType === "all" ? null : v?.subType,
                             }));
                         }
 
