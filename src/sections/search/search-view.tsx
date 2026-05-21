@@ -101,8 +101,15 @@ const SearchView = () => {
     // ================= TEMP FILTER =================
     const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
 
-    const [tempSeriesFilter, setTempSeriesFilter] =
-        useState(seriesFilter);
+    const [tempSeriesFilter, setTempSeriesFilter] = useState(seriesFilter);
+
+    useEffect(() => {
+        setTempSeriesFilter(seriesFilter);
+    }, [seriesFilter]);
+
+    useEffect(() => {
+        setTempTourFilter(tourFilter);
+    }, [tourFilter]);
 
     // ================= API =================
 
@@ -195,9 +202,6 @@ const SearchView = () => {
 
     const resultCount = rawData?.[0]?.intTotalRecords || 0;
 
-    console.log("page", pageSeries);
-    console.log("tsData length", tsData?.length);
-
     return (
         <div className="mt-20 max-w-7xl mx-auto px-4 pb-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -216,10 +220,16 @@ const SearchView = () => {
 
                         onApply={() => {
                             if (isSeries) {
-                                setSeriesFilter(tempSeriesFilter);
+                                setSeriesFilter({
+                                    ...tempSeriesFilter,
+                                });
+
                                 setPageSeries(1);
                             } else {
-                                setTourFilter(tempTourFilter);
+                                setTourFilter({
+                                    ...tempTourFilter,
+                                });
+
                                 setPageTour(1);
                             }
                         }}
