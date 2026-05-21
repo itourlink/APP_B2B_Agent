@@ -156,7 +156,7 @@ const TourSearch = () => {
 
                                         setDraftFilters2((prev) => ({
                                             ...prev,
-                                            strLocationCode: "",
+                                            strLocationCode: null,
                                         }));
                                     } else {
                                         setSelectedTourUrl(null);
@@ -201,11 +201,16 @@ const TourSearch = () => {
                         if (k === "guestRoom") {
                             setDraftFilters2((prev) => ({
                                 ...prev,
+
                                 intNoOfAdult: v?.adults || 1,
-                                strListNoOfChild: v?.children
-                                    ? String(v.children)
-                                    : "",
+
+                                strListNoOfChild:
+                                    v?.childAges?.length
+                                        ? v.childAges.join(",")
+                                        : "",
+
                                 intNoOfSGLSup: v?.roomTypes?.sgl || 0,
+
                                 intNoOfTPLRec: v?.roomTypes?.tpl || 0,
                             }));
                         }

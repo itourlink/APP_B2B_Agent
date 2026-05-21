@@ -126,8 +126,8 @@ const SearchView = () => {
     } = useListTourSeries(
         isSeries
             ? {
-                ...seriesFilter,
                 ...searchTourPayload,
+                ...seriesFilter,
                 page: pageSeries,
                 pageSize,
             }
