@@ -59,37 +59,35 @@ export default function SearchFilter({
         setPriceRange([0, 250]);
         setDayRange([1, 10]);
 
-        setCurrentFilter((prev: any) => ({
-            ...prev,
-
+        const resetData = {
             intCateID: null,
             intProductID: null,
 
-            strNoOfDayRange: null,
-            strFilterServiceName: null,
-            strListEasiaCateID: null,
-            strListTransportOptionID: null,
+            strNoOfDayRange: "",
+            strFilterServiceName: "",
 
-            strPriceFromRange: null,
+            strListEasiaCateID: "",
+            strListTransportOptionID: "",
 
-            // FIX
+            strPriceFromRange: "",
+
             strLocationCode:
-                prev?.strLocationCode ?? "VN0000",
+                currentFilter?.strLocationCode ?? "VN0000",
 
             dtmFilterDateValidFrom: null,
             dtmFilterDateValidTo: null,
 
-            // ...(isSeries && {
             intNoOfAdult: 2,
             strListNoOfChild: "",
+
             intNoOfSGLSup: 0,
             intNoOfTPLRec: 0,
-            // }),
-        }));
+        };
 
-        setTimeout(() => {
-            onApply?.();
-        }, 0);
+        setCurrentFilter((prev: any) => ({
+            ...prev,
+            ...resetData,
+        }));
     };
 
     return (
@@ -102,7 +100,7 @@ export default function SearchFilter({
                 </h3>
 
                 <button
-                    onClick={resetFilter}
+                    onClick={() => resetFilter()}
                     className="text-xs text-blue-500 hover:underline cursor-pointer"
                 >
                     Đặt lại
