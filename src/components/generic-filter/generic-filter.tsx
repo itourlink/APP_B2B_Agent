@@ -208,7 +208,7 @@ export const GenericFilter = ({
                             <div className="absolute top-20 z-50">
                                 <GuestRoomPopup
                                     isOpen
-                                    isRoomDetail={item.isRoomDetail ?? false} // 👈 FIX chính
+                                    isRoomDetail={item.isRoomDetail ?? false} 
                                     value={val}
                                     onDone={(newVal) => {
                                         onChange(item.key, newVal);

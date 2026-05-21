@@ -17,23 +17,19 @@ import { format } from "date-fns";
 
 import DatePopup from "@/components/generic-filter/date-popup";
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
+import { useListPrice } from "@/hooks/actions/useBooking";
 
 interface Props {
     item?: any;
 }
 
 const BookingForm = ({ item }: Props) => {
+    const [canFetchPrice, setCanFetchPrice] = useState(false);
+    // ================= STATE =================
+    const [active, setActive] = useState<"dateOne" | "guestRoom" | null>(null);
 
-    // ================= ACTIVE =================
-    const [active, setActive] = useState<
-        "dateOne" | "guestRoom" | null
-    >(null);
+    const [startDate, setStartDate] = useState<Date | null>(null);
 
-    // ================= DATE =================
-    const [startDate, setStartDate] =
-        useState<Date | null>(null);
-
-    // ================= GUEST =================
     const [guestValue, setGuestValue] = useState({
         rooms: 1,
         adults: 2,
@@ -47,9 +43,14 @@ const BookingForm = ({ item }: Props) => {
         },
     });
 
+    const [selectedStar, setSelectedStar] = useState<number | null>(null);
+    const [joinType, setJoinType] = useState<number | null>(null);
+
+    // ================= REF =================
     const dateRef = useRef<HTMLDivElement>(null);
     const guestRef = useRef<HTMLDivElement>(null);
 
+    // ================= OUTSIDE CLICK =================
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -74,7 +75,7 @@ const BookingForm = ({ item }: Props) => {
             document.removeEventListener("mousedown", handleClickOutside);
     }, [active]);
 
-    // ================= STAR =================
+    // ================= STAR LIST =================
     const starList = useMemo(() => {
         if (!item?.strListEasiaCateID) return [];
 
@@ -83,8 +84,6 @@ const BookingForm = ({ item }: Props) => {
             .map((id: string) => Number(id))
             .filter(Boolean);
     }, [item]);
-
-    const [selectedStar, setSelectedStar] = useState<number | null>(null);
 
     useEffect(() => {
         if (starList.length > 0) {
@@ -101,152 +100,157 @@ const BookingForm = ({ item }: Props) => {
             .map((id: string) => Number(id))
             .map((id: number) => ({
                 value: id,
-                label:
-                    id === 1
-                        ? "Joined Tour"
-                        : id === 2
-                            ? "Private Tour"
-                            : `Type ${id}`,
+                label: id === 1
+                    ? "Joined Tour"
+                    : id === 2
+                        ? "Private Tour"
+                        : `Type ${id}`,
             }));
     }, [item]);
 
-    const [joinType, setJoinType] = useState<number | null>(
-        joinTypeList?.[0]?.value || null
-    );
-
     useEffect(() => {
-        if (joinTypeList?.length > 0) {
+        if (joinTypeList.length > 0) {
             setJoinType(joinTypeList[0].value);
         }
-    }, [item]);
+    }, [joinTypeList]);
 
+    useEffect(() => {
+        if (canFetchPrice) {
+            // trigger re-fetch logic (nếu hook support refetch dependency)
+        }
+    }, [guestValue, selectedStar, joinType]);
+
+    // ================= PRICE API =================
+    const { priceData } = useListPrice({
+        enabled: canFetchPrice && !!startDate,
+
+        strTourGUID: item?.strTourGUID,
+        intNoOfAdult: guestValue.adults,
+        intNoOfSGLSup: guestValue.roomTypes?.sgl,
+        intNoOfTPLRec: guestValue.roomTypes?.tpl,
+
+        dtmFilterDateFrom: startDate
+            ? startDate.toISOString()
+            : null,
+
+        intEasiaCateID: selectedStar,
+        intJoinTypeID: joinType,
+    });
+
+    console.log("priceData", priceData);
+
+    // ================= UI =================
     return (
         <div className="w-[320px] sticky top-32">
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
 
                 {/* HEADER */}
-                <div className="flex items-start justify-between">
+                <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-xl font-bold text-slate-900">
-                            Đặt tour
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <h3 className="text-xl font-bold">Đặt tour</h3>
+                        <p className="text-xs text-slate-500">
                             Nhập thông tin để hiển thị giá
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <button className="w-8 h-8 rounded-full bg-[#2566b0] text-white flex items-center justify-center">
+                    <div className="flex gap-2">
+                        <button className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
                             <HelpCircle size={16} />
                         </button>
-                        <button className="w-8 h-8 rounded-full bg-[#2566b0] text-white flex items-center justify-center">
+                        <button className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
                             <Download size={16} />
                         </button>
                     </div>
                 </div>
-
-                {/* WARNING */}
-                <div className="text-red-500 text-sm font-medium">
-                    Bạn hãy chọn ngày bắt đầu
-                </div>
+                {priceData?.[0]?.dblUnitPrice && (
+                    <div className="">
+                        Tổng giá: ₫{priceData?.[0]?.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                    </div>
+                )}
 
                 {/* DATE */}
-                <div ref={dateRef} className="space-y-1 relative">
-                    <label className="text-xs font-semibold text-slate-700">
-                        Ngày bắt đầu
-                    </label>
+                <div ref={dateRef}>
+                    <label className="text-xs font-semibold">Ngày bắt đầu</label>
 
                     <button
-                        type="button"
                         onClick={() =>
                             setActive(active === "dateOne" ? null : "dateOne")
                         }
-                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex items-center justify-between"
+                        className="w-full border rounded-lg px-3 py-2 flex justify-between"
                     >
                         <span>
                             {startDate
                                 ? format(startDate, "dd/MM/yyyy")
                                 : "Chọn ngày"}
                         </span>
-                        <Calendar size={16} className="text-slate-400" />
+                        <Calendar size={16} />
                     </button>
 
                     {active === "dateOne" && (
-                        <div className="absolute top-[72px] left-0 z-50">
-                            <DatePopup
-                                isOpen
-                                value={startDate}
-                                onApply={(val: Date | null) => {
-                                    setStartDate(val);
-                                    setActive(null);
-                                }}
-                            />
-                        </div>
+                        <DatePopup
+                            isOpen
+                            value={startDate}
+                            onApply={(val) => {
+                                setStartDate(val);
+                                setActive(null);
+
+                                if (val) {
+                                    setCanFetchPrice(true); // 👈 ONLY HERE
+                                }
+                            }}
+                        />
                     )}
                 </div>
 
                 {/* GUEST */}
-                <div ref={guestRef} className="space-y-1 relative">
-                    <label className="text-xs font-semibold text-slate-700">
-                        Số lượng khách
-                    </label>
+                <div ref={guestRef}>
+                    <label className="text-xs font-semibold">Số lượng khách</label>
 
                     <button
-                        type="button"
                         onClick={() =>
                             setActive(active === "guestRoom" ? null : "guestRoom")
                         }
-                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex items-center justify-between"
+                        className="w-full border rounded-lg px-3 py-2 flex justify-between"
                     >
-                        <div className="flex items-center gap-2">
-                            <Users size={16} className="text-slate-400" />
+                        <div className="flex gap-2">
+                            <Users size={16} />
                             <span>
                                 {guestValue.adults} NL • {guestValue.children} TE •{" "}
                                 {guestValue.rooms} Phòng
                             </span>
                         </div>
-                        <span className="text-slate-400">▼</span>
+                        <span>▼</span>
                     </button>
 
                     {active === "guestRoom" && (
-                        <div className="absolute top-[72px] left-0 z-50">
-                            <GuestRoomPopup
-                                isOpen
-                                isRoomDetail
-                                value={guestValue}
-                                onDone={(newVal: any) => {
-                                    setGuestValue(newVal);
-                                    setActive(null);
-                                }}
-                            />
-                        </div>
+                        <GuestRoomPopup
+                            isOpen
+                            isRoomDetail={true}
+                            value={guestValue}
+                            onDone={(val) => {
+                                setGuestValue(val);
+                                setActive(null);
+                            }}
+                        />
                     )}
                 </div>
 
                 {/* STAR */}
-                <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700">
-                        Hạng Tour
-                    </label>
+                <div>
+                    <label className="text-xs font-semibold">Hạng Tour</label>
 
                     <div className="flex gap-2">
                         {starList.map((star: number) => (
                             <button
                                 key={star}
-                                type="button"
                                 onClick={() => setSelectedStar(star)}
-                                className={`flex items-center gap-1 px-3 py-1 rounded-lg border ${selectedStar === star
+                                className={`px-3 py-1 border rounded-lg ${selectedStar === star
                                     ? "border-blue-500"
                                     : "border-slate-300"
                                     }`}
                             >
                                 {Array.from({ length: star }).map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={14}
-                                        fill="currentColor"
-                                        className="text-yellow-400"
-                                    />
+                                    <Star key={i} size={14} fill="gold" />
                                 ))}
                             </button>
                         ))}
@@ -254,30 +258,28 @@ const BookingForm = ({ item }: Props) => {
                 </div>
 
                 {/* TYPE */}
-                <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700">
-                        Loại hình
-                    </label>
+                <div>
+                    <label className="text-xs font-semibold">Loại hình</label>
 
                     <select
                         value={joinType || ""}
                         onChange={(e) => setJoinType(Number(e.target.value))}
-                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                        className="w-full border rounded-lg px-3 py-2"
                     >
-                        {joinTypeList.map((type: any) => (
-                            <option key={type.value} value={type.value}>
-                                {type.label}
+                        {joinTypeList.map((t: any) => (
+                            <option key={t.value} value={t.value}>
+                                {t.label}
                             </option>
                         ))}
                     </select>
                 </div>
 
                 {/* BUTTON */}
-                <button className="w-full bg-[#2566b0] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
                     Đặt ngay
                 </button>
 
-                <button className="w-full bg-[#2566b0] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
                     Thêm vào giỏ
                 </button>
             </div>
