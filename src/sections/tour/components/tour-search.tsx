@@ -57,8 +57,6 @@ const DEFAULT_FILTERS2 = {
     strLocationCode: "VN0000",
     dtmFilterDateValidFrom: today,
     dtmFilterDateValidTo: null,
-    strTourType: "all",
-    strTourSubType: "all",
 };
 
 const TourSearch = () => {
@@ -211,11 +209,16 @@ const TourSearch = () => {
                         if (k === "tourType") {
                             setDraftFilters2((prev) => ({
                                 ...prev,
-                                strTourType:
-                                    v?.mainType === "all" ? null : v?.mainType,
 
-                                strTourSubType:
-                                    v?.subType === "all" ? null : v?.subType,
+                                intCateID:
+                                    v?.mainType === "all"
+                                        ? null
+                                        : v?.mainType,
+
+                                intProductID:
+                                    v?.subType === "all"
+                                        ? null
+                                        : v?.subType,
                             }));
                         }
 

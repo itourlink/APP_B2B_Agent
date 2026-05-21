@@ -45,7 +45,8 @@ const SearchView = () => {
         strListEasiaCateID: null as string | null,
         strListTransportOptionID: null as string | null,
 
-        strLocationCode: null as string | null,
+        strLocationCode:
+            searchTourPayload?.strLocationCode ?? null,
 
         dtmFilterDateValidFrom: null as string | null,
         dtmFilterDateValidTo: null as string | null,
