@@ -50,7 +50,7 @@ export const GenericFilter = ({
     const locadesRef = useRef<HTMLDivElement>(null);
 
     const [active, setActive] = useState<
-        "guest" | "guestRoom" | "date" | "dateOne" | "locades" | "search"  | null
+        "guest" | "guestRoom" | "date" | "dateOne" | "locades" | "search" | null
     >(null);
 
     useEffect(() => {
@@ -337,14 +337,27 @@ export const GenericFilter = ({
             <div className="bg-white rounded-xl shadow-2xl p-6 flex gap-5 items-center">
 
 
-                {filters.map((item, i) => (
-                    <div key={i} className="flex items-center gap-5">
-                        {renderItem(item)}
-                        {i !== filters.length - 1 && (
-                            <div className="h-10 w-px bg-gray-300" />
-                        )}
-                    </div>
-                ))}
+                {filters
+                    .filter((item) => {
+                        // bật Tour Series => ẩn Tour Type
+                        if (
+                            item.type === "tourType" &&
+                            values.isTourSeries
+                        ) {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .map((item, i, arr) => (
+                        <div key={i} className="flex items-center gap-5">
+                            {renderItem(item)}
+
+                            {i !== arr.length - 1 && (
+                                <div className="h-10 w-px bg-gray-300" />
+                            )}
+                        </div>
+                    ))}
 
                 <button
                     onClick={onSearch}
