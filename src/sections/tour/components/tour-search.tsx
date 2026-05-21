@@ -49,14 +49,40 @@ const DEFAULT_FILTERS = {
     },
 };
 
-const DEFAULT_FILTERS2 = {
+const DEFAULT_FILTERS2: {
+    intNoOfAdult: number;
+    strListNoOfChild: string;
+    intNoOfSGLSup: number;
+    intNoOfTPLRec: number;
+
+    strLocationCode: string;
+
+    dtmFilterDateValidFrom: string | null;
+    dtmFilterDateValidTo: string | null;
+
+    intCateID?: string | null;
+    intProductID?: string | null;
+} = {
     intNoOfAdult: 1,
     strListNoOfChild: "",
     intNoOfSGLSup: 0,
     intNoOfTPLRec: 0,
+
     strLocationCode: "VN0000",
-    dtmFilterDateValidFrom: today,
+
+    dtmFilterDateValidFrom:
+        new Date().toLocaleDateString("en-US"),
+
     dtmFilterDateValidTo: null,
+
+    intCateID: null,
+    intProductID: null,
+};
+
+const formatDate = (date: Date | null) => {
+    if (!date) return null;
+
+    return new Date(date).toLocaleDateString("en-US");
 };
 
 const TourSearch = () => {
@@ -101,12 +127,7 @@ const TourSearch = () => {
             },
         });
 
-        console.log({
-            isTourSeries: filters.isTourSeries,
-            isSearchTour: {
-                ...draftFilters2,
-            },
-        });
+
     };
 
     return (
@@ -195,13 +216,15 @@ const TourSearch = () => {
                         if (k === "start" || k === "end") {
                             setDraftFilters2((prev) => ({
                                 ...prev,
+
                                 dtmFilterDateValidFrom:
                                     k === "start"
-                                        ? v
+                                        ? formatDate(v)
                                         : prev.dtmFilterDateValidFrom,
+
                                 dtmFilterDateValidTo:
                                     k === "end"
-                                        ? v
+                                        ? formatDate(v)
                                         : prev.dtmFilterDateValidTo,
                             }));
                         }

@@ -37,45 +37,64 @@ const SearchView = () => {
 
     // ================= TOUR FILTER STATE =================
     const [tourFilter, setTourFilter] = useState({
-        intCateID: null as number | null,
-        intProductID: null as number | null,
+        intCateID:
+            searchTourPayload?.intCateID ?? null,
 
-        strNoOfDayRange: null as string | null,
-        strFilterServiceName: null as string | null,
-        strListEasiaCateID: null as string | null,
-        strListTransportOptionID: null as string | null,
+        intProductID:
+            searchTourPayload?.intProductID ?? null,
+
+        strNoOfDayRange: null,
+        strFilterServiceName: null,
+        strListEasiaCateID: null,
+        strListTransportOptionID: null,
 
         strLocationCode:
             searchTourPayload?.strLocationCode ?? null,
 
-        dtmFilterDateValidFrom: null as string | null,
-        dtmFilterDateValidTo: null as string | null,
+        dtmFilterDateValidFrom:
+            searchTourPayload?.dtmFilterDateValidFrom ?? null,
 
-        strPriceFromRange: null as string | null,
+        dtmFilterDateValidTo:
+            searchTourPayload?.dtmFilterDateValidTo ?? null,
+
+        strPriceFromRange: null,
     });
 
     // ================= SERIES FILTER STATE =================
     const [seriesFilter, setSeriesFilter] = useState({
-        intCateID: null as string | null,
-        intProductID: null as string | null,
+        intCateID:
+            searchTourPayload?.intCateID ?? null,
 
-        strNoOfDayRange: null as string | null,
-        strFilterServiceName: null as string | null,
-        strListEasiaCateID: null as string | null,
-        strListTransportOptionID: null as string | null,
+        intProductID:
+            searchTourPayload?.intProductID ?? null,
 
-        strPriceFromRange: null as string | null,
+        strNoOfDayRange: null,
+        strFilterServiceName: null,
+        strListEasiaCateID: null,
+        strListTransportOptionID: null,
 
-        intNoOfAdult: undefined as number | undefined,
-        strListNoOfChild: undefined as string | undefined,
+        strPriceFromRange: null,
 
-        intNoOfSGLSup: undefined as number | undefined,
-        intNoOfTPLRec: undefined as number | undefined,
+        intNoOfAdult:
+            searchTourPayload?.intNoOfAdult,
 
-        strLocationCode: null as string | null,
+        strListNoOfChild:
+            searchTourPayload?.strListNoOfChild,
 
-        dtmFilterDateValidFrom: null as string | null,
-        dtmFilterDateValidTo: null as string | null,
+        intNoOfSGLSup:
+            searchTourPayload?.intNoOfSGLSup,
+
+        intNoOfTPLRec:
+            searchTourPayload?.intNoOfTPLRec,
+
+        strLocationCode:
+            searchTourPayload?.strLocationCode ?? null,
+
+        dtmFilterDateValidFrom:
+            searchTourPayload?.dtmFilterDateValidFrom ?? null,
+
+        dtmFilterDateValidTo:
+            searchTourPayload?.dtmFilterDateValidTo ?? null,
     });
 
 
