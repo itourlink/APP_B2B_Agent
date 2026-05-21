@@ -5,8 +5,6 @@ import TourLocationDes from "./tour-location-des";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 
-const today = new Date();
-
 const TOUR_TYPE_OPTIONS = [
     { label: "Tất cả", value: "all" },
     { label: "Tour hằng ngày", value: "18" },
@@ -29,7 +27,7 @@ const DEFAULT_FILTERS = {
     pageSize: 10,
     isTourSeries: false,
     strFilterDestinationName: "",
-    start: today,
+    start: null,
     end: null,
     tourType: {
         mainType: "all",
@@ -55,7 +53,7 @@ const DEFAULT_FILTERS2: {
     intNoOfSGLSup: number;
     intNoOfTPLRec: number;
 
-    strLocationCode: string;
+    strLocationCode: string | null;
 
     dtmFilterDateValidFrom: string | null;
     dtmFilterDateValidTo: string | null;
@@ -68,10 +66,9 @@ const DEFAULT_FILTERS2: {
     intNoOfSGLSup: 0,
     intNoOfTPLRec: 0,
 
-    strLocationCode: "VN0000",
+    strLocationCode: null,
 
-    dtmFilterDateValidFrom:
-        new Date().toLocaleDateString("en-US"),
+    dtmFilterDateValidFrom: null,
 
     dtmFilterDateValidTo: null,
 
