@@ -9,8 +9,8 @@ import { useLocation } from 'react-router-dom';
 
 // --- MOCK DATA TYPE ---
 interface BookingDetail {
-    stt: number;
-    serviceName: string;
+    No: number;
+    strServiceName: string;
     dateRange: string;
     totalGuests: number;
     commissionPrice: number;
@@ -30,6 +30,10 @@ const PaymentBookingView: React.FC = () => {
     const [serviceItemGUID, setServiceItemGUID] = useState<string | null>(null);
     const [isBookingSuccess, setIsBookingSuccess] = useState(false);
 
+    console.log("PAYMENT VIEW ITEM", item);
+ 
+
+
 
     const [contactInfo] = useState({
         name: 'Miền Trần',
@@ -37,17 +41,7 @@ const PaymentBookingView: React.FC = () => {
         isTourGuest: false,
     });
 
-    const [bookingItems] = useState<BookingDetail[]>([
-        {
-            stt: 1,
-            serviceName: 'HaNoi - HCM 3 days 2 nights',
-            dateRange: 'T5, 28 Thg 05, 2026 - T7, 30 Thg 05, 2026',
-            totalGuests: 4,
-            commissionPrice: 0,
-            totalPrice: 14031360,
-            paymentTotal: 0, // Hiện tại hiển thị 0đ theo ảnh
-        },
-    ]);
+    const [bookingItems] = useState<BookingDetail[]>([ ]);
 
     const bankAccountInfo = {
         accountName: 'Công Ty Itourlink',
@@ -200,11 +194,11 @@ const PaymentBookingView: React.FC = () => {
                     <div className="p-5 space-y-2 text-sm">
                         <div className="flex gap-2">
                             <span className="font-medium text-gray-600 min-w-[90px]">Họ và tên:</span>
-                            <span className="text-gray-800">{contactInfo.name}</span>
+                            <span className="text-gray-800">{user?.strFullName}</span>
                         </div>
                         <div className="flex gap-2">
                             <span className="font-medium text-gray-600 min-w-[90px]">Email:</span>
-                            <span className="text-gray-800 font-light">{contactInfo.email}</span>
+                            <span className="text-gray-800 font-light">{user?.strEmail}</span>
                         </div>
 
                         {/* Toggle Switch */}
@@ -243,12 +237,12 @@ const PaymentBookingView: React.FC = () => {
                                 {bookingItems.map((item, index) => (
                                     <React.Fragment key={index}>
                                         <tr className="hover:bg-gray-50">
-                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.stt}</td>
+                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.No}</td>
                                             <td className="py-3 px-4 text-left align-top border-r border-gray-100">
-                                                <div className="font-semibold text-gray-800">{item.serviceName}</div>
+                                                <div className="font-semibold text-gray-800">{item?.strServiceName}</div>
                                                 <div className="text-gray-500 text-[11px] mt-0.5">{item.dateRange}</div>
                                             </td>
-                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.totalGuests}</td>
+                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.intPaxMax}</td>
                                             <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(item.commissionPrice)}</td>
                                             <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(item.totalPrice)}</td>
                                             <td className="py-3 px-3 align-top font-medium">{formatCurrency(item.paymentTotal)}</td>
