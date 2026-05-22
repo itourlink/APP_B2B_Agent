@@ -5,7 +5,7 @@ import { getUrlImage } from '@/utils/format-image';
 import { formatPrice } from '@/utils/format-number';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
-
+    
 export const TourCard = ({ tour }: any) => {
     const router = useRouter();
 
@@ -98,6 +98,7 @@ const TourCardSkeleton = () => {
 
 const TourList = () => {
 
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     const [filters] = useState({
         page: 1,
@@ -152,7 +153,7 @@ const TourList = () => {
                 <h2 className="text-2xl font-bold text-gray-800">
                     Tour nổi bật
                 </h2>
-                <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
+                {/* <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
                     <span className="text-sm text-gray-500 ml-2">
                         Hiển thị dạng:
                     </span>
@@ -162,14 +163,74 @@ const TourList = () => {
                     <button className="cursor-pointer p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
                         <List size={18} />
                     </button>
+                </div> */}
+
+                <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
+                    <span className="text-[12px] text-gray-500 ml-2">
+                        Hiển thị dạng:
+                    </span>
+
+                    <div className="flex gap-1">
+                        <button
+                            onClick={() => setViewMode("grid")}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
+                        >
+                            <LayoutGrid size={16} />
+                        </button>
+
+                        <button
+                            onClick={() => setViewMode("list")}
+                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
+                        >
+                            <List size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
+             {tourLoading && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    {[...Array(8)].map((_, i) => (
+                        <TourCardSkeleton key={i} />
+                    ))}
+                </div>
+            )}
+            {tourError && <TourError />}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {!tourLoading && !tourError && (
+                          <div
+                              className={
+                                  viewMode === "grid"
+                                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+                                      : "flex flex-col gap-4"
+                              }
+                          >
+                              {tourData?.map((tour: any) =>
+                                  viewMode === "grid" ? (
+                                      <TourCard
+                                          key={tour?.strTourGUID}
+                                          tour={tour}
+                                      />
+                                  ) : (
+                                      <TourListItem
+                                          key={tour?.strTourGUID}
+                                          tour={tour}
+                                      />
+                                    )
+                              )}
+                          </div>
+                      )}
+
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {tourData.map((tour: any) => (
                     <TourCard key={tour.strTourGUID} tour={tour} />
                 ))}
-            </div>
+            </div> */}
 
             {/* <Pagination
                 currentPage={filters.page}
@@ -181,3 +242,90 @@ const TourList = () => {
 };
 
 export default TourList;
+
+const TourError = () => (
+    <div className="text-center py-20 text-red-500">
+        Không tải được danh sách tour
+    </div>
+);
+const TourListItem = ({ tour }: any) => {
+    const router = useRouter();
+
+    return (
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-56 group">
+            <div className="relative w-80 overflow-hidden shrink-0">
+                <img
+                    src={getUrlImage(tour?.strTourImageUrl)}
+                    alt={tour?.strTourName}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+            </div>
+
+            <div className="p-5 flex flex-col flex-grow justify-between min-w-0">
+                <div>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                        <h3 className="text-gray-900 font-bold text-lg leading-tight uppercase line-clamp-2">
+                            {tour?.strTourName}
+                        </h3>
+
+                        <span className="shrink-0 bg-[#e6f0ff] text-[#2563eb] text-xs font-semibold px-3 py-1 rounded-full">
+                            {tour?.strLangCode === "CATEID_SETTOUR"
+                                ? "Tour hằng ngày"
+                                : "Trọn gói"}
+                        </span>
+                    </div>
+
+                    <div className="space-y-2.5 text-[14px] text-gray-600">
+                        <div className="flex items-center gap-2">
+                            <Flag size={16} className="text-gray-400 shrink-0" />
+                            <span className="truncate">
+                                Bởi: {tour?.strOwnerCompanyName || "--"}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Clock size={16} className="text-gray-400 shrink-0" />
+                            <span>
+                                Thời lượng: {tour?.intNoOfDay || 0} Ngày /{" "}
+                                {Math.max(Number(tour?.intNoOfDay || 1) - 1, 0)} Đêm
+                            </span>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                            <MapPin
+                                size={16}
+                                className="text-gray-400 mt-0.5 shrink-0"
+                            />
+                            <span className="line-clamp-2 leading-relaxed">
+                                Các điểm đến: {tour?.strListTourDestinationName || "--"}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-end justify-between pt-4 border-t border-gray-50">
+                    <div>
+                        <p className="text-[12px] text-gray-500 mb-0.5">
+                            Giá từ
+                        </p>
+
+                        <p className="text-[#2563eb] font-bold text-2xl leading-none">
+                            {formatPrice(tour?.dblPriceFrom)}
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={() =>
+                            router.replaceParams(paths.shop.tour.detail, {
+                                item: tour,
+                            })
+                        }
+                        className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+                    >
+                        Xem chi tiết
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};

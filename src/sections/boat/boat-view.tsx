@@ -10,7 +10,7 @@ const BoatView = () => {
             <div className="absolute left-1/2 -translate-x-1/2 top-[550px] z-50 w-full">
                 {/* <TourSearch /> */}
             </div>
-            <div className="mt-20">
+            <div className="">
                 <BoatList />
             </div>
             <DestinationAccordion />

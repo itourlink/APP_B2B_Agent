@@ -1,50 +1,64 @@
+import { useState } from "react";
+
+import {
+  Star,
+  MapPin,
+  LayoutGrid,
+  List,
+  UtensilsCrossed,
+} from "lucide-react";
+
 import { useListRestaurant } from "@/hooks/actions/useRestaurant";
+
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
-import { Star, MapPin } from "lucide-react";
-import { useState } from "react";
+
 import { getUrlImage } from "@/utils/format-image";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────── */
+/* GRID CARD */
+/* ─────────────────────────────────────────────────────────── */
 
-// ─── RestaurantCard ───────────────────────────────────────────────────────────
-
-export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
-
+const RestaurantCardGrid = ({
+  restaurant,
+}: {
+  restaurant: any;
+}) => {
   const router = useRouter();
 
   return (
-    <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full min-h-[195px] group">
-      {/* Image — left */}
-      <div
-        className="relative w-1/2 overflow-hidden bg-gray-100 cursor-pointer shrink-0"
-      // onClick={handleNavigate}
-      >
+    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
+      {/* IMAGE */}
+      <div className="relative h-52 overflow-hidden bg-gray-100">
         <img
-          src={getUrlImage(restaurant?.strSupplierImage)}
+          src={
+            restaurant?.strSupplierImage
+              ? getUrlImage(
+                  restaurant?.strSupplierImage
+                )
+              : "https://placehold.co/600x400?text=Restaurant"
+          }
           alt={restaurant?.strSupplierName}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
 
-      {/* Content — right */}
-      <div className="w-1/2 p-4 flex flex-col">
-        {/* Restaurant name */}
-        <h3
-          // onClick={handleNavigate}
-          className="text-[#1a4a8d] font-bold text-[15px] leading-tight uppercase mb-3 line-clamp-2 cursor-pointer hover:text-blue-600 transition-colors"
-        >
-          {restaurant.strSupplierName}
+      {/* CONTENT */}
+      <div className="flex flex-grow flex-col p-4">
+        {/* TITLE */}
+        <h3 className="mb-3 line-clamp-2 min-h-[48px] text-[15px] font-bold uppercase leading-tight text-[#0f172a]">
+          {restaurant?.strSupplierName || "---"}
         </h3>
 
-        {/* Star rating */}
-        <div className="flex items-center gap-0.5 mb-3">
+        {/* STAR */}
+        <div className="mb-3 flex items-center gap-0.5">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              size={13}
+              size={14}
               className={
-                i < restaurant.intEasiaCateID
+                i <
+                (restaurant?.intEasiaCateID || 0)
                   ? "fill-orange-400 text-orange-400"
                   : "text-gray-300"
               }
@@ -52,42 +66,74 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
           ))}
         </div>
 
-        {/* Address */}
-        <div className="flex items-start gap-1.5 mb-3">
-          <MapPin size={13} className="text-gray-400 mt-0.5 shrink-0" />
-          <p className="text-[12px] text-gray-600 leading-relaxed line-clamp-2">
-            {restaurant.strSupplierAddr || "Đang cập nhật..."}
-          </p>
+        {/* TYPE */}
+        <div className="mb-2 flex items-center gap-2 text-[13px] text-gray-600">
+          <UtensilsCrossed
+            size={14}
+            className="shrink-0 text-gray-400"
+          />
+
+          <span>Nhà hàng</span>
         </div>
 
-        {/* Badge */}
-        <div className="mb-3">
-          <span className="inline-block bg-[#e6f0ff] text-[#3b82f6] text-[11px] font-medium px-3 py-1 rounded-full">
-            {restaurant.tag || "Nhà hàng nổi bật"}
+        {/* ADDRESS */}
+        <div className="mb-4 flex items-start gap-2 text-[13px] text-gray-600">
+          <MapPin
+            size={14}
+            className="mt-0.5 shrink-0 text-gray-400"
+          />
+
+          <span className="line-clamp-2 leading-relaxed">
+            {restaurant?.strSupplierAddr ||
+              "Đang cập nhật..."}
           </span>
         </div>
 
-        {/* Footer */}
-        <div className="mt-auto pt-3 border-t border-gray-100 flex items-end justify-between gap-2">
+        {/* TAG */}
+        <div className="mb-4">
+          <span className="rounded-full bg-orange-50 px-3 py-1 text-[11px] font-medium text-orange-700">
+            {restaurant?.tag ||
+              "Nhà hàng nổi bật"}
+          </span>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-auto flex items-end justify-between border-t border-gray-100 pt-4">
           <div>
-            <p className="text-[11px] text-gray-500 mb-0.5">Giá từ</p>
-            <p className="text-[#2563eb] font-bold text-lg leading-none">
-              {restaurant.dblPriceFrom === "$0" ||
-                restaurant.dblPriceFrom === "N/A" ? (
-                <span className="text-gray-400 text-base">N/A</span>
-              ) : (
-                restaurant.dblPriceFrom
-              )}
+            <p className="mb-1 text-[11px] text-gray-500">
+              Giá từ
+            </p>
+
+            <p className="text-xl font-bold leading-none text-[#2563eb]">
+              {restaurant?.dblPriceFrom === "$0" ||
+              restaurant?.dblPriceFrom === "N/A"
+                ? "N/A"
+                : restaurant?.dblPriceFrom}
             </p>
           </div>
 
           <button
             onClick={() =>
-              router.replaceParams(paths.shop.restaurant.detail, {
-                item: restaurant,
-              })
+              router.replaceParams(
+                paths.shop.restaurant.detail,
+                {
+                  item: restaurant,
+                }
+              )
             }
-            className="cursor-pointer text-blue-600 border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
+            className="
+              rounded-lg
+              border
+              border-blue-200
+              px-3
+              py-1.5
+              text-xs
+              font-medium
+              text-[#2566b0]
+              transition-all
+              hover:border-blue-600
+              hover:bg-blue-50
+            "
           >
             Xem chi tiết
           </button>
@@ -97,9 +143,212 @@ export const RestaurantCard = ({ restaurant }: { restaurant: any }) => {
   );
 };
 
-// ─── RestaurantList ───────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────── */
+/* LIST CARD */
+/* ─────────────────────────────────────────────────────────── */
+
+const RestaurantCardList = ({
+  restaurant,
+}: {
+  restaurant: any;
+}) => {
+  const router = useRouter();
+
+  return (
+    <div className="group flex overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
+      {/* IMAGE */}
+      <div className="h-[210px] w-[320px] shrink-0 overflow-hidden bg-gray-100">
+        <img
+          src={
+            restaurant?.strSupplierImage
+              ? getUrlImage(
+                  restaurant?.strSupplierImage
+                )
+              : "https://placehold.co/600x400?text=Restaurant"
+          }
+          alt={restaurant?.strSupplierName}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+
+      {/* CONTENT */}
+      <div className="flex flex-1 items-stretch justify-between p-5">
+        {/* LEFT */}
+        <div className="flex flex-1 flex-col">
+          {/* TITLE */}
+          <h3 className="mb-3 text-[20px] font-bold uppercase leading-tight text-[#0f172a]">
+            {restaurant?.strSupplierName || "---"}
+          </h3>
+
+          {/* TYPE */}
+          <div className="mb-3 flex items-center gap-2 text-[14px] text-gray-600">
+            <UtensilsCrossed
+              size={15}
+              className="shrink-0 text-gray-400"
+            />
+
+            <span>Nhà hàng</span>
+          </div>
+
+          {/* ADDRESS */}
+          <div className="flex items-start gap-2 text-[14px] text-gray-600">
+            <MapPin
+              size={15}
+              className="mt-0.5 shrink-0 text-gray-400"
+            />
+
+            <span className="leading-relaxed">
+              {restaurant?.strSupplierAddr ||
+                "Đang cập nhật..."}
+            </span>
+          </div>
+
+          {/* TAG */}
+          <div className="mt-4">
+            <span className="rounded-full bg-orange-50 px-3 py-1 text-[11px] font-medium text-orange-700">
+              {restaurant?.tag ||
+                "Nhà hàng nổi bật"}
+            </span>
+          </div>
+
+          {/* PRICE */}
+          <div className="mt-auto pt-5">
+            <p className="mb-1 text-[13px] text-gray-500">
+              Giá từ
+            </p>
+
+            <p className="text-[38px] font-bold leading-none text-[#2563eb]">
+              {restaurant?.dblPriceFrom === "$0" ||
+              restaurant?.dblPriceFrom === "N/A"
+                ? "N/A"
+                : restaurant?.dblPriceFrom}
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="ml-6 flex min-w-[180px] flex-col items-end justify-between">
+          {/* STAR */}
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={16}
+                className={
+                  i <
+                  (restaurant?.intEasiaCateID || 0)
+                    ? "fill-orange-400 text-orange-400"
+                    : "text-gray-300"
+                }
+              />
+            ))}
+          </div>
+
+          {/* BUTTON */}
+          <button
+            onClick={() =>
+              router.replaceParams(
+                paths.shop.restaurant.detail,
+                {
+                  item: restaurant,
+                }
+              )
+            }
+            className="
+              rounded-xl
+              bg-[#2563eb]
+              px-6
+              py-3
+              text-sm
+              font-semibold
+              text-white
+              transition-all
+              hover:bg-[#1d4ed8]
+            "
+          >
+            Xem chi tiết
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────── */
+/* SKELETON */
+/* ─────────────────────────────────────────────────────────── */
+
+const RestaurantSkeleton = () => {
+  return (
+    <div className="animate-pulse overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div className="h-52 bg-gray-200" />
+
+      <div className="p-4">
+        <div className="mb-3 h-5 w-3/4 rounded bg-gray-200" />
+
+        <div className="mb-2 h-3 w-1/2 rounded bg-gray-200" />
+
+        <div className="mb-4 h-3 w-full rounded bg-gray-200" />
+
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-24 rounded bg-gray-200" />
+
+          <div className="h-8 w-20 rounded bg-gray-200" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────── */
+/* EMPTY */
+/* ─────────────────────────────────────────────────────────── */
+
+const EmptyState = () => {
+  return (
+    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+      <h3 className="text-lg font-semibold text-gray-700">
+        Không có nhà hàng nào
+      </h3>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Hiện tại chưa có dữ liệu phù hợp
+      </p>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────── */
+/* ERROR */
+/* ─────────────────────────────────────────────────────────── */
+
+const ErrorState = () => {
+  return (
+    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+      <div className="mb-3 text-5xl text-red-400">
+        ⚠️
+      </div>
+
+      <h3 className="text-lg font-semibold text-gray-800">
+        Có lỗi xảy ra
+      </h3>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Không thể tải danh sách nhà hàng
+      </p>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────── */
+/* MAIN */
+/* ─────────────────────────────────────────────────────────── */
 
 export const RestaurantList = () => {
+  const [viewMode, setViewMode] = useState<
+    "grid" | "list"
+  >("grid");
+
   const [filters] = useState({
     page: 1,
     pageSize: 15,
@@ -111,24 +360,65 @@ export const RestaurantList = () => {
     restaurantError,
   } = useListRestaurant(filters);
 
-  const isEmpty = !restaurantLoading && restaurantData?.length === 0;
+  const isEmpty =
+    !restaurantLoading &&
+    restaurantData?.length === 0;
 
   return (
-    <section className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-8">
+    <section className="mx-auto min-h-screen max-w-7xl bg-gray-50 p-6">
+      {/* HEADER */}
+      <div className="mb-8 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800">
           Khám phá nhà hàng
         </h2>
+
+        {/* VIEW MODE */}
+        <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-1.5 shadow-sm">
+          <span className="ml-2 text-sm text-gray-500">
+            Hiển thị dạng:
+          </span>
+
+          {/* GRID */}
+          <button
+            onClick={() => setViewMode("grid")}
+            className={`rounded-md p-1.5 transition-all ${
+              viewMode === "grid"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-400 hover:bg-gray-100"
+            }`}
+          >
+            <LayoutGrid size={18} />
+          </button>
+
+          {/* LIST */}
+          <button
+            onClick={() => setViewMode("list")}
+            className={`rounded-md p-1.5 transition-all ${
+              viewMode === "list"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-400 hover:bg-gray-100"
+            }`}
+          >
+            <List size={18} />
+          </button>
+        </div>
       </div>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
+      {/* CONTENT */}
+      <div
+        className={
+          viewMode === "grid"
+            ? "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            : "flex flex-col gap-5"
+        }
+      >
         {/* LOADING */}
         {restaurantLoading &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <RestaurantSkeleton key={i} />
-          ))}
+          Array.from({ length: 6 }).map(
+            (_, i) => (
+              <RestaurantSkeleton key={i} />
+            )
+          )}
 
         {/* ERROR */}
         {restaurantError && <ErrorState />}
@@ -139,60 +429,27 @@ export const RestaurantList = () => {
         {/* DATA */}
         {!restaurantLoading &&
           !restaurantError &&
-          restaurantData?.map((restaurant: any) => (
-            <RestaurantCard
-              key={restaurant.strSupplierGUID}
-              restaurant={restaurant}
-            />
-          ))}
+          restaurantData?.map(
+            (restaurant: any) =>
+              viewMode === "grid" ? (
+                <RestaurantCardGrid
+                  key={
+                    restaurant?.strSupplierGUID
+                  }
+                  restaurant={restaurant}
+                />
+              ) : (
+                <RestaurantCardList
+                  key={
+                    restaurant?.strSupplierGUID
+                  }
+                  restaurant={restaurant}
+                />
+              )
+          )}
       </div>
     </section>
   );
 };
 
-
-const RestaurantSkeleton = () => {
-  return (
-    <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden h-[195px] animate-pulse">
-      <div className="w-1/2 bg-gray-200" />
-
-      <div className="w-1/2 p-4 flex flex-col gap-3">
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
-        <div className="h-3 bg-gray-200 rounded w-1/2" />
-        <div className="h-3 bg-gray-200 rounded w-2/3" />
-
-        <div className="mt-auto">
-          <div className="h-4 bg-gray-200 rounded w-1/3" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-const EmptyState = () => {
-  return (
-    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-      <h3 className="text-gray-700 font-semibold text-lg">
-        Không có nhà hàng nào
-      </h3>
-      <p className="text-gray-500 text-sm mt-1">
-        Hiện tại chưa có dữ liệu phù hợp
-      </p>
-    </div>
-  );
-};
-
-const ErrorState = () => {
-  return (
-    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-      <div className="text-red-400 text-5xl mb-3">⚠️</div>
-      <h3 className="text-gray-800 font-semibold text-lg">
-        Có lỗi xảy ra
-      </h3>
-      <p className="text-gray-500 text-sm mt-1">
-        Không thể tải danh sách nhà hàng
-      </p>
-    </div>
-  );
-};
+export default RestaurantList;

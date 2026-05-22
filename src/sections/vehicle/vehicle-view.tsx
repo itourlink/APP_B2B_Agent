@@ -4,7 +4,7 @@ import { slidesVehicle } from '@/components/banner/banner-data';
 
 const VehicleView = () => {
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-white">
       <BannerSlider slides={slidesVehicle} />
       <VehicleList />
     </main>
