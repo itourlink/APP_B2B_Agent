@@ -3,7 +3,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
 
-const fetchListPrice = async (body: any) => {
+export const fetchListPrice = async (body: any) => {
     const res = await apiClient.post("tour/GetListPriceLevelTour", body);
     return res.data;
 };

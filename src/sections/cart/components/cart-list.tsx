@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Building2, HelpCircle, LayoutGrid, Trash2 } from "lucide-react";
+import { Building2, HelpCircle, LayoutGrid, Pencil, Trash2 } from "lucide-react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { useListCart } from "@/hooks/actions/useCart";
 import CartPopupAccept from "./cart-popup-accept";
+import CartPopupEdit from "./cart-popup-edit";
 
 
 const CartList = () => {
@@ -13,14 +14,28 @@ const CartList = () => {
 
   const [popupAccept, setPopupAccept] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
+  const [popupEdit, setPopupEdit] = useState(false);
+const [selectedEditRow, setSelectedEditRow] =
+  useState<any>(null);
+
+
   const { cartData, cartLoading, cartError } = useListCart(filters);
 
   const listCart = cartData?.[0] ?? []
-
+  // xóa item khỏi giỏ hàng
   const handleOpenDelete = (row: any) => {
     setSelectedRow(row);
     setPopupAccept(true);
   }
+  // chỉnh sửa item trong giỏ hàng
+  const handleOpenEdit = (row: any) => {
+  console.log("EDIT ROW", row);
+
+  setSelectedEditRow(row);
+  setPopupEdit(true);
+};
+
+
   const colDefs: ColumnDef<any>[] = [
     {
       field: "checkbox",
@@ -60,11 +75,28 @@ const CartList = () => {
       field: "strType",
       headerName: "Type",
       render: (_: any, row: any) => (
-        <span
-          className="text-[13px] text-gray-700"
-          dangerouslySetInnerHTML={{ __html: row?.strType || "-" }}
-        />
-      )
+        <div className="flex items-center gap-2">
+          <span
+            className="text-[13px] text-gray-700"
+            dangerouslySetInnerHTML={{
+              __html: row?.strType || "-",
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => handleOpenEdit(row)}
+            className="
+              flex h-7 w-7 items-center justify-center
+              rounded bg-blue-50
+              text-[#1f5fa9]
+              hover:bg-blue-100
+            "
+          >
+            <Pencil size={14} />
+          </button>
+        </div>
+      ),
     },
     {
       field: "intQuantity",
@@ -163,7 +195,12 @@ const CartList = () => {
             open={popupAccept}
             onClose={() => setPopupAccept(false)}
             item={selectedRow}
-          />
+            />
+            <CartPopupEdit
+              open={popupEdit}
+              onClose={() => setPopupEdit(false)}
+              item={selectedEditRow}
+            />
           </div>
         </div>
       </div>
