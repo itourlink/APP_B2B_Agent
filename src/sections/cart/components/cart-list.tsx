@@ -4,6 +4,9 @@ import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { useListCart } from "@/hooks/actions/useCart";
 import CartPopupAccept from "./cart-popup-accept";
 import CartPopupEdit from "./cart-popup-edit";
+import CartBottomAcction from "./cart-bottom-acction";
+import CartPopupTotalPrice from "./cart-popup-total-price";
+import PanelPopup from "@/components/popup/panel-popup";
 
 
 const CartList = () => {
@@ -15,10 +18,13 @@ const CartList = () => {
   const [popupAccept, setPopupAccept] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [popupEdit, setPopupEdit] = useState(false);
-const [selectedEditRow, setSelectedEditRow] =
-  useState<any>(null);
+  const [selectedEditRow, setSelectedEditRow] = useState<any>(null);
+  
+  const [open, setOpen] = useState(true);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
-
+  const [openPriceDetail, setOpenPriceDetail] =useState(false);
+  const [selectedCartPriceDetail, setSelectedCartPriceDetail] =useState("");
   const { cartData, cartLoading, cartError } = useListCart(filters);
 
   const listCart = cartData?.[0] ?? []
@@ -29,18 +35,83 @@ const [selectedEditRow, setSelectedEditRow] =
   }
   // chỉnh sửa item trong giỏ hàng
   const handleOpenEdit = (row: any) => {
-  console.log("EDIT ROW", row);
 
   setSelectedEditRow(row);
   setPopupEdit(true);
 };
 
+  const handleCheckRow = (row: any) => {
+    const isChecked = selectedRows.some(
+        (x: any) => x?.No === row?.No    
+      );
 
+    if (isChecked) {
+      setSelectedRows((prev) =>
+        prev.filter((x: any) => x?.No !== row?.No)
+      );
+    }else {
+      setSelectedRows((prev) => [...prev, row]);
+    }
+  }
+  const handleCheckAll = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  if (e.target.checked) {
+    setSelectedRows(listCart || []);
+  } else {
+    setSelectedRows([]);
+  }
+};
+
+  const totalPrice = selectedRows.reduce(
+  (sum, item) =>
+    sum + Number(item?.dblPriceTotal || 0),
+  0
+);
+const totalCommission =
+  selectedRows.reduce(
+    (sum, item) =>
+      sum +
+      Number(
+        item?.dblPriceTotalAgentCom || 0
+      ),
+    0
+  );
+
+  // poup total price detail
+  
   const colDefs: ColumnDef<any>[] = [
     {
       field: "checkbox",
-      headerName: "",
-      render: () => <input className="w-4 h-4 cursor-pointer" type="checkbox" />,
+       headerName: (
+          <div className="flex items-center justify-center">
+            <input
+              type="checkbox"
+              className="h-4 w-4 cursor-pointer"
+              checked={
+                listCart.length > 0 &&
+                selectedRows.length ===
+                  listCart.length
+              }
+              onChange={handleCheckAll}
+            />
+          </div>
+        ) as any,
+      width: 50,
+      render: (_: any, row: any) => (
+        <div className="flex items-center justify-center">
+          <input
+            type="checkbox"
+            className="h-4 w-4 cursor-pointer"
+            checked={selectedRows.some(
+              (x: any) => x?.No === row?.No
+            )}
+            onChange={() =>
+              handleCheckRow(row)
+            }
+          />
+        </div>
+      ),
     },
     {
       field: "No",
@@ -127,13 +198,38 @@ const [selectedEditRow, setSelectedEditRow] =
         />
       )
     },
-    {
-      field: "dblPriceTotal",
-      headerName: "Tổng giá",
-      render: (value: any) => (
-        <span className="text-[13px] text-gray-800">${value ?? 0}</span>
-      ),
-    },
+{
+  field: "dblPriceTotal",
+  headerName: "Tổng giá",
+
+  render: (
+    value: any,
+    row: any
+  ) => (
+    <button
+      type="button"
+      onClick={() => {
+        console.log("ROW", row);
+
+        setSelectedCartPriceDetail(
+          row?.strCartServiceItemGUID
+        );
+
+        setOpenPriceDetail(true);
+      }}
+      className="
+        text-[13px]
+        text-[#1677ff]
+        hover:underline
+      "
+    >
+      $
+      {Number(value || 0).toLocaleString(
+        "en-US"
+      )}
+    </button>
+  ),
+},
     {
       field: "dblPriceTotalAgentCom",
       headerName: "Tổng hoa hồng",
@@ -220,6 +316,31 @@ const [selectedEditRow, setSelectedEditRow] =
               onClose={() => setPopupEdit(false)}
               item={selectedEditRow}
             />
+            <CartBottomAcction
+              selectedCount={selectedRows.length}
+              totalPrice={totalPrice}
+              totalCommission={totalCommission}
+              open={true}
+              onToggle={() => setOpen(!open)}
+              onQuote={() => console.log("QUOTE")}
+              onBooking={() => console.log("BOOKING")}
+            />
+
+            <PanelPopup
+              open={openPriceDetail}
+              onClose={() =>
+                setOpenPriceDetail(false)
+              }
+              title="Price Detail"
+              className="w-[1100px]"
+            >
+              <CartPopupTotalPrice
+                open={openPriceDetail}
+                strCartServiceItemGUID={
+                  selectedCartPriceDetail
+                }
+              />
+            </PanelPopup>
           </div>
         </div>
       </div>
