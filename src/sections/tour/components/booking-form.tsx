@@ -1,6 +1,5 @@
 import {
     Calendar,
-    Star,
     HelpCircle,
     Download,
     Users,
@@ -271,7 +270,7 @@ const BookingForm = ({ item }: Props) => {
                     </button>
 
                     {active === "dateOne" && (
-                        <div className="absolute top-28 z-50 right-80">
+                        <div className="absolute top-0 z-50 right-80">
                             <DatePopup
                                 isOpen
                                 value={startDate}
@@ -309,7 +308,7 @@ const BookingForm = ({ item }: Props) => {
                     </button>
 
                     {active === "guestRoom" && (
-                        <div className="absolute top-40 z-50 right-80">
+                        <div className="absolute top-0 z-50 right-80">
                             <GuestRoomPopup
                                 isOpen
                                 isRoomDetail={true}
