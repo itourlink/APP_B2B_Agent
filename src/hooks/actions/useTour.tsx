@@ -46,7 +46,7 @@ export const useListTour = (filters?: { page?: number; pageSize?: number }) => {
     };
 };
 
-const fetchDetailTour = async (body: any) => {
+export const fetchDetailTour = async (body: any) => {
     const res = await apiClient.post("tour/GetListTourDetailByPtn", body);
     return res.data;
 };
