@@ -34,7 +34,7 @@ export const useListCart = (filters: {
         intCurPage: null,
         intPageSize: null,
         strOrder: null,
-        tblsReturn: "[1]",
+        tblsReturn: "[0]",
       }),
     enabled: !!user && !!coData,
     placeholderData: keepPreviousData,

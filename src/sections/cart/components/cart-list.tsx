@@ -11,6 +11,7 @@ const CartList = () => {
 
   const { cartData, cartLoading, cartError } = useListCart(filters);
 
+  const listCart = cartData?.[0] ?? []
   const colDefs: ColumnDef<any>[] = [
     {
       field: "checkbox",
@@ -25,10 +26,10 @@ const CartList = () => {
       ),
     },
     {
-      field: "No",
+      field: "strServiceName",
       headerName: "Tên dịch vụ",
       render: (value: any, row: any) => (
-        <div className="py-0.5 leading-5">
+        <div className="py-0.5 leading-5 flex flex-col items-start justify-start gap-1 w-full">
           <div className="text-[#1f5fa9] text-[13px] font-medium">
             {value || "--"}
           </div>
@@ -47,37 +48,36 @@ const CartList = () => {
       ),
     },
     {
-      field: "No",
+      field: "strType",
       headerName: "Type",
       render: (_: any, row: any) => (
-        <span className="text-[13px] text-gray-700">
-          {row?.strType || "-"}
-        </span>
-      ),
+        <span
+          className="text-[13px] text-gray-700"
+          dangerouslySetInnerHTML={{ __html: row?.strType || "-" }}
+        />
+      )
     },
     {
-      field: "No",
+      field: "intQuantity",
       headerName: "Số lượng",
-      render: (value: any, row: any) => (
-        <div className="text-[#1f5fa9] text-[13px] leading-5">
-          <div>{value || "--"}</div>
-          <div className="text-[11px] text-gray-500">
-            (Available: {row?.intRemain ?? 0})
-          </div>
-        </div>
-      ),
+      render: (_: any, row: any) => (
+        <div
+          className="text-[#1f5fa9] text-[13px] leading-5"
+          dangerouslySetInnerHTML={{ __html: row?.intQuantity || "" }}
+        />
+      )
     },
     {
-      field: "No",
+      field: "dblPriceTotal",
       headerName: "Tổng giá",
       render: (value: any) => (
         <span className="text-[13px] text-gray-800">${value ?? 0}</span>
       ),
     },
     {
-      field: "No",
+      field: "dblPriceTotalAgentCom",
       headerName: "Tổng hoa hồng",
-      render: () => <span className="text-[13px] text-gray-700">N/A</span>,
+      render: (value: any) => <span className="text-[13px] text-gray-700">{value}</span>,
     },
     {
       field: "No",
@@ -144,7 +144,7 @@ const CartList = () => {
               "
           >
             <TableCore
-              rowData={cartData ?? []}
+              rowData={listCart ?? []}
               columnDefs={colDefs}
               loading={cartLoading}
             />

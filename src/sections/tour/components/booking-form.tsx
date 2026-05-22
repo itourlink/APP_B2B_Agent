@@ -23,14 +23,35 @@ import { addCartForTour } from "@/hooks/actions/useCart";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useToastStore } from "@/zustand/useToastStore";
-import { useTranslate } from "@/locales";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { paths } from "@/routes/paths";
+import { useRouter } from "@/routes/hooks/use-router";
 
 interface Props {
     item?: any;
 }
 
+type GuestValue = {
+    rooms: number;
+    adults: number;
+    children: number;
+    childAges: number[];
+    roomTypes: {
+        sgl: number;
+        dbl: number;
+        twn: number;
+        tpl: number;
+    };
+};
 const BookingForm = ({ item }: Props) => {
+    console.log("item", item)
+    const queryClient = useQueryClient();
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner();
+    const { showToast } = useToastStore();
+    const route = useRouter();
+    // const { t } = useTranslate();
+
 
     const [canFetchPrice, setCanFetchPrice] = useState(false);
     // ================= STATE =================
@@ -38,7 +59,7 @@ const BookingForm = ({ item }: Props) => {
 
     const [startDate, setStartDate] = useState<Date | null>(null);
 
-    const [guestValue, setGuestValue] = useState({
+    const [guestValue, setGuestValue] = useState<GuestValue>({
         rooms: 1,
         adults: 2,
         children: 0,
@@ -58,48 +79,9 @@ const BookingForm = ({ item }: Props) => {
     const dateRef = useRef<HTMLDivElement>(null);
     const guestRef = useRef<HTMLDivElement>(null);
 
-
     const { mutate: addCartForTourApi } = useMutation({
         mutationFn: addCartForTour,
     });
-
-    const queryClient = useQueryClient();
-    const { user } = useUser();
-    const { showToast } = useToastStore();
-    // const { t } = useTranslate();
-
-    const handleSubmit = async () => {
-        const { coData } = useListCompanyOwner();
-
-        const payload = {
-            strCompanyPartnerGUID: user?.strCompanyGUID,
-            strCompanyOwnerGUID: coData?.strCompanyGUID,
-            strTourGUID: "96fda9d4-ad23-4d3c-b176-407f355926ce",
-            strTourPriceItemLevelGUID: "085974ed-adc5-4436-9635-38bbdecd4db8",
-            strDepartureTourLevelGUID: null,
-            intAdult: 1,
-            strListChildAge: null,
-            intSGL: 0,
-            intDBL: 0,
-            intTWN: 0,
-            intTPL: 0,
-            dtmDateFrom: "5/29/2026",
-            dtmDateTo: "5/31/2026",
-            intCurrencyID: user?.intCurrencyID,
-        }
-
-        addCartForTourApi(payload, {
-            onSuccess: () => {
-                queryClient.invalidateQueries({
-                    queryKey: [QUERY_KEYS.CART.LIST_CART],
-                });
-                showToast("success", "Thêm vào giỏ thành công");
-            },
-            onError: () => {
-                showToast("error", "Thêm vào giỏ thất bại");
-            },
-        });
-    };
 
 
     // ================= OUTSIDE CLICK =================
@@ -189,7 +171,51 @@ const BookingForm = ({ item }: Props) => {
         intJoinTypeID: joinType,
     });
 
-    console.log("priceData", priceData);
+    const price = priceData?.[0] ?? [];
+    console.log("priceData", price);
+
+    const dtmDateTo = startDate
+        ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000)
+        : null;
+    const buildPayload = () => {
+        return {
+            strCompanyPartnerGUID: user?.strCompanyGUID,
+            strCompanyOwnerGUID: coData?.strCompanyGUID,
+            strTourGUID: item?.strTourGUID,
+            strTourPriceItemLevelGUID: price?.strTourPriceItemLevelGUID,
+            strDepartureTourLevelGUID: null,
+
+            intAdult: guestValue.adults,
+            strListChildAge: guestValue.childAges?.join(",") ?? null,
+
+            intSGL: guestValue.roomTypes.sgl,
+            intDBL: guestValue.roomTypes.dbl,
+            intTWN: guestValue.roomTypes.twn,
+            intTPL: guestValue.roomTypes.tpl,
+
+            dtmDateFrom: startDate?.toISOString(),
+            dtmDateTo: dtmDateTo?.toISOString(),
+
+            intCurrencyID: user?.intCurrencyID,
+        };
+    };
+
+    const handleAddtoCart = () => {
+        const payload = buildPayload();
+
+        addCartForTourApi(payload, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.CART.LIST_CART],
+                });
+                route.push(paths.cart.list);
+                showToast("success", "Thêm vào giỏ thành công");
+            },
+            onError: () => {
+                showToast("error", "Thêm vào giỏ thất bại");
+            },
+        });
+    };
 
     // ================= UI =================
     return (
@@ -214,9 +240,9 @@ const BookingForm = ({ item }: Props) => {
                         </button>
                     </div>
                 </div>
-                {priceData?.[0]?.dblUnitPrice && (
+                {price.dblUnitPrice && (
                     <div className="">
-                        Tổng giá: ₫{priceData?.[0]?.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                        Tổng giá: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                     </div>
                 )}
 
@@ -331,7 +357,11 @@ const BookingForm = ({ item }: Props) => {
                     Đặt ngay
                 </button>
 
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
+                <button
+                    onClick={handleAddtoCart}
+                    disabled={!startDate || !price?.strTourPriceItemLevelGUID}
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg disabled:opacity-50"
+                >
                     Thêm vào giỏ
                 </button>
             </div>
