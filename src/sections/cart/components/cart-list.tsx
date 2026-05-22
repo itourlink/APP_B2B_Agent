@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Building2, HelpCircle, LayoutGrid, Trash2 } from "lucide-react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { useListCart } from "@/hooks/actions/useCart";
+import CartPopupAccept from "./cart-popup-accept";
+
 
 const CartList = () => {
   const [filters] = useState({
@@ -9,9 +11,16 @@ const CartList = () => {
     pageSize: 10,
   });
 
+  const [popupAccept, setPopupAccept] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const { cartData, cartLoading, cartError } = useListCart(filters);
 
   const listCart = cartData?.[0] ?? []
+
+  const handleOpenDelete = (row: any) => {
+    setSelectedRow(row);
+    setPopupAccept(true);
+  }
   const colDefs: ColumnDef<any>[] = [
     {
       field: "checkbox",
@@ -82,8 +91,10 @@ const CartList = () => {
     {
       field: "No",
       headerName: "Thao tác",
-      render: () => (
-        <button className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-200 hover:bg-gray-300">
+      render: (_: any, row: any) => (
+        <button 
+          onClick={() => handleOpenDelete(row)}
+          className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-200 hover:bg-gray-300">
           <Trash2 size={14} />
         </button>
       ),
@@ -148,10 +159,17 @@ const CartList = () => {
               columnDefs={colDefs}
               loading={cartLoading}
             />
+            <CartPopupAccept
+            open={popupAccept}
+            onClose={() => setPopupAccept(false)}
+            item={selectedRow}
+          />
           </div>
         </div>
       </div>
     </div>
+
+    
   );
 };
 

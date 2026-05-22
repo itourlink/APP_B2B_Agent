@@ -333,6 +333,15 @@ export const useListBooking = async (body: any) => {
     );
     return res.data;
 };
+
+export const DelCartServiceItem = async (body: any) => {
+    const res = await apiClient.post(
+        "booking/DelCartServiceItem",
+        body
+    );
+    return res.data;
+};
+
 export const useHelperFileByShow = async (body: any) => {
     const res = await apiClient.post(
         "travelhelper/GetDetailTravelB2BHelperFileByShow",
