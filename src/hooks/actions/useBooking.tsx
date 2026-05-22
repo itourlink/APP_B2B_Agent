@@ -1,5 +1,5 @@
 import apiClient from "@/axios";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
 
@@ -100,66 +100,98 @@ export const useListBankAccount = () => {
 };
 
 
+// const fetchListAgentHostServiceTransToTMS = async (body: any) => {
+
+//     const res = await apiClient.post("connectto/tour/GetListAgentHostServiceTransToTMS", body);
+//     return res.data;
+// };
+
+// export const useListAGTransTMS = (filters?: {
+//     strListAgentHostServiceItemGUID?: string;
+// }) => {
+//     const { coData } = useListCompanyOwner();
+
+//     const query = useQuery({
+//         queryKey: [
+//             QUERY_KEYS.BOOKING.AGH_TRANSTMS,
+//             filters
+//         ],
+//         queryFn: () =>
+//             fetchListAgentHostServiceTransToTMS({
+//                 strCompanyGUID: coData?.strCompanyGUID,
+//                 strListAgentHostServiceItemGUID: filters?.strListAgentHostServiceItemGUID
+//             }),
+//         enabled: !!coData?.strCompanyGUID && !!filters?.strListAgentHostServiceItemGUID,
+//         placeholderData: keepPreviousData,
+//     });
+
+//     return {
+//         AGTMSData: query.data?.[0] ?? [],
+//         AGTMSLoading: query.isLoading,
+//         AGTMSError: query.isError,
+//     };
+// };
+
+
+
+// const fetchDetailAgentHostServiceTransToTMS = async (body: any) => {
+//     const res = await apiClient.post("connectto/tour/GetDetailBookingServiceTransToTMS", body);
+//     return res.data;
+// };
+
+// export const useDetailAGTransTMS = (filters?: {
+//     strAgentHostCompanyGUID?: string;
+//     strListAgentHostServiceItemGUID?: string;
+// }) => {
+
+//     const query = useQuery({
+//         queryKey: [
+//             QUERY_KEYS.BOOKING.DAGH_TRANSTMS,
+//             filters
+//         ],
+//         queryFn: () =>
+//             fetchDetailAgentHostServiceTransToTMS({
+//                 strAgentHostCompanyGUID: filters?.strAgentHostCompanyGUID,
+//                 strListAgentHostServiceItemGUID: filters?.strListAgentHostServiceItemGUID
+//             }),
+//         enabled: !!filters?.strListAgentHostServiceItemGUID && !!filters?.strAgentHostCompanyGUID,
+//         placeholderData: keepPreviousData,
+//     });
+
+//     return {
+//         DAGTMSData: query.data?.[0] ?? [],
+//         DAGTMSLoading: query.isLoading,
+//         DAGTMSError: query.isError,
+//     };
+// };
+
+
 const fetchListAgentHostServiceTransToTMS = async (body: any) => {
-    const res = await apiClient.post("connectto/tour/GetListAgentHostServiceTransToTMS", body);
+    const res = await apiClient.post(
+        "connectto/tour/GetListAgentHostServiceTransToTMS",
+        body
+    );
+
     return res.data;
 };
 
-export const useListAGTransTMS = (filters?: {
-    strListAgentHostServiceItemGUID?: string;
-}) => {
-    const { coData } = useListCompanyOwner();
-
-    const query = useQuery({
-        queryKey: [
-            QUERY_KEYS.BOOKING.AGH_TRANSTMS,
-            filters
-        ],
-        queryFn: () =>
-            fetchListAgentHostServiceTransToTMS({
-                strCompanyGUID: coData?.strCompanyGUID,
-                strListAgentHostServiceItemGUID: filters?.strListAgentHostServiceItemGUID
-            }),
-        enabled: !!coData?.strCompanyGUID && !!filters?.strListAgentHostServiceItemGUID,
-        placeholderData: keepPreviousData,
+export const useListAGTransTMSMutation = () => {
+    return useMutation({
+        mutationFn: fetchListAgentHostServiceTransToTMS,
     });
-
-    return {
-        AGTMSData: query.data?.[0] ?? [],
-        AGTMSLoading: query.isLoading,
-        AGTMSError: query.isError,
-    };
 };
-
-
 
 const fetchDetailAgentHostServiceTransToTMS = async (body: any) => {
-    const res = await apiClient.post("connectto/tour/GetDetailBookingServiceTransToTMS", body);
+    const res = await apiClient.post(
+        "connectto/tour/GetDetailBookingServiceTransToTMS",
+        body
+    );
+
     return res.data;
 };
 
-export const useDetailAGTransTMS = (filters?: {
-    strAgentHostCompanyGUID?: string;
-    strListAgentHostServiceItemGUID?: string;
-}) => {
-
-    const query = useQuery({
-        queryKey: [
-            QUERY_KEYS.BOOKING.DAGH_TRANSTMS,
-            filters
-        ],
-        queryFn: () =>
-            fetchDetailAgentHostServiceTransToTMS({
-                strAgentHostCompanyGUID: filters?.strAgentHostCompanyGUID,
-                strListAgentHostServiceItemGUID: filters?.strListAgentHostServiceItemGUID
-            }),
-        enabled: !!filters?.strListAgentHostServiceItemGUID && !!filters?.strAgentHostCompanyGUID,
-        placeholderData: keepPreviousData,
+export const useDetailAGTransTMSMutation = () => {
+    return useMutation({
+        mutationFn: fetchDetailAgentHostServiceTransToTMS,
     });
-
-    return {
-        DAGTMSData: query.data?.[0] ?? [],
-        DAGTMSLoading: query.isLoading,
-        DAGTMSError: query.isError,
-    };
 };

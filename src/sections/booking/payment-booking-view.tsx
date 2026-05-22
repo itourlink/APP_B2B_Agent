@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, useDetailAGTransTMS, useListAGTransTMS, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForTour, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
@@ -27,15 +27,9 @@ const PaymentBookingView: React.FC = () => {
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
     const { coData } = useListCompanyOwner();
+    const [serviceItemGUID, setServiceItemGUID] = useState<string | null>(null);
+    const [isBookingSuccess, setIsBookingSuccess] = useState(false);
 
-
-    // const { AGTMSData } = useListAGTransTMS({
-    //     strListAgentHostServiceItemGUID?: string;
-    // })
-    // const { DAGTMSData } = useDetailAGTransTMS({
-    //     strAgentHostCompanyGUID?: string;
-    //     strListAgentHostServiceItemGUID?: string;
-    // })
 
     const [contactInfo] = useState({
         name: 'Miền Trần',
@@ -86,8 +80,14 @@ const PaymentBookingView: React.FC = () => {
         mutationFn: addBookingForTour,
     });
 
-    const handleBooking = () => {
+    const { mutateAsync: listAGTMS } =
+        useListAGTransTMSMutation();
 
+    const { mutateAsync: detailAGTMS } =
+        useDetailAGTransTMSMutation();
+
+
+    const handleBooking = () => {
 
         const payload = {
 
@@ -135,25 +135,51 @@ const PaymentBookingView: React.FC = () => {
 
             intPaymentMethodID: null,
 
-            strCompanyBankAccountGUID: selectedBankAccount?.strCompanyBankAccountGUID || null,
+            strCompanyBankAccountGUID:
+                selectedBankAccount?.strCompanyBankAccountGUID || null,
 
             VoucherCode: null,
-        }
+        };
 
-        addBookingForTourApi(
-            payload,
-            {
-                onSuccess: (res) => {
+        addBookingForTourApi(payload, {
+            onSuccess: async (res) => {
+                try {
                     console.log("BOOKING SUCCESS", res);
+
+                    const serviceGUID =
+                        res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
+
+                    console.log("serviceGUID", serviceGUID);
+
+                    if (serviceGUID) {
+
+                        await listAGTMS({
+                            strCompanyGUID: coData?.strCompanyGUID,
+                            strListAgentHostServiceItemGUID: serviceGUID,
+                        });
+
+                        await detailAGTMS({
+                            strAgentHostCompanyGUID:
+                                coData?.strCompanyGUID,
+
+                            strListAgentHostServiceItemGUID:
+                                serviceGUID,
+                        });
+                    }
+
                     router.replaceParams(paths.content.service, {
                         activeTab: "booked",
                     });
-                },
-                onError: (err) => {
-                    console.log("BOOKING ERROR", err);
-                },
-            }
-        );
+
+                } catch (err) {
+                    console.log("TMS ERROR", err);
+                }
+            },
+
+            onError: (err) => {
+                console.log("BOOKING ERROR", err);
+            },
+        });
     };
 
     return (
