@@ -328,22 +328,23 @@ const BookingForm = ({ item }: Props) => {
                 <div>
                     <label className="text-xs font-semibold">Hạng Tour</label>
 
-                    <div className="flex gap-2">
+                    <select
+                        value={selectedStar ?? ""}
+                        onChange={(e) =>
+                            setSelectedStar(
+                                e.target.value ? Number(e.target.value) : null
+                            )
+                        }
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    >
+                        <option value="">Chọn hạng tour</option>
+
                         {starList.map((star: number) => (
-                            <button
-                                key={star}
-                                onClick={() => setSelectedStar(star)}
-                                className={`flex px-3 py-1 border rounded-lg ${selectedStar === star
-                                    ? "border-blue-500"
-                                    : "border-slate-300"
-                                    }`}
-                            >
-                                {Array.from({ length: star }).map((_, i) => (
-                                    <Star key={i} size={14} fill="gold" />
-                                ))}
-                            </button>
+                            <option key={star} value={star}>
+                                {"⭐".repeat(star)} ({star} sao)
+                            </option>
                         ))}
-                    </div>
+                    </select>
                 </div>
 
                 {/* TYPE */}
