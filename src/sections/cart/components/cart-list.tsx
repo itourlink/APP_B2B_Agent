@@ -74,29 +74,48 @@ const [selectedEditRow, setSelectedEditRow] =
     {
       field: "strType",
       headerName: "Type",
-      render: (_: any, row: any) => (
-        <div className="flex items-center gap-2">
-          <span
-            className="text-[13px] text-gray-700"
-            dangerouslySetInnerHTML={{
-              __html: row?.strType || "-",
-            }}
-          />
 
-          <button
-            type="button"
-            onClick={() => handleOpenEdit(row)}
-            className="
-              flex h-7 w-7 items-center justify-center
-              rounded bg-blue-50
-              text-[#1f5fa9]
-              hover:bg-blue-100
-            "
-          >
-            <Pencil size={14} />
-          </button>
-        </div>
-      ),
+      render: (_: any, row: any) => {
+
+        // ================= REMOVE HTML =================
+        const plainText = row?.strType
+          ?.replace(/<[^>]*>/g, "")
+          ?.replace(/&nbsp;/g, "")
+          ?.trim();
+
+        // ================= CHECK VALID DATA =================
+        const hasType =
+          plainText &&
+          plainText !== "--" &&
+          plainText !== "-";
+
+        return (
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[13px] text-gray-700"
+              dangerouslySetInnerHTML={{
+                __html: row?.strType || "--",
+              }}
+            />
+
+            {/* ================= ONLY SHOW ICON WHEN HAS DATA ================= */}
+            {hasType && (
+              <button
+                type="button"
+                onClick={() => handleOpenEdit(row)}
+                className="
+                  flex h-7 w-7 items-center justify-center
+                  rounded bg-blue-50
+                  text-[#1f5fa9]
+                  hover:bg-blue-100
+                "
+              >
+                <Pencil size={14} />
+              </button>
+            )}
+          </div>
+        );
+      },
     },
     {
       field: "intQuantity",

@@ -9,7 +9,6 @@ import { fetchDetailTour } from "@/hooks/actions/useTour";
 import { useUserStore } from "@/zustand/useUserStore";
 
 
-import {CONFIG} from "@/config-global";
 
 interface Props {
   open: boolean;
@@ -25,9 +24,8 @@ const CartPopupEdit = ({
   const { user } = useUserStore();
 
   // ================= SELECTED LEVEL =================
-  const [selectedLevel, setSelectedLevel] =
-    useState("");
-
+  const [selectedLevel, setSelectedLevel] =useState("");
+    const [selectedJoinType, setSelectedJoinType] = useState("")
   // ================= TOUR DETAIL =================
   const { data: tourDetail } = useQuery({
     queryKey: [
@@ -146,159 +144,118 @@ const CartPopupEdit = ({
   }, [priceLevels, selectedLevel]);
 
   return (
-    <PanelPopup
-      open={open}
-      onClose={onClose}
-      title="Edit Tour"
-      className="max-w-[500px]"
-    >
-      <div className="space-y-5">
-        {/* ================= TOUR IMAGE ================= */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <img
-            src={
-              detailTour?.strTourImageUrl
-                ? `${CONFIG.site.serverUrl}/${detailTour?.strTourImageUrl}`
-                : "/no-image.png"
-            }
-            alt="tour"
-            className="h-[220px] w-full object-cover"
-          />
+<PanelPopup
+  open={open}
+  onClose={onClose}
+  title="Payment"
+  className="max-w-[420px]"
+>
+  <div className="space-y-4">
 
-          <div className="space-y-2 p-4">
-            <div className="text-xl font-bold text-[#004b91]">
-              {detailTour?.strServiceName}
-            </div>
+    {/* ================= FORM ================= */}
+    <div className="grid grid-cols-2 gap-4">
 
-            <div className="text-sm text-gray-500">
-              {detailTour?.strCompanyName}
-            </div>
+      {/* TOUR LEVEL */}
+      <div>
+        <label className="mb-1 block text-[13px] font-medium text-gray-700">
+          Hạng Tour
+        </label>
 
-            <div className="flex flex-wrap gap-3 text-xs text-gray-400">
-              <span>
-                Tour Code:
-                {" "}
-                {detailTour?.strTourCode}
-              </span>
-
-              <span>
-                {detailTour?.intNoOfDay}
-                {" "}
-                Days
-              </span>
-
-              <span>
-                {currentPrice?.strJoinTypeName}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ================= SELECT LEVEL ================= */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">
-            Price Level
-          </label>
-
-          <select
+            <select
             value={selectedLevel}
             onChange={(e) =>
-              setSelectedLevel(
-                e.target.value
-              )
+                setSelectedLevel(e.target.value)
             }
             className="
-              h-11 w-full rounded-lg
-              border border-gray-300
-              px-3 text-sm outline-none
-              focus:border-[#004b91]
+                h-10 w-full rounded
+                border border-gray-300
+                bg-white px-3
+                text-sm outline-none
+                focus:border-[#004b91]
             "
-          >
-            {priceLevels?.[0]?.map(
-              (level: any) => (
-                <option
-                  key={
-                    level?.strTourPriceItemLevelGUID
-                  }
-                  value={
-                    level?.strTourPriceItemLevelGUID
-                  }
-                >
-                  {
-                    level?.strColPriceName
-                  }
-                </option>
-              )
-            )}
-          </select>
-        </div>
-
-        {/* ================= PRICE ================= */}
-        <div className="rounded-xl bg-[#f5f9ff] p-4">
-          <div className="text-sm text-gray-500">
-            Total Price
-          </div>
-
-          <div className="mt-1 text-[32px] font-bold text-[#1f73ff]">
-            $
-            {Number(
-              currentPrice?.dblTotalPrice ||
-                0
-            ).toLocaleString("en-US")}
-          </div>
-        </div>
-
-        {/* ================= OVERVIEW ================= */}
-        {detailTour?.strOverview && (
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="mb-2 text-sm font-semibold text-[#004b91]">
-              Overview
-            </div>
-
-            <div
-              className="text-sm leading-6 text-gray-600"
-              dangerouslySetInnerHTML={{
-                __html:
-                  detailTour?.strOverview,
-              }}
-            />
-          </div>
-        )}
-
-        {/* ================= ACTIONS ================= */}
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="
-              rounded-lg border border-gray-300
-              px-5 py-2 text-sm font-medium
-              text-gray-700
-              hover:bg-gray-100
-            "
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            disabled={priceLoading}
-            className="
-              rounded-lg bg-[#004b91]
-              px-5 py-2
-              text-sm font-medium text-white
-              hover:bg-[#00386d]
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
-          >
-            {priceLoading
-              ? "Loading..."
-              : "Save"}
-          </button>
-        </div>
+            >
+            <option value={selectedLevel}>
+                {Array(
+                Number(detailTour?.strListEasiaCateID || 0)
+                )
+                .fill("★")
+                .join("")}
+            </option>
+            </select>
       </div>
-    </PanelPopup>
+
+      {/* JOIN TYPE */}
+            <div>
+            <label className="mb-1 block text-[13px] font-medium text-gray-700">
+            Join Type
+            </label>
+
+        <select
+        value={selectedLevel}
+        onChange={(e) =>
+            setSelectedLevel(e.target.value)
+        }
+        className="
+            h-10 w-full rounded
+            border border-gray-300
+            bg-white px-3
+            text-sm outline-none
+            focus:border-[#004b91]
+        "
+        >
+        {priceLevels?.[0]?.map((item: any) => (
+            <option
+            key={item?.strTourPriceItemLevelGUID}
+            value={item?.strTourPriceItemLevelGUID}
+            >
+            {item?.strJoinTypeName}
+            </option>
+        ))}
+        </select>
+            </div>
+    </div>
+
+    {/* ================= PRICE INFO ================= */}
+    <div className="space-y-1">
+      <div className="text-[28px] font-bold text-[#1f73ff]">
+        Tổng giá:
+        {" "}
+        $
+        {Number(
+          currentPrice?.dblTotalPrice || 0
+        ).toLocaleString("en-US")}
+      </div>
+
+      <div className="text-sm text-gray-500">
+        (Số tiền hoa hồng:
+        {" "}
+        <span className="font-semibold text-red-500">
+          $20
+        </span>
+        )
+      </div>
+
+      <div className="text-sm font-medium text-orange-500">
+        Còn lại 49 Pax
+      </div>
+    </div>
+
+    {/* ================= ACTIONS ================= */}
+    <div className="flex justify-start pt-2">
+      <button
+        type="button"
+        className="
+          rounded bg-[#004b91]
+          px-5 py-2
+          text-sm font-medium text-white
+          hover:bg-[#00386d]
+        "
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</PanelPopup>
   );
 };
 
