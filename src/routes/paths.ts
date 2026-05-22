@@ -160,6 +160,10 @@ export const paths = {
     },
   },
 
+  booking: {
+    paymentBooking: "/booking/payment-booking",
+  },
+
   content: {
     info: "/info",
     requestBooking: "/request-booking",

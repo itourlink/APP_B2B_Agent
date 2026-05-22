@@ -100,6 +100,9 @@ export const QUERY_KEYS = {
         LIST_MEDIA: "LIST_MEDIA"
     },
     BOOKING: {
-        LIST_PRICE: "LIST_PRICE"
+        LIST_PRICE: "LIST_PRICE",
+        BOOKING_TOUR: "BOOKING_TOUR",
+        AGH_TRANSTMS: "AGH_TRANSTMS",
+        DAGH_TRANSTMS: "DAGH_TRANSTMS"
     },
 };

@@ -12,6 +12,7 @@ import ServiceMoving from "./components/service-moving";
 import ServiceDone from "./components/service-done";
 import ServiceCancel from "./components/service-cancel";
 import { useToastStore } from "@/zustand/useToastStore";
+import { useLocation } from "react-router-dom";
 
 const SERVICE_TABS = [
     { id: "suggest", labelKey: "tabPropose", icon: Lightbulb, component: ServicePropose },
@@ -24,7 +25,11 @@ const SERVICE_TABS = [
 
 const ServiceView = () => {
     const { t } = useTranslate("service");
-    const [activeTab, setActiveTab] = useState("suggest");
+    const location = useLocation();
+
+    const [activeTab, setActiveTab] = useState(
+        location.state?.activeTab || "suggest"
+    );
     const { showToast } = useToastStore()
     const [filters, setFilters] = useState({
         startTime: "",

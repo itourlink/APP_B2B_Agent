@@ -28,6 +28,7 @@ const SalesChannelPage = lazy(() => import("@/pages/sales-channel/list"));
 const ShopPage = lazy(() => import("@/pages/shop/list"));
 const VoucherPage = lazy(() => import("@/pages/voucher/list"));
 const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
+const PaymentBookingPage = lazy(() => import("@/pages/booking/payment-booking"));
 
 // const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
 
@@ -103,6 +104,7 @@ export function Router() {
               path: paths.content.agentHost,
               element: <AgentHostPage />,
             },
+
 
           ],
         },
@@ -303,12 +305,29 @@ export function Router() {
               path: paths.shop.salesChannel.list,
               element: <SalesChannelPage />,
             },
+
+          ],
+        },
+
+        // OUT LAYOUT
+        {
+          element: (
+            <InitLayout type={LAYOUT.OUTSIDE}>
+              <Outlet />
+            </InitLayout>
+          ),
+          children: [
+            {
+              path: paths.booking.paymentBooking,
+              element: <PaymentBookingPage />,
+            },
           ],
         },
       ],
     },
 
-    // OUTSIDE LAYOUT
+
+
     { path: paths.page404, element: <Page404Page /> },
     { path: "*", element: <Navigate to={paths.page404} replace /> },
   ]);

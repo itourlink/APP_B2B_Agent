@@ -48,7 +48,9 @@ const BookingForm = ({ item }: Props) => {
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+
     const { showToast } = useToastStore();
+
     const route = useRouter();
     // const { t } = useTranslate();
 
@@ -217,6 +219,10 @@ const BookingForm = ({ item }: Props) => {
         });
     };
 
+
+    const handleBooking = () => {
+        route.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), });
+    };
     // ================= UI =================
     return (
         <div className="w-[320px] sticky top-32">
@@ -265,18 +271,20 @@ const BookingForm = ({ item }: Props) => {
                     </button>
 
                     {active === "dateOne" && (
-                        <DatePopup
-                            isOpen
-                            value={startDate}
-                            onApply={(val) => {
-                                setStartDate(val);
-                                setActive(null);
+                        <div className="absolute top-28 z-50 right-80">
+                            <DatePopup
+                                isOpen
+                                value={startDate}
+                                onApply={(val) => {
+                                    setStartDate(val);
+                                    setActive(null);
 
-                                if (val) {
-                                    setCanFetchPrice(true); // 👈 ONLY HERE
-                                }
-                            }}
-                        />
+                                    if (val) {
+                                        setCanFetchPrice(true);
+                                    }
+                                }}
+                            />
+                        </div>
                     )}
                 </div>
 
@@ -301,15 +309,18 @@ const BookingForm = ({ item }: Props) => {
                     </button>
 
                     {active === "guestRoom" && (
-                        <GuestRoomPopup
-                            isOpen
-                            isRoomDetail={true}
-                            value={guestValue}
-                            onDone={(val) => {
-                                setGuestValue(val);
-                                setActive(null);
-                            }}
-                        />
+                        <div className="absolute top-40 z-50 right-80">
+                            <GuestRoomPopup
+                                isOpen
+                                isRoomDetail={true}
+                                value={guestValue}
+                                onDone={(val) => {
+                                    setGuestValue(val);
+                                    setActive(null);
+                                }}
+                            />
+                        </div>
+
                     )}
                 </div>
 
@@ -322,7 +333,7 @@ const BookingForm = ({ item }: Props) => {
                             <button
                                 key={star}
                                 onClick={() => setSelectedStar(star)}
-                                className={`px-3 py-1 border rounded-lg ${selectedStar === star
+                                className={`flex px-3 py-1 border rounded-lg ${selectedStar === star
                                     ? "border-blue-500"
                                     : "border-slate-300"
                                     }`}
@@ -353,7 +364,7 @@ const BookingForm = ({ item }: Props) => {
                 </div>
 
                 {/* BUTTON */}
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
+                <button onClick={handleBooking} className="w-full bg-blue-600 text-white py-3 rounded-lg">
                     Đặt ngay
                 </button>
 

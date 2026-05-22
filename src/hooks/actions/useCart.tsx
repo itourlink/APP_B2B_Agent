@@ -30,7 +30,7 @@ export const useListCart = (filters: {
         strListCartServiceItemGUID: null,
         strOnlineCartGUID: null,
         strBuyFromAgentHostGUID: null,
-        intCurrencyID: 1,
+        intCurrencyID: user?.intCurrencyID,
         intCurPage: null,
         intPageSize: null,
         strOrder: null,
