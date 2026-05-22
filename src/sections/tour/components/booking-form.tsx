@@ -18,12 +18,20 @@ import { format } from "date-fns";
 import DatePopup from "@/components/generic-filter/date-popup";
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
 import { useListPrice } from "@/hooks/actions/useBooking";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addCartForTour } from "@/hooks/actions/useCart";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useUser } from "@/hooks/actions/useAuth";
+import { useToastStore } from "@/zustand/useToastStore";
+import { useTranslate } from "@/locales";
+import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 
 interface Props {
     item?: any;
 }
 
 const BookingForm = ({ item }: Props) => {
+
     const [canFetchPrice, setCanFetchPrice] = useState(false);
     // ================= STATE =================
     const [active, setActive] = useState<"dateOne" | "guestRoom" | null>(null);
@@ -49,6 +57,50 @@ const BookingForm = ({ item }: Props) => {
     // ================= REF =================
     const dateRef = useRef<HTMLDivElement>(null);
     const guestRef = useRef<HTMLDivElement>(null);
+
+
+    const { mutate: addCartForTourApi } = useMutation({
+        mutationFn: addCartForTour,
+    });
+
+    const queryClient = useQueryClient();
+    const { user } = useUser();
+    const { showToast } = useToastStore();
+    // const { t } = useTranslate();
+
+    const handleSubmit = async () => {
+        const { coData } = useListCompanyOwner();
+
+        const payload = {
+            strCompanyPartnerGUID: user?.strCompanyGUID,
+            strCompanyOwnerGUID: coData?.strCompanyGUID,
+            strTourGUID: "96fda9d4-ad23-4d3c-b176-407f355926ce",
+            strTourPriceItemLevelGUID: "085974ed-adc5-4436-9635-38bbdecd4db8",
+            strDepartureTourLevelGUID: null,
+            intAdult: 1,
+            strListChildAge: null,
+            intSGL: 0,
+            intDBL: 0,
+            intTWN: 0,
+            intTPL: 0,
+            dtmDateFrom: "5/29/2026",
+            dtmDateTo: "5/31/2026",
+            intCurrencyID: user?.intCurrencyID,
+        }
+
+        addCartForTourApi(payload, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.CART.LIST_CART],
+                });
+                showToast("success", "Thêm vào giỏ thành công");
+            },
+            onError: () => {
+                showToast("error", "Thêm vào giỏ thất bại");
+            },
+        });
+    };
+
 
     // ================= OUTSIDE CLICK =================
     useEffect(() => {

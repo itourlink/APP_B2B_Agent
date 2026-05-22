@@ -40,7 +40,7 @@ export const useListCart = (filters: {
     placeholderData: keepPreviousData,
   });
 
-   const listData = query.data ?? [];
+  const listData = query.data ?? [];
   const totalRecords = listData?.[0]?.intTotalRecords || listData.length || 0;
   const totalPages = Math.ceil(totalRecords / filters.pageSize);
 
@@ -51,5 +51,13 @@ export const useListCart = (filters: {
     cartLoading: query.isLoading,
     cartError: query.isError,
   };
-  
+
+};
+
+export const addCartForTour = async (body: any) => {
+  const res = await apiClient.post(
+    "booking/AddCartForTour",
+    body
+  );
+  return res.data;
 };

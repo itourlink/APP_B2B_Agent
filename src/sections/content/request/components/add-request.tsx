@@ -103,21 +103,25 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
 
     const onSubmit = handleSubmit(async (data) => {
         const payload = {
-            intLangID: 0,
-            strAgentCode: user?.strAgentCode,
-            strMemberCode: user?.strMemberCode,
-            strCompanyGUID: searchTerm,
-            strCountryGUID: "DF5DD7F2-43F2-48F4-BFB2-F3D6BE4C9838",
-            strDestination: data?.destination,
-            strRequestTitle: data?.title,
-            strRemark: "",
-            dtmDateStart: data?.dateStart,
-            intDuration: data?.duration,
-            intAdult: data?.adults,
-            intNoOfChild: data?.children,
-            strListEasiaCateID: data?.category,
-            strListMealIncludedTypeID: data?.meal
-        };
+            "strCompanyPartnerGUID": "a03279de-85b4-4328-b396-cb370efd559e",
+            "strCompanyOwnerGUID": "8f620326-9a14-4775-b72a-66f292192807",
+            "strTourGUID": "96fda9d4-ad23-4d3c-b176-407f355926ce",
+            "strTourPriceItemLevelGUID": "085974ed-adc5-4436-9635-38bbdecd4db8",
+            "strDepartureTourLevelGUID": null,
+
+            "intAdult": 1,
+            "strListChildAge": null,
+
+            "intSGL": 0,
+            "intDBL": 0,
+            "intTWN": 0,
+            "intTPL": 0,
+
+            "dtmDateFrom": "5/28/2026",
+            "dtmDateTo": "5/30/2026",
+
+            "intCurrencyID": 3
+        }
 
         useAddCompanyBankAccountApi(payload, {
             onSuccess: () => {
