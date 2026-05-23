@@ -11,7 +11,7 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { useListCity } from "@/hooks/actions/useCity";
 import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
 import { useTranslate } from "@/locales";
-import { TITLES_OPTIONS } from "@/utils/oprion-data";
+import { TITLES_OPTIONS } from "@/utils/option-data";
 import { useToastStore } from "@/zustand/useToastStore";
 
 interface Props {

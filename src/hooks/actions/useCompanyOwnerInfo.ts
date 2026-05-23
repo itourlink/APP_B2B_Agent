@@ -9,8 +9,8 @@ export const fetchCompanyOwnerList = async (body: any) => {
 };
 
 export const useCompanyOwnerListInfo = (params: {
-    page: number;
-    pageSize: number;
+    page?: number;
+    pageSize?: number;
     nameProvider?: string;
 }) => {
     const { user } = useUser();

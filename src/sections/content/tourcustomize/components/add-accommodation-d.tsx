@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Field, Form } from "@/components/hook-form";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useTranslate } from "@/locales";
-import { STARS2_OPTIONS } from "@/utils/oprion-data";
+import { STARS2_OPTIONS } from "@/utils/option-data";
 
 import AddSupAccommodationD from "./add-sup-accommodation-d";
 import DetailAccommodationD from "./detail-accommodation-d";

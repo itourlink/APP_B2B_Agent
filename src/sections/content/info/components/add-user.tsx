@@ -4,7 +4,7 @@ import { z as zod } from "zod";
 
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
-import { ROLES_OPTIONS, TITLES_OPTIONS } from "../../../../utils/oprion-data";
+import { ROLES_OPTIONS, TITLES_OPTIONS } from "../../../../utils/option-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addUserInCompany, useCheckAgentRegisterByEmail } from "@/hooks/actions/useUser";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";

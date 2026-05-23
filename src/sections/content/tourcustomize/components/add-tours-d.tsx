@@ -6,7 +6,7 @@ import { Field, Form } from "@/components/hook-form";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useGetlistTourPublish } from "@/hooks/actions/useTourCustomized";
 import { useTranslate } from "@/locales";
-import { STARS2_OPTIONS } from "@/utils/oprion-data";
+import { STARS2_OPTIONS } from "@/utils/option-data";
 
 const AddToursD = () => {
   const { t } = useTranslate("tourcustomize");

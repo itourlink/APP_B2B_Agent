@@ -5,7 +5,7 @@ import { z as zod } from "zod";
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
 import { RotateCcw, Trash2 } from "lucide-react";
-import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/oprion-data";
+import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/option-data";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { addNewTourCustomized } from "@/hooks/actions/useTour";

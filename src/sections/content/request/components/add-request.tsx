@@ -5,7 +5,7 @@ import { z as zod } from "zod";
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
 import { ArrowLeft } from "lucide-react";
-import { MEALS_OPTIONS, STARS_OPTIONS } from "@/utils/oprion-data";
+import { MEALS_OPTIONS, STARS_OPTIONS } from "@/utils/option-data";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useAddSaleRequest } from "@/hooks/actions/useUser";

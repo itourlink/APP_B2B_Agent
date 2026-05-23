@@ -1,6 +1,6 @@
 import PrimaryButton from "@/components/button/primary-button"
 import CustomFilter from "@/components/form/custom-filter"
-import { STATES_OPTIONS } from "@/utils/oprion-data";
+import { STATES_OPTIONS } from "@/utils/option-data";
 import { RotateCcw, Search } from "lucide-react"
 import Pagination from "@/components/pagination/pagination";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
