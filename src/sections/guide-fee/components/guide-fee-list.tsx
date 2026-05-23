@@ -24,27 +24,27 @@ const GuideCardGrid = ({
 }) => {
     const router = useRouter();
 
-    const handleNavigate = () => {
-        const supplierGuidQuery =
-            guide?.strSupplierGUID
-                ? `?supplierGuid=${encodeURIComponent(
-                      guide.strSupplierGUID
-                  )}`
-                : "";
+    // const handleNavigate = () => {
+    //     const supplierGuidQuery =
+    //         guide?.strSupplierGUID
+    //             ? `?supplierGuid=${encodeURIComponent(
+    //                   guide.strSupplierGUID
+    //               )}`
+    //             : "";
 
-        router.replaceParams(
-            `${paths.shop.guide.detail}${supplierGuidQuery}`,
-            {
-                item: guide,
-            }
-        );
-    };
+    //     router.replaceParams(
+    //         `${paths.shop.guide.detail}${supplierGuidQuery}`,
+    //         {
+    //             item: guide,
+    //         }
+    //     );
+    // };
 
     return (
         <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
             {/* IMAGE */}
             <div
-                onClick={handleNavigate}
+                onClick={() => router.replaceParams(paths.shop.guide.detail, { item: guide })}
                 className="relative h-52 cursor-pointer overflow-hidden bg-gray-100"
             >
                 <img
@@ -64,7 +64,7 @@ const GuideCardGrid = ({
             <div className="flex flex-grow flex-col p-4">
                 {/* TITLE */}
                 <h3
-                    onClick={handleNavigate}
+                    onClick={() => router.replaceParams(paths.shop.guide.detail, { item: guide })}
                     className="mb-3 line-clamp-2 min-h-[48px] cursor-pointer text-[15px] font-bold uppercase leading-tight text-[#0f172a] transition-colors hover:text-[#2566b0]"
                 >
                     {guide?.strSupplierName || "---"}
@@ -126,7 +126,7 @@ const GuideCardGrid = ({
                     </div>
 
                     <button
-                        onClick={handleNavigate}
+                        onClick={() => router.replaceParams(paths.shop.guide.detail, { item: guide })}
                         className="
                             rounded-lg
                             border

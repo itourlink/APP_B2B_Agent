@@ -13,6 +13,13 @@ import { getUrlImage } from "@/utils/format-image";
 import { useState } from "react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 
+const safeText = (value: any, fallback = "---") => {
+  if (value === null || value === undefined) return fallback;
+
+  if (typeof value === "object") return fallback;
+
+  return String(value);
+};
 const VehicleDetail = () => {
   const location = useLocation();
   const item = location?.state?.item;
@@ -152,7 +159,10 @@ const VehicleDetail = () => {
 
           <div className="flex flex-col pt-2">
             <h1 className="text-3xl font-medium text-gray-800 uppercase tracking-wide">
-              {vehicle?.strSupplierName || "Không có dữ liệu"}
+                      {safeText(
+                          vehicle?.strSupplierName,
+                          "Không có dữ liệu"
+                        )}
             </h1>
 
             <div className="flex text-orange-400 mt-2 mb-3">
@@ -163,12 +173,18 @@ const VehicleDetail = () => {
 
             <p className="text-sm text-gray-700 mb-1">
               <span className="font-medium">Địa chỉ:</span>{" "}
-              {vehicle?.strSupplierAddr || "Không có dữ liệu"}
+              {safeText(
+  vehicle?.strSupplierAddr,
+  "Không có dữ liệu"
+)}
             </p>
 
             <p className="text-sm text-gray-700 italic">Mô tả:</p>
             <p className="text-sm text-gray-500 italic mt-1">
-              {vehicle?.strRemark || "Không có dữ liệu"}
+              {safeText(
+                vehicle?.strRemark,
+                "Không có dữ liệu"
+              )}
             </p>
           </div>
         </div>
