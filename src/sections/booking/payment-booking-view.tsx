@@ -26,6 +26,18 @@ const PaymentBookingView: React.FC = () => {
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
     const [isExpired, setIsExpired] = useState(false);
 
+    const [travellerForm, setTravellerForm] =
+        useState<any>({
+            intSaluteID: "2",
+            strPassengerFirstName: "",
+            strPassengerLastName: "",
+            strCountryGUID: "",
+            dtmPassengerBirthday: "",
+            strPassengerEmail: "",
+            strPassengerPhone: "",
+            strPassengerRemark: "",
+        });
+
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
 
@@ -62,59 +74,132 @@ const PaymentBookingView: React.FC = () => {
     const { mutateAsync: detailAGTMS } =
         useDetailAGTransTMSMutation();
 
-
     const handleBooking = () => {
 
         const payload = {
+            strUserGUID:
+                user?.strUserGUID || null,
 
-            strCompanyAgentGUID: user?.strCompanyGUID,
-            strCompanyOwnerGUID: coData?.strCompanyGUID,
+            strCompanyAgentGUID:
+                user?.strCompanyGUID || null,
 
-            strTourGUID: item?.strTourGUID,
-            strTourPriceItemLevelGUID: price?.strTourPriceItemLevelGUID,
+            strCompanyOwnerGUID:
+                coData?.strCompanyGUID || null,
 
-            strDepartureTourLevelGUID: null,
+            strTourGUID:
+                item?.strTourGUID || null,
 
-            intAdult: payloadItem?.intAdult || 0,
-            strListChildAge: payloadItem?.strListChildAge || "15,9,9",
+            strTourPriceItemLevelGUID:
+                price?.strTourPriceItemLevelGUID || null,
 
-            intSGL: payloadItem?.intSGL || 0,
-            intDBL: payloadItem?.intDBL || 0,
-            intTWN: payloadItem?.intTWN || 0,
-            intTPL: payloadItem?.intTPL || 0,
+            strDepartureTourLevelGUID:
+                null,
 
-            dtmDateFrom: payloadItem?.dtmDateFrom || null,
-            dtmDateTo: null,
+            intAdult:
+                payloadItem?.intAdult || 0,
 
-            intCurrencyID: user?.intCurrencyID,
+            strListChildAge:
+                payloadItem?.strListChildAge || null,
 
-            strPaidRemark: null,
+            intSGL:
+                payloadItem?.intSGL || 0,
 
-            intSaluteID: null,
-            intAgeID: null,
-            intPassengerAges: null,
+            intDBL:
+                payloadItem?.intDBL || 0,
 
-            strPassengerFirstName: null,
-            strPassengerLastName: null,
+            intTWN:
+                payloadItem?.intTWN || 0,
 
-            dtmPassengerBirthday: null,
-            dtmPasspostExpirationDate: null,
+            intTPL:
+                payloadItem?.intTPL || 0,
 
-            strPassengerEmail: null,
-            strPassengerPhone: null,
-            strPassengerRemark: null,
+            dtmDateFrom:
+                payloadItem?.dtmDateFrom || null,
 
-            strPassport: null,
-            strCountryGUID: null,
+            dtmDateTo:
+                null,
 
-            IsTraveller: false,
+            intCurrencyID:
+                user?.intCurrencyID || 3,
 
-            intPaymentMethodID: null,
+            strPaidRemark:
+                null,
+
+            intSaluteID:
+                isShowTravellerForm
+                    ? travellerForm?.intSaluteID || null
+                    : null,
+
+            intAgeID:
+                isShowTravellerForm
+                    ? "3"
+                    : null,
+
+            intPassengerAges:
+                null,
+
+            strPassengerFirstName:
+                isShowTravellerForm
+                    ? travellerForm?.strPassengerFirstName || null
+                    : null,
+
+            strPassengerLastName:
+                isShowTravellerForm
+                    ? travellerForm?.strPassengerLastName || null
+                    : null,
+
+            dtmPassengerBirthday:
+                isShowTravellerForm
+                    ? travellerForm?.dtmPassengerBirthday || null
+                    : null,
+
+            dtmPasspostExpirationDate:
+                null,
+
+            strPassengerEmail:
+                isShowTravellerForm
+                    ? travellerForm?.strPassengerEmail || null
+                    : null,
+
+            strPassengerPhone:
+                isShowTravellerForm
+                    ? travellerForm?.strPassengerPhone || null
+                    : null,
+
+            strPassengerRemark:
+                isShowTravellerForm
+                    ? travellerForm?.strPassengerRemark || null
+                    : null,
+
+            strPassport:
+                null,
+
+            strCountryGUID:
+                isShowTravellerForm
+                    ? travellerForm?.strCountryGUID || null
+                    : null,
+
+            IsTraveller:
+                isShowTravellerForm,
+
+            intPaymentMethodID:
+                paymentMethod === "Bank transfer"
+                    ? 1
+                    : 2,
 
             strCompanyBankAccountGUID:
                 selectedBankAccount?.strCompanyBankAccountGUID || null,
 
-            VoucherCode: null,
+            VoucherCode:
+                selectedVoucher?.length > 0
+                    ? selectedVoucher
+                        .map(
+                            (item: any) =>
+                                item?.voucherCode
+                        )
+                        .filter(Boolean)
+                        .join(",")
+                    : null,
         };
 
         addBookingForTourApi(payload, {
