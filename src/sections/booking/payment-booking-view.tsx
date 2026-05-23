@@ -2,26 +2,15 @@ import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForTour, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
-import { useCompanyOwnerListInfo } from '@/hooks/actions/useCompanyOwnerInfo';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import PaymentCountdown from './payment-countdown';
 import { isValidValue } from '@/utils/utilts';
-
-// --- MOCK DATA TYPE ---
-interface BookingDetail {
-    No: number;
-    strServiceName: string;
-    dateRange: string;
-    totalGuests: number;
-    commissionPrice: number;
-    totalPrice: number;
-    paymentTotal: number;
-}
+import VoucherList from './voucher-list';
 
 const PaymentBookingView: React.FC = () => {
     const router = useRouter();
@@ -33,19 +22,9 @@ const PaymentBookingView: React.FC = () => {
     const { user } = useUser()
     const { coData } = useListCompanyOwner();
     const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
-
+    const [isShowVoucher, setIsShowVoucher] = useState(false);
+    const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
     const [isExpired, setIsExpired] = useState(false);
-
-    console.log("payloadItem", payloadItem)
-
-    const bankAccountInfo = {
-        accountName: 'Công Ty Itourlink',
-        accountNumber: '123456789',
-        bankName: 'Ngân hàng Thương mại cổ phần Kỹ thương Việt Nam',
-        bankAddress: 'Nguyễn Xiển, Hà Nội',
-        swiftCode: 'ABC',
-        qrPlaceholder: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ItourlinkPaymentMock',
-    };
 
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
@@ -144,8 +123,6 @@ const PaymentBookingView: React.FC = () => {
                     const serviceGUID =
                         res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
 
-                    console.log("serviceGUID", serviceGUID);
-
                     if (serviceGUID) {
 
                         await listAGTMS({
@@ -238,6 +215,7 @@ const PaymentBookingView: React.FC = () => {
                 ? selectedBankAccount?.strLinkQRCode
                 : "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NoQRCode",
     };
+
     if (isExpired) {
         return (
             <div className="w-full min-h-screen bg-gradient-to-b from-[#f4f8fc] to-white flex items-center justify-center px-4">
@@ -541,9 +519,29 @@ const PaymentBookingView: React.FC = () => {
                     {/* Section Voucher & Chi tiết đợt thanh toán bên dưới table */}
                     <div className="p-5 border-t border-gray-100 space-y-4">
                         {/* Nút Voucher */}
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-                            <span>🎟️</span> Voucher
-                        </button>
+                        <div>
+                            <button
+                                onClick={() => setIsShowVoucher(!isShowVoucher)}
+                                className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                            >
+                                <span>🎟️</span>
+                                Voucher
+                            </button>
+
+                            <VoucherList
+                                isOpen={isShowVoucher}
+                                onSelectVoucher={(voucher) => {
+                                    setSelectedVoucher(voucher);
+                                    setIsShowVoucher(false);
+                                }}
+                            />
+
+                            {selectedVoucher && (
+                                <div className="mt-2 text-xs text-green-600 font-medium">
+                                    Đã chọn voucher: {selectedVoucher?.VoucherCode}
+                                </div>
+                            )}
+                        </div>
 
                         {/* Thông tin các đợt thanh toán và Alert */}
                         <div className="text-xs space-y-2 pt-2">
