@@ -1,3 +1,4 @@
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useGetListCart } from "@/hooks/actions/useUser";
 import { useQuery } from "@tanstack/react-query";
@@ -59,65 +60,50 @@ const CartPopupTotalPrice = ({
 }: Props) => {
   const { user } = useUser();
 
-  const {
-    data: listCart = [],
-    isLoading,
+const {
+  data: listCart = [],
+  isLoading,
     isError,
-  } = useQuery<CartItem[]>({
-    queryKey: [
-      "GET_LIST_CART_SERVICE_ITEM_PRICE_DETAIL",
-      user?.strUserGUID,
-      user?.strCompanyGUID,
+} = useQuery({
+  queryKey: [
+    QUERY_KEYS.CART.LIST_CART,
+    strCartServiceItemGUID,
+  ],
+
+  queryFn: async () => {
+    const res = await useGetListCart({
+      strUserGUID: user?.strUserGUID,
+
+      strCompanyAgentGUID:
+        user?.strCompanyGUID,
+
       strCartServiceItemGUID,
-    ],
 
-    queryFn: async () => {
-      const res = await useGetListCart({
-        strUserGUID: user?.strUserGUID,
+      strListCartServiceItemGUID: null,
 
-        strCompanyAgentGUID:
-          user?.strCompanyGUID,
+      strOnlineCartGUID: null,
 
-        strCartServiceItemGUID,
+      strBuyFromAgentHostGUID: null,
 
-        strListCartServiceItemGUID: null,
+      intCurrencyID: 1,
 
-        strOnlineCartGUID: null,
+      intCurPage: null,
 
-        strBuyFromAgentHostGUID: null,
+      intPageSize: null,
 
-        intCurrencyID: 1,
+      strOrder: null,
 
-        intCurPage: null,
+      tblsReturn: "[2]",
+    });
 
-        intPageSize: null,
 
-        strOrder: null,
+    return res?.data?.[1] || [];
+  },
 
-        tblsReturn: "[2]",
-      });
-
-      const priceDetails =
-        res?.[2] ??
-        res?.[1] ??
-        res?.[0] ??
-        res?.data?.[2] ??
-        res?.data?.[1] ??
-        res?.data?.[0] ??
-        res;
-
-      return Array.isArray(priceDetails)
-        ? priceDetails
-        : [];
-    },
-
-    enabled:
-      !!open &&
-      !!user?.strUserGUID &&
-      !!user?.strCompanyGUID &&
-      !!strCartServiceItemGUID,
-    refetchOnWindowFocus: false,
-  });
+  enabled:
+    open &&
+    !!strCartServiceItemGUID,
+});
 
   const totalPrice = listCart.reduce(
     (

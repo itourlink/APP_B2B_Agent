@@ -1,87 +1,193 @@
-import { useListFlight } from '@/hooks/actions/useFilght';
-import { useRouter } from '@/routes/hooks/use-router';
-import { paths } from '@/routes/paths';
-import { Star, LayoutGrid, List, MapPin } from 'lucide-react';
-import { getUrlImage } from '@/utils/format-image';
+import { useState } from "react";
 
+import {
+  Star,
+  LayoutGrid,
+  List,
+  MapPin,
+} from "lucide-react";
 
-// ─── FlightCard ───────────────────────────────────────────────────────────────
+import { useListFlight } from "@/hooks/actions/useFilght";
 
-const FlightCard = ({ flight }: any) => {
+import { useRouter } from "@/routes/hooks/use-router";
+import { paths } from "@/routes/paths";
+
+import { getUrlImage } from "@/utils/format-image";
+
+/* ───────────────────────────────────────── */
+/* FLIGHT CARD */
+/* ───────────────────────────────────────── */
+
+const FlightCard = ({
+  flight,
+  viewMode,
+}: any) => {
   const router = useRouter();
 
-
   return (
-    <div className="flex bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full min-h-[195px] group">
-      {/* Image — left */}
+    <div
+      className={`bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group ${
+        viewMode === "grid"
+          ? "flex h-full min-h-[195px]"
+          : "flex"
+      }`}
+    >
+      {/* IMAGE */}
       <div
-        className="relative w-1/2 overflow-hidden bg-gray-100 cursor-pointer shrink-0"
-      // onClick={handleNavigate}
+        className={`relative overflow-hidden bg-gray-100 cursor-pointer shrink-0 ${
+          viewMode === "grid"
+            ? "w-1/2"
+            : "w-[320px] h-[210px]"
+        }`}
       >
         <img
-          src={getUrlImage(flight?.strSupplierImage)}
+          src={
+            flight?.strSupplierImage
+              ? getUrlImage(
+                  flight?.strSupplierImage
+                )
+              : "https://placehold.co/600x400?text=Flight"
+          }
           alt={flight?.strSupplierName}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
       </div>
 
-      {/* Content — right */}
-      <div className="w-1/2 p-4 flex flex-col">
-        {/* Airline name */}
+      {/* CONTENT */}
+      <div
+        className={`p-4 flex flex-col ${
+          viewMode === "grid"
+            ? "w-1/2"
+            : "flex-1"
+        }`}
+      >
+        {/* TITLE */}
         <h3
-          // onClick={handleNavigate}
-          className="text-[#1a4a8d] font-bold text-[15px] leading-tight uppercase mb-3 line-clamp-2 cursor-pointer hover:text-[#2566b0] transition-colors"
+          className={`font-bold uppercase cursor-pointer hover:text-[#2566b0] transition-colors ${
+            viewMode === "grid"
+              ? "text-[#1a4a8d] text-[15px] leading-tight mb-3 line-clamp-2"
+              : "text-[#0f172a] text-[20px] leading-tight mb-4"
+          }`}
         >
-          {flight.strSupplierName}
+          {String(
+            flight?.strSupplierName || "---"
+          )}
         </h3>
 
-        {/* Star rating */}
+        {/* STAR */}
         <div className="flex items-center gap-0.5 mb-3">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              size={13}
-              className={i < flight.intEasiaCateID ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}
+              size={
+                viewMode === "grid"
+                  ? 13
+                  : 16
+              }
+              className={
+                i <
+                (flight?.intEasiaCateID || 0)
+                  ? "fill-orange-400 text-orange-400"
+                  : "text-gray-300"
+              }
             />
           ))}
         </div>
 
-        {/* Address */}
-        <div className="flex items-start gap-1.5 mb-3">
-          <MapPin size={13} className="text-gray-400 mt-0.5 shrink-0" />
-          <p className="text-[12px] text-gray-600 leading-relaxed line-clamp-2">
-            {flight.strSupplierAddr || 'Đang cập nhật...'}
+        {/* ADDRESS */}
+        <div
+          className={`flex items-start gap-2 ${
+            viewMode === "grid"
+              ? "mb-3"
+              : "mb-4"
+          }`}
+        >
+          <MapPin
+            size={
+              viewMode === "grid"
+                ? 13
+                : 15
+            }
+            className="text-gray-400 mt-0.5 shrink-0"
+          />
+
+          <p
+            className={`text-gray-600 leading-relaxed ${
+              viewMode === "grid"
+                ? "text-[12px] line-clamp-2"
+                : "text-[14px]"
+            }`}
+          >
+            {String(
+              flight?.strSupplierAddr ||
+                "Đang cập nhật..."
+            )}
           </p>
         </div>
 
-        {/* Badge */}
-        <div className="mb-3">
+        {/* TAG */}
+        <div
+          className={
+            viewMode === "grid"
+              ? "mb-3"
+              : "mb-4"
+          }
+        >
           <span className="inline-block bg-[#e6f0ff] text-[#3b82f6] text-[11px] font-medium px-3 py-1 rounded-full">
-            {flight.tag || 'Chuyến bay nổi bật'}
+            {typeof flight?.tag ===
+            "object"
+              ? "Chuyến bay nổi bật"
+              : flight?.tag ||
+                "Chuyến bay nổi bật"}
           </span>
         </div>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <div className="mt-auto pt-3 border-t border-gray-100 flex items-end justify-between gap-2">
+          {/* PRICE */}
           <div>
-            <p className="text-[11px] text-gray-500 mb-0.5">Giá từ</p>
-            <p className="text-[#2563eb] font-bold text-lg leading-none">
-              {flight.dblPriceFrom === '$0' || flight.dblPriceFrom === 'N/A' ? (
-                <span className="text-gray-400 text-base">N/A</span>
+            <p className="text-[11px] text-gray-500 mb-0.5">
+              Giá từ
+            </p>
+
+            <p
+              className={`text-[#2563eb] font-bold leading-none ${
+                viewMode === "grid"
+                  ? "text-lg"
+                  : "text-[38px]"
+              }`}
+            >
+              {typeof flight?.dblPriceFrom ===
+                "object" ||
+              flight?.dblPriceFrom ===
+                "$0" ||
+              flight?.dblPriceFrom ===
+                "N/A" ||
+              !flight?.dblPriceFrom ? (
+                <span className="text-gray-400">
+                  N/A
+                </span>
               ) : (
-                flight.dblPriceFrom
+                flight?.dblPriceFrom
               )}
             </p>
           </div>
 
+          {/* BUTTON */}
           <button
-            // onClick={() => handleNavigate()}
             onClick={() => {
-              router.replaceParams(paths.shop.flight.detail, {
-                item: flight
-              })
+              router.replaceParams(
+                paths.shop.flight.detail,
+                {
+                  item: flight,
+                }
+              );
             }}
-            className="cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
+            className={`cursor-pointer font-medium transition-all whitespace-nowrap ${
+              viewMode === "grid"
+                ? "text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs"
+                : "bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-6 py-3 rounded-xl text-sm"
+            }`}
           >
             Xem chi tiết
           </button>
@@ -91,45 +197,90 @@ const FlightCard = ({ flight }: any) => {
   );
 };
 
-// ─── FlightList ───────────────────────────────────────────────────────────────
+/* ───────────────────────────────────────── */
+/* MAIN */
+/* ───────────────────────────────────────── */
 
 const FlightList = () => {
+  const [viewMode, setViewMode] =
+    useState<"grid" | "list">(
+      "grid"
+    );
+
   const filters = {
     page: 1,
     pageSize: 15,
   };
 
-  const { flightData } = useListFlight(filters);
+  const { flightData = [] } =
+    useListFlight(filters);
 
   return (
-    <section className="max-w-7xl mx-auto px-6  mb-10 mt-6 ">
-
-      {/* Header */}
+    <section className="max-w-7xl mx-auto px-6 mb-10 mt-6">
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
           Chuyến bay nổi bật
         </h2>
 
+        {/* VIEW MODE */}
         <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
-          <span className="text-sm text-gray-500 ml-2">Hiển thị dạng:</span>
-          <button className="p-1.5 bg-[#2566b0] text-white rounded-md shadow-sm cursor-pointer">
+          <span className="text-sm text-gray-500 ml-2">
+            Hiển thị dạng:
+          </span>
+
+          {/* GRID */}
+          <button
+            onClick={() =>
+              setViewMode("grid")
+            }
+            className={`p-1.5 rounded-md shadow-sm cursor-pointer transition-all ${
+              viewMode === "grid"
+                ? "bg-[#2566b0] text-white"
+                : "text-gray-400 hover:bg-gray-100"
+            }`}
+          >
             <LayoutGrid size={18} />
           </button>
-          <button className="cursor-pointer p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
+
+          {/* LIST */}
+          <button
+            onClick={() =>
+              setViewMode("list")
+            }
+            className={`cursor-pointer p-1.5 rounded-md transition-colors ${
+              viewMode === "list"
+                ? "bg-[#2566b0] text-white"
+                : "text-gray-400 hover:bg-gray-100"
+            }`}
+          >
             <List size={18} />
           </button>
         </div>
       </div>
 
-      {/* List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {flightData.map((flight: any) => (
-          <FlightCard key={flight.strSupplierGUID} flight={flight} />
-        ))}
+      {/* LIST */}
+      <div
+        className={
+          viewMode === "grid"
+            ? "grid grid-cols-1 lg:grid-cols-2 gap-6"
+            : "flex flex-col gap-5"
+        }
+      >
+        {flightData?.map(
+          (flight: any) => (
+            <FlightCard
+              key={
+                flight?.strSupplierGUID
+              }
+              flight={flight}
+              viewMode={viewMode}
+            />
+          )
+        )}
       </div>
-
     </section>
-  )
-}
+  );
+};
 
 export default FlightList;
