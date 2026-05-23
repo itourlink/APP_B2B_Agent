@@ -178,6 +178,7 @@ const BookingForm = ({ item }: Props) => {
     const dtmDateTo = startDate
         ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000)
         : null;
+        
     const buildPayload = () => {
         return {
             strCompanyPartnerGUID: user?.strCompanyGUID,
@@ -224,53 +225,56 @@ const BookingForm = ({ item }: Props) => {
     };
     // ================= UI =================
     return (
-        <div className="w-[320px] sticky top-32">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+        <div className="w-[280px] sticky top-24">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
 
                 {/* HEADER */}
                 <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-xl font-bold">Đặt tour</h3>
-                        <p className="text-xs text-slate-500">
+                        <h3 className="text-lg font-bold">Đặt tour</h3>
+                        <p className="text-[11px] text-slate-500">
                             Nhập thông tin để hiển thị giá
                         </p>
                     </div>
 
-                    <div className="flex gap-2">
-                        <button className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
-                            <HelpCircle size={16} />
+                    {/* <div className="flex gap-2">
+                        <button className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center">
+                            <HelpCircle size={14} />
                         </button>
-                        <button className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
-                            <Download size={16} />
+
+                        <button className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center">
+                            <Download size={14} />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
+
                 {price.dblUnitPrice && (
-                    <div className="">
+                    <div className="text-sm font-semibold">
                         Tổng giá: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                     </div>
                 )}
 
                 {/* DATE */}
                 <div ref={dateRef}>
-                    <label className="text-xs font-semibold">Ngày bắt đầu</label>
+                    <label className="text-[11px] font-semibold">Ngày bắt đầu</label>
 
                     <button
                         onClick={() =>
                             setActive(active === "dateOne" ? null : "dateOne")
                         }
-                        className="w-full border rounded-lg px-3 py-2 flex justify-between"
+                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex justify-between items-center"
                     >
                         <span>
                             {startDate
                                 ? format(startDate, "dd/MM/yyyy")
                                 : "Chọn ngày"}
                         </span>
-                        <Calendar size={16} />
+
+                        <Calendar size={14} />
                     </button>
 
                     {active === "dateOne" && (
-                        <div className="absolute top-0 z-50 right-80">
+                        <div className="absolute top-0 z-50 right-72">
                             <DatePopup
                                 isOpen
                                 value={startDate}
@@ -289,26 +293,28 @@ const BookingForm = ({ item }: Props) => {
 
                 {/* GUEST */}
                 <div ref={guestRef}>
-                    <label className="text-xs font-semibold">Số lượng khách</label>
+                    <label className="text-[11px] font-semibold">Số lượng khách</label>
 
                     <button
                         onClick={() =>
                             setActive(active === "guestRoom" ? null : "guestRoom")
                         }
-                        className="w-full border rounded-lg px-3 py-2 flex justify-between"
+                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex justify-between items-center"
                     >
-                        <div className="flex gap-2">
-                            <Users size={16} />
+                        <div className="flex gap-2 items-center">
+                            <Users size={14} />
+
                             <span>
                                 {guestValue.adults} NL • {guestValue.children} TE •{" "}
                                 {guestValue.rooms} Phòng
                             </span>
                         </div>
-                        <span>▼</span>
+
+                        <span className="text-xs">▼</span>
                     </button>
 
                     {active === "guestRoom" && (
-                        <div className="absolute top-0 z-50 right-80">
+                        <div className="absolute top-0 z-50 right-72">
                             <GuestRoomPopup
                                 isOpen
                                 isRoomDetail={true}
@@ -319,13 +325,12 @@ const BookingForm = ({ item }: Props) => {
                                 }}
                             />
                         </div>
-
                     )}
                 </div>
 
                 {/* STAR */}
                 <div>
-                    <label className="text-xs font-semibold">Hạng Tour</label>
+                    <label className="text-[11px] font-semibold">Hạng Tour</label>
 
                     <select
                         value={selectedStar ?? ""}
@@ -334,10 +339,8 @@ const BookingForm = ({ item }: Props) => {
                                 e.target.value ? Number(e.target.value) : null
                             )
                         }
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
                     >
-                        <option value="">Chọn hạng tour</option>
-
                         {starList.map((star: number) => (
                             <option key={star} value={star}>
                                 {"⭐".repeat(star)} ({star} sao)
@@ -348,12 +351,12 @@ const BookingForm = ({ item }: Props) => {
 
                 {/* TYPE */}
                 <div>
-                    <label className="text-xs font-semibold">Loại hình</label>
+                    <label className="text-[11px] font-semibold">Loại hình</label>
 
                     <select
                         value={joinType || ""}
                         onChange={(e) => setJoinType(Number(e.target.value))}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
                     >
                         {joinTypeList.map((t: any) => (
                             <option key={t.value} value={t.value}>
@@ -364,14 +367,18 @@ const BookingForm = ({ item }: Props) => {
                 </div>
 
                 {/* BUTTON */}
-                <button onClick={handleBooking} className="w-full bg-blue-600 text-white py-3 rounded-lg">
+                <button
+                    onClick={handleBooking}
+                    disabled={!startDate || !price?.strTourPriceItemLevelGUID}
+                    className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg"
+                >
                     Đặt ngay
                 </button>
 
                 <button
                     onClick={handleAddtoCart}
                     disabled={!startDate || !price?.strTourPriceItemLevelGUID}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg disabled:opacity-50"
+                    className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
                     Thêm vào giỏ
                 </button>

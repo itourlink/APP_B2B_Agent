@@ -9,9 +9,14 @@ export const fetchCompanyOwnerList = async (body: any) => {
 };
 
 export const useCompanyOwnerListInfo = (params: {
+    strCompanyOwnerGUID?: string | null;
     page?: number;
     pageSize?: number;
-    nameProvider?: string;
+    nameProvider?: string | null;
+    strOrder?: string | null;
+    strCompanyNameUrl?: string | null;
+    IsOwnerFriend?: boolean | null;
+    tblsReturn?: string | null;
 }) => {
     const { user } = useUser();
 
@@ -27,14 +32,14 @@ export const useCompanyOwnerListInfo = (params: {
             fetchCompanyOwnerList({
                 strUserPartnerGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
-                strCompanyOwnerGUID: null,
+                strCompanyOwnerGUID: params.strCompanyOwnerGUID || null,
                 intCurPage: params.page,
                 intPageSize: params.pageSize,
-                strOrder: null,
+                strOrder: params.strOrder || null,
                 strFilterCompanyName: params.nameProvider || null,
-                strCompanyNameUrl: null,
-                IsOwnerFriend: true,
-                tblsReturn: "[0]",
+                strCompanyNameUrl: params.strCompanyNameUrl || null,
+                IsOwnerFriend: params.IsOwnerFriend,
+                tblsReturn: params.tblsReturn || "[0]",
             }),
         enabled: !!user?.strUserGUID && !!user?.strCompanyGUID,
         placeholderData: keepPreviousData,

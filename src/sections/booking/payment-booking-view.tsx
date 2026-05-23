@@ -8,7 +8,9 @@ import { paths } from '@/routes/paths';
 import { TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import PaymentCountdown from './payment-countdown';
+import { isValidValue } from '@/utils/utilts';
 
 // --- MOCK DATA TYPE ---
 interface BookingDetail {
@@ -30,33 +32,11 @@ const PaymentBookingView: React.FC = () => {
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
     const { coData } = useListCompanyOwner();
-    const [serviceItemGUID, setServiceItemGUID] = useState<string | null>(null);
-    const [isBookingSuccess, setIsBookingSuccess] = useState(false);
     const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
-    console.log("PAYMENT VIEW ITEM", item);
 
-    const [timeLeft, setTimeLeft] = useState(100000); // 4
     const [isExpired, setIsExpired] = useState(false);
 
-    useEffect(() => {
-        if (timeLeft <= 0) {
-            setIsExpired(true);
-            return;
-        }
-
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => prev - 1);
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [timeLeft]);
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-
-        return `${mins}m ${secs}s`;
-    };
+    console.log("payloadItem", payloadItem)
 
     const bankAccountInfo = {
         accountName: 'Công Ty Itourlink',
@@ -71,10 +51,18 @@ const PaymentBookingView: React.FC = () => {
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
 
     // Helper định dạng tiền tệ Việt Nam (đ)
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-            .format(amount)
-            .replace('₫', 'đ');
+    const formatCurrency = (amount?: any) => {
+        const value =
+            typeof amount === "number" || typeof amount === "string"
+                ? Number(amount)
+                : 0;
+
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        })
+            .format(isNaN(value) ? 0 : value)
+            .replace("₫", "đ");
     };
 
     const [selectedBankAccount, setSelectedBankAccount] = useState<any>(null);
@@ -219,19 +207,37 @@ const PaymentBookingView: React.FC = () => {
         };
     }, []);
 
+    const totalChildren =
+        payloadItem?.strListChildAge
+            ? payloadItem.strListChildAge.split(",").filter(Boolean).length
+            : 0;
+
+    const totalGuests =
+        (payloadItem?.intAdult || 0) + totalChildren;
 
 
-    const { data } = useCompanyOwnerListInfo({
-        "strCompanyOwnerGUID": null,
-        "intCurPage": 1,
-        "intPageSize": 1,
-        "strOrder": null,
-        "strFilterCompanyName": null,
-        "strCompanyNameUrl": "cong-ty-tnhh-ket-noi-du-lich-8F620",
-        "IsOwnerFriend": 1,
-        "tblsReturn": "[0]"
-    });
+    const bankInfo = {
+        accountName:
+            selectedBankAccount?.strCompanyBankAccountName || "---",
 
+        accountNumber:
+            selectedBankAccount?.strCompanyBankAccountCode || "---",
+
+        bankName:
+            selectedBankAccount?.strCompanyBankAccountInfo || "---",
+
+        bankAddress:
+            selectedBankAccount?.strBankAddress || "---",
+
+        swiftCode:
+            selectedBankAccount?.strSwiftCode || "---",
+
+        qrPlaceholder:
+            typeof selectedBankAccount?.strLinkQRCode === "string" &&
+                selectedBankAccount?.strLinkQRCode
+                ? selectedBankAccount?.strLinkQRCode
+                : "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NoQRCode",
+    };
     if (isExpired) {
         return (
             <div className="w-full min-h-screen bg-gradient-to-b from-[#f4f8fc] to-white flex items-center justify-center px-4">
@@ -279,10 +285,7 @@ const PaymentBookingView: React.FC = () => {
     return (
         <div className="w-full min-h-screen bg-gray-100 font-sans text-gray-800 pb-12">
             {/* 1. Thanh thông báo đếm ngược màu vàng phía trên */}
-            <div className="w-full bg-[#f19f1b] text-white text-center text-xs md:text-sm py-2 px-4 shadow-sm font-medium flex items-center justify-center gap-1">
-                <span className="inline-block w-4 h-4 rounded-full border border-white text-center text-[10px] leading-[14px] font-bold">!</span>
-                Nếu quý khách không thực hiện thanh toán, đơn hàng sẽ tự động hủy sau {formatTime(timeLeft)}
-            </div>
+            <PaymentCountdown />
 
             <div className="max-w-5xl mx-auto px-4 mt-6 space-y-5">
 
@@ -509,31 +512,29 @@ const PaymentBookingView: React.FC = () => {
                                     <th className="py-2 px-3 border border-[#1a52a3]">Tổng Tiền Thanh Toán</th>
                                 </tr>
                             </thead>
-                            {/* <tbody className="divide-y divide-gray-100 text-center text-gray-700">
-                                {bookingItems.map((item, index) => (
-                                    <React.Fragment key={index}>
-                                        <tr className="hover:bg-gray-50">
-                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.No}</td>
-                                            <td className="py-3 px-4 text-left align-top border-r border-gray-100">
-                                                <div className="font-semibold text-gray-800">{item?.strServiceName}</div>
-                                                <div className="text-gray-500 text-[11px] mt-0.5">{item.dateRange}</div>
-                                            </td>
-                                            <td className="py-3 px-3 align-top border-r border-gray-100">{item.intPaxMax}</td>
-                                            <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(item.commissionPrice)}</td>
-                                            <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(item.totalPrice)}</td>
-                                            <td className="py-3 px-3 align-top font-medium">{formatCurrency(item.paymentTotal)}</td>
-                                        </tr>
-                                        <tr className="bg-gray-50/50 font-semibold">
-                                            <td className="py-2 px-3 border-r border-gray-100"></td>
-                                            <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
-                                            <td className="py-2 px-3 border-r border-gray-100"></td>
-                                            <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(0)}</td>
-                                            <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(item.totalPrice)}</td>
-                                            <td className="py-2 px-3">{formatCurrency(0)}</td>
-                                        </tr>
-                                    </React.Fragment>
-                                ))}
-                            </tbody> */}
+                            <tbody className="divide-y divide-gray-100 text-center text-gray-700">
+                                <React.Fragment>
+                                    <tr className="hover:bg-gray-50">
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">{price.No}</td>
+                                        <td className="py-3 px-4 text-left align-top border-r border-gray-100">
+                                            <div className="font-semibold text-gray-800">{price?.strServiceName}</div>
+                                            <div className="text-gray-500 text-[11px] mt-0.5">{isValidValue(price?.strDtmDateFrom)} - {isValidValue(price?.strDtmDateTo)}</div>
+                                        </td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(price?.dblTotalPrice)}</td>
+                                        <td className="py-3 px-3 align-top font-medium">{formatCurrency(price?.dblUnitPrice)}</td>
+                                    </tr>
+                                    <tr className="bg-gray-50/50 font-semibold">
+                                        <td className="py-2 px-3 border-r border-gray-100"></td>
+                                        <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
+                                        <td className="py-2 px-3 border-r border-gray-100"></td>
+                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
+                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPrice)}</td>
+                                        <td className="py-2 px-3">{formatCurrency(price?.dblUnitPrice) ?? 0}</td>
+                                    </tr>
+                                </React.Fragment>
+                            </tbody>
                         </table>
                     </div>
 
@@ -565,60 +566,116 @@ const PaymentBookingView: React.FC = () => {
                         {/* Khu vực Chọn Phương thức & Ngân hàng */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
                             <div>
-                                <label className="block font-medium text-gray-700 mb-1.5">Phương Thức Thanh Toán</label>
+                                <label className="block font-medium text-gray-700 mb-1.5">
+                                    Phương Thức Thanh Toán
+                                </label>
+
                                 <select
                                     value={paymentMethod}
                                     onChange={(e) => setPaymentMethod(e.target.value)}
                                     className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
                                 >
                                     <option value="Bank transfer">Bank transfer</option>
-                                    <option value="Cash">Cash</option>
+                                    <option value="Payment online">Payment online</option>
                                 </select>
                             </div>
 
-                            <div>
-                                <label className="block font-medium text-gray-700 mb-1.5">Tài khoản ngân hàng</label>
-                                <select
-                                    value={selectedBankAccount?.strCompanyBankAccountGUID || ""}
-                                    onChange={(e) => {
-                                        const bank = bankAccountData?.find(
-                                            (x: any) =>
-                                                x.strCompanyBankAccountGUID === e.target.value
-                                        );
+                            {/* Chỉ hiện khi Bank transfer */}
+                            {paymentMethod === "Bank transfer" && (
+                                <div>
+                                    <label className="block font-medium text-gray-700 mb-1.5">
+                                        Tài khoản ngân hàng
+                                    </label>
 
-                                        setSelectedBankAccount(bank);
-                                    }}
-                                    className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
-                                >
-                                    {bankAccountData?.map((bank: any) => (
-                                        <option
-                                            key={bank.strCompanyBankAccountGUID}
-                                            value={bank.strCompanyBankAccountGUID}
-                                        >
-                                            {bank.strCompanyBankAccountName} -{" "}
-                                            {bank.strCompanyBankAccountCode}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+                                    <select
+                                        value={selectedBankAccount?.strCompanyBankAccountGUID || ""}
+                                        onChange={(e) => {
+                                            const bank = bankAccountData?.find(
+                                                (x: any) =>
+                                                    x.strCompanyBankAccountGUID === e.target.value
+                                            );
 
-                        {/* Thông tin chuyển khoản và QR Code */}
-                        <div className="flex flex-col items-center text-center text-xs space-y-1.5 py-6 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 mt-4">
-                            <p><span className="font-medium text-gray-600">Tên tài khoản:</span> <span className="font-semibold text-gray-800">{bankAccountInfo.accountName}</span></p>
-                            <p><span className="font-medium text-gray-600">Mã tài khoản:</span> <span className="font-semibold text-gray-800">{bankAccountInfo.accountNumber}</span></p>
-                            <p><span className="font-medium text-gray-600">Bank Name:</span> <span className="font-semibold text-gray-800">{bankAccountInfo.bankName}</span></p>
-                            <p><span className="font-medium text-gray-600">Bank Add:</span> <span className="text-gray-700">{bankAccountInfo.bankAddress}</span></p>
-                            <p><span className="font-medium text-gray-600">SwiftCode:</span> <span className="font-semibold text-gray-800">{bankAccountInfo.swiftCode}</span></p>
-
-                            {/* Vùng hiển thị ảnh QR Code */}
-                            <div className="pt-4 flex flex-col items-center">
-                                <div className="w-32 h-32 bg-white border border-gray-200 p-2 rounded flex items-center justify-center shadow-inner">
-                                    <img src={bankAccountInfo.qrPlaceholder} alt="QR Code Thanh Toán" className="w-full h-full object-contain" />
+                                            setSelectedBankAccount(bank);
+                                        }}
+                                        className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
+                                    >
+                                        {bankAccountData?.map((bank: any) => (
+                                            <option
+                                                key={bank.strCompanyBankAccountGUID}
+                                                value={bank.strCompanyBankAccountGUID}
+                                            >
+                                                {bank.strCompanyBankAccountName} -{" "}
+                                                {bank.strCompanyBankAccountCode}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
-                                <span className="text-[10px] text-gray-400 mt-1">QR Code</span>
-                            </div>
+                            )}
                         </div>
+
+                        {/* Chỉ hiện info bank khi Bank transfer */}
+                        {paymentMethod === "Bank transfer" && (
+                            <div className="flex flex-col items-center text-center text-xs space-y-1.5 py-6 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 mt-4">
+                                <p>
+                                    <span className="font-medium text-gray-600">
+                                        Tên tài khoản:
+                                    </span>{" "}
+                                    <span className="font-semibold text-gray-800">
+                                        {bankInfo.accountName}
+                                    </span>
+                                </p>
+
+                                <p>
+                                    <span className="font-medium text-gray-600">
+                                        Mã tài khoản:
+                                    </span>{" "}
+                                    <span className="font-semibold text-gray-800">
+                                        {bankInfo.accountNumber}
+                                    </span>
+                                </p>
+
+                                <p>
+                                    <span className="font-medium text-gray-600">
+                                        Bank Name:
+                                    </span>{" "}
+                                    <span className="font-semibold text-gray-800">
+                                        {bankInfo.bankName}
+                                    </span>
+                                </p>
+
+                                <p>
+                                    <span className="font-medium text-gray-600">
+                                        Bank Add:
+                                    </span>{" "}
+                                    <span className="text-gray-700">
+                                        {bankInfo.bankAddress}
+                                    </span>
+                                </p>
+
+                                <p>
+                                    <span className="font-medium text-gray-600">
+                                        SwiftCode:
+                                    </span>{" "}
+                                    <span className="font-semibold text-gray-800">
+                                        {bankInfo.swiftCode}
+                                    </span>
+                                </p>
+
+                                <div className="pt-4 flex flex-col items-center">
+                                    <div className="w-32 h-32 bg-white border border-gray-200 p-2 rounded flex items-center justify-center shadow-inner">
+                                        <img
+                                            src={bankInfo.qrPlaceholder}
+                                            alt="QR Code Thanh Toán"
+                                            className="w-full h-full object-contain"
+                                        />
+                                    </div>
+
+                                    <span className="text-[10px] text-gray-400 mt-1">
+                                        QR Code
+                                    </span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Ô nhập ghi chú */}
                         <div className="pt-2 text-xs">
