@@ -192,6 +192,7 @@ const PaymentBookingView: React.FC = () => {
     const totalGuests =
         (payloadItem?.intAdult || 0) + totalChildren;
 
+    const totalPaymentDebt = (Number(price?.dblTotalPrice || 0) - Number(price?.dblUnitPrice || 0));
 
     const bankInfo = {
         accountName:
@@ -509,7 +510,7 @@ const PaymentBookingView: React.FC = () => {
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
                                         <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
                                         <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPrice)}</td>
-                                        <td className="py-2 px-3">{formatCurrency(price?.dblUnitPrice) ?? 0}</td>
+                                        <td className="py-2 px-3">{formatCurrency(price?.dblUnitPrice)}</td>
                                     </tr>
                                 </React.Fragment>
                             </tbody>
@@ -520,6 +521,7 @@ const PaymentBookingView: React.FC = () => {
                     <div className="p-5 border-t border-gray-100 space-y-4">
                         {/* Nút Voucher */}
                         <div>
+
                             <button
                                 onClick={() => setIsShowVoucher(!isShowVoucher)}
                                 className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
@@ -533,6 +535,7 @@ const PaymentBookingView: React.FC = () => {
                                 onSelectVoucher={(voucher) => {
                                     setSelectedVoucher(voucher);
                                 }}
+                                totalPaymentAmount={price.dblUnitPrice || 0}
                             />
 
                             {selectedVoucher && (
@@ -546,7 +549,7 @@ const PaymentBookingView: React.FC = () => {
                         <div className="text-xs space-y-2 pt-2">
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
-                                <span className="font-semibold text-[#1e5bb4] underline">{formatCurrency(0)}</span>
+                                <span className="font-semibold text-[#1e5bb4] underline">{formatCurrency(price?.dblUnitPrice)}</span>
                             </div>
 
                             {/* Alert Đỏ */}
@@ -556,7 +559,7 @@ const PaymentBookingView: React.FC = () => {
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
-                                <span className="font-semibold text-gray-800">{formatCurrency(14031360)}</span>
+                                <span className="font-semibold text-gray-800">{formatCurrency(totalPaymentDebt)}</span>
                             </div>
                         </div>
 
