@@ -532,7 +532,6 @@ const PaymentBookingView: React.FC = () => {
                                 isOpen={isShowVoucher}
                                 onSelectVoucher={(voucher) => {
                                     setSelectedVoucher(voucher);
-                                    setIsShowVoucher(false);
                                 }}
                             />
 

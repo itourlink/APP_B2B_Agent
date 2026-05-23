@@ -29,7 +29,8 @@ export default function VoucherList({
 
     const isAllSelected =
         voucherData.length > 0 &&
-        selectedVouchers.length === voucherData.length;
+        selectedVouchers.length ===
+        voucherData.length;
 
     const handleSelectAll = () => {
         if (isAllSelected) {
@@ -40,11 +41,15 @@ export default function VoucherList({
         setSelectedVouchers(voucherData);
     };
 
-    const handleSelectVoucher = (voucher: any) => {
-        const isSelected = selectedVouchers.some(
-            (item) =>
-                item?.voucherCode === voucher?.voucherCode
-        );
+    const handleSelectVoucher = (
+        voucher: any
+    ) => {
+        const isSelected =
+            selectedVouchers.some(
+                (item) =>
+                    item?.voucherCode ===
+                    voucher?.voucherCode
+            );
 
         if (isSelected) {
             setSelectedVouchers((prev) =>
@@ -65,7 +70,12 @@ export default function VoucherList({
     };
 
     return (
-        <div className="mt-3 border border-gray-200 rounded-lg overflow-hidden bg-white">
+        <div
+            className="mt-3 border border-gray-200 rounded-lg overflow-hidden bg-white"
+            onClick={(e) =>
+                e.stopPropagation()
+            }
+        >
             <div className="max-h-[350px] overflow-auto">
                 <table className="w-full text-xs">
                     <thead className="bg-gray-100 sticky top-0 z-10">
@@ -73,8 +83,16 @@ export default function VoucherList({
                             <th className="px-3 py-2 border-b w-10">
                                 <input
                                     type="checkbox"
-                                    checked={isAllSelected}
-                                    onChange={handleSelectAll}
+                                    checked={
+                                        isAllSelected
+                                    }
+                                    onChange={(e) => {
+                                        e.stopPropagation();
+                                        handleSelectAll();
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                    }}
                                     className="cursor-pointer"
                                 />
                             </th>
@@ -115,12 +133,18 @@ export default function VoucherList({
                                     Đang tải voucher...
                                 </td>
                             </tr>
-                        ) : voucherData.length > 0 ? (
+                        ) : voucherData.length >
+                            0 ? (
                             voucherData.map(
-                                (voucher: any, index: number) => {
+                                (
+                                    voucher: any,
+                                    index: number
+                                ) => {
                                     const isSelected =
                                         selectedVouchers.some(
-                                            (item) =>
+                                            (
+                                                item
+                                            ) =>
                                                 item?.voucherCode ===
                                                 voucher?.voucherCode
                                         );
@@ -131,11 +155,14 @@ export default function VoucherList({
                                                 voucher?.voucherCode ||
                                                 index
                                             }
-                                            onClick={() =>
+                                            onClick={(
+                                                e
+                                            ) => {
+                                                e.stopPropagation();
                                                 handleSelectVoucher(
                                                     voucher
-                                                )
-                                            }
+                                                );
+                                            }}
                                             className="hover:bg-gray-50 border-b cursor-pointer transition-colors"
                                         >
                                             <td className="px-3 py-2">
@@ -144,20 +171,26 @@ export default function VoucherList({
                                                     checked={
                                                         isSelected
                                                     }
-                                                    onChange={() =>
+                                                    onChange={(
+                                                        e
+                                                    ) => {
+                                                        e.stopPropagation();
                                                         handleSelectVoucher(
                                                             voucher
-                                                        )
-                                                    }
-                                                    onClick={(e) =>
-                                                        e.stopPropagation()
-                                                    }
+                                                        );
+                                                    }}
+                                                    onClick={(
+                                                        e
+                                                    ) => {
+                                                        e.stopPropagation();
+                                                    }}
                                                     className="cursor-pointer"
                                                 />
                                             </td>
 
                                             <td className="px-3 py-2">
-                                                {index + 1}
+                                                {index +
+                                                    1}
                                             </td>
 
                                             <td className="px-3 py-2 font-semibold text-red-500">
