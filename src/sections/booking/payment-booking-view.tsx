@@ -415,11 +415,10 @@ const PaymentBookingView: React.FC = () => {
                                     <label className="block text-gray-700 font-medium mb-1">Độ tuổi <span className="text-red-500">*</span></label>
                                     <select
                                         name="intAgeID"
+                                        disabled
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-gray-100"
                                     >
-                                        <option value="Adults">Adults</option>
-                                        <option value="Children">Children</option>
-                                        <option value="Infants">Infants</option>
+                                        <option value="3">Adults</option>
                                     </select>
                                 </div>
 
