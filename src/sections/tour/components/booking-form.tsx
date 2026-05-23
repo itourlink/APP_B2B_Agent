@@ -368,7 +368,7 @@ const BookingForm = ({ item }: Props) => {
                 <button
                     onClick={handleBooking}
                     disabled={!startDate || !price?.strTourPriceItemLevelGUID}
-                    className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg"
+                    className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
                     Đặt ngay
                 </button>

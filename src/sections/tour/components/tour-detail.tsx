@@ -107,7 +107,12 @@ const TourDetail = () => {
 
                                         <div className="flex items-center gap-1">
                                             <Clock3 size={16} />
-                                            1 Ngày / 0 Đêm
+                                            Quy mô: {ListData?.intPaxMin} - {ListData?.intPaxMax} khách
+                                        </div>
+
+                                        <div className="flex items-center gap-1">
+                                            <Clock3 size={16} />
+                                            {ListData?.intNoOfDay} Ngày /  {(ListData?.intNoOfDay) - 1} Đêm
                                         </div>
 
                                         <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-xs font-semibold">
