@@ -260,7 +260,7 @@ const BookingForm = ({ item }: Props) => {
                         onClick={() =>
                             setActive(active === "dateOne" ? null : "dateOne")
                         }
-                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex justify-between items-center"
+                        className="cursor-pointer w-full border border-slate-300 rounded-lg px-3 py-2 text-sm flex justify-between items-center"
                     >
                         <span>
                             {startDate

@@ -12,8 +12,11 @@ import { isValidValue } from "@/utils/utilts";
 import { getUrlImage } from "@/utils/format-image";
 import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
+import { useRouter } from "@/routes/hooks/use-router";
+import { paths } from "@/routes/paths";
 
 const SearchView = () => {
+    const router = useRouter();
     const location = useLocation();
     const state = (location.state || {}) as any;
 
@@ -398,7 +401,7 @@ const SearchView = () => {
                                                 )}
                                             </div>
 
-                                            <button className="w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors">
+                                            <button onClick={() => router.push(paths.content.agent)} className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors">
                                                 Đặt Ngay
                                             </button>
 

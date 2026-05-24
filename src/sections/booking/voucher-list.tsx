@@ -8,12 +8,14 @@ type Props = {
     isOpen: boolean;
     totalPaymentAmount?: number;
     onSelectVoucher?: (voucher: any[]) => void;
+    onFinalPaymentChange?: (amount: number) => void;
 };
 
 export default function VoucherList({
     isOpen,
     onSelectVoucher,
-    totalPaymentAmount
+    totalPaymentAmount,
+    onFinalPaymentChange
 }: Props) {
     const {
         voucherData,
@@ -39,11 +41,18 @@ export default function VoucherList({
         );
     }, [selectedVouchers]);
 
-    if (!isOpen) return null;
 
     const finalPayment = (totalPaymentAmount || 0) - totalVoucherAmount;
 
+    useEffect(() => {
+        onFinalPaymentChange?.(
+            Math.max(finalPayment, 0)
+        );
+    }, [finalPayment]);
+
     const isAllSelected = voucherData.length > 0 && selectedVouchers.length === voucherData.length;
+
+    if (!isOpen) return null;
 
     const handleSelectAll = () => {
         if (isAllSelected) {

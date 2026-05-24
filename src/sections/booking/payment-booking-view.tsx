@@ -280,6 +280,10 @@ const PaymentBookingView: React.FC = () => {
 
     const totalPaymentDebt = (Number(price?.dblTotalPrice || 0) - Number(price?.dblUnitPrice || 0));
 
+    const [finalVoucherPayment, setFinalVoucherPayment] = useState(
+        Number(price?.dblUnitPrice || 0)
+    );
+
     const bankInfo = {
         accountName:
             selectedBankAccount?.strCompanyBankAccountName || "---",
@@ -474,7 +478,7 @@ const PaymentBookingView: React.FC = () => {
                                     className="relative"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsOpenCountry(true);
+                                        // setIsOpenCountry(true);
                                     }}
                                 >
                                     <label className="block text-gray-700 font-medium mb-1">
@@ -570,7 +574,7 @@ const PaymentBookingView: React.FC = () => {
                                                 })
                                             )
                                         }
-                                        className="w-full border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-blue-500"
+                                        className="cursor-pointer w-full border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-blue-500"
                                     />
                                 </div>
 
@@ -713,6 +717,9 @@ const PaymentBookingView: React.FC = () => {
                                     setSelectedVoucher(voucher);
                                 }}
                                 totalPaymentAmount={price.dblUnitPrice || 0}
+                                onFinalPaymentChange={(amount) => {
+                                    setFinalVoucherPayment(amount);
+                                }}
                             />
 
                             {selectedVoucher && (
@@ -726,7 +733,10 @@ const PaymentBookingView: React.FC = () => {
                         <div className="text-xs space-y-2 pt-2">
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
-                                <span className="font-semibold text-[#1e5bb4] underline">{formatCurrency(price?.dblUnitPrice)}</span>
+                                <span className="font-semibold text-[#1e5bb4] underline">
+                                    {/* {formatCurrency(price?.dblUnitPrice)} */}
+                                    0
+                                </span>
                             </div>
 
                             {/* Alert Đỏ */}
@@ -736,7 +746,10 @@ const PaymentBookingView: React.FC = () => {
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
-                                <span className="font-semibold text-gray-800">{formatCurrency(totalPaymentDebt)}</span>
+                                {/* <span className="font-semibold text-gray-800">{formatCurrency(totalPaymentDebt)}</span> */}
+                                <span className="font-semibold text-gray-800">
+                                    {formatCurrency(finalVoucherPayment)}
+                                </span>
                             </div>
                         </div>
 
