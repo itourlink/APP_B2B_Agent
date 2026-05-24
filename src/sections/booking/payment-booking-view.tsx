@@ -24,7 +24,7 @@ const PaymentBookingView: React.FC = () => {
     const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
     const [isShowVoucher, setIsShowVoucher] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
-    const [isExpired, setIsExpired] = useState(false);
+    const [isExpired, _] = useState(false);
     const [paidRemark, setPaidRemark] = useState("");
     const [selectedCountry, setSelectedCountry] = useState<any>(null);
     const [travellerForm, setTravellerForm] =
@@ -278,7 +278,7 @@ const PaymentBookingView: React.FC = () => {
     const totalGuests =
         (payloadItem?.intAdult || 0) + totalChildren;
 
-    const totalPaymentDebt = (Number(price?.dblTotalPrice || 0) - Number(price?.dblUnitPrice || 0));
+    // const totalPaymentDebt = (Number(price?.dblTotalPrice || 0) - Number(price?.dblUnitPrice || 0));
 
     const [finalVoucherPayment, setFinalVoucherPayment] = useState(
         Number(price?.dblUnitPrice || 0)

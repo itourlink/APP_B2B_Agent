@@ -146,7 +146,7 @@ export const useListVouchers = (isOpen: boolean) => {
         
         enabled: isOpen,
         placeholderData: keepPreviousData,
-    });
+    }) as any;
 
     return {
         voucherData: query.data || [],

@@ -101,7 +101,7 @@ const AddRequest = ({ onBack }: { onBack: () => void }) => {
 
     const { handleSubmit, formState: { isSubmitting } } = methods;
 
-    const onSubmit = handleSubmit(async (data) => {
+    const onSubmit = handleSubmit(async (_) => {
         const payload = {
             "strCompanyPartnerGUID": "a03279de-85b4-4328-b396-cb370efd559e",
             "strCompanyOwnerGUID": "8f620326-9a14-4775-b72a-66f292192807",

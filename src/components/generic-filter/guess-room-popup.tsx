@@ -16,7 +16,7 @@ type Props = {
         adults: number;
         children: number;
         childAges: number[];
-        roomTypes?: RoomTypes;
+        roomTypes: RoomTypes;
     };
     onDone: (val: Props["value"]) => void;
 };

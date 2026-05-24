@@ -25,7 +25,6 @@ const CartPopupEdit = ({
 
   // ================= SELECTED LEVEL =================
   const [selectedLevel, setSelectedLevel] =useState("");
-    const [selectedJoinType, setSelectedJoinType] = useState("")
   // ================= TOUR DETAIL =================
   const { data: tourDetail } = useQuery({
     queryKey: [
@@ -55,7 +54,6 @@ const CartPopupEdit = ({
   // ================= PRICE LEVEL =================
   const {
     data: priceLevels,
-    isLoading: priceLoading,
   } = useQuery({
     queryKey: [
       "PRICE_LEVEL_TOUR",
