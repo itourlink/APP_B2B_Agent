@@ -25,7 +25,8 @@ const PaymentBookingView: React.FC = () => {
     const [isShowVoucher, setIsShowVoucher] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
     const [isExpired, setIsExpired] = useState(false);
-
+    const [paidRemark, setPaidRemark] = useState("");
+    const [selectedCountry, setSelectedCountry] = useState<any>(null);
     const [travellerForm, setTravellerForm] =
         useState<any>({
             intSaluteID: "2",
@@ -123,7 +124,7 @@ const PaymentBookingView: React.FC = () => {
                 user?.intCurrencyID || 3,
 
             strPaidRemark:
-                null,
+                paidRemark || null,
 
             intSaluteID:
                 isShowTravellerForm
@@ -396,14 +397,28 @@ const PaymentBookingView: React.FC = () => {
                                     <label className="block text-gray-700 font-medium mb-1">Danh xưng <span className="text-red-500">*</span></label>
                                     <select
                                         name="intSaluteID"
+                                        value={
+                                            travellerForm.intSaluteID
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    intSaluteID:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-white"
                                     >
                                         {TITLES_OPTIONS.map((option) => (
-                                            <option key={option.value} value={option.value}>
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
                                                 {option.label}
                                             </option>
                                         ))}
-
                                     </select>
                                 </div>
 
@@ -413,6 +428,18 @@ const PaymentBookingView: React.FC = () => {
                                     <input
                                         type="text"
                                         name="strPassengerFirstName"
+                                        value={
+                                            travellerForm.strPassengerFirstName
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    strPassengerFirstName:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
                                         placeholder="Nhập tên"
                                     />
@@ -424,9 +451,22 @@ const PaymentBookingView: React.FC = () => {
                                     <input
                                         type="text"
                                         name="strPassengerLastName"
+                                        value={
+                                            travellerForm.strPassengerLastName
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    strPassengerLastName:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
                                         placeholder="Nhập họ và đệm"
                                     />
+
                                 </div>
 
                                 {/* Quốc tịch */}
@@ -446,8 +486,8 @@ const PaymentBookingView: React.FC = () => {
                                         onClick={() => setIsOpenCountry(!isOpenCountry)}
                                         className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
                                     >
-                                        <span className={countrySearch ? "text-black" : "text-gray-400"}>
-                                            {countrySearch || "--- Chọn quốc gia ---"}
+                                        <span className={selectedCountry ? "text-black" : "text-gray-400"}>
+                                            {selectedCountry?.label || "--- Chọn quốc gia ---"}
                                         </span>
 
                                         <span className="text-gray-500 text-sm">⌄</span>
@@ -478,6 +518,11 @@ const PaymentBookingView: React.FC = () => {
                                                             key={option.value}
                                                             onClick={() => {
                                                                 setCountrySearch(option.label);
+                                                                setSelectedCountry(option);
+                                                                setTravellerForm((prev: any) => ({
+                                                                    ...prev,
+                                                                    strCountryGUID: option.value,
+                                                                }));
                                                                 setIsOpenCountry(false);
                                                             }}
                                                             className="px-3 py-2 text-sm hover:bg-blue-500 hover:text-white cursor-pointer"
@@ -513,6 +558,18 @@ const PaymentBookingView: React.FC = () => {
                                     <input
                                         type="date"
                                         name="dtmPassengerBirthday"
+                                        value={
+                                            travellerForm.dtmPassengerBirthday
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    dtmPassengerBirthday:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-blue-500"
                                     />
                                 </div>
@@ -523,6 +580,18 @@ const PaymentBookingView: React.FC = () => {
                                     <input
                                         type="email"
                                         name="strPassengerEmail"
+                                        value={
+                                            travellerForm.strPassengerEmail
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    strPassengerEmail:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
                                         placeholder="example@gmail.com"
                                     />
@@ -534,6 +603,18 @@ const PaymentBookingView: React.FC = () => {
                                     <input
                                         type="text"
                                         name="strPassengerPhone"
+                                        value={
+                                            travellerForm.strPassengerPhone
+                                        }
+                                        onChange={(e) =>
+                                            setTravellerForm(
+                                                (prev: any) => ({
+                                                    ...prev,
+                                                    strPassengerPhone:
+                                                        e.target.value,
+                                                })
+                                            )
+                                        }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
                                         placeholder="Nhập số điện thoại"
                                     />
@@ -544,6 +625,18 @@ const PaymentBookingView: React.FC = () => {
                             <div className="mt-4 text-xs">
                                 <textarea
                                     name="strPassengerRemark"
+                                    value={
+                                        travellerForm.strPassengerRemark
+                                    }
+                                    onChange={(e) =>
+                                        setTravellerForm(
+                                            (prev: any) => ({
+                                                ...prev,
+                                                strPassengerRemark:
+                                                    e.target.value,
+                                            })
+                                        )
+                                    }
                                     placeholder="Ghi chú"
                                     rows={3}
                                     className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
@@ -764,6 +857,12 @@ const PaymentBookingView: React.FC = () => {
                         {/* Ô nhập ghi chú */}
                         <div className="pt-2 text-xs">
                             <textarea
+                                value={paidRemark}
+                                onChange={(e) =>
+                                    setPaidRemark(
+                                        e.target.value
+                                    )
+                                }
                                 placeholder="Ghi chú"
                                 rows={3}
                                 className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
