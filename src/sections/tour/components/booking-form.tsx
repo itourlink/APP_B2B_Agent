@@ -223,7 +223,7 @@ const BookingForm = ({ item }: Props) => {
     // ================= UI =================
     return (
         <div className="w-[280px] sticky top-24">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
 
                 {/* HEADER */}
                 <div className="flex justify-between items-start">
@@ -245,9 +245,14 @@ const BookingForm = ({ item }: Props) => {
                     </div> */}
                 </div>
 
-                {price.dblUnitPrice && (
-                    <div className="text-sm font-semibold">
-                        Tổng giá: ₫{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                {price.dblTotalPrice && (
+                    <div className="">
+                        <div className="text-[24px] font-semibold text-[#0c63e6]">
+                            Tổng giá: ₫{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                        </div>
+                        <div className="text-[12px] pt-[5px]">
+                            Giá / Khách: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                        </div>
                     </div>
                 )}
 
