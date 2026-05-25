@@ -11,7 +11,6 @@ import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
-import TourSearch from "../tour/components/tour-search";
 
 const SearchView = () => {
   const router = useRouter();

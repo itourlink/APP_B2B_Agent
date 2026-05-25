@@ -41,7 +41,6 @@ type GuestValue = {
     };
 };
 const BookingForm = ({ item }: Props) => {
-    console.log("item", item)
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -248,7 +247,7 @@ const BookingForm = ({ item }: Props) => {
 
                 {price.dblUnitPrice && (
                     <div className="text-sm font-semibold">
-                        Tổng giá: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                        Tổng giá: ₫{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                     </div>
                 )}
 
