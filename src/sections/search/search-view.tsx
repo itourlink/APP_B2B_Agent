@@ -99,32 +99,32 @@ const SearchView = () => {
   const { tdpData, tdpLoading } = useListTourPublish(
     !isSeries && !isSearchHotel
       ? {
-          ...searchTourPayload,
-          page: pageTour,
-          pageSize,
-          ...tourFilter,
-        }
+        ...searchTourPayload,
+        page: pageTour,
+        pageSize,
+        ...tourFilter,
+      }
       : null,
   );
 
   const { tsData, tsLoading } = useListTourSeries(
     isSeries
       ? {
-          ...searchTourPayload,
-          ...seriesFilter,
-          page: pageSeries,
-          pageSize,
-        }
+        ...searchTourPayload,
+        ...seriesFilter,
+        page: pageSeries,
+        pageSize,
+      }
       : null,
   );
 
   const { searchData: hotelData, searchLoading } = useSearchHotel(
     isSearchHotel
       ? {
-          ...isSearchHotel,
-          page: pageHotel,
-          pageSize,
-        }
+        ...isSearchHotel,
+        page: pageHotel,
+        pageSize,
+      }
       : undefined,
   );
 
@@ -388,7 +388,7 @@ const SearchView = () => {
               </div>
             )}
 
-            {!isSeries && !isSearchHotel && (
+            {!isSeries && !isSearchHotel && !tdpLoading && (
               <Pagination
                 currentPage={pageTour}
                 onPageChange={setPageTour}
