@@ -63,13 +63,13 @@ export default function SearchFilter({
             intCateID: null,
             intProductID: null,
 
-            strNoOfDayRange: "",
-            strFilterServiceName: "",
+            strNoOfDayRange: null,
+            strFilterServiceName: null,
 
-            strListEasiaCateID: "",
-            strListTransportOptionID: "",
+            strListEasiaCateID: null,
+            strListTransportOptionID: null,
 
-            strPriceFromRange: "",
+            strPriceFromRange: null,
 
             strLocationCode:
                 currentFilter?.strLocationCode ?? "VN0000",
@@ -78,7 +78,7 @@ export default function SearchFilter({
             dtmFilterDateValidTo: null,
 
             intNoOfAdult: 2,
-            strListNoOfChild: "",
+            strListNoOfChild: null,
 
             intNoOfSGLSup: 0,
             intNoOfTPLRec: 0,
