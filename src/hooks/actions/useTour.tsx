@@ -41,7 +41,7 @@ export const useListTour = (filters?: { page?: number; pageSize?: number }) => {
         tourData: listData,
         totalRecords,
         totalPages,
-        tourLoading: query.isLoading,
+        tourLoading: query.isLoading || query.isFetching,
         tourError: query.isError,
     };
 };
@@ -84,7 +84,7 @@ export const useDetailTour = (filters?: {
         tdData: listData,
         totalRecords,
         totalPages,
-        tdLoading: query.isLoading,
+        tdLoading: query.isLoading || query.isFetching,
         tdError: query.isError,
     };
 };
@@ -172,7 +172,7 @@ export const useListTourPublish = (filters?: {
         tdpData: listData,
         totalRecords,
         totalPages,
-        tdpLoading: query.isLoading,
+        tdpLoading: query.isLoading || query.isFetching,
         tdpError: query.isError,
     };
 };
@@ -207,7 +207,7 @@ export const useListTourDay = (filters?: { strTourGUID?: string }) => {
 
     return {
         tddData: listData,
-        tddLoading: query.isLoading,
+        tddLoading: query.isLoading || query.isFetching,
         tddError: query.isError,
     };
 };
@@ -252,7 +252,7 @@ export const useSearchTour = (filters?: {
         searchData: listData,
         totalRecords,
         totalPages,
-        searchLoading: query.isLoading,
+        searchLoading: query.isLoading || query.isFetching,
         searchError: query.isError,
     };
 };
@@ -378,7 +378,7 @@ export const useListTourSeries = (filters?: {
         tsData: listData,
         totalRecords,
         totalPages,
-        tsLoading: query.isLoading,
+        tsLoading: query.isPending || query.isFetching,
         tsError: query.isError,
     };
 };

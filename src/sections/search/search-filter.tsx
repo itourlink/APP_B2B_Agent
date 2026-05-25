@@ -224,7 +224,7 @@ export default function SearchFilter({
                         const selected =
                             currentFilter?.strListTransportOptionID
                                 ?.split(",")
-                                ?.includes(item.value);
+                                ?.includes(item.value) || false;
 
                         return (
                             <label
@@ -278,7 +278,7 @@ export default function SearchFilter({
                         const selected =
                             currentFilter?.strListEasiaCateID
                                 ?.split(",")
-                                ?.includes(item.value);
+                                ?.includes(item.value) || false;
 
                         return (
                             <label

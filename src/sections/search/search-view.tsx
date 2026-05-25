@@ -354,7 +354,7 @@ const SearchView = () => {
               </div>
             )}
 
-            {isSeries && (
+            {isSeries && !tsLoading && (
               <Pagination
                 currentPage={pageSeries}
                 onPageChange={setPageSeries}
