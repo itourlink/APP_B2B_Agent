@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { useRouter } from '@/routes/hooks/use-router';
@@ -412,17 +412,54 @@ const PaymentBookingView: React.FC = () => {
                         // call email template
                         if (serviceGUID) {
 
-                            await fetchGetEmailSendAGHByAGBApi({
-                                strBookingGUID: null,
-                                strCompanyGUID: coData?.strCompanyGUID,
-                                strListAgentHostServiceItemGUID: serviceGUID,
-                                intLangID: user?.intLangID,
-                                strEmailTemplateCode: "BKK",
-                            });
+                            const emailTemplateRes =
+                                await fetchGetEmailSendAGHByAGBApi({
+                                    strBookingGUID: null,
+                                    strCompanyGUID: coData?.strCompanyGUID,
+                                    strListAgentHostServiceItemGUID: serviceGUID,
+                                    intLangID: user?.intLangID,
+                                    strEmailTemplateCode: "BKK",
+                                });
+
+                            const emailData = emailTemplateRes;
+
+                            // send email
+                            if (emailData) {
+
+                                await fetchGetSendEmailApi({
+
+                                    strEmailsSendTo:
+                                        emailData?.strEmailsSendTo || null,
+
+                                    strEmailsCC:
+                                        emailData?.strEmailsCC || null,
+
+                                    strEmailsBCC:
+                                        emailData?.strEmailsBCC || null,
+
+                                    strAttachments:
+                                        null,
+
+                                    strSubject:
+                                        emailData?.strEmailTemplateSubject || null,
+
+                                    IsBodyHtml:
+                                        1,
+
+                                    strBody:
+                                        emailData?.strEmailTemplateContent || null,
+
+                                    intEmailConfigID:
+                                        null,
+                                });
+                            }
 
                             await listAGTMS({
-                                strCompanyGUID: coData?.strCompanyGUID,
-                                strListAgentHostServiceItemGUID: serviceGUID,
+                                strCompanyGUID:
+                                    coData?.strCompanyGUID,
+
+                                strListAgentHostServiceItemGUID:
+                                    serviceGUID,
                             });
 
                             await detailAGTMS({
