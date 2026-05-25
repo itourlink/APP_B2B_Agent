@@ -29,7 +29,7 @@ const PaymentBookingView: React.FC = () => {
     const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
     const [isShowVoucher, setIsShowVoucher] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
-    const [isExpired, _] = useState(false);
+    const [isExpired, setIsExpired] = useState(false);
     const [paidRemark, setPaidRemark] = useState("");
     const [selectedCountry, setSelectedCountry] = useState<any>(null);
     const [travellerForm, setTravellerForm] =
@@ -170,47 +170,7 @@ const PaymentBookingView: React.FC = () => {
     };
 
     if (isExpired) {
-        return (
-            <div className="w-full min-h-screen bg-gradient-to-b from-[#f4f8fc] to-white flex items-center justify-center px-4">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-
-                    {/* Header */}
-                    <div className="bg-[#0f4c81] px-6 py-5 text-center">
-                        <div className="w-14 h-14 mx-auto rounded-full bg-white/15 flex items-center justify-center text-white text-2xl font-bold border border-white/20">
-                            !
-                        </div>
-
-                        <h2 className="text-white text-xl font-semibold mt-4">
-                            Hết thời gian thanh toán
-                        </h2>
-
-                        <p className="text-white/80 text-sm mt-1">
-                            Phiên thanh toán đã kết thúc
-                        </p>
-                    </div>
-
-                    {/* Content */}
-                    <div className="px-6 py-8 text-center">
-                        <p className="text-slate-600 text-sm leading-6">
-                            Đơn hàng của bạn đã tự động hủy do quá thời gian giữ chỗ.
-                        </p>
-
-                        <div className="mt-6 bg-[#f4f8fc] border border-slate-200 rounded-xl p-4">
-                            <p className="text-xs text-slate-500">
-                                Vui lòng thực hiện đặt lại nếu bạn vẫn muốn tiếp tục thanh toán.
-                            </p>
-                        </div>
-
-                        <button
-                            onClick={() => router.back()}
-                            className="mt-6 w-full bg-[#0f4c81] hover:bg-[#0c3d68] text-white py-3 rounded-xl text-sm font-medium transition"
-                        >
-                            Quay lại
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
+        return <div className="w-full min-h-screen bg-white"></div>;
     }
 
     useEffect(() => {
@@ -444,7 +404,7 @@ const PaymentBookingView: React.FC = () => {
                                         emailData?.strEmailTemplateSubject || null,
 
                                     IsBodyHtml:
-                                        1,
+                                        true,
 
                                     strBody:
                                         emailData?.strEmailTemplateContent || null,
@@ -506,7 +466,7 @@ const PaymentBookingView: React.FC = () => {
     return (
         <div className="w-full min-h-screen bg-gray-100 font-sans text-gray-800 pb-12">
 
-            <PaymentCountdown />
+            <PaymentCountdown onExpire={() => setIsExpired(true)} />
 
             <div className="max-w-5xl mx-auto px-4 mt-6 space-y-5">
 

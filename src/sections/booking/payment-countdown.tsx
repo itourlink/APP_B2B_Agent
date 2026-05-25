@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-const PaymentCountdown = () => {
+type Props = {
+    onExpire?: () => void;
+};
+
+const PaymentCountdown = ({ onExpire }: Props) => {
     const [timeLeft, setTimeLeft] = useState(240);
 
     useEffect(() => {
@@ -8,6 +12,9 @@ const PaymentCountdown = () => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
+
+                    onExpire?.();
+
                     return 0;
                 }
 
@@ -16,7 +23,7 @@ const PaymentCountdown = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [onExpire]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
