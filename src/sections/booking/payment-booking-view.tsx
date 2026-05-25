@@ -278,7 +278,8 @@ const PaymentBookingView: React.FC = () => {
     const totalGuests =
         (payloadItem?.intAdult || 0) + totalChildren;
 
-    // const totalPaymentDebt = (Number(price?.dblTotalPrice || 0) - Number(price?.dblUnitPrice || 0));
+    const totalDeposit = Number(price?.dblUnitPrice || 0) * 0.3;
+    const totalDebt = Number(price?.dblUnitPrice || 0) - Number(totalDeposit);
 
     const [finalVoucherPayment, setFinalVoucherPayment] = useState(
         Number(price?.dblUnitPrice || 0)
@@ -682,16 +683,16 @@ const PaymentBookingView: React.FC = () => {
                                         </td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(price?.dblTotalPrice)}</td>
-                                        <td className="py-3 px-3 align-top font-medium">{formatCurrency(price?.dblUnitPrice)}</td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(price?.dblUnitPrice)}</td>
+                                        <td className="py-3 px-3 align-top font-medium">{formatCurrency(totalDeposit)}</td>
                                     </tr>
                                     <tr className="bg-gray-50/50 font-semibold">
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
                                         <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
                                         <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPrice)}</td>
-                                        <td className="py-2 px-3">{formatCurrency(price?.dblUnitPrice)}</td>
+                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblUnitPrice)}</td>
+                                        <td className="py-2 px-3">{formatCurrency(totalDeposit)}</td>
                                     </tr>
                                 </React.Fragment>
                             </tbody>
@@ -734,8 +735,7 @@ const PaymentBookingView: React.FC = () => {
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
-                                    {/* {formatCurrency(price?.dblUnitPrice)} */}
-                                    0
+                                    {formatCurrency(totalDeposit)}
                                 </span>
                             </div>
 
@@ -746,9 +746,8 @@ const PaymentBookingView: React.FC = () => {
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
-                                {/* <span className="font-semibold text-gray-800">{formatCurrency(totalPaymentDebt)}</span> */}
                                 <span className="font-semibold text-gray-800">
-                                    {formatCurrency(finalVoucherPayment)}
+                                    {formatCurrency(totalDebt)}
                                 </span>
                             </div>
                         </div>
