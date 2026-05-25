@@ -141,8 +141,7 @@ export default function VoucherList({
                     <div className="mt-4 space-y-1">
                         <div className="flex items-center justify-between">
                             <span className="text-gray-700">
-                                Tổng tiền sau
-                                voucher:
+                                Tổng tiền sau voucher:
                             </span>
 
                             <span className="font-semibold text-green-600">
@@ -154,8 +153,7 @@ export default function VoucherList({
 
                         <div className="flex items-center justify-between">
                             <span className="text-gray-700">
-                                Phí thanh toán
-                                sau voucher:
+                                Phí thanh toán sau voucher:
                             </span>
 
                             <span className="font-semibold text-green-600">
