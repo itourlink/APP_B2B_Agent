@@ -7,15 +7,19 @@ import { isValidValue } from "@/utils/utilts";
 type Props = {
     isOpen: boolean;
     totalPaymentAmount?: number;
+    depositAmount?: number;
     onSelectVoucher?: (voucher: any[]) => void;
     onFinalPaymentChange?: (amount: number) => void;
+    onVoucherAmountChange?: (amount: number) => void;
 };
 
 export default function VoucherList({
     isOpen,
     onSelectVoucher,
     totalPaymentAmount,
-    onFinalPaymentChange
+    depositAmount,
+    onFinalPaymentChange,
+    onVoucherAmountChange
 }: Props) {
     const {
         voucherData,
@@ -42,13 +46,21 @@ export default function VoucherList({
     }, [selectedVouchers]);
 
 
-    const finalPayment = (totalPaymentAmount || 0) - totalVoucherAmount;
+    const finalTotalPayment =
+        Number(totalPaymentAmount || 0) - totalVoucherAmount;
+
+    const finalDepositPayment =
+        Number(depositAmount || 0) - totalVoucherAmount;
 
     useEffect(() => {
         onFinalPaymentChange?.(
-            Math.max(finalPayment, 0)
+            Math.max(finalTotalPayment, 0)
         );
-    }, [finalPayment]);
+    }, [finalTotalPayment]);
+    
+    useEffect(() => {
+        onVoucherAmountChange?.(totalVoucherAmount);
+    }, [totalVoucherAmount]);
 
     const isAllSelected = voucherData.length > 0 && selectedVouchers.length === voucherData.length;
 
@@ -146,7 +158,10 @@ export default function VoucherList({
 
                             <span className="font-semibold text-green-600">
                                 {formatCurrency(
-                                    totalPaymentAmount || 0
+                                    Math.max(
+                                        finalTotalPayment,
+                                        0
+                                    )
                                 )}
                             </span>
                         </div>
@@ -159,7 +174,7 @@ export default function VoucherList({
                             <span className="font-semibold text-green-600">
                                 {formatCurrency(
                                     Math.max(
-                                        finalPayment,
+                                        finalDepositPayment,
                                         0
                                     )
                                 )}

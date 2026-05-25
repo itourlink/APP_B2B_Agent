@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { useRouter } from '@/routes/hooks/use-router';
@@ -11,13 +11,18 @@ import { useLocation } from 'react-router-dom';
 import PaymentCountdown from './payment-countdown';
 import { isValidValue } from '@/utils/utilts';
 import VoucherList from './voucher-list';
+import BookingPopup from './booking-popup';
+import { useToastStore } from '@/zustand/useToastStore';
+import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 
 const PaymentBookingView: React.FC = () => {
+    const { setGlobalLoading } = useGlobalLoading();
     const router = useRouter();
     const location = useLocation();
     const item = location.state?.item;
     const price = location.state?.price;
     const payloadItem = location.state?.payload;
+    const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
     const { coData } = useListCompanyOwner();
@@ -65,179 +70,27 @@ const PaymentBookingView: React.FC = () => {
         }
     }, [bankAccountData]);
 
-    const { mutate: addBookingForTourApi, isPending: isLoading } = useMutation({
+    const { mutateAsync: addBookingForTourApi, isPending: isLoading } = useMutation({
         mutationFn: addBookingForTour,
     });
 
-    const { mutateAsync: listAGTMS } =
+    const { mutateAsync: markUsedVoucherApi, isPending: isVcPending } = useMutation({
+        mutationFn: markUsedVoucher,
+    });
+
+    const { mutateAsync: fetchGetEmailSendAGHByAGBApi } = useMutation({
+        mutationFn: fetchGetEmailSendAGHByAGB,
+    });
+    const { mutateAsync: fetchGetSendEmailApi } = useMutation({
+        mutationFn: fetchGetSendEmail,
+    });
+
+    const { mutateAsync: listAGTMS, isPending: isListAGTMSPending } =
         useListAGTransTMSMutation();
 
-    const { mutateAsync: detailAGTMS } =
+    const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
         useDetailAGTransTMSMutation();
 
-    const handleBooking = () => {
-
-        const payload = {
-            strUserGUID:
-                user?.strUserGUID || null,
-
-            strCompanyAgentGUID:
-                user?.strCompanyGUID || null,
-
-            strCompanyOwnerGUID:
-                coData?.strCompanyGUID || null,
-
-            strTourGUID:
-                item?.strTourGUID || null,
-
-            strTourPriceItemLevelGUID:
-                price?.strTourPriceItemLevelGUID || null,
-
-            strDepartureTourLevelGUID:
-                null,
-
-            intAdult:
-                payloadItem?.intAdult || 0,
-
-            strListChildAge:
-                payloadItem?.strListChildAge || null,
-
-            intSGL:
-                payloadItem?.intSGL || 0,
-
-            intDBL:
-                payloadItem?.intDBL || 0,
-
-            intTWN:
-                payloadItem?.intTWN || 0,
-
-            intTPL:
-                payloadItem?.intTPL || 0,
-
-            dtmDateFrom:
-                payloadItem?.dtmDateFrom || null,
-
-            dtmDateTo:
-                null,
-
-            intCurrencyID:
-                user?.intCurrencyID || 3,
-
-            strPaidRemark:
-                paidRemark || null,
-
-            intSaluteID:
-                isShowTravellerForm
-                    ? travellerForm?.intSaluteID || null
-                    : null,
-
-            intAgeID:
-                isShowTravellerForm
-                    ? "3"
-                    : null,
-
-            intPassengerAges:
-                null,
-
-            strPassengerFirstName:
-                isShowTravellerForm
-                    ? travellerForm?.strPassengerFirstName || null
-                    : null,
-
-            strPassengerLastName:
-                isShowTravellerForm
-                    ? travellerForm?.strPassengerLastName || null
-                    : null,
-
-            dtmPassengerBirthday:
-                isShowTravellerForm
-                    ? travellerForm?.dtmPassengerBirthday || null
-                    : null,
-
-            dtmPasspostExpirationDate:
-                null,
-
-            strPassengerEmail:
-                isShowTravellerForm
-                    ? travellerForm?.strPassengerEmail || null
-                    : null,
-
-            strPassengerPhone:
-                isShowTravellerForm
-                    ? travellerForm?.strPassengerPhone || null
-                    : null,
-
-            strPassengerRemark:
-                isShowTravellerForm
-                    ? travellerForm?.strPassengerRemark || null
-                    : null,
-
-            strPassport:
-                null,
-
-            strCountryGUID:
-                isShowTravellerForm
-                    ? travellerForm?.strCountryGUID || null
-                    : null,
-
-            IsTraveller:
-                isShowTravellerForm,
-
-            intPaymentMethodID:
-                paymentMethod === "Bank transfer"
-                    ? 1
-                    : 2,
-
-            strCompanyBankAccountGUID:
-                selectedBankAccount?.strCompanyBankAccountGUID || null,
-
-            VoucherCode:
-                selectedVoucher?.length > 0
-                    ? selectedVoucher
-                        .map(
-                            (item: any) =>
-                                item?.voucherCode
-                        )
-                        .filter(Boolean)
-                        .join(",")
-                    : null,
-        };
-
-        addBookingForTourApi(payload, {
-            onSuccess: async (res) => {
-                try {
-                    const serviceGUID =
-                        res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
-
-                    if (serviceGUID) {
-
-                        await listAGTMS({
-                            strCompanyGUID: coData?.strCompanyGUID,
-                            strListAgentHostServiceItemGUID: serviceGUID,
-                        });
-
-                        await detailAGTMS({
-                            strAgentHostCompanyGUID:
-                                coData?.strCompanyGUID,
-
-                            strListAgentHostServiceItemGUID:
-                                serviceGUID,
-                        });
-                    }
-                    router.replaceParams(paths.content.service, {
-                        activeTab: "booked",
-                    });
-
-                } catch (err) {
-                    console.log("TMS ERROR", err);
-                }
-            },
-
-            onError: (err) => {
-                console.log("BOOKING ERROR", err);
-            },
-        });
-    };
 
 
     const { ctData } = useListCity({
@@ -253,6 +106,7 @@ const PaymentBookingView: React.FC = () => {
 
     const [countrySearch, setCountrySearch] = useState("");
     const [isOpenCountry, setIsOpenCountry] = useState(false);
+    const [isOpenConfirm, setIsOpenConfirm] = useState(false);
 
     const filteredCountries = COUNTRY_OPTIONS.filter((item: any) =>
         item.label.toLowerCase().includes(countrySearch.toLowerCase())
@@ -281,9 +135,16 @@ const PaymentBookingView: React.FC = () => {
     const totalDeposit = Number(price?.dblUnitPrice || 0) * 0.3;
     const totalDebt = Number(price?.dblUnitPrice || 0) - Number(totalDeposit);
 
-    const [finalVoucherPayment, setFinalVoucherPayment] = useState(
+    const [finalVoucherPayment] = useState(
         Number(price?.dblUnitPrice || 0)
     );
+    const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
+
+    const finalDeposit =
+        Math.max(totalDeposit - totalVoucherAmount, 0);
+
+    const finalDebt =
+        Math.max(totalDebt - totalVoucherAmount, 0);
 
     const bankInfo = {
         accountName:
@@ -351,6 +212,259 @@ const PaymentBookingView: React.FC = () => {
             </div>
         );
     }
+
+    useEffect(() => {
+
+        const isPending =
+            isLoading ||
+            isVcPending ||
+            isListAGTMSPending ||
+            isDetailAGTMSPending;
+
+        setGlobalLoading(isPending);
+
+    }, [
+        isLoading,
+        isVcPending,
+        isListAGTMSPending,
+        isDetailAGTMSPending,
+    ]);
+
+    const handleBooking = async () => {
+
+        try {
+
+            // apply voucher trước
+            if (selectedVoucher?.length > 0) {
+
+                await Promise.all(
+                    selectedVoucher.map((voucher: any) =>
+                        new Promise((resolve, reject) => {
+
+                            markUsedVoucherApi(
+                                {
+                                    VoucherCode: voucher?.voucherCode,
+                                    updatedBy: user?.strUserGUID || null,
+                                },
+                                {
+                                    onSuccess: () => resolve(true),
+
+                                    onError: (err) => {
+
+                                        showToast(
+                                            "error",
+                                            "Áp dụng voucher thất bại",
+                                        );
+
+                                        reject(err);
+                                    },
+                                }
+                            );
+
+                        })
+                    )
+                );
+
+                showToast(
+                    "success",
+                    "Áp dụng voucher thành công",
+                );
+            }
+
+            // payload booking
+            const payload = {
+                strUserGUID:
+                    user?.strUserGUID || null,
+
+                strCompanyAgentGUID:
+                    user?.strCompanyGUID || null,
+
+                strCompanyOwnerGUID:
+                    coData?.strCompanyGUID || null,
+
+                strTourGUID:
+                    item?.strTourGUID || null,
+
+                strTourPriceItemLevelGUID:
+                    price?.strTourPriceItemLevelGUID || null,
+
+                strDepartureTourLevelGUID:
+                    null,
+
+                intAdult:
+                    payloadItem?.intAdult || 0,
+
+                strListChildAge:
+                    payloadItem?.strListChildAge || null,
+
+                intSGL:
+                    payloadItem?.intSGL || 0,
+
+                intDBL:
+                    payloadItem?.intDBL || 0,
+
+                intTWN:
+                    payloadItem?.intTWN || 0,
+
+                intTPL:
+                    payloadItem?.intTPL || 0,
+
+                dtmDateFrom:
+                    payloadItem?.dtmDateFrom || null,
+
+                dtmDateTo:
+                    null,
+
+                intCurrencyID:
+                    user?.intCurrencyID || 3,
+
+                strPaidRemark:
+                    paidRemark || null,
+
+                intSaluteID:
+                    isShowTravellerForm
+                        ? travellerForm?.intSaluteID || null
+                        : null,
+
+                intAgeID:
+                    isShowTravellerForm
+                        ? "3"
+                        : null,
+
+                intPassengerAges:
+                    null,
+
+                strPassengerFirstName:
+                    isShowTravellerForm
+                        ? travellerForm?.strPassengerFirstName || null
+                        : null,
+
+                strPassengerLastName:
+                    isShowTravellerForm
+                        ? travellerForm?.strPassengerLastName || null
+                        : null,
+
+                dtmPassengerBirthday:
+                    isShowTravellerForm
+                        ? travellerForm?.dtmPassengerBirthday || null
+                        : null,
+
+                dtmPasspostExpirationDate:
+                    null,
+
+                strPassengerEmail:
+                    isShowTravellerForm
+                        ? travellerForm?.strPassengerEmail || null
+                        : null,
+
+                strPassengerPhone:
+                    isShowTravellerForm
+                        ? travellerForm?.strPassengerPhone || null
+                        : null,
+
+                strPassengerRemark:
+                    isShowTravellerForm
+                        ? travellerForm?.strPassengerRemark || null
+                        : null,
+
+                strPassport:
+                    null,
+
+                strCountryGUID:
+                    isShowTravellerForm
+                        ? travellerForm?.strCountryGUID || null
+                        : null,
+
+                IsTraveller:
+                    isShowTravellerForm,
+
+                intPaymentMethodID:
+                    paymentMethod === "Bank transfer"
+                        ? 1
+                        : 2,
+
+                strCompanyBankAccountGUID:
+                    selectedBankAccount?.strCompanyBankAccountGUID || null,
+
+                VoucherCode:
+                    selectedVoucher?.length > 0
+                        ? selectedVoucher
+                            .map((item: any) => item?.voucherCode)
+                            .filter(Boolean)
+                            .join(",")
+                        : null,
+            };
+
+            addBookingForTourApi(payload, {
+
+                onSuccess: async (res) => {
+
+                    showToast(
+                        "success",
+                        "Đặt thành công"
+                    );
+
+                    try {
+
+                        const serviceGUID =
+                            res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
+
+                        // call email template
+                        if (serviceGUID) {
+
+                            await fetchGetEmailSendAGHByAGBApi({
+                                strBookingGUID: null,
+                                strCompanyGUID: coData?.strCompanyGUID,
+                                strListAgentHostServiceItemGUID: serviceGUID,
+                                intLangID: user?.intLangID,
+                                strEmailTemplateCode: "BKK",
+                            });
+
+                            await listAGTMS({
+                                strCompanyGUID: coData?.strCompanyGUID,
+                                strListAgentHostServiceItemGUID: serviceGUID,
+                            });
+
+                            await detailAGTMS({
+                                strAgentHostCompanyGUID:
+                                    coData?.strCompanyGUID,
+
+                                strListAgentHostServiceItemGUID:
+                                    serviceGUID,
+                            });
+                        }
+
+                        router.replaceParams(paths.content.service, {
+                            activeTab: "booked",
+                        });
+
+                    } catch (err) {
+
+                        console.log("TMS ERROR", err);
+                    }
+                },
+
+                onError: (err) => {
+
+                    showToast(
+                        "error",
+                        "Đặt thất bại"
+                    );
+
+                    console.log("BOOKING ERROR", err);
+                },
+            });
+
+        } catch (err) {
+
+            showToast(
+                "error",
+                "Voucher không hợp lệ hoặc đã được sử dụng"
+            );
+
+            console.log("VOUCHER ERROR", err);
+        }
+    };
 
     return (
         <div className="w-full min-h-screen bg-gray-100 font-sans text-gray-800 pb-12">
@@ -717,9 +831,10 @@ const PaymentBookingView: React.FC = () => {
                                 onSelectVoucher={(voucher) => {
                                     setSelectedVoucher(voucher);
                                 }}
-                                totalPaymentAmount={price.dblUnitPrice || 0}
-                                onFinalPaymentChange={(amount) => {
-                                    setFinalVoucherPayment(amount);
+                                totalPaymentAmount={finalVoucherPayment}
+                                depositAmount={totalDeposit}
+                                onVoucherAmountChange={(amount) => {
+                                    setTotalVoucherAmount(amount);
                                 }}
                             />
 
@@ -735,19 +850,19 @@ const PaymentBookingView: React.FC = () => {
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
-                                    {formatCurrency(totalDeposit)}
+                                    {formatCurrency(finalDeposit)}
                                 </span>
                             </div>
 
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                                The prepayment is not due yet. You can order the product
+                                Bạn sẽ thanh toán trước T3, 26 Thg 05, 2026 23:59:59 để hoàn thành quá trình book đặt
                             </div>
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
                                 <span className="font-semibold text-gray-800">
-                                    {formatCurrency(totalDebt)}
+                                    {formatCurrency(finalDebt)}
                                 </span>
                             </div>
                         </div>
@@ -883,7 +998,7 @@ const PaymentBookingView: React.FC = () => {
 
                         <div className="flex justify-end pt-2">
                             <button
-                                onClick={handleBooking}
+                                onClick={() => setIsOpenConfirm(true)}
                                 disabled={isLoading}
                                 className="cursor-pointer bg-[#0f4c81] hover:bg-[#0b3a63] text-white font-medium text-xs py-2 px-6 rounded shadow transition-colors duration-150 disabled:opacity-50"
                             >
@@ -893,8 +1008,22 @@ const PaymentBookingView: React.FC = () => {
 
                     </div>
                 </div>
-
             </div>
+
+            <BookingPopup
+                open={isOpenConfirm}
+                onClose={() => setIsOpenConfirm(false)}
+                onConfirm={() => {
+                    handleBooking();
+                    setIsOpenConfirm(false);
+                }}
+                isLoading={isLoading}
+                finalDeposit={finalDeposit}
+                finalDebt={finalDebt}
+                totalVoucherAmount={totalVoucherAmount}
+                paymentMethod={paymentMethod}
+                totalPrice={price?.dblUnitPrice}
+            />
         </div>
     );
 };

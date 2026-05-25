@@ -2,6 +2,7 @@ import apiClient from "@/axios";
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
+import { useUser } from "./useAuth";
 
 export const fetchListPrice = async (body: any) => {
     const res = await apiClient.post("tour/GetListPriceLevelTour", body);
@@ -143,7 +144,7 @@ export const useListVouchers = (isOpen: boolean) => {
         queryKey: [QUERY_KEYS.BOOKING.VOUCHER],
 
         queryFn: fetchVouchers,
-        
+
         enabled: isOpen,
         placeholderData: keepPreviousData,
     }) as any;
@@ -153,4 +154,19 @@ export const useListVouchers = (isOpen: boolean) => {
         voucherLoading: query.isLoading,
         voucherError: query.error,
     };
+};
+
+export const markUsedVoucher = async (body: any) => {
+    const res = await apiClient.post("voucher/MarkUsed", body);
+    return res.data;
+};
+
+
+export const fetchGetEmailSendAGHByAGB = async (body: any) => {
+    const res = await apiClient.post("system/GetEmailSendAgentHostByAgentBook", body);
+    return res.data;
+};
+export const fetchGetSendEmail = async (body: any) => {
+    const res = await apiClient.post("public/GetSendEmail", body);
+    return res.data;
 };
