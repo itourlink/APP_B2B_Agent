@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const PaymentCountdown = () => {
-    const [timeLeft, setTimeLeft] = useState(100000);
+    const [timeLeft, setTimeLeft] = useState(240);
 
     useEffect(() => {
         const timer = setInterval(() => {
