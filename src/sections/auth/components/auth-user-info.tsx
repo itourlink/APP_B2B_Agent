@@ -4,7 +4,6 @@ import { User, LogOut, ChevronDown } from "lucide-react";
 import { getUrlImage } from "@/utils/format-image";
 import { CONFIG } from "@/config-global";
 import { truncateEmail, truncateText } from "@/utils/format-number";
-import { useRouter } from "@/routes/hooks/use-router";
 import { isValidValue } from "@/utils/utilts";
 
 const AuthUserInfo = () => {
