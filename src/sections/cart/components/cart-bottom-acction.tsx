@@ -1,7 +1,5 @@
 import { ChevronUp, ChevronDown } from "lucide-react";
 
-
-
 interface Props {
   selectedCount?: number;
   totalPrice?: number;
@@ -107,7 +105,7 @@ const CartBottomAcction = ({
                 rounded border border-[#1677ff]
                 px-4 py-2 text-sm font-medium
                 text-[#1677ff]
-                hover:bg-blue-50
+                hover:bg-blue-50 cursor-pointer
               "
             >
               Send Quote
@@ -120,7 +118,7 @@ const CartBottomAcction = ({
                 rounded bg-[#1677ff]
                 px-5 py-2 text-sm font-medium
                 text-white
-                hover:bg-[#0958d9]
+                hover:bg-[#0958d9] cursor-pointer
               "
             >
               Đặt
