@@ -252,6 +252,9 @@ const BookingForm = ({ item }: Props) => {
                         <div className="text-[12px] pt-[5px]">
                             Giá / Khách: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
+                        <div className="text-[12px] pt-[5px]">
+                            Còn lại: {price.intPaxRemain ?? "0"} suất
+                        </div>
                     </div>
                 )}
 
