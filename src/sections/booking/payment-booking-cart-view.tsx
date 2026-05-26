@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForCart, addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { useRouter } from '@/routes/hooks/use-router';
@@ -18,10 +18,27 @@ import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 const PaymentBookingCartView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
     const router = useRouter();
+
     const location = useLocation();
-    const item = location.state?.item;
-    const price = location.state?.price;
-    const payloadItem = location.state?.payload;
+
+    const items =
+        location.state?.items || [];
+
+    const strListCartServiceItemGUID =
+        location.state?.strListCartServiceItemGUID || "";
+
+    const totalPrice =
+        Number(location.state?.totalPrice || 0);
+
+    const totalCommission =
+        Number(location.state?.totalCommission || 0);
+
+
+    console.log("items", items)
+    console.log("strListCartServiceItemGUID", strListCartServiceItemGUID)
+    console.log("totalPrice", totalPrice)
+    console.log("totalCommission", totalCommission)
+
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
@@ -70,8 +87,8 @@ const PaymentBookingCartView: React.FC = () => {
         }
     }, [bankAccountData]);
 
-    const { mutateAsync: addBookingForTourApi, isPending: isLoading } = useMutation({
-        mutationFn: addBookingForTour,
+    const { mutateAsync: addBookingForCartApi, isPending: isLoading } = useMutation({
+        mutationFn: addBookingForCart,
     });
 
     const { mutateAsync: markUsedVoucherApi, isPending: isVcPending } = useMutation({
@@ -124,20 +141,20 @@ const PaymentBookingCartView: React.FC = () => {
         };
     }, []);
 
-    const totalChildren =
-        payloadItem?.strListChildAge
-            ? payloadItem.strListChildAge.split(",").filter(Boolean).length
-            : 0;
-
-    const totalGuests =
-        (payloadItem?.intAdult || 0) + totalChildren;
-
-    const totalDeposit = Number(price?.dblUnitPrice || 0) * 0.3;
-    const totalDebt = Number(price?.dblUnitPrice || 0) - Number(totalDeposit);
-
-    const [finalVoucherPayment] = useState(
-        Number(price?.dblUnitPrice || 0)
+    const totalGuests = items.reduce(
+        (sum: number, item: any) =>
+            sum + Number(item?.intQuantity || 0),
+        0
     );
+
+    const totalDeposit = totalPrice * 0.3;
+
+    const totalDebt =
+        totalPrice - totalDeposit;
+
+    const [finalVoucherPayment] =
+        useState(totalPrice);
+
     const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
 
     const finalDeposit =
@@ -239,44 +256,19 @@ const PaymentBookingCartView: React.FC = () => {
                 strCompanyAgentGUID:
                     user?.strCompanyGUID || null,
 
+                strListCartServiceItemGUID:
+                    strListCartServiceItemGUID || null,
+
                 strCompanyOwnerGUID:
                     coData?.strCompanyGUID || null,
 
-                strTourGUID:
-                    item?.strTourGUID || null,
+                intPaymentMethodID:
+                    paymentMethod === "Bank transfer"
+                        ? 1
+                        : 2,
 
-                strTourPriceItemLevelGUID:
-                    price?.strTourPriceItemLevelGUID || null,
-
-                strDepartureTourLevelGUID:
-                    null,
-
-                intAdult:
-                    payloadItem?.intAdult || 0,
-
-                strListChildAge:
-                    payloadItem?.strListChildAge || null,
-
-                intSGL:
-                    payloadItem?.intSGL || 0,
-
-                intDBL:
-                    payloadItem?.intDBL || 0,
-
-                intTWN:
-                    payloadItem?.intTWN || 0,
-
-                intTPL:
-                    payloadItem?.intTPL || 0,
-
-                dtmDateFrom:
-                    payloadItem?.dtmDateFrom || null,
-
-                dtmDateTo:
-                    null,
-
-                intCurrencyID:
-                    user?.intCurrencyID || 3,
+                strCompanyBankAccountGUID:
+                    selectedBankAccount?.strCompanyBankAccountGUID || null,
 
                 strPaidRemark:
                     paidRemark || null,
@@ -338,14 +330,6 @@ const PaymentBookingCartView: React.FC = () => {
                 IsTraveller:
                     isShowTravellerForm,
 
-                intPaymentMethodID:
-                    paymentMethod === "Bank transfer"
-                        ? 1
-                        : 2,
-
-                strCompanyBankAccountGUID:
-                    selectedBankAccount?.strCompanyBankAccountGUID || null,
-
                 VoucherCode:
                     selectedVoucher?.length > 0
                         ? selectedVoucher
@@ -355,7 +339,7 @@ const PaymentBookingCartView: React.FC = () => {
                         : null,
             };
 
-            addBookingForTourApi(payload, {
+            addBookingForCartApi(payload, {
 
                 onSuccess: async (res) => {
 
@@ -441,14 +425,13 @@ const PaymentBookingCartView: React.FC = () => {
                     }
                 },
 
-                onError: (err) => {
+                onError: () => {
 
                     showToast(
                         "error",
                         "Đặt thất bại"
                     );
 
-                    console.log("BOOKING ERROR", err);
                 },
             });
 
@@ -775,36 +758,100 @@ const PaymentBookingCartView: React.FC = () => {
                         <table className="w-full text-left text-xs border-collapse">
                             <thead>
                                 <tr className="bg-[#1e5bb4] text-white font-medium text-center">
-                                    <th className="py-2 px-3 border border-[#1a52a3] w-12">STT</th>
-                                    <th className="py-2 px-4 border border-[#1a52a3] text-left">Tên dịch vụ</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng số khách</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng giá hoa hồng dư</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng giá</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng Tiền Thanh Toán</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3] w-12">
+                                        STT
+                                    </th>
+
+                                    <th className="py-2 px-4 border border-[#1a52a3] text-left">
+                                        Tên dịch vụ
+                                    </th>
+
+                                    <th className="py-2 px-3 border border-[#1a52a3]">
+                                        Tổng số khách
+                                    </th>
+
+                                    <th className="py-2 px-3 border border-[#1a52a3]">
+                                        Tổng giá hoa hồng dư
+                                    </th>
+
+                                    <th className="py-2 px-3 border border-[#1a52a3]">
+                                        Tổng giá
+                                    </th>
+
+                                    <th className="py-2 px-3 border border-[#1a52a3]">
+                                        Tổng Tiền Thanh Toán
+                                    </th>
                                 </tr>
                             </thead>
+
                             <tbody className="divide-y divide-gray-100 text-center text-gray-700">
-                                <React.Fragment>
-                                    <tr className="hover:bg-gray-50">
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">{price.No}</td>
-                                        <td className="py-3 px-4 text-left align-top border-r border-gray-100">
-                                            <div className="font-semibold text-gray-800">{price?.strServiceName}</div>
-                                            <div className="text-gray-500 text-[11px] mt-0.5">{isValidValue(price?.strDtmDateFrom)} - {isValidValue(price?.strDtmDateTo)}</div>
+                                {items?.map((item: any, index: number) => (
+                                    <tr
+                                        key={item?.strCartServiceItemGUID || index}
+                                        className="hover:bg-gray-50"
+                                    >
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">
+                                            {index + 1}
                                         </td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(price?.dblUnitPrice)}</td>
-                                        <td className="py-3 px-3 align-top font-medium">{formatCurrency(totalDeposit)}</td>
+
+                                        <td className="py-3 px-4 text-left align-top border-r border-gray-100">
+                                            <div className="font-semibold text-gray-800">
+                                                {item?.strServiceName}
+                                            </div>
+
+                                            <div className="text-gray-500 text-[11px] mt-0.5">
+                                                {isValidValue(item?.dtmDateFrom)} -{" "}
+                                                {isValidValue(item?.dtmDateTo)}
+                                            </div>
+                                        </td>
+
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">
+                                            {item?.intQuantity || 0}
+                                        </td>
+
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">
+                                            {formatCurrency(
+                                                item?.dblPriceTotalAgentCom
+                                            )}
+                                        </td>
+
+                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
+                                            {formatCurrency(
+                                                item?.dblPriceTotal
+                                            )}
+                                        </td>
+
+                                        <td className="py-3 px-3 align-top font-medium">
+                                            {formatCurrency(
+                                                Number(item?.dblPriceTotal || 0) * 0.3
+                                            )}
+                                        </td>
                                     </tr>
-                                    <tr className="bg-gray-50/50 font-semibold">
-                                        <td className="py-2 px-3 border-r border-gray-100"></td>
-                                        <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
-                                        <td className="py-2 px-3 border-r border-gray-100"></td>
-                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblUnitPrice)}</td>
-                                        <td className="py-2 px-3">{formatCurrency(totalDeposit)}</td>
-                                    </tr>
-                                </React.Fragment>
+                                ))}
+
+                                <tr className="bg-gray-50/50 font-semibold">
+                                    <td className="py-2 px-3 border-r border-gray-100"></td>
+
+                                    <td className="py-2 px-4 text-left border-r border-gray-100">
+                                        Total Price
+                                    </td>
+
+                                    <td className="py-2 px-3 border-r border-gray-100">
+                                        {totalGuests}
+                                    </td>
+
+                                    <td className="py-2 px-3 border-r border-gray-100">
+                                        {formatCurrency(totalCommission)}
+                                    </td>
+
+                                    <td className="py-2 px-3 border-r border-gray-100">
+                                        {formatCurrency(totalPrice)}
+                                    </td>
+
+                                    <td className="py-2 px-3">
+                                        {formatCurrency(totalDeposit)}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1018,7 +1065,7 @@ const PaymentBookingCartView: React.FC = () => {
                 finalDebt={finalDebt}
                 totalVoucherAmount={totalVoucherAmount}
                 paymentMethod={paymentMethod}
-                totalPrice={price?.dblUnitPrice}
+                totalPrice={totalPrice}
             />
         </div>
     );

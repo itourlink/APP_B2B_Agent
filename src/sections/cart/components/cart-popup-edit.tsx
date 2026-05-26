@@ -1,14 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-
 import { useQuery } from "@tanstack/react-query";
-
 import PanelPopup from "@/components/popup/panel-popup";
-
 import { fetchListPrice } from "@/hooks/actions/useBooking";
 import { fetchDetailTour } from "@/hooks/actions/useTour";
 import { useUserStore } from "@/zustand/useUserStore";
-
-
 
 interface Props {
   open: boolean;
@@ -48,8 +43,6 @@ const CartPopupEdit = ({
 
   // ================= DETAIL TOUR =================
   const detailTour =tourDetail?.[0]?.[0];
-
-  console.log("TOUR DETAIL", detailTour);
 
   // ================= PRICE LEVEL =================
   const {
@@ -117,10 +110,6 @@ const CartPopupEdit = ({
 
     enabled: open && !!item,
   });
-
-  console.log(
-    "PRICE LEVELS TOUR",priceLevels
-  );
 
   // ================= DEFAULT SELECT =================
   useEffect(() => {

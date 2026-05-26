@@ -170,7 +170,6 @@ const BookingForm = ({ item }: Props) => {
     });
 
     const price = priceData?.[0] ?? [];
-    console.log("priceData", price);
 
     const dtmDateTo = startDate
         ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000)

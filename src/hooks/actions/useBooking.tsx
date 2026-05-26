@@ -169,3 +169,11 @@ export const fetchGetSendEmail = async (body: any) => {
     const res = await apiClient.post("public/GetSendEmail", body);
     return res.data;
 };
+
+export const addBookingForCart = async (body: any) => {
+    const res = await apiClient.post(
+        "booking/AddBookingForCart",
+        body
+    );
+    return res.data;
+};

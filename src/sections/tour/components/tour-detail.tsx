@@ -34,7 +34,6 @@ const TourDetail = () => {
     const location = useLocation();
     const item = location.state;
 
-    console.log(item);
     const [filters] = useState({
         page: 1,
         pageSize: 1,
