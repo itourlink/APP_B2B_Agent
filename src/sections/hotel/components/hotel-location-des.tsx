@@ -47,7 +47,11 @@ const HotelLocationDes = ({ data = [], isLoading, onSelectDestination }: Props) 
                     </div>
 
                     <button
-                        onClick={() => onSelectDestination?.(destination)}
+                        onClick={() => {
+
+                            onSelectDestination?.(destination)
+                        }
+                        }
                         className="flex gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
                     >
                         <MapPin className="text-[#2566b0] mt-1" size={18} />
@@ -57,34 +61,37 @@ const HotelLocationDes = ({ data = [], isLoading, onSelectDestination }: Props) 
                         </div>
                     </button>
                 </div>
-            )}
+            )
+            }
 
             {/* HOTELS */}
-            {dataT.length > 0 && (
-                <div>
-                    <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold p-4">
-                        <Map size={14} />
-                        HOTELS
-                    </div>
+            {
+                dataT.length > 0 && (
+                    <div>
+                        <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold p-4">
+                            <Map size={14} />
+                            HOTELS
+                        </div>
 
-                    <div className="flex flex-col">
-                        {dataT.map((hotel, index) => (
-                            <button
-                                key={index}
-                                onClick={() => onSelectDestination?.(hotel)}
-                                className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
-                            >
-                                <Flag className="text-[#2566b0] mt-1" size={18} />
+                        <div className="flex flex-col">
+                            {dataT.map((hotel, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => onSelectDestination?.(hotel)}
+                                    className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
+                                >
+                                    <Flag className="text-[#2566b0] mt-1" size={18} />
 
-                                <div className="font-medium text-left">
-                                    {hotel?.strDestinationName}
-                                </div>
-                            </button>
-                        ))}
+                                    <div className="font-medium text-left">
+                                        {hotel?.strDestinationName}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     )
 }
 
