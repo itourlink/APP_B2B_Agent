@@ -13,7 +13,11 @@ import {
 import { useState } from "react";
 import { TourCard } from "./tour-list";
 import BookingForm from "./booking-form";
-import { useDetailTour, useListTourDay, useListTourPublish } from "@/hooks/actions/useTour";
+import {
+    useDetailTour,
+    useListTourDay,
+    useListTourPublish,
+} from "@/hooks/actions/useTour";
 import { useLocation } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 
@@ -27,56 +31,105 @@ const SkeletonBlock = () => (
 );
 
 const ErrorBlock = () => (
-    <div className="text-red-500 text-sm">Có lỗi xảy ra</div>
+    <div className="text-red-500 text-sm">
+        Có lỗi xảy ra
+    </div>
 );
 
 const TourDetail = () => {
+
     const location = useLocation();
+
     const item = location.state;
 
     const [filters] = useState({
         page: 1,
         pageSize: 1,
-        strServiceNameUrl: item?.item?.strServiceNameUrl
+        strServiceNameUrl:
+            item?.item?.strServiceNameUrl,
     });
 
     const [filters2] = useState({
         page: 1,
         pageSize: 4,
-        intCateID: item?.item?.intCateID,
-        intProductID: item?.item?.intProductID,
-        strLocationCode: null
+        intCateID:
+            item?.item?.intCateID,
+        intProductID:
+            item?.item?.intProductID,
+        strLocationCode: null,
     });
 
     const [filters3] = useState({
-        strTourGUID: item?.item?.strTourGUID
+        strTourGUID:
+            item?.item?.strTourGUID,
     });
 
-    const { tdData, tdLoading, tdError } = useDetailTour(filters);
-    const { tdpData, tdpLoading, tdpError } = useListTourPublish(filters2);
-    const { tddData, tddLoading, tddError } = useListTourDay(filters3);
+    const {
+        tdData,
+        tdLoading,
+        tdError,
+    } = useDetailTour(filters);
+
+    const {
+        tdpData,
+        tdpLoading,
+        tdpError,
+    } = useListTourPublish(filters2);
+
+    const {
+        tddData,
+        tddLoading,
+        tddError,
+    } = useListTourDay(filters3);
+
+    const [openAll, setOpenAll] = useState(false);
 
     const [openDay, setOpenDay] = useState<number | null>(1);
+
     const toggleDay = (day: number) => {
-        setOpenDay(openDay === day ? null : day);
+
+        if (openAll) return;
+
+        setOpenDay((prev) =>
+            prev === day ? null : day
+        );
     };
 
-    const ListData = tdData?.[0]?.[0] || {};
+    const toggleAllDays = () => {
 
-    const includedList = ListData?.strIncluded
-        ?.replace(/<\/p>/g, "")
-        ?.split("<p>")
-        ?.filter(Boolean)
-        ?.map((item: any) => item.replace(/^\s*-\s*/, "")) || [];
+        setOpenAll((prev) => !prev);
 
-    const exclusionsList = ListData?.strExcluded
-        ?.replace(/<\/p>/g, "")
-        ?.split("<p>")
-        ?.filter(Boolean)
-        ?.map((item: any) => item.replace(/^\s*-\s*/, "")) || [];
+        if (!openAll) {
+            setOpenDay(null);
+        } else {
+            setOpenDay(1);
+        }
+    };
+
+    const ListData =
+        tdData?.[0]?.[0] || {};
+
+    const includedList =
+        ListData?.strIncluded
+            ?.replace(/<\/p>/g, "")
+            ?.split("<p>")
+            ?.filter(Boolean)
+            ?.map((item: any) =>
+                item.replace(/^\s*-\s*/, "")
+            ) || [];
+
+    const exclusionsList =
+        ListData?.strExcluded
+            ?.replace(/<\/p>/g, "")
+            ?.split("<p>")
+            ?.filter(Boolean)
+            ?.map((item: any) =>
+                item.replace(/^\s*-\s*/, "")
+            ) || [];
 
     return (
         <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
+
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
 
                 {/* LEFT */}
@@ -84,57 +137,102 @@ const TourDetail = () => {
 
                     {/* TITLE */}
                     <div className="space-y-3">
-                        {tdLoading ? <SkeletonBlock /> : tdError ? <ErrorBlock /> : (
+
+                        {tdLoading ? (
+                            <SkeletonBlock />
+                        ) : tdError ? (
+                            <ErrorBlock />
+                        ) : (
                             <>
                                 <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
                                     {ListData?.strServiceName}
                                 </h1>
 
                                 <div className="text-sm text-slate-600 space-y-1">
-                                    <p className="font-semibold">{ListData?.strCompanyName}</p>
+
+                                    <p className="font-semibold">
+                                        {ListData?.strCompanyName}
+                                    </p>
+
                                     <div className="flex items-center gap-3">
-                                        <p>{ListData?.strCompanyEmail}</p> - <p>{ListData?.strCompanyPhone}</p>
+                                        <p>
+                                            {ListData?.strCompanyEmail}
+                                        </p>
+
+                                        -
+
+                                        <p>
+                                            {ListData?.strCompanyPhone}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-200">
-                                    <div className="flex items-center gap-5 text-sm text-slate-600">
+
+                                    <div className="flex items-center gap-5 text-sm text-slate-600 flex-wrap">
+
                                         <div className="flex items-center gap-1">
-                                            <MapPin size={16} className="text-[#2566b0]" />
+                                            <MapPin
+                                                size={16}
+                                                className="text-[#2566b0]"
+                                            />
+
                                             {ListData?.strListTourDestinationName}
                                         </div>
 
                                         <div className="flex items-center gap-1">
                                             <Clock3 size={16} />
-                                            Quy mô: {ListData?.intPaxMin} - {ListData?.intPaxMax} khách
+
+                                            Quy mô:
+                                            {" "}
+                                            {ListData?.intPaxMin}
+                                            {" - "}
+                                            {ListData?.intPaxMax}
+                                            {" "}
+                                            khách
                                         </div>
 
                                         <div className="flex items-center gap-1">
                                             <Clock3 size={16} />
-                                            {ListData?.intNoOfDay} Ngày /  {(ListData?.intNoOfDay) - 1} Đêm
+
+                                            {ListData?.intNoOfDay}
+                                            {" "}
+                                            Ngày /
+                                            {" "}
+                                            {(ListData?.intNoOfDay || 0) - 1}
+                                            {" "}
+                                            Đêm
                                         </div>
 
-                                        <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-xs font-semibold">
-                                            <MessageSquare size={14} className="inline mr-1" />
+                                        <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center">
+                                            <MessageSquare
+                                                size={14}
+                                                className="mr-1"
+                                            />
+
                                             Nhắn tin
                                         </button>
                                     </div>
 
                                     <div className="flex items-center gap-2 text-slate-500">
-                                        <span className="text-sm font-semibold">Share:</span>
+
+                                        <span className="text-sm font-semibold">
+                                            Share:
+                                        </span>
+
                                         {[
                                             {
                                                 Icon: Facebook,
-                                                link: `https://www.facebook.com`
+                                                link: "https://www.facebook.com",
                                             },
                                             {
                                                 Icon: Twitter,
-                                                link: `https://twitter.com`
+                                                link: "https://twitter.com",
                                             },
                                             {
                                                 Icon: Mail,
-                                                link: `https://gmail.com`
-                                            }
+                                                link: "https://gmail.com",
+                                            },
                                         ].map(({ Icon, link }, i) => (
                                             <a
                                                 key={i}
@@ -154,9 +252,16 @@ const TourDetail = () => {
 
                     {/* IMAGE */}
                     <div className="aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200">
-                        {tdLoading ? <SkeletonBlock /> : tdError ? <ErrorBlock /> : (
+
+                        {tdLoading ? (
+                            <SkeletonBlock />
+                        ) : tdError ? (
+                            <ErrorBlock />
+                        ) : (
                             <img
-                                src={getUrlImage(ListData?.strTourImageUrl)}
+                                src={getUrlImage(
+                                    ListData?.strTourImageUrl
+                                )}
                                 className="w-full h-full object-cover"
                             />
                         )}
@@ -164,82 +269,210 @@ const TourDetail = () => {
 
                     {/* DESCRIPTION */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-slate-900">Mô tả</h2>
-                        {tdLoading ? <SkeletonBlock /> : tdError ? <ErrorBlock /> : (
-                            ListData?.strRemark
-                                ? <div dangerouslySetInnerHTML={{ __html: ListData?.strRemark }} />
-                                : <span className="text-slate-500 text-sm">Không có dữ liệu</span>
+
+                        <h2 className="text-xl font-bold text-slate-900">
+                            Mô tả
+                        </h2>
+
+                        {tdLoading ? (
+                            <SkeletonBlock />
+                        ) : tdError ? (
+                            <ErrorBlock />
+                        ) : ListData?.strRemark ? (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: ListData?.strRemark,
+                                }}
+                            />
+                        ) : (
+                            <span className="text-slate-500 text-sm">
+                                Không có dữ liệu
+                            </span>
                         )}
                     </div>
 
                     {/* ITINERARY */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-slate-900">Lịch trình</h2>
+
+                        <div className="flex items-center justify-between">
+
+                            <h2 className="text-xl font-bold text-slate-900">
+                                Lịch trình
+                            </h2>
+
+                            <button
+                                type="button"
+                                onClick={toggleAllDays}
+                                className="
+                                    text-sm
+                                    font-medium
+                                    text-blue-600
+                                    hover:underline
+                                "
+                            >
+                                {openAll
+                                    ? "Thu gọn"
+                                    : "Hiển thị tất cả"}
+                            </button>
+                        </div>
 
                         {tddLoading && <SkeletonBlock />}
                         {tddError && <ErrorBlock />}
 
-                        {!tddLoading && !tddError && tddData?.map((tdd: any) => {
-                            const hasContent = tdd?.strDayContent && typeof tdd?.strDayContent === "string" && tdd?.strDayContent.trim() !== "";
+                        {!tddLoading &&
+                            !tddError &&
+                            tddData?.map((tdd: any) => {
 
-                            return (
-                                <div key={tdd?.strTourDayGUID} className="border border-slate-200 rounded-xl overflow-hidden">
-                                    <button
-                                        onClick={() => toggleDay(tdd?.No)}
-                                        className="w-full flex justify-between p-4 bg-slate-50"
+                                const hasContent =
+                                    tdd?.strDayContent &&
+                                    typeof tdd?.strDayContent === "string" &&
+                                    tdd?.strDayContent.trim() !== "";
+
+                                const isOpen =
+                                    openAll ||
+                                    openDay === tdd?.No;
+
+                                return (
+                                    <div
+                                        key={tdd?.strTourDayGUID}
+                                        className="border border-slate-200 rounded-xl overflow-hidden"
                                     >
-                                        Ngày {tdd?.No}
-                                        {openDay === tdd?.No ? <ChevronUp /> : <ChevronDown />}
-                                    </button>
 
-                                    {openDay === tdd?.No && (
-                                        <div className="p-4 text-sm">
-                                            {hasContent
-                                                ? <div dangerouslySetInnerHTML={{ __html: tdd?.strDayContent }} />
-                                                : <span>Chưa có nội dung</span>}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+                                        <button
+                                            onClick={() =>
+                                                toggleDay(tdd?.No)
+                                            }
+                                            className="
+                                                w-full
+                                                flex
+                                                items-center
+                                                justify-between
+                                                p-4
+                                                bg-slate-50
+                                                hover:bg-slate-100
+                                                transition-colors
+                                            "
+                                        >
+
+                                            <div className="font-semibold text-slate-800">
+                                                Ngày {tdd?.No}
+                                            </div>
+
+                                            {isOpen ? (
+                                                <ChevronUp size={18} />
+                                            ) : (
+                                                <ChevronDown size={18} />
+                                            )}
+                                        </button>
+
+                                        {isOpen && (
+                                            <div className="p-4 text-sm leading-7 text-slate-700 border-t border-slate-100">
+
+                                                {hasContent ? (
+                                                    <div
+                                                        dangerouslySetInnerHTML={{
+                                                            __html:
+                                                                tdd?.strDayContent,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <span>
+                                                        Chưa có nội dung
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                     </div>
 
+                    {/* INCLUDED / EXCLUDED */}
                     <div className="grid md:grid-cols-2 gap-6">
+
                         <div>
-                            <h3 className="font-bold mb-3">Bao gồm</h3>
-                            {includedList.map((item: any, i: any) => (
-                                <div key={i} className="flex gap-2 text-sm">
-                                    <CheckCircle2 className="text-green-500" />
-                                    <span dangerouslySetInnerHTML={{ __html: item }} />
-                                </div>
-                            ))}
+
+                            <h3 className="font-bold mb-3">
+                                Bao gồm
+                            </h3>
+
+                            <div className="space-y-2">
+
+                                {includedList.map((item: any, i: any) => (
+                                    <div
+                                        key={i}
+                                        className="flex gap-2 text-sm"
+                                    >
+
+                                        <CheckCircle2 className="text-green-500 min-w-[18px]" />
+
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: item,
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
-                            <h3 className="font-bold mb-3">Không bao gồm</h3>
-                            {exclusionsList.map((item: any, i: any) => (
-                                <div key={i} className="flex gap-2 text-sm">
-                                    <XCircle className="text-red-500" />
-                                    <span dangerouslySetInnerHTML={{ __html: item }} />
-                                </div>
-                            ))}
+
+                            <h3 className="font-bold mb-3">
+                                Không bao gồm
+                            </h3>
+
+                            <div className="space-y-2">
+
+                                {exclusionsList.map((item: any, i: any) => (
+                                    <div
+                                        key={i}
+                                        className="flex gap-2 text-sm"
+                                    >
+
+                                        <XCircle className="text-red-500 min-w-[18px]" />
+
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: item,
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
                     {/* TERMS */}
                     <div>
-                        <h2 className="text-xl font-bold">Các điều khoản</h2>
-                        {tdLoading ? <SkeletonBlock /> : tdError ? <ErrorBlock /> : (
-                            ListData?.strTermAndCondition
-                                ? <div className="text-sm" dangerouslySetInnerHTML={{ __html: ListData?.strTermAndCondition }} />
-                                : <span className="text-sm">Không có dữ liệu</span>
+
+                        <h2 className="text-xl font-bold mb-4">
+                            Các điều khoản
+                        </h2>
+
+                        {tdLoading ? (
+                            <SkeletonBlock />
+                        ) : tdError ? (
+                            <ErrorBlock />
+                        ) : ListData?.strTermAndCondition ? (
+                            <div
+                                className="text-sm leading-7"
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        ListData?.strTermAndCondition,
+                                }}
+                            />
+                        ) : (
+                            <span className="text-sm">
+                                Không có dữ liệu
+                            </span>
                         )}
                     </div>
-
                 </div>
 
                 {/* RIGHT */}
                 <div className="relative">
+
                     <div className="sticky top-32">
                         <BookingForm item={ListData} />
                     </div>
@@ -248,6 +481,7 @@ const TourDetail = () => {
 
             {/* RELATED */}
             <div className="max-w-7xl m-auto mt-20">
+
                 <h2 className="text-2xl font-bold mb-6 text-center">
                     Bạn có thể quan tâm
                 </h2>
@@ -256,9 +490,13 @@ const TourDetail = () => {
                 {tdpError && <ErrorBlock />}
 
                 {!tdpLoading && !tdpError && (
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
                         {tdpData?.map((t: any) => (
-                            <TourCard key={t.id} tour={t} />
+                            <TourCard
+                                key={t.id}
+                                tour={t}
+                            />
                         ))}
                     </div>
                 )}
