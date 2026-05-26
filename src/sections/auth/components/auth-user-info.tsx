@@ -4,12 +4,10 @@ import { User, LogOut, ChevronDown } from "lucide-react";
 import { getUrlImage } from "@/utils/format-image";
 import { CONFIG } from "@/config-global";
 import { truncateEmail, truncateText } from "@/utils/format-number";
-import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import { isValidValue } from "@/utils/utilts";
 
 const AuthUserInfo = () => {
-    const router = useRouter();
     const { user, userLoading } = useUser();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
