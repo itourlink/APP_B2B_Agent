@@ -9,36 +9,65 @@ const fetchListHotel = async (body: any) => {
     return res.data;
 };
 
-export const useListHotel = (filters?: { page?: number; pageSize?: number; strSupplierGUID?: string | null, tblsReturn?: string }) => {
+export const useListHotel = (filters?: {
+    page?: number;
+    pageSize?: number;
+    strSupplierGUID?: string | null;
+    strFilterLocationCode?: string | null;
+    strFilterSupplierName?: string | null;
+    intNoOfRooms?: number | null;
+    dtmFilterCheckIn?: string | Date | null;
+    dtmFilterCheckOut?: string | Date | null;
+    IsShowAll?: boolean;
+    strPriceFromRange?: string | null;
+    strListEasiaCateID?: string | null;
+    strOrder?: string | null;
+    tblsReturn?: string;
+}) => {
     const { user } = useUser();
 
     const {
         page = 1,
         pageSize = 10,
         strSupplierGUID = null,
-        tblsReturn = "[0]"
+        strFilterLocationCode = null,
+        strFilterSupplierName = null,
+        intNoOfRooms = null,
+        dtmFilterCheckIn = null,
+        dtmFilterCheckOut = null,
+        IsShowAll = true,
+        strPriceFromRange = null,
+        strListEasiaCateID = null,
+        strOrder = null,
+        tblsReturn = "[0]",
     } = filters || {};
 
     const query = useQuery({
         queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters],
         queryFn: () =>
             fetchListHotel({
+                strUserGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 strCompanyOwnerGUID: null,
                 intCurrencyID: user?.intCurrencyID,
-                strSupplierGUID: strSupplierGUID,
-                strFilterSupplierName: null,
-                strFilterLocationCode: null,
-                strPriceFromRange: null,
-                intNoOfRooms: null,
-                dtmFilterCheckIn: null,
-                dtmFilterCheckOut: null,
-                IsShowAll: true,
-                strListEasiaCateID: null,
+
+                strSupplierGUID,
+                strFilterLocationCode,
+                strFilterSupplierName,
+
+                intNoOfRooms,
+                dtmFilterCheckIn,
+                dtmFilterCheckOut,
+
+                IsShowAll,
+
+                strPriceFromRange,
+                strListEasiaCateID,
+
                 intCurPage: page,
                 intPageSize: pageSize,
-                strOrder: null,
-                tblsReturn: tblsReturn
+                strOrder,
+                tblsReturn,
             }),
         enabled: !!user,
         placeholderData: keepPreviousData,
