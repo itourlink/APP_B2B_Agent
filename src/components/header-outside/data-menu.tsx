@@ -9,7 +9,6 @@ import VoucherIcon from "@/assets/icons/header/voucher-icon";
 
 import { paths } from "@/routes/paths";
 
-
 const COMMON_MATCH = [
   paths.shop.search,
   paths.booking.paymentBooking,
@@ -17,6 +16,7 @@ const COMMON_MATCH = [
 
 export const menuConfigByGUID: Record<string, any> = {
   "1b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "tour",
     link: paths.shop.tour.list,
     match: [
       paths.shop.tour.list,
@@ -27,6 +27,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "2b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "hotel",
     link: paths.shop.hotel.list,
     match: [
       paths.shop.hotel.list,
@@ -37,6 +38,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "3b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "boat",
     link: paths.shop.boat.list,
     match: [
       paths.shop.boat.list,
@@ -47,6 +49,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "4b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "vehicle",
     link: paths.shop.vehicle.list,
     match: [
       paths.shop.vehicle.list,
@@ -57,6 +60,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "5b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "voucher",
     link: paths.shop.voucher.list,
     match: [
       paths.shop.voucher.list,
@@ -66,6 +70,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "6b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "restaurant",
     link: paths.shop.restaurant.list,
     match: [
       paths.shop.restaurant.list,
@@ -76,6 +81,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "7b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "guide",
     link: paths.shop.guide.list,
     match: [
       paths.shop.guide.list,
@@ -86,6 +92,7 @@ export const menuConfigByGUID: Record<string, any> = {
   },
 
   "8b7a2657-18eb-4703-8573-fa43b8dda001": {
+    type: "flight",
     link: paths.shop.flight.list,
     match: [
       paths.shop.flight.list,
@@ -110,6 +117,7 @@ export const buildMenu = (
       return {
         id: item.strWebMenuGUID,
         title: item.strMenuName || "",
+        type: config.type,
         link: config.link,
         match: config.match,
         icon: config.icon,
