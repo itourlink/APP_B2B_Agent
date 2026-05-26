@@ -771,7 +771,6 @@ const PaymentBookingView: React.FC = () => {
                         <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">CÔNG TY KẾT NỐI DU LỊCH</h2>
                     </div>
 
-                    {/* Bảng chi tiết dịch vụ */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs border-collapse">
                             <thead>
