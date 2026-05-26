@@ -48,7 +48,6 @@ const HotelLocationDes = ({ data = [], isLoading, onSelectDestination }: Props) 
 
                     <button
                         onClick={() => {
-
                             onSelectDestination?.(destination)
                         }
                         }
