@@ -162,6 +162,7 @@ export const paths = {
 
   booking: {
     paymentBooking: "/booking/payment-booking",
+    paymentBookingCart: "/booking/payment-booking-cart",
   },
 
   content: {

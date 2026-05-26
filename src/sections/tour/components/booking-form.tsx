@@ -207,7 +207,7 @@ const BookingForm = ({ item }: Props) => {
                 queryClient.invalidateQueries({
                     queryKey: [QUERY_KEYS.CART.LIST_CART],
                 });
-                route.replaceParams(paths.cart.list, { item: item, price: price, payload: buildPayload(), });
+                route.push(paths.cart.list);
                 showToast("success", "Thêm vào giỏ thành công");
             },
             onError: () => {

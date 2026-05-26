@@ -29,6 +29,7 @@ const ShopPage = lazy(() => import("@/pages/shop/list"));
 const VoucherPage = lazy(() => import("@/pages/voucher/list"));
 const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
 const PaymentBookingPage = lazy(() => import("@/pages/booking/payment-booking"));
+const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-booking-cart"));
 
 // const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
 
@@ -320,6 +321,10 @@ export function Router() {
             {
               path: paths.booking.paymentBooking,
               element: <PaymentBookingPage />,
+            },
+            {
+              path: paths.booking.paymentBookingCart,
+              element: <PaymentBookingCartPage />,
             },
           ],
         },
