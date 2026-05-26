@@ -63,7 +63,8 @@ const AuthUserInfo = () => {
 
                     <div className="mt-2">
                         <button onClick={() => {
-                            router.push(paths.content.info);
+                            // router.push(paths.content.info);
+                            window.open("https://myagentmember.itourlink.com", "_blank");
                         }} className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
                             <User size={18} /> Hồ Sơ Cá Nhân
                         </button>
