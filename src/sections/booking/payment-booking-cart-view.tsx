@@ -33,12 +33,6 @@ const PaymentBookingCartView: React.FC = () => {
     const totalCommission =
         Number(location.state?.totalCommission || 0);
 
-
-    console.log("items", items)
-    console.log("strListCartServiceItemGUID", strListCartServiceItemGUID)
-    console.log("totalPrice", totalPrice)
-    console.log("totalCommission", totalCommission)
-
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
@@ -349,10 +343,7 @@ const PaymentBookingCartView: React.FC = () => {
                     );
 
                     try {
-
-                        const serviceGUID =
-                            res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
-
+                        const serviceGUID = res?.[0]?.[0]?.strListAgentHostServiceItemGUID;
                         // call email template
                         if (serviceGUID) {
 

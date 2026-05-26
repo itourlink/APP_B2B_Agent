@@ -48,7 +48,7 @@ export default function BookingPopup({
             <div className="space-y-5 text-sm">
 
                 <div className="text-gray-700 leading-relaxed">
-                    Bạn có chắc chắn muốn đặt tour này không?
+                    Bạn có chắc chắn muốn đặt này không?
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2 text-xs">
