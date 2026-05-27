@@ -77,20 +77,6 @@ export default function BookingPopup({
                         </span>
                     </div>
 
-                    <div className="border-t border-dashed border-gray-300 pt-2 flex justify-between">
-                        <span>Tổng thanh toán:</span>
-
-                        <span className="font-bold text-green-600">
-                            {formatCurrency(
-                                Math.max(
-                                    Number(totalPrice || 0) -
-                                    Number(totalVoucherAmount || 0),
-                                    0
-                                )
-                            )}
-                        </span>
-                    </div>
-
                     <div className="flex justify-between">
                         <span>Phương thức:</span>
 
