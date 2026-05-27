@@ -14,12 +14,16 @@ import { paths } from "@/routes/paths";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useUser } from "@/hooks/actions/useAuth";
 import HotelListRowCard from "./hotel-list-row-card";
+import TourSearch from "../tour/components/tour-search";
+import HotelSearch from "../hotel/components/hotel-search";
 
 const SearchView = () => {
   const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
-
+  const searchType =
+    new URLSearchParams(location.search)
+      .get("type");
   const isSeries = state?.isTourSeries;
   const searchTourPayload = state?.isSearchTour || {};
 
@@ -283,9 +287,15 @@ const SearchView = () => {
 
   return (
     <div className="">
-      {/* <div className="sticky top-30 z-50 mt-[-50px]">
-                <TourSearch />
-            </div> */}
+      <div className="sticky top-30 z-[49] mt-[-50px]">
+        {searchType === "tour" && (
+          <TourSearch />
+        )}
+
+        {searchType === "hotel" && (
+          <HotelSearch />
+        )}
+      </div>
 
       <div className="mt-20 max-w-7xl mx-auto px-4 pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
