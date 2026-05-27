@@ -369,6 +369,9 @@ const PaymentBookingView: React.FC = () => {
                         const serviceGUID =
                             res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
 
+                        const intStatusBk = res?.[1]?.[0]?.intStatusBk;
+
+                        //intStatusBk = 1 => hold, intStatusBk = 2 => booked 
                         // call email template
                         if (serviceGUID) {
 
@@ -431,9 +434,20 @@ const PaymentBookingView: React.FC = () => {
                             });
                         }
 
-                        router.replaceParams(paths.content.service, {
-                            activeTab: "booked",
-                        });
+                        const mapStatusToTab = (status?: number) => {
+                            switch (status) {
+                                case 1:
+                                    return "hold";
+                                case 2:
+                                    return "booked";
+                                default:
+                                    return "suggest";
+                            }
+                        };
+
+                        const activeTab = mapStatusToTab(intStatusBk);
+
+                        router.push(`${paths.content.service}?activeTab=${activeTab}`);
 
                     } catch (err) {
 

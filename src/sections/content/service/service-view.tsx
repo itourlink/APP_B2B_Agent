@@ -27,8 +27,10 @@ const ServiceView = () => {
     const { t } = useTranslate("service");
     const location = useLocation();
 
+    const searchParams = new URLSearchParams(location.search);
+
     const [activeTab, setActiveTab] = useState(
-        location.state?.activeTab || "suggest"
+        searchParams.get("activeTab") || "suggest"
     );
     const { showToast } = useToastStore()
     const [filters, setFilters] = useState({
