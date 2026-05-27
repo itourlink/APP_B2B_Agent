@@ -84,10 +84,22 @@ const SearchView = () => {
     dtmFilterDateValidTo: searchTourPayload?.dtmFilterDateValidTo ?? null,
   });
 
+  const [hotelFilter, setHotelFilter] = useState({
+    strFilterSupplierName: null,
+    strPriceFromRange: null,
+    strListEasiaCateID: null,
+  });
+
   // ================= TEMP FILTER =================
   const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
   const hotelParams = state?.hotelParams;
   const [tempSeriesFilter, setTempSeriesFilter] = useState(seriesFilter);
+
+  const [tempHotelFilter, setTempHotelFilter] = useState(hotelFilter);
+
+  useEffect(() => {
+    setTempHotelFilter(hotelFilter);
+  }, [hotelFilter]);
 
   useEffect(() => {
     setTempSeriesFilter(seriesFilter);
@@ -138,6 +150,13 @@ const SearchView = () => {
     isQuick
       ? {
         ...hotelParams,
+
+        strFilterSupplierName:
+          hotelFilter?.strFilterSupplierName,
+
+        strListEasiaCateID:
+          hotelFilter?.strListEasiaCateID,
+
         page: pageHotel,
         pageSize,
       }
@@ -153,6 +172,15 @@ const SearchView = () => {
         intCurrencyID: user?.intCurrencyID,
 
         ...hotelParams,
+
+        strFilterSupplierName:
+          hotelFilter?.strFilterSupplierName,
+
+        strPriceFromRange:
+          hotelFilter?.strPriceFromRange,
+
+        strListEasiaCateID:
+          hotelFilter?.strListEasiaCateID,
 
         intCurPage: pageHotel,
         intPageSize: 12,
@@ -238,10 +266,22 @@ const SearchView = () => {
               isSeries={isSeries}
               isHotel={isSearchHotel}
               isQuick={isQuick}
-              tourFilter={tempTourFilter}
-              setTourFilter={setTempTourFilter}
+
+              tourFilter={
+                isSearchHotel
+                  ? tempHotelFilter
+                  : tempTourFilter
+              }
+
+              setTourFilter={
+                isSearchHotel
+                  ? setTempHotelFilter
+                  : setTempTourFilter
+              }
+
               seriesFilter={tempSeriesFilter}
               setSeriesFilter={setTempSeriesFilter}
+
               onApply={() => {
                 if (isSeries) {
                   setSeriesFilter({
@@ -249,14 +289,22 @@ const SearchView = () => {
                   });
 
                   setPageSeries(1);
+
+                } else if (isSearchHotel) {
+
+                  setHotelFilter({
+                    ...tempHotelFilter,
+                  });
+
+                  setPageHotel(1);
+
                 } else {
+
                   setTourFilter({
                     ...tempTourFilter,
                   });
 
                   setPageTour(1);
-
-                  setPageHotel(1);
                 }
               }}
             />
@@ -437,7 +485,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                            Không có dữ liệu QUICK HOTEL
+                            Không có dữ liệu Khách sạn
                           </div>
                         )}
                       </>
@@ -454,7 +502,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                            Không có dữ liệu LIST HOTEL
+                            Không có dữ liệu Khách sạn
                           </div>
                         )}
                       </>

@@ -68,7 +68,9 @@ export default function SearchFilter({
             intProductID: null,
 
             strNoOfDayRange: null,
+
             strFilterServiceName: null,
+            strFilterSupplierName: null,
 
             strListEasiaCateID: null,
             strListTransportOptionID: null,
@@ -121,11 +123,22 @@ export default function SearchFilter({
 
                 <input
                     type="text"
-                    value={currentFilter?.strFilterServiceName || ""}
+                    value={
+                        isHotel
+                            ? currentFilter?.strFilterSupplierName || ""
+                            : currentFilter?.strFilterServiceName || ""
+                    }
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-                            strFilterServiceName: e.target.value,
+
+                            ...(isHotel
+                                ? {
+                                    strFilterSupplierName: e.target.value,
+                                }
+                                : {
+                                    strFilterServiceName: e.target.value,
+                                }),
                         }))
                     }
                     placeholder="Nhập từ khóa..."
