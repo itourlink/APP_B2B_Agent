@@ -68,6 +68,7 @@ const HotelSearch = () => {
 
         router.replaceParams(paths.shop.search, {
             isSearchHotel: payload,
+            mode: filters.series ? "quick" : "list", // 👈 THÊM DÒNG NÀY
         });
     };
 

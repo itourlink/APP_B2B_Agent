@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useListTourPublish, useListTourSeries } from "@/hooks/actions/useTour";
 import { TourListCard } from "./tour-list-card";
-import { useSearchHotel } from "@/hooks/actions/useHotel";
+import { useListHotel, useSearchHotel } from "@/hooks/actions/useHotel";
 import { HotelCard } from "../hotel/components/hotel-list";
 import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +11,8 @@ import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { useUser } from "@/hooks/actions/useAuth";
 
 const SearchView = () => {
   const router = useRouter();
@@ -18,14 +20,14 @@ const SearchView = () => {
   const state = (location.state || {}) as any;
 
   const isSeries = state?.isTourSeries;
-  const isSearchHotel = state?.isSearchHotel;
-
   const searchTourPayload = state?.isSearchTour || {};
 
   const [pageSeries, setPageSeries] = useState(1);
   const [pageTour, setPageTour] = useState(1);
   const [pageHotel, setPageHotel] = useState(1);
-
+  const mode = state?.mode; // "quick" | "list"
+  const isQuick = mode === "quick";
+  const isSearchHotel = mode === "quick" || state?.isSearchHotel;
   const pageSize = 5;
 
   const getTotalPages = (listData: any, pageSize: number) => {
@@ -83,7 +85,7 @@ const SearchView = () => {
 
   // ================= TEMP FILTER =================
   const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
-
+  const hotelParams = state?.hotelParams;
   const [tempSeriesFilter, setTempSeriesFilter] = useState(seriesFilter);
 
   useEffect(() => {
@@ -119,13 +121,43 @@ const SearchView = () => {
   );
 
   const { searchData: hotelData, searchLoading } = useSearchHotel(
-    isSearchHotel
+    isQuick
       ? {
-        ...isSearchHotel,
+        ...hotelParams,
         page: pageHotel,
         pageSize,
       }
-      : undefined,
+      : undefined
+  );
+  const { coData } = useListCompanyOwner();
+  const { user } = useUser();
+
+  // QUICK HOTEL
+  const quickHotel = useSearchHotel(
+    isQuick
+      ? {
+        ...hotelParams,
+        page: pageHotel,
+        pageSize,
+      }
+      : undefined
+  );
+
+  // LIST HOTEL
+  const listHotel = useListHotel(
+    !isQuick
+      ? {
+        strCompanyPartnerGUID: user?.strCompanyGUID,
+        strCompanyOwnerGUID: coData?.strCompanyGUID,
+        intCurrencyID: user?.intCurrencyID,
+
+        ...hotelParams,
+
+        intCurPage: pageHotel,
+        intPageSize: 12,
+        tblsReturn: "[0]",
+      }
+      : undefined
   );
 
   const tsTotalPages = getTotalPages(tsData, pageSize);
@@ -212,7 +244,7 @@ const SearchView = () => {
 
           {/* CONTENT */}
           <div className="lg:col-span-9">
-            <div className="text-2xl font-semibold mb-6">
+            {/* <div className="text-2xl font-semibold mb-6">
               {loading ? "Loading..." : `Tìm thấy ${resultCount} kết quả`}
             </div>
 
@@ -220,7 +252,7 @@ const SearchView = () => {
               <div className="text-center py-10 text-gray-500">
                 Không có dữ liệu
               </div>
-            )}
+            )} */}
 
             {/* SERIES */}
             {tsLoading && isSeries && (
@@ -363,20 +395,58 @@ const SearchView = () => {
             )}
 
             {/* HOTEL */}
-            {!loading && isSearchHotel && (
-              <div className="grid grid-cols-3 gap-6">
-                {rawData.map((item: any) => (
-                  <HotelCard key={item?.strSupplierGUID} hotel={item} />
-                ))}
-              </div>
-            )}
-
             {isSearchHotel && (
-              <Pagination
-                currentPage={pageHotel}
-                onPageChange={setPageHotel}
-                totalPages={hotelTotalPages || 1}
-              />
+              <>
+                {/* QUICK MODE */}
+                {isQuick ? (
+                  <>
+                    {quickHotel.searchData?.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-6">
+                        {quickHotel.searchData.map((item: any) => (
+                          <HotelCard
+                            key={item?.strSupplierGUID}
+                            hotel={item}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="w-full py-20 flex items-center justify-center text-gray-500">
+                        Không có dữ liệu QUICK HOTEL
+                      </div>
+                    )}
+
+                    <Pagination
+                      currentPage={pageHotel}
+                      onPageChange={setPageHotel}
+                      totalPages={hotelTotalPages || 1}
+                    />
+                  </>
+                ) : (
+                  <>
+                    {/* LIST MODE */}
+                    {listHotel.hotelData?.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-6">
+                        {listHotel.hotelData.map((item: any) => (
+                          <HotelCard
+                            key={item?.strSupplierGUID}
+                            hotel={item}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="w-full py-20 flex items-center justify-center text-gray-500">
+                        Không có dữ liệu LIST HOTEL
+                      </div>
+                    )}
+
+                    <Pagination
+                      currentPage={pageHotel}
+                      onPageChange={setPageHotel}
+                      totalPages={hotelTotalPages || 1}
+                    />
+                  </>
+                )}
+              </>
             )}
 
             {/* TOUR */}
