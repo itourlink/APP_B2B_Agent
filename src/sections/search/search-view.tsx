@@ -7,12 +7,13 @@ import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
 import { isValidValue } from "@/utils/utilts";
 import { getUrlImage } from "@/utils/format-image";
-import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
+import { Building2, Calendar, Clock, Flag, MapPin, Star, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useUser } from "@/hooks/actions/useAuth";
+import HotelListRowCard from "./hotel-list-row-card";
 
 const SearchView = () => {
   const router = useRouter();
@@ -397,16 +398,13 @@ const SearchView = () => {
             {/* HOTEL */}
             {isSearchHotel && (
               <>
-                {/* QUICK MODE */}
+                {/* QUICK MODE (UI cũ - HotelCard grid) */}
                 {isQuick ? (
                   <>
                     {quickHotel.searchData?.length > 0 ? (
                       <div className="grid grid-cols-3 gap-6">
                         {quickHotel.searchData.map((item: any) => (
-                          <HotelCard
-                            key={item?.strSupplierGUID}
-                            hotel={item}
-                          />
+                          <HotelCard key={item?.strSupplierGUID} hotel={item} />
                         ))}
                       </div>
                     ) : (
@@ -414,38 +412,24 @@ const SearchView = () => {
                         Không có dữ liệu QUICK HOTEL
                       </div>
                     )}
-
-                    <Pagination
-                      currentPage={pageHotel}
-                      onPageChange={setPageHotel}
-                      totalPages={hotelTotalPages || 1}
-                    />
                   </>
                 ) : (
-                  <>
-                    {/* LIST MODE */}
-                    {listHotel.hotelData?.length > 0 ? (
-                      <div className="grid grid-cols-3 gap-6">
-                        {listHotel.hotelData.map((item: any) => (
-                          <HotelCard
-                            key={item?.strSupplierGUID}
-                            hotel={item}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                        Không có dữ liệu LIST HOTEL
-                      </div>
-                    )}
-
-                    <Pagination
-                      currentPage={pageHotel}
-                      onPageChange={setPageHotel}
-                      totalPages={hotelTotalPages || 1}
-                    />
-                  </>
+                  <div className="flex flex-col gap-4">
+                    {listHotel.hotelData.map((item: any) => (
+                      <HotelListRowCard
+                        key={item?.strSupplierGUID}
+                        hotel={item}
+                      />
+                    ))}
+                  </div>
                 )}
+
+                {/* PAGINATION (chung) */}
+                <Pagination
+                  currentPage={pageHotel}
+                  onPageChange={setPageHotel}
+                  totalPages={hotelTotalPages || 1}
+                />
               </>
             )}
 
