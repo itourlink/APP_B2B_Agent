@@ -133,15 +133,6 @@ const SearchView = () => {
       : null,
   );
 
-  const { searchData: hotelData, searchLoading } = useSearchHotel(
-    isQuick
-      ? {
-        ...hotelParams,
-        page: pageHotel,
-        pageSize,
-      }
-      : undefined
-  );
   const { coData } = useListCompanyOwner();
   const { user } = useUser();
 
@@ -149,6 +140,13 @@ const SearchView = () => {
   const quickHotel = useSearchHotel(
     isQuick
       ? {
+        intCurPage: pageHotel,
+        intPageSize: pageSize,
+
+        strCompanyOwnerGUID: coData?.strCompanyGUID,
+        strCompanyPartnerGUID: user?.strCompanyGUID,
+        intCurrencyID: user?.intCurrencyID,
+
         ...hotelParams,
 
         strFilterSupplierName:
@@ -157,12 +155,15 @@ const SearchView = () => {
         strListEasiaCateID:
           hotelFilter?.strListEasiaCateID,
 
-        page: pageHotel,
-        pageSize,
+        strPriceFromRange:
+          hotelFilter?.strPriceFromRange,
+
+        strOrder: null,
+        strSupplierGUID: null,
+        tblsReturn: "[0],[1],[2]",
       }
       : undefined
   );
-
   // LIST HOTEL
   const listHotel = useListHotel(
     !isQuick
@@ -211,9 +212,23 @@ const SearchView = () => {
   // ================= RAW DATA =================
   const rawData = useMemo(() => {
     if (isSeries) return tsData || [];
-    if (isSearchHotel) return hotelData || [];
+
+    if (isSearchHotel) {
+      return isQuick
+        ? quickHotel.searchData || []
+        : listHotel.hotelData || [];
+    }
+
     return tdpData || [];
-  }, [tsData, tdpData, hotelData, isSeries, isSearchHotel]);
+  }, [
+    tsData,
+    tdpData,
+    quickHotel.searchData,
+    listHotel.hotelData,
+    isSeries,
+    isSearchHotel,
+    isQuick,
+  ]);
 
   // ================= PAGE FIX =================
   useEffect(() => {
@@ -233,12 +248,26 @@ const SearchView = () => {
   }, [tdpData, pageTour]);
 
   useEffect(() => {
-    const totalPages = getTotalPages(hotelData, pageSize);
+
+    const hotelSource = isQuick
+      ? quickHotel.searchData
+      : listHotel.hotelData;
+
+    const totalPages = getTotalPages(
+      hotelSource,
+      isQuick ? pageSize : 12
+    );
 
     if (pageHotel > totalPages && totalPages > 0) {
       setPageHotel(1);
     }
-  }, [hotelData, pageHotel]);
+
+  }, [
+    quickHotel.searchData,
+    listHotel.hotelData,
+    pageHotel,
+    isQuick,
+  ]);
 
   // ================= LOADING =================
   const hotelLoadingState = isQuick

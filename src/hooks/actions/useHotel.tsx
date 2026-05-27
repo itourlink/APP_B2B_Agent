@@ -132,10 +132,15 @@ const fetchSearchHotel = async (body: any) => {
 };
 
 export const useSearchHotel = (filters?: {
-    page?: number,
-    pageSize?: number,
+    page?: number
+    pageSize?: number
+    intCurPage?: number
+    intPageSize?: number
     strFilterDestinationName?: string,
     strFilterLocationCode?: string | null,
+    strFilterSupplierName?: string | null,
+    strPriceFromRange?: string | null,
+    strListEasiaCateID?: string | null,
     IsShowAll?: boolean,
     intNoOfRooms?: number,
     dtmFilterCheckIn?: Date,
@@ -144,8 +149,11 @@ export const useSearchHotel = (filters?: {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
 
-    const page = filters?.page ?? null;
-    const pageSize = filters?.pageSize ?? null;
+    const page =
+        filters?.intCurPage ?? filters?.page ?? 1;
+
+    const pageSize =
+        filters?.intPageSize ?? filters?.pageSize ?? 5;
 
     const query = useQuery({
         queryKey: [QUERY_KEYS.HOTEL.LIST_SEARCH_HOTEL, filters],
@@ -164,9 +172,9 @@ export const useSearchHotel = (filters?: {
                 IsShowAll: filters?.IsShowAll,
 
                 strSupplierGUID: null,
-                strFilterSupplierName: null,
-                strPriceFromRange: null,
-                strListEasiaCateID: null,
+                strFilterSupplierName: filters?.strFilterSupplierName ?? null,
+                strPriceFromRange: filters?.strPriceFromRange ?? null,
+                strListEasiaCateID: filters?.strListEasiaCateID ?? null,
 
                 intCurPage: page,
                 intPageSize: pageSize,
