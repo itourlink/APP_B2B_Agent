@@ -24,6 +24,8 @@ const starList = [
 
 type Props = {
     isSeries?: boolean;
+    isHotel?: boolean;
+    isQuick?: boolean;
 
     tourFilter: any;
     setTourFilter: any;
@@ -36,6 +38,8 @@ type Props = {
 
 export default function SearchFilter({
     isSeries,
+    isHotel,
+    isQuick,
 
     tourFilter,
     setTourFilter,
@@ -130,141 +134,147 @@ export default function SearchFilter({
             </div>
 
             {/* PRICE */}
-            <div className="mb-4">
-                <h4 className="text-xs font-medium mb-2">
-                    Giá (USD)
-                </h4>
+            {(!isHotel || !isQuick) && (
+                <div className="mb-4">
+                    <h4 className="text-xs font-medium mb-2">
+                        Giá (USD)
+                    </h4>
 
-                <ReactSlider
-                    className="w-full h-2"
-                    thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
-                    trackClassName="h-2 rounded"
-                    value={priceRange}
-                    min={0}
-                    max={500}
-                    step={5}
-                    onChange={(value: any) => {
-                        setPriceRange(value);
+                    <ReactSlider
+                        className="w-full h-2"
+                        thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
+                        trackClassName="h-2 rounded"
+                        value={priceRange}
+                        min={0}
+                        max={500}
+                        step={5}
+                        onChange={(value: any) => {
+                            setPriceRange(value);
 
-                        setCurrentFilter((prev: any) => ({
-                            ...prev,
-                            strPriceFromRange: `${value[0]},${value[1]}`,
-                        }));
-                    }}
-                    renderTrack={(props: any, state: any) => (
-                        <div
-                            {...props}
-                            className={`
-                h-2 rounded
-                ${state.index === 1
-                                    ? "bg-blue-600"
-                                    : "bg-slate-200"}
-            `}
-                        />
-                    )}
-                />
+                            setCurrentFilter((prev: any) => ({
+                                ...prev,
+                                strPriceFromRange: `${value[0]},${value[1]}`,
+                            }));
+                        }}
+                        renderTrack={(props: any, state: any) => (
+                            <div
+                                {...props}
+                                className={`
+                                    h-2 rounded
+                                    ${state.index === 1
+                                        ? "bg-blue-600"
+                                        : "bg-slate-200"}
+                                `}
+                            />
+                        )}
+                    />
 
-                <div className="flex justify-between text-[10px] mt-2 text-gray-500">
-                    <span>{priceRange[0]}</span>
-                    <span>{priceRange[1]}</span>
+                    <div className="flex justify-between text-[10px] mt-2 text-gray-500">
+                        <span>{priceRange[0]}</span>
+                        <span>{priceRange[1]}</span>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* DAY */}
-            <div className="mb-4">
-                <h4 className="text-xs font-medium mb-2">
-                    Số ngày
-                </h4>
+            {!isHotel && (
+                <div className="mb-4">
+                    <h4 className="text-xs font-medium mb-2">
+                        Số ngày
+                    </h4>
 
-                <ReactSlider
-                    className="w-full h-2"
-                    thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
-                    trackClassName="h-2 rounded"
-                    value={dayRange}
-                    min={1}
-                    max={30}
-                    step={1}
-                    onChange={(value: any) => {
-                        setDayRange(value);
+                    <ReactSlider
+                        className="w-full h-2"
+                        thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
+                        trackClassName="h-2 rounded"
+                        value={dayRange}
+                        min={1}
+                        max={30}
+                        step={1}
+                        onChange={(value: any) => {
+                            setDayRange(value);
 
-                        setCurrentFilter((prev: any) => ({
-                            ...prev,
-                            strNoOfDayRange: `${value[0]},${value[1]}`,
-                        }));
-                    }}
-                    renderTrack={(props: any, state: any) => (
-                        <div
-                            {...props}
-                            className={`
-                    h-2 rounded
-                    ${state.index === 1
-                                    ? "bg-blue-600"
-                                    : "bg-slate-200"}
-                `}
-                        />
-                    )}
-                />
+                            setCurrentFilter((prev: any) => ({
+                                ...prev,
+                                strNoOfDayRange: `${value[0]},${value[1]}`,
+                            }));
+                        }}
+                        renderTrack={(props: any, state: any) => (
+                            <div
+                                {...props}
+                                className={`
+                                    h-2 rounded
+                                    ${state.index === 1
+                                        ? "bg-blue-600"
+                                        : "bg-slate-200"}
+                                `}
+                            />
+                        )}
+                    />
 
-                <div className="flex justify-between text-[10px] mt-2 text-gray-500">
-                    <span>{dayRange[0]} ngày</span>
+                    <div className="flex justify-between text-[10px] mt-2 text-gray-500">
+                        <span>{dayRange[0]} ngày</span>
 
-                    <span>{dayRange[1]} ngày</span>
+                        <span>{dayRange[1]} ngày</span>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* TRANSPORT */}
-            <div className="mb-4">
-                <h4 className="text-xs font-medium mb-2">
-                    Phương tiện
-                </h4>
+            {!isHotel && (
+                <div className="mb-4">
+                    <h4 className="text-xs font-medium mb-2">
+                        Phương tiện
+                    </h4>
 
-                <div className="space-y-1 max-h-30 overflow-auto">
-                    {transportList.map((item) => {
+                    <div className="space-y-1 max-h-30 overflow-auto">
+                        {transportList.map((item) => {
 
-                        const selected =
-                            currentFilter?.strListTransportOptionID
-                                ?.split(",")
-                                ?.includes(item.value) || false;
+                            const selected =
+                                currentFilter?.strListTransportOptionID
+                                    ?.split(",")
+                                    ?.includes(item.value) || false;
 
-                        return (
-                            <label
-                                key={item.value}
-                                className="flex items-center gap-2 cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={selected}
-                                    onChange={(e) => {
+                            return (
+                                <label
+                                    key={item.value}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selected}
+                                        onChange={(e) => {
 
-                                        const current =
-                                            currentFilter?.strListTransportOptionID
-                                                ?.split(",")
-                                                ?.filter(Boolean) || [];
+                                            const current =
+                                                currentFilter?.strListTransportOptionID
+                                                    ?.split(",")
+                                                    ?.filter(Boolean) || [];
 
-                                        const updated =
-                                            e.target.checked
-                                                ? [...current, item.value]
-                                                : current.filter(
-                                                    (x: string) => x !== item.value
-                                                );
+                                            const updated =
+                                                e.target.checked
+                                                    ? [...current, item.value]
+                                                    : current.filter(
+                                                        (x: string) => x !== item.value
+                                                    );
 
-                                        setCurrentFilter((prev: any) => ({
-                                            ...prev,
-                                            strListTransportOptionID:
-                                                updated.join(","),
-                                        }));
-                                    }}
-                                    className="w-3 h-3"
-                                />
+                                            setCurrentFilter((prev: any) => ({
+                                                ...prev,
+                                                strListTransportOptionID:
+                                                    updated.join(","),
+                                            }));
+                                        }}
+                                        className="w-3 h-3"
+                                    />
 
-                                <span className="text-xs">
-                                    {item.label}
-                                </span>
-                            </label>
-                        );
-                    })}
+                                    <span className="text-xs">
+                                        {item.label}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* STAR */}
             <div className="mb-4">

@@ -236,6 +236,8 @@ const SearchView = () => {
           <div className="lg:col-span-3">
             <SearchFilter
               isSeries={isSeries}
+              isHotel={isSearchHotel}
+              isQuick={isQuick}
               tourFilter={tempTourFilter}
               setTourFilter={setTempTourFilter}
               seriesFilter={tempSeriesFilter}
@@ -253,6 +255,8 @@ const SearchView = () => {
                   });
 
                   setPageTour(1);
+
+                  setPageHotel(1);
                 }
               }}
             />
