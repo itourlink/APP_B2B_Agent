@@ -8,7 +8,7 @@ const HotelView = () => {
     return (
         <div className="relative">
             <BannerSlider slides={slidesHotel} />
-            <div className="absolute left-1/2 -translate-x-1/2 top-[550px] z-50 w-full">
+            <div className="sticky top-30 mt-[-50px] z-[49]">
                 <HotelSearch />
             </div>
             <div className="mt-20">
