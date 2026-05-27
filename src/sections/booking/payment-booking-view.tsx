@@ -371,7 +371,6 @@ const PaymentBookingView: React.FC = () => {
 
                         const intStatusBk = res?.[1]?.[0]?.intStatusBk;
 
-                        //intStatusBk = 1 => hold, intStatusBk = 2 => booked 
                         // call email template
                         if (serviceGUID) {
 
