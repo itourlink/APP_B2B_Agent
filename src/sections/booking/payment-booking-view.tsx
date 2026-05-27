@@ -476,12 +476,13 @@ const PaymentBookingView: React.FC = () => {
         }
     };
 
-    console.log("price", price)
-
     return (
         <div className="w-full min-h-screen bg-gray-100 font-sans text-gray-800 pb-12">
 
-            <PaymentCountdown onExpire={() => setIsExpired(true)} />
+            <PaymentCountdown
+                isExpired={isExpired}
+                onExpire={() => setIsExpired(true)}
+            />
 
             <div className="max-w-5xl mx-auto px-4 mt-6 space-y-5">
 
