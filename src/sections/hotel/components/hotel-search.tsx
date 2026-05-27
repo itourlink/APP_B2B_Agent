@@ -4,6 +4,7 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { useState } from "react";
 import { paths } from "@/routes/paths";
 import { useSearchDesHotel } from "@/hooks/actions/useHotel";
+import { useLocation } from "react-router-dom";
 
 const today = new Date();
 
@@ -30,6 +31,11 @@ const DEFAULT_FILTERS2 = {
 };
 
 const HotelSearch = () => {
+    const location = useLocation();
+
+    const company =
+        new URLSearchParams(location.search).get("company");
+
     const [isNavigating, setIsNavigating] = useState(false);
     const router = useRouter();
 
@@ -56,20 +62,35 @@ const HotelSearch = () => {
                     strSupplierNameURL: selectedUrl,
                 },
             });
+
             return;
         }
 
         const payload = {
             ...draftFilters,
-            intNoOfRooms: filters.guestRoom?.rooms || 1,
+
+            intNoOfRooms:
+                filters.guestRoom?.rooms || 1,
+
             dtmFilterCheckIn: filters.start,
+
             dtmFilterCheckOut: filters.end,
         };
 
-        router.replaceParams(paths.shop.search, {
-            isSearchHotel: payload,
-            mode: filters.series ? "quick" : "list", // 👈 THÊM DÒNG NÀY
-        });
+        router.pushQuery(
+            paths.shop.search,
+            {
+                company,
+                type: "hotel",
+            },
+            {
+                isSearchHotel: payload,
+
+                mode: filters.series
+                    ? "quick"
+                    : "list",
+            }
+        );
     };
 
     return (

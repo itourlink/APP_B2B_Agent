@@ -86,6 +86,23 @@ export function useRouter() {
 
         navigate(url);
       },
+
+      pushQuery: (
+        href: string,
+        params?: Record<string, any>,
+        state?: any
+      ) => {
+        const query = params
+          ? `?${buildQuery(params)}`
+          : "";
+
+        navigate(
+          `${href}${query}`,
+          {
+            state,
+          }
+        );
+      },
     }),
     [navigate, location.search]
   );

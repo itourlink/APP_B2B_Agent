@@ -4,6 +4,7 @@ import { useState } from "react";
 import TourLocationDes from "./tour-location-des";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
+import { useLocation } from "react-router-dom";
 
 const TOUR_TYPE_OPTIONS = [
     { label: "Tất cả", value: "all" },
@@ -83,6 +84,11 @@ const formatDate = (date: Date | null) => {
 };
 
 const TourSearch = () => {
+    const location = useLocation();
+
+    const company =
+        new URLSearchParams(location.search).get("company");
+
     const router = useRouter();
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
@@ -117,13 +123,28 @@ const TourSearch = () => {
         }
 
         // CLICK DESTINATION => SEARCH LIST
-        router.replaceParams(paths.shop.search, {
-            isTourSeries: filters.isTourSeries,
-            isSearchTour: {
-                ...draftFilters2,
-            },
-        });
+        // router.replaceParams(paths.shop.search, {
+        //     type: "tour",
+        //     isTourSeries: filters.isTourSeries,
+        //     isSearchTour: {
+        //         ...draftFilters2,
+        //     },
+        // });
 
+        router.pushQuery(
+            paths.shop.search,
+            {
+                company,
+                type: "tour",
+            },
+            {
+                isTourSeries: filters.isTourSeries,
+
+                isSearchTour: {
+                    ...draftFilters2,
+                },
+            }
+        );
 
     };
 
