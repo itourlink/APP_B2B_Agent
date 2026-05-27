@@ -418,9 +418,7 @@ const PaymentBookingCartView: React.FC = () => {
                             });
                         }
 
-                        router.replaceParams(paths.content.service, {
-                            activeTab: "booked",
-                        });
+                        router.push(`${paths.content.service}?activeTab=booked`);
 
                     } catch (err) {
 
