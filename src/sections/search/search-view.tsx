@@ -163,7 +163,15 @@ const SearchView = () => {
 
   const tsTotalPages = getTotalPages(tsData, pageSize);
   const tourTotalPages = getTotalPages(tdpData, pageSize);
-  const hotelTotalPages = getTotalPages(hotelData, pageSize);
+  const quickHotelTotalPages = getTotalPages(
+    quickHotel.searchData,
+    pageSize
+  );
+
+  const listHotelTotalPages = getTotalPages(
+    listHotel.hotelData,
+    12
+  );
 
   // ================= RESET PAGE =================
   useEffect(() => {
@@ -205,7 +213,14 @@ const SearchView = () => {
   }, [hotelData, pageHotel]);
 
   // ================= LOADING =================
-  const loading = tsLoading || tdpLoading || searchLoading;
+  const hotelLoadingState = isQuick
+    ? quickHotel.searchLoading
+    : listHotel.hotelLoading;
+
+  const loading =
+    tsLoading ||
+    tdpLoading ||
+    hotelLoadingState;
 
   const resultCount = rawData?.[0]?.intTotalRecords || 0;
 
@@ -398,38 +413,61 @@ const SearchView = () => {
             {/* HOTEL */}
             {isSearchHotel && (
               <>
-                {/* QUICK MODE (UI cũ - HotelCard grid) */}
-                {isQuick ? (
-                  <>
-                    {quickHotel.searchData?.length > 0 ? (
-                      <div className="grid grid-cols-3 gap-6">
-                        {quickHotel.searchData.map((item: any) => (
-                          <HotelCard key={item?.strSupplierGUID} hotel={item} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                        Không có dữ liệu QUICK HOTEL
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex flex-col gap-4">
-                    {listHotel.hotelData.map((item: any) => (
-                      <HotelListRowCard
-                        key={item?.strSupplierGUID}
-                        hotel={item}
-                      />
-                    ))}
+                {hotelLoadingState ? (
+                  <div className="flex items-center justify-center py-20">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
                   </div>
-                )}
+                ) : (
+                  <>
+                    {/* QUICK MODE */}
+                    {isQuick ? (
+                      <>
+                        {quickHotel.searchData?.length > 0 ? (
+                          <div className="grid grid-cols-3 gap-6">
+                            {quickHotel.searchData.map((item: any) => (
+                              <HotelCard
+                                key={item?.strSupplierGUID}
+                                hotel={item}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="w-full py-20 flex items-center justify-center text-gray-500">
+                            Không có dữ liệu QUICK HOTEL
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {listHotel.hotelData?.length > 0 ? (
+                          <div className="flex flex-col gap-4">
+                            {listHotel.hotelData.map((item: any) => (
+                              <HotelListRowCard
+                                key={item?.strSupplierGUID}
+                                hotel={item}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="w-full py-20 flex items-center justify-center text-gray-500">
+                            Không có dữ liệu LIST HOTEL
+                          </div>
+                        )}
+                      </>
+                    )}
 
-                {/* PAGINATION (chung) */}
-                <Pagination
-                  currentPage={pageHotel}
-                  onPageChange={setPageHotel}
-                  totalPages={hotelTotalPages || 1}
-                />
+                    {/* PAGINATION */}
+                    <Pagination
+                      currentPage={pageHotel}
+                      onPageChange={setPageHotel}
+                      totalPages={
+                        isQuick
+                          ? quickHotelTotalPages || 1
+                          : listHotelTotalPages || 1
+                      }
+                    />
+                  </>
+                )}
               </>
             )}
 
