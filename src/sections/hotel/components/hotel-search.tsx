@@ -11,9 +11,14 @@ const today = new Date();
 const DEFAULT_FILTERS = {
     page: 1,
     pageSize: 10,
+
+    series: false,
+
     strFilterDestinationName: "",
+
     start: today,
     end: null,
+
     guestRoom: {
         rooms: 1,
         adults: 1,

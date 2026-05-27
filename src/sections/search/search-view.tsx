@@ -7,7 +7,7 @@ import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
 import { isValidValue } from "@/utils/utilts";
 import { getUrlImage } from "@/utils/format-image";
-import { Building2, Calendar, Clock, Flag, MapPin, Star, Users } from "lucide-react";
+import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
@@ -341,15 +341,15 @@ const SearchView = () => {
 
           {/* CONTENT */}
           <div className="lg:col-span-9">
-            {/* <div className="text-2xl font-semibold mb-6">
+            <div className="text-2xl font-semibold mb-6">
               {loading ? "Loading..." : `Tìm thấy ${resultCount} kết quả`}
             </div>
 
             {resultCount === 0 && !loading && (
               <div className="text-center py-10 text-gray-500">
-                Không có dữ liệu
+                Tìm thấy 0 kết quả
               </div>
-            )} */}
+            )}
 
             {/* SERIES */}
             {tsLoading && isSeries && (
