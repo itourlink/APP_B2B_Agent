@@ -82,6 +82,18 @@ const CartList = () => {
 
   // poup total price detail
 
+  const extractNumberFromHTML = (html?: string) => {
+    if (!html) return 0;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const text = doc.body.textContent || "";
+
+    const match = text.match(/(\d+)/);
+    return match ? Number(match[1]) : 0;
+  };
+
   const colDefs: ColumnDef<any>[] = [
     {
       field: "checkbox",
@@ -194,10 +206,9 @@ const CartList = () => {
       field: "intQuantity",
       headerName: "Số lượng",
       render: (_: any, row: any) => (
-        <div
-          className="text-[#1f5fa9] text-[13px] leading-5"
-          dangerouslySetInnerHTML={{ __html: row?.intQuantity || "" }}
-        />
+        <div className="text-[#1f5fa9] text-[13px] leading-5">
+          {extractNumberFromHTML(row?.intQuantity)}
+        </div>
       )
     },
     {

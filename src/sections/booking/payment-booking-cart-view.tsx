@@ -135,9 +135,20 @@ const PaymentBookingCartView: React.FC = () => {
         };
     }, []);
 
+    const extractNumber = (value?: string) => {
+        if (!value) return 0;
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(value, "text/html");
+        const text = doc.body.textContent || "";
+
+        const match = text.match(/(\d+)/);
+        return match ? Number(match[1]) : 0;
+    };
+
     const totalGuests = items.reduce(
         (sum: number, item: any) =>
-            sum + Number(item?.intQuantity || 0),
+            sum + extractNumber(item?.intQuantity),
         0
     );
 
@@ -437,6 +448,8 @@ const PaymentBookingCartView: React.FC = () => {
             console.log("VOUCHER ERROR", err);
         }
     };
+
+
 
     return (
         <div className="w-full min-h-screen bg-gray-100 font-sans text-gray-800 pb-12">
@@ -798,7 +811,7 @@ const PaymentBookingCartView: React.FC = () => {
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {item?.intQuantity || 0}
+                                            {extractNumber(item?.intQuantity)}
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
