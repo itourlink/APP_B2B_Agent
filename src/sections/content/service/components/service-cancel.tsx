@@ -33,7 +33,7 @@ const ServiceCancel = ({ appliedFilters }: Props) => {
                 strFilterDateFrom: appliedFilters?.startTime || null,
                 strFilterDateTo: appliedFilters?.endTime || null,
                 strAgentHostServiceItemCode: appliedFilters?.idOrder || null,
-                intBookingStatusID: "5",
+                intBookingStatusID: 5,
                 intCurrencyID: user?.intCurrencyID,
                 strFilterAgent: null,
                 strWhere: null,

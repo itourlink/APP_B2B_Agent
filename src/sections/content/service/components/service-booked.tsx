@@ -45,7 +45,7 @@ const ServiceBooked = ({ appliedFilters }: Props) => {
                 strFilterDateFrom: appliedFilters?.startTime || null,
                 strFilterDateTo: appliedFilters?.endTime || null,
                 strAgentHostServiceItemCode: appliedFilters?.idOrder || null,
-                intBookingStatusID: "2",
+                intBookingStatusID: 2,
                 intCurrencyID: user?.intCurrencyID,
                 strFilterAgent: null,
                 strWhere: null,

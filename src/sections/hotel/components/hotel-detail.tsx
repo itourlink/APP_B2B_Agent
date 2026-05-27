@@ -1,5 +1,5 @@
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
-import { useListHotel, useListItemByAgent } from "@/hooks/actions/useHotel";
+import { useListHotel, useListHotelGetPriceUID, useListItemByAgent, useListPriceListForCompany, useListSupplierPriceByAgent } from "@/hooks/actions/useHotel";
 import { getUrlImage } from "@/utils/format-image";
 import {
     Star,
@@ -8,6 +8,7 @@ import {
     XCircle,
     Info,
     X,
+    Utensils,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -22,15 +23,34 @@ const HotelDetail = () => {
         strSupplierGUID: item?.strSupplierGUID,
         tblsReturn: "[0][1]"
     });
+    const [filters2] = useState({
+        strSupplierGUID: item?.strSupplierGUID,
+        tblsReturn: "[0][1]"
+    });
+
 
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
-
+    const { pplfcData } = useListPriceListForCompany(filters2);
+    const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
     const hotel = hotelData?.[0] ?? {};
-    
+    const strPriceListGUID = pplfcData?.strPriceListGUID;
+    const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
+    const isSupplierPriceReady =
+        !!item?.strSupplierGUID &&
+        !!strPriceListGUID &&
+        !!strPriceLevelGUID;
+    const { spbData } = useListSupplierPriceByAgent(
+        isSupplierPriceReady
+            ? {
+                strSupplierGUID: item?.strSupplierGUID,
+                strPriceListGUID,
+                strPriceLevelGUID,
+            }
+            : undefined
+    );
+
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    
-    
 
 
     const colDefs: ColumnDef<any>[] = [
@@ -64,7 +84,23 @@ const HotelDetail = () => {
         {
             field: "strItemTypeName",
             headerName: "Tên phòng",
-            render: (value) => <div>{value}</div>
+            render: (value, row) => {
+                const price = spbData?.[0]?.find(
+                    (p: any) => p.strItemTypeGUID === row.strItemTypeGUID
+                );
+                return (
+                    <div>
+                        <div>{value}</div>
+
+                        {price?.strMealIncludedTypeName && (
+                            <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                <Utensils size={14} className="text-emerald-500" />
+                                {price.strMealIncludedTypeName}
+                            </div>
+                        )}
+                    </div>
+                );
+            }
         },
         {
             field: "strSglDblName",
@@ -231,18 +267,18 @@ const HotelDetail = () => {
                 </div>
             </div>
 
-            {previewImage  && (
-                <div 
+            {previewImage && (
+                <div
                     className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
                     onClick={() => setPreviewImage(null)}
                 >
-                    <div 
+                    <div
                         className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                             <h2 className="text-xl font-bold text-slate-800">Xem chi tiết hình ảnh</h2>
-                            <button  
+                            <button
                                 onClick={() => setPreviewImage(null)}
                                 className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
                             >
@@ -251,10 +287,10 @@ const HotelDetail = () => {
                         </div>
 
                         <div className="p-2 flex justify-center bg-slate-50">
-                            <img 
+                            <img
                                 className="max-w-full max-h-[80vh] object-contain rounded-lg"
-                                src={getUrlImage(hotel?.strSupplierImage) || "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image"} 
-                                alt="hotel-image" 
+                                src={getUrlImage(hotel?.strSupplierImage) || "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image"}
+                                alt="hotel-image"
                             />
                         </div>
                     </div>

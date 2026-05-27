@@ -46,7 +46,7 @@ const ServiceReservationHold = ({ appliedFilters }: Props) => {
                 strFilterDateFrom: appliedFilters?.startTime || null,
                 strFilterDateTo: appliedFilters?.endTime || null,
                 strAgentHostServiceItemCode: appliedFilters?.idOrder || null,
-                intBookingStatusID: "1",
+                intBookingStatusID: 1,
                 intCurrencyID: user?.intCurrencyID,
                 strFilterAgent: null,
                 strWhere: null,

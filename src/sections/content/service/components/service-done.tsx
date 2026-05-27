@@ -33,7 +33,7 @@ const ServiceDone = ({ appliedFilters }: Props) => {
                 strFilterDateFrom: appliedFilters?.startTime || null,
                 strFilterDateTo: appliedFilters?.endTime || null,
                 strAgentHostServiceItemCode: appliedFilters?.idOrder || null,
-                intBookingStatusID: "4",
+                intBookingStatusID: 4,
                 intCurrencyID: user?.intCurrencyID,
                 strFilterAgent: null,
                 strWhere: null,

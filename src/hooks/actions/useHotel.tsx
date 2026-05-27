@@ -86,6 +86,82 @@ export const useListHotel = (filters?: {
     };
 };
 
+export const useListHotelGetPriceUID = (filters?: {
+    page?: number;
+    pageSize?: number;
+    strSupplierGUID?: string | null;
+    strFilterLocationCode?: string | null;
+    strFilterSupplierName?: string | null;
+    intNoOfRooms?: number | null;
+    dtmFilterCheckIn?: string | Date | null;
+    dtmFilterCheckOut?: string | Date | null;
+    IsShowAll?: boolean;
+    strPriceFromRange?: string | null;
+    strListEasiaCateID?: string | null;
+    strOrder?: string | null;
+    tblsReturn?: string;
+}) => {
+    const { user } = useUser();
+
+    const {
+        page = 1,
+        pageSize = 10,
+        strSupplierGUID = null,
+        strFilterLocationCode = null,
+        strFilterSupplierName = null,
+        intNoOfRooms = null,
+        dtmFilterCheckIn = null,
+        dtmFilterCheckOut = null,
+        IsShowAll = true,
+        strPriceFromRange = null,
+        strListEasiaCateID = null,
+        strOrder = null,
+        tblsReturn = "[0]",
+    } = filters || {};
+
+    const query = useQuery({
+        queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters],
+        queryFn: () =>
+            fetchListHotel({
+                strUserGUID: user?.strUserGUID,
+                strCompanyPartnerGUID: user?.strCompanyGUID,
+                strCompanyOwnerGUID: null,
+                intCurrencyID: user?.intCurrencyID,
+
+                strSupplierGUID,
+                strFilterLocationCode,
+                strFilterSupplierName,
+
+                intNoOfRooms,
+                dtmFilterCheckIn,
+                dtmFilterCheckOut,
+
+                IsShowAll,
+
+                strPriceFromRange,
+                strListEasiaCateID,
+
+                intCurPage: page,
+                intPageSize: pageSize,
+                strOrder,
+                tblsReturn,
+            }),
+        enabled: !!user,
+        placeholderData: keepPreviousData,
+    });
+
+    const listData = query.data ?? [];
+    const totalRecords = listData?.[0]?.intTotalRecords || 0;
+    const totalPages = Math.ceil(totalRecords / pageSize);
+
+    return {
+        hotelData: listData,
+        totalRecords,
+        totalPages,
+        hotelLoading: query.isLoading,
+        hotelError: query.isError,
+    };
+};
 
 const fetchItemTypeByAgent = async (body: any) => {
     const res = await apiClient.post("supplier/GetListItemTypeByAgent", body);
@@ -125,6 +201,72 @@ export const useListItemByAgent = (filters?: { strSupplierGUID?: string | null }
     };
 };
 
+const fetchListSupPriceByAgent = async (body: any) => {
+    const res = await apiClient.post("supplier/GetListSupplierMappingPriceForHotelByAgent", body);
+    return res.data;
+};
+
+export const useListSupplierPriceByAgent = (
+    filters?: {
+        strSupplierGUID?: string | null;
+        strPriceListGUID?: string | null;
+        strPriceLevelGUID?: string | null;
+    }
+) => {
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner();
+
+    const {
+        strSupplierGUID = null,
+        strPriceListGUID = null,
+        strPriceLevelGUID = null
+    } = filters || {};
+
+    // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
+
+    const tomorrowDate = new Date();
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    const tomorrow = tomorrowDate.toISOString().split("T")[0];
+
+    const isReady =
+        !!user &&
+        !!coData &&
+        !!strSupplierGUID &&
+        !!strPriceListGUID &&
+        !!strPriceLevelGUID;
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.HOTEL.LIST_SUPPLIER_PRICE_BY_AGENT,
+            filters,
+            coData?.strCompanyGUID
+        ],
+        queryFn: () =>
+            fetchListSupPriceByAgent({
+                strSupplierMappingPriceGUID: null,
+                strSupplierGUID,
+                strPriceListGUID,
+                strPriceLevelGUID,
+                strCompanyOwnerGUID: coData?.strCompanyGUID,
+                dtmFilterCheckIn: today,
+                dtmFilterCheckOut: tomorrow,
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: null,
+                tblsReturn: "[0][1]",
+                intCurrencyView: 3
+            }),
+        enabled: isReady,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        spbData: query.data ?? [],
+        spbLoading: query.isLoading,
+        spbError: query.isError,
+    };
+};
 
 const fetchSearchHotel = async (body: any) => {
     const res = await apiClient.post("supplier/GetListSupplierForHotelAlotmentByAgent", body);
@@ -197,6 +339,95 @@ export const useSearchHotel = (filters?: {
     };
 };
 
+const fetchListPriceListForCompany = async (body: any) => {
+    const res = await apiClient.post(
+        "supplier/GetListPriceListForCompany",
+        body
+    );
+
+    return res.data;
+};
+
+export const useListPriceListForCompany = (filters?: {
+    page?: number;
+    pageSize?: number;
+    intCurPage?: number;
+    intPageSize?: number;
+
+    strPriceListGUID?: string | null;
+    strSupplierGUID?: string | null;
+
+    IsNotInPriceList?: number | null;
+    IsAddSystem?: number;
+    IsEnable?: number;
+}) => {
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner();
+
+    const page =
+        filters?.intCurPage ?? filters?.page ?? 1;
+
+    const pageSize =
+        filters?.intPageSize ?? filters?.pageSize ?? 20;
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.HOTEL.LIST_PRICE_LIST_FOR_COMPANY,
+            filters
+        ],
+
+        queryFn: () =>
+            fetchListPriceListForCompany({
+                strUserGUID: user?.strUserGUID,
+
+                strPriceListGUID:
+                    filters?.strPriceListGUID ?? null,
+
+                IsNotInPriceList:
+                    filters?.IsNotInPriceList ?? true,
+
+                strSupplierGUID:
+                    filters?.strSupplierGUID ?? null,
+
+                IsAddSystem:
+                    filters?.IsAddSystem ?? true,
+
+                strCompanyGUID:
+                    coData?.strCompanyGUID,
+
+                IsEnable:
+                    filters?.IsEnable ?? true,
+
+                intCurPage: page,
+                intPageSize: pageSize,
+
+                strOrder: null,
+                tblsReturn: "[0]"
+            }),
+
+        enabled: !!user && !!coData,
+        placeholderData: keepPreviousData,
+    });
+
+    const listData = query.data?.[0]?.[0] ?? [];
+
+    const totalRecords =
+        listData?.[0]?.intTotalRecords || 0;
+
+    const totalPages =
+        pageSize
+            ? Math.ceil(totalRecords / pageSize)
+            : 0;
+
+    return {
+        pplfcData: listData,
+        pplfcLoading: query.isLoading,
+        pplfcError: query.isError,
+
+        totalRecords,
+        totalPages,
+    };
+};
 
 const fetchSearchDesHotel = async (body: any) => {
     const res = await apiClient.post("system/GetListDirectorySearchingForSuppByAgent", body);
