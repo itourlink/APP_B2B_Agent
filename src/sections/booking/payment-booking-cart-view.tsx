@@ -154,7 +154,6 @@ const PaymentBookingCartView: React.FC = () => {
 
     const totalDeposit = totalPrice * 0.3;
 
-    console.log("totalPrice", totalPrice)
     const totalDebt =
         totalPrice - totalDeposit;
 

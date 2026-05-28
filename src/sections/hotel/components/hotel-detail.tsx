@@ -61,15 +61,54 @@ const HotelDetail = () => {
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const spbDataItem = spbData?.[0]
-    console.log("spbData", spbDataItem)
-    console.log("ibgData", ibgData)
     const ibgDataMain = ibgData?.[0] ?? [];
     const ibgDataDetail = ibgData?.[1] ?? [];
     const ibgDataDetailChild = ibgData?.[3] ?? [];
 
-    console.log("ibgDataMain", ibgDataMain)
-    console.log("ibgDataDetail", ibgDataDetail)
-    console.log("ibgDataDetailChild", ibgDataDetailChild)
+    console.log("spbData", spbDataItem)
+    console.log("ibgData", ibgData)
+
+    const getPrice = (row: any, option: any) => {
+        const flatSpbData = spbData?.flat?.() || [];
+
+        const priceRow = flatSpbData.find(
+            (x: any) => x.strItemTypeGUID === row.strItemTypeGUID
+        );
+
+        if (!priceRow) return 0;
+
+        const getNum = (v: any) => (typeof v === "number" ? v : 0);
+
+        // CHILD / EXTRA
+        if (option.raw?.intAgeFrom != null && option.raw?.intAgeTo != null) {
+
+            const from = option.raw.intAgeFrom;
+            const to = option.raw.intAgeTo;
+
+            if (
+                option.raw.IsExb ||
+                option.raw.strAgeName?.toLowerCase().includes("extra")
+            ) {
+                return getNum(priceRow.dblPriceChild2);
+            }
+
+            if (from === 6 && to === 11) {
+                return getNum(priceRow.dblPriceChild1);
+            }
+
+            return getNum(priceRow.dblPriceChild1) || getNum(priceRow.dblPrice);
+        }
+
+        // ROOM
+        switch (option.raw?.intSglDblID) {
+            case 1:
+                return getNum(priceRow.dblPriceSGL) || getNum(priceRow.dblPrice);
+            case 2:
+                return getNum(priceRow.dblPriceTPL) || getNum(priceRow.dblPrice);
+            default:
+                return getNum(priceRow.dblPrice);
+        }
+    };
 
     const colDefs: ColumnDef<any>[] = [
         {
@@ -225,7 +264,7 @@ const HotelDetail = () => {
                             {selected.length > 0 ? (
                                 <div className="flex flex-col gap-2">
                                     {selected.map((room) => {
-                                        const price = 3628800;
+                                        const price = getPrice(row, room);
                                         const total = room.qty * price;
                                         return (
                                             <div
