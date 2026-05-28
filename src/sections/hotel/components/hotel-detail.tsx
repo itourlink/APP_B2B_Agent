@@ -10,14 +10,13 @@ import {
     X,
     Utensils,
     BedDouble,
-    Plus,
-    Minus,
     Baby,
     ShoppingCart,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
+import BookingHotelPopup from "./booking-hotel-popup";
 
 const HotelDetail = () => {
     const location = useLocation();
@@ -38,7 +37,7 @@ const HotelDetail = () => {
     const [selectedRooms, setSelectedRooms] = useState<
         Record<string, any[]>
     >({});
-
+    const [bookingData, setBookingData] = useState<any | null>(null);
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
     const { pplfcData } = useListPriceListForCompany(filters2);
@@ -170,12 +169,12 @@ const HotelDetail = () => {
 
                 // ===== ROOM TYPES =====
                 const roomTypes = ibgDataDetail.filter(
-                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
+                    (x: any) => x.strItemTypeGUID === row.strItemTypeGUID
                 );
 
                 const roomTypeOptions = [
                     ...new Map(
-                        roomTypes.map((item) => [
+                        roomTypes.map((item: any) => [
                             item.strSglDblName,
                             {
                                 label: item.strSglDblName,
@@ -185,7 +184,7 @@ const HotelDetail = () => {
                                 icon: (
                                     <BedDouble
                                         size={14}
-                                        className="text-slate-600"
+                                        className="text-emerald-500"
                                     />
                                 ),
                             },
@@ -195,10 +194,10 @@ const HotelDetail = () => {
 
                 // ===== CHILD / EXTRA OPTIONS =====
                 const childOptions = ibgDataDetailChild.filter(
-                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
+                    (x: any) => x.strItemTypeGUID === row.strItemTypeGUID
                 );
 
-                const childTypeOptions = childOptions.map((item) => ({
+                const childTypeOptions = childOptions.map((item: any) => ({
                     label: item.strAgeName,
                     qty: 1,
                     intSglDblID: item.intSupplierChildAgeKeyID,
@@ -286,7 +285,7 @@ const HotelDetail = () => {
                                                     {/* QTY */}
                                                     <div className="flex items-center border-2 border-blue-500 rounded-full overflow-hidden h-7">
                                                         <button
-                                                            className="w-7 flex items-center justify-center text-blue-600"
+                                                            className="cursor-pointer w-7 flex items-center justify-center text-blue-600"
                                                             onClick={() => {
                                                                 setSelectedRooms((prev) => {
                                                                     const current =
@@ -321,7 +320,7 @@ const HotelDetail = () => {
                                                         </span>
 
                                                         <button
-                                                            className="w-7 flex items-center justify-center text-blue-600"
+                                                            className="cursor-pointer w-7 flex items-center justify-center text-blue-600"
                                                             onClick={() => {
                                                                 setSelectedRooms((prev) => {
                                                                     const current =
@@ -407,31 +406,6 @@ const HotelDetail = () => {
                 );
             }
         },
-        // {
-        //     field: "stt",
-        //     headerName: "Thao tác",
-        //     render: (_, row) => {
-        //         <div className="flex items-center gap-2">
-        //             {/* <button
-        //                 onClick={() => {
-        //                     console.log("BOOK NOW:", row);
-        //                 }}
-        //                 className="px-3 h-9 text-sm font-medium rounded bg-[#2563eb] text-white hover:bg-blue-700 transition"
-        //             >
-        //                 Đặt ngay
-        //             </button> */}
-
-        //             {/* <button
-        //                 onClick={() => {
-        //                     console.log("ADD TO CART:", row);
-        //                 }}
-        //                 className="w-9 h-9 flex items-center justify-center rounded bg-gray-200 hover:bg-gray-300 transition"
-        //             >
-        //                 <ShoppingCart size={16} />
-        //             </button> */}
-        //         </div>
-        //     }
-        // }
 
         {
             field: "action",
@@ -440,7 +414,28 @@ const HotelDetail = () => {
                 return (
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={() => console.log("BOOK NOW", row)}
+                            onClick={() => {
+                                const selected = selectedRooms[row.strItemTypeGUID] || [];
+
+                                const items = selected.map((room) => {
+                                    const price = getPrice(row, room);
+                                    return {
+                                        label: room.label,
+                                        qty: room.qty,
+                                        price,
+                                        total: room.qty * price,
+                                    };
+                                });
+
+                                const totalAmount = items.reduce((sum, i) => sum + i.total, 0);
+
+                                setBookingData({
+                                    hotel,
+                                    room: row,
+                                    items,
+                                    totalAmount,
+                                });
+                            }}
                             className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
                         >
                             Đặt ngay
@@ -448,7 +443,7 @@ const HotelDetail = () => {
 
                         <button
                             onClick={() => console.log("ADD CART", row)}
-                            className="w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
+                            className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
                         >
                             <ShoppingCart size={16} className="text-slate-700" />
                         </button>
@@ -631,6 +626,14 @@ const HotelDetail = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {bookingData && (
+                <BookingHotelPopup
+                    open={true}
+                    data={bookingData}
+                    onClose={() => setBookingData(null)}
+                />
             )}
         </div>
     );
