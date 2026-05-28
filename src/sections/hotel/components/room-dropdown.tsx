@@ -1,14 +1,19 @@
 import { BedDouble, Plus, Minus } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+interface RoomOption {
+    label: string;
+    icon?: React.ReactNode;
+    qty?: number;
+}
+
 interface RoomDropdownProps {
     isOpen: boolean;
     onToggle: () => void;
     onClose?: () => void;
-    options?: {
-        label: string;
-        icon?: React.ReactNode;
-    }[];
+    options?: RoomOption[];
+    selected?: RoomOption[];
+    onChange?: (item: RoomOption) => void;
 }
 
 const RoomDropdown = ({
@@ -16,6 +21,8 @@ const RoomDropdown = ({
     onToggle,
     onClose,
     options = [],
+    selected = [],
+    onChange,
 }: RoomDropdownProps) => {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -56,19 +63,34 @@ const RoomDropdown = ({
             </button>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-white border border-slate-300 rounded-lg shadow-lg p-3 min-w-[200px] z-50">
-                    {options.map((item) => (
-                        <label
-                            key={item.label}
-                            className="flex items-center gap-2 mb-2"
-                        >
-                            <input type="checkbox" />
+                <div
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="absolute top-full left-0 mt-2 bg-white border border-slate-300 rounded-lg shadow-lg p-3 min-w-[220px] z-50"
+                >
+                    {options.map((item) => {
+                        const checked = selected.find(
+                            (x) => x.label === item.label
+                        );
 
-                            {item.icon}
+                        return (
+                            <label
+                                key={item.label}
+                                className="flex items-center gap-2 mb-2 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={!!checked}
+                                    onChange={() => onChange?.(item)}
+                                />
 
-                            {item.label}
-                        </label>
-                    ))}
+                                {item.icon}
+
+                                <span className="text-sm">
+                                    {item.label}
+                                </span>
+                            </label>
+                        );
+                    })}
                 </div>
             )}
         </div>

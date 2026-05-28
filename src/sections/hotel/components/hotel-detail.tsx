@@ -34,6 +34,10 @@ const HotelDetail = () => {
     });
 
     const [openId, setOpenId] = useState(null);
+    const [selectedRooms, setSelectedRooms] = useState<
+        Record<string, any[]>
+    >({});
+
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
     const { pplfcData } = useListPriceListForCompany(filters2);
@@ -55,11 +59,29 @@ const HotelDetail = () => {
             : undefined
     );
 
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const spbDataItem = spbData?.[0]
     console.log("spbData", spbDataItem)
     console.log("ibgData", ibgData)
-    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const ibgDataMain = ibgData?.[0] ?? [];
+    const ibgDataDetail = ibgData?.[1] ?? [];
+    const ibgDataDetailChild = ibgData?.[3] ?? [];
 
+    console.log("ibgDataMain", ibgDataMain)
+    console.log("ibgDataDetail", ibgDataDetail)
+    console.log("ibgDataDetailChild", ibgDataDetailChild)
+
+    const groupedRoomData = ibgDataMain.map((room: any) => {
+        const roomTypes = ibgDataDetail.filter(
+            (detail: any) =>
+                detail.strItemTypeGUID === room.strItemTypeGUID
+        );
+
+        return {
+            ...room,
+            roomTypes: roomTypes, // 👈 GIỮ NGUYÊN, KHÔNG DEDUPE
+        };
+    });
 
     const colDefs: ColumnDef<any>[] = [
         {
@@ -110,155 +132,24 @@ const HotelDetail = () => {
                 );
             }
         },
+
         {
             field: "strSglDblName",
             headerName: "Loại phòng",
-            render: (value, row) => {
-                const isOpen = openId === row.strItemTypeGUID;
 
-                const selectedRooms = [
-                    {
-                        label: "Double",
-                        qty: 2,
-                        icon: (
-                            <BedDouble
-                                size={14}
-                                className="text-slate-600"
-                            />
-                        ),
-                    },
-                    {
-                        label: "Twin",
-                        qty: 1,
-                        icon: (
-                            <BedDouble
-                                size={14}
-                                className="text-slate-600"
-                            />
-                        ),
-                    },
-                ];
+            render: (_, row) => {
+                const roomTypes = ibgDataDetail.filter(
+                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
+                );
+
+                const labels = roomTypes.map(x => x.strSglDblName);
 
                 return (
-                    <div className="flex flex-col gap-3">
-                        <RoomDropdown
-                            isOpen={isOpen}
-                            onToggle={() =>
-                                setOpenId(
-                                    isOpen
-                                        ? null
-                                        : row.strItemTypeGUID
-                                )
-                            }
-                            onClose={() => setOpenId(null)}
-                            options={[
-                                {
-                                    label: "Double",
-                                    icon: (
-                                        <BedDouble
-                                            size={14}
-                                            className="text-emerald-500"
-                                        />
-                                    ),
-                                },
-                                {
-                                    label: "Twin",
-                                    icon: (
-                                        <BedDouble
-                                            size={14}
-                                            className="text-blue-500"
-                                        />
-                                    ),
-                                },
-                                {
-                                    label: "Single",
-                                    icon: (
-                                        <BedDouble
-                                            size={14}
-                                            className="text-orange-500"
-                                        />
-                                    ),
-                                },
-                                {
-                                    label: "Child from 6 to 11",
-                                    icon: (
-                                        <Baby
-                                            size={14}
-                                            className="text-pink-500"
-                                        />
-                                    ),
-                                },
-                            ]}
-                        />
-
-                        <div className="flex flex-col gap-2">
-                            <div className="flex flex-col gap-2">
-                                {selectedRooms.map((room) => {
-                                    const price = 3628800;
-                                    const total = room.qty * price;
-
-                                    return (
-                                        <div
-                                            key={room.label}
-                                            className="flex items-center gap-3"
-                                        >
-                                            <div className="flex items-center gap-1 min-w-[90px]">
-                                                {room.icon}
-
-                                                <span className="text-[#1d3557] font-medium text-sm">
-                                                    {room.label}
-                                                </span>
-
-                                                <Info
-                                                    size={12}
-                                                    className="text-blue-500"
-                                                />
-                                            </div>
-
-                                            <div className="flex items-center border-2 border-blue-500 rounded-full overflow-hidden h-7">
-                                                <button className="w-7 flex items-center justify-center text-blue-600">
-                                                    -
-                                                </button>
-
-                                                <span className="px-2 text-sm font-medium text-blue-600">
-                                                    {room.qty}
-                                                </span>
-
-                                                <button className="w-7 flex items-center justify-center text-blue-600">
-                                                    +
-                                                </button>
-                                            </div>
-
-                                            <div className="flex items-center gap-1 text-sm">
-                                                <span>x</span>
-
-                                                <span className="text-[#2563eb] font-medium">
-                                                    ₫{price.toLocaleString()}
-                                                </span>
-
-                                                <span>=</span>
-
-                                                <span className="text-[#1d3557] font-semibold">
-                                                    ₫{total.toLocaleString()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                    <div className="flex flex-wrap gap-1">
+                        {labels.join(", ")}
                     </div>
                 );
-            },
-        },
-        {
-            field: "strSglDblName",
-            headerName: "Tên phòng",
-            render: (value) => (
-                <div>
-                    {value === "Double" ? "Phòng đôi" : "Phòng đơn"}
-                </div>
-            )
+            }
         },
     ];
 
@@ -367,7 +258,7 @@ const HotelDetail = () => {
                     </div>
 
                     <TableCore
-                        rowData={ibgData ?? []}
+                        rowData={ibgDataMain}
                         columnDefs={colDefs}
                         loading={ibgLoading}
                     />

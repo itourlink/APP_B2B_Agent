@@ -192,7 +192,7 @@ export const useListItemByAgent = (filters?: { strSupplierGUID?: string | null }
         placeholderData: keepPreviousData,
     });
 
-    const listData = query.data?.[1] ?? [];
+    const listData = query.data ?? [];
 
     return {
         ibgData: listData,
