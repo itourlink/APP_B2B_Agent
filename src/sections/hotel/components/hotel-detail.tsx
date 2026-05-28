@@ -71,18 +71,6 @@ const HotelDetail = () => {
     console.log("ibgDataDetail", ibgDataDetail)
     console.log("ibgDataDetailChild", ibgDataDetailChild)
 
-    const groupedRoomData = ibgDataMain.map((room: any) => {
-        const roomTypes = ibgDataDetail.filter(
-            (detail: any) =>
-                detail.strItemTypeGUID === room.strItemTypeGUID
-        );
-
-        return {
-            ...room,
-            roomTypes: roomTypes, // 👈 GIỮ NGUYÊN, KHÔNG DEDUPE
-        };
-    });
-
     const colDefs: ColumnDef<any>[] = [
         {
             field: "stt",
@@ -139,10 +127,17 @@ const HotelDetail = () => {
 
             render: (_, row) => {
                 const roomTypes = ibgDataDetail.filter(
-                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
+                    x => x.strItemTypeGUID === row.strItemTypeGUID
                 );
 
-                const labels = roomTypes.map(x => x.strSglDblName);
+                const childOptions = ibgDataDetailChild.filter(
+                    x => x.strItemTypeGUID === row.strItemTypeGUID
+                );
+
+                const labels = [
+                    ...roomTypes.map(x => x.strSglDblName),
+                    ...childOptions.map(x => x.strAgeName),
+                ];
 
                 return (
                     <div className="flex flex-wrap gap-1">
