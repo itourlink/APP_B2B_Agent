@@ -21,7 +21,6 @@ export default function BookingPopup({
     finalDebt,
     totalVoucherAmount,
     paymentMethod,
-    totalPrice,
 }: Props) {
 
     const formatCurrency = (amount?: any) => {
