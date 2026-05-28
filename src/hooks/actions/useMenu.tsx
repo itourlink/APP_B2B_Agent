@@ -21,7 +21,6 @@ export const useListMenu = () => {
             user?.strCompanyGUID
         ],
         queryFn: async () => {
-            console.log("CALL GET WEB MENU");
 
             return fetchListMenu({
                 strCompanyGUID: companyGUID,

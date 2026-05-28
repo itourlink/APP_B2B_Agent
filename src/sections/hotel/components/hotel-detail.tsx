@@ -9,9 +9,14 @@ import {
     Info,
     X,
     Utensils,
+    BedDouble,
+    Plus,
+    Minus,
+    Baby,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import RoomDropdown from "./room-dropdown";
 
 const HotelDetail = () => {
     const location = useLocation();
@@ -28,7 +33,7 @@ const HotelDetail = () => {
         tblsReturn: "[0][1]"
     });
 
-
+    const [openId, setOpenId] = useState(null);
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
     const { pplfcData } = useListPriceListForCompany(filters2);
@@ -50,6 +55,9 @@ const HotelDetail = () => {
             : undefined
     );
 
+    const spbDataItem = spbData?.[0]
+    console.log("spbData", spbDataItem)
+    console.log("ibgData", ibgData)
     const [previewImage, setPreviewImage] = useState<string | null>(null);
 
 
@@ -105,11 +113,51 @@ const HotelDetail = () => {
         {
             field: "strSglDblName",
             headerName: "Loại phòng",
-            render: (value) => (
-                <div>
-                    {value === "Double" ? "Phòng đôi" : "Phòng đơn"}
-                </div>
-            )
+            render: (value, row) => {
+
+                const isOpen = openId === row.strItemTypeGUID;
+
+                return (
+                    <div className="flex flex-col items-center gap-4">
+
+                        <RoomDropdown
+                            isOpen={isOpen}
+                            onToggle={() =>
+                                setOpenId(
+                                    isOpen ? null : row.strItemTypeGUID
+                                )
+                            }
+                            onClose={() => setOpenId(null)}
+                            options={[
+                                {
+                                    label: "Double",
+                                    icon: <BedDouble size={14} className="text-emerald-500" />,
+                                },
+                                {
+                                    label: "Twin",
+                                    icon: <BedDouble size={14} className="text-blue-500" />,
+                                },
+                                {
+                                    label: "Single",
+                                    icon: <BedDouble size={14} className="text-orange-500" />,
+                                },
+                                {
+                                    label: "Child from 6 to 11",
+                                    icon: <Baby size={14} className="text-pink-500" />,
+                                }
+                            ]}
+                        />
+
+                        <div className="flex items-center gap-2">
+                            <BedDouble
+                                size={14}
+                                className="text-emerald-500"
+                            />
+                            {value}
+                        </div>
+                    </div>
+                );
+            }
         },
         {
             field: "strSglDblName",
