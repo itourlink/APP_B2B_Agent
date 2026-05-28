@@ -126,26 +126,227 @@ const HotelDetail = () => {
             headerName: "Loại phòng",
 
             render: (_, row) => {
+                const isOpen = openId === row.strItemTypeGUID;
+
+                // ===== ROOM TYPES =====
                 const roomTypes = ibgDataDetail.filter(
-                    x => x.strItemTypeGUID === row.strItemTypeGUID
+                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
                 );
 
-                const childOptions = ibgDataDetailChild.filter(
-                    x => x.strItemTypeGUID === row.strItemTypeGUID
-                );
-
-                const labels = [
-                    ...roomTypes.map(x => x.strSglDblName),
-                    ...childOptions.map(x => x.strAgeName),
+                const roomTypeOptions = [
+                    ...new Map(
+                        roomTypes.map((item) => [
+                            item.strSglDblName,
+                            {
+                                label: item.strSglDblName,
+                                qty: 1,
+                                intSglDblID: item.intSglDblID,
+                                raw: item,
+                                icon: (
+                                    <BedDouble
+                                        size={14}
+                                        className="text-slate-600"
+                                    />
+                                ),
+                            },
+                        ])
+                    ).values(),
                 ];
 
+                // ===== CHILD / EXTRA OPTIONS =====
+                const childOptions = ibgDataDetailChild.filter(
+                    (x) => x.strItemTypeGUID === row.strItemTypeGUID
+                );
+
+                const childTypeOptions = childOptions.map((item) => ({
+                    label: item.strAgeName,
+                    qty: 1,
+                    intSglDblID: item.intSupplierChildAgeKeyID,
+                    raw: item,
+                    icon: (
+                        <Baby
+                            size={14}
+                            className="text-pink-500"
+                        />
+                    ),
+                }));
+
+                // ===== FINAL OPTIONS =====
+                const roomOptions = [
+                    ...roomTypeOptions,
+                    ...childTypeOptions,
+                ];
+
+                const selected =
+                    selectedRooms[row.strItemTypeGUID] || [];
+
+                const firstOption = roomOptions?.[0];
+
                 return (
-                    <div className="flex flex-wrap gap-1">
-                        {labels.join(", ")}
+                    <div className="flex flex-col gap-3">
+
+                        {/* DROPDOWN */}
+                        <RoomDropdown
+                            isOpen={isOpen}
+                            onToggle={() =>
+                                setOpenId(
+                                    isOpen
+                                        ? null
+                                        : row.strItemTypeGUID
+                                )
+                            }
+                            onClose={() => setOpenId(null)}
+                            options={roomOptions}
+                            selected={selected}
+                            onChange={(item) => {
+                                setSelectedRooms((prev) => {
+                                    const current =
+                                        prev[row.strItemTypeGUID] || [];
+
+                                    const exists = current.find(
+                                        (x) => x.label === item.label
+                                    );
+
+                                    return {
+                                        ...prev,
+                                        [row.strItemTypeGUID]: exists
+                                            ? current.filter(
+                                                (x) =>
+                                                    x.label !== item.label
+                                            )
+                                            : [...current, item],
+                                    };
+                                });
+                            }}
+                        />
+
+                        {/* SELECTED LIST */}
+                        <div className="flex flex-col gap-2">
+                            {selected.length > 0 ? (
+                                <div className="flex flex-col gap-2">
+                                    {selected.map((room) => {
+                                        const price = 3628800;
+                                        const total = room.qty * price;
+                                        return (
+                                            <div
+                                                key={room.label}
+                                                className="flex items-center justify-between gap-6"
+                                            >
+                                                {/* LEFT */}
+                                                <div className="flex items-center gap-2 min-w-[180px]">
+                                                    {room.icon}
+
+                                                    <span className="text-[#1d3557] font-medium text-sm">
+                                                        {room.label}
+                                                    </span>
+                                                </div>
+
+                                                {/* RIGHT */}
+                                                <div className="flex items-center gap-3 flex-1">
+                                                    {/* QTY */}
+                                                    <div className="flex items-center border-2 border-blue-500 rounded-full overflow-hidden h-7">
+                                                        <button
+                                                            className="w-7 flex items-center justify-center text-blue-600"
+                                                            onClick={() => {
+                                                                setSelectedRooms((prev) => {
+                                                                    const current =
+                                                                        prev[
+                                                                        row.strItemTypeGUID
+                                                                        ] || [];
+
+                                                                    return {
+                                                                        ...prev,
+                                                                        [row.strItemTypeGUID]:
+                                                                            current.map((x) =>
+                                                                                x.label ===
+                                                                                    room.label
+                                                                                    ? {
+                                                                                        ...x,
+                                                                                        qty: Math.max(
+                                                                                            1,
+                                                                                            x.qty - 1
+                                                                                        ),
+                                                                                    }
+                                                                                    : x
+                                                                            ),
+                                                                    };
+                                                                });
+                                                            }}
+                                                        >
+                                                            -
+                                                        </button>
+
+                                                        <span className="px-2 text-sm font-medium text-blue-600">
+                                                            {room.qty}
+                                                        </span>
+
+                                                        <button
+                                                            className="w-7 flex items-center justify-center text-blue-600"
+                                                            onClick={() => {
+                                                                setSelectedRooms((prev) => {
+                                                                    const current =
+                                                                        prev[
+                                                                        row.strItemTypeGUID
+                                                                        ] || [];
+
+                                                                    return {
+                                                                        ...prev,
+                                                                        [row.strItemTypeGUID]:
+                                                                            current.map((x) =>
+                                                                                x.label ===
+                                                                                    room.label
+                                                                                    ? {
+                                                                                        ...x,
+                                                                                        qty:
+                                                                                            x.qty +
+                                                                                            1,
+                                                                                    }
+                                                                                    : x
+                                                                            ),
+                                                                    };
+                                                                });
+                                                            }}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+
+                                                    {/* PRICE */}
+                                                    <div className="flex items-center gap-1 text-sm whitespace-nowrap">
+                                                        <span>x</span>
+
+                                                        <span className="text-[#2563eb] font-medium">
+                                                            ₫{price.toLocaleString()}
+                                                        </span>
+
+                                                        <span>=</span>
+
+                                                        <span className="text-[#1d3557] font-semibold">
+                                                            ₫{total.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <BedDouble
+                                        size={14}
+                                        className="text-emerald-500"
+                                    />
+
+                                    <span>
+                                        {firstOption?.label || row.strSglDblName}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 );
-            }
-        },
+            },
+        }
     ];
 
     if (hotelLoading || ibgLoading) {
