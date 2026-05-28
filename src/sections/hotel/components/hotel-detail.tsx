@@ -114,50 +114,142 @@ const HotelDetail = () => {
             field: "strSglDblName",
             headerName: "Loại phòng",
             render: (value, row) => {
-
                 const isOpen = openId === row.strItemTypeGUID;
 
-                return (
-                    <div className="flex flex-col items-center gap-4">
+                const selectedRooms = [
+                    {
+                        label: "Double",
+                        qty: 2,
+                        icon: (
+                            <BedDouble
+                                size={14}
+                                className="text-slate-600"
+                            />
+                        ),
+                    },
+                    {
+                        label: "Twin",
+                        qty: 1,
+                        icon: (
+                            <BedDouble
+                                size={14}
+                                className="text-slate-600"
+                            />
+                        ),
+                    },
+                ];
 
+                return (
+                    <div className="flex flex-col gap-3">
                         <RoomDropdown
                             isOpen={isOpen}
                             onToggle={() =>
                                 setOpenId(
-                                    isOpen ? null : row.strItemTypeGUID
+                                    isOpen
+                                        ? null
+                                        : row.strItemTypeGUID
                                 )
                             }
                             onClose={() => setOpenId(null)}
                             options={[
                                 {
                                     label: "Double",
-                                    icon: <BedDouble size={14} className="text-emerald-500" />,
+                                    icon: (
+                                        <BedDouble
+                                            size={14}
+                                            className="text-emerald-500"
+                                        />
+                                    ),
                                 },
                                 {
                                     label: "Twin",
-                                    icon: <BedDouble size={14} className="text-blue-500" />,
+                                    icon: (
+                                        <BedDouble
+                                            size={14}
+                                            className="text-blue-500"
+                                        />
+                                    ),
                                 },
                                 {
                                     label: "Single",
-                                    icon: <BedDouble size={14} className="text-orange-500" />,
+                                    icon: (
+                                        <BedDouble
+                                            size={14}
+                                            className="text-orange-500"
+                                        />
+                                    ),
                                 },
                                 {
                                     label: "Child from 6 to 11",
-                                    icon: <Baby size={14} className="text-pink-500" />,
-                                }
+                                    icon: (
+                                        <Baby
+                                            size={14}
+                                            className="text-pink-500"
+                                        />
+                                    ),
+                                },
                             ]}
                         />
 
-                        <div className="flex items-center gap-2">
-                            <BedDouble
-                                size={14}
-                                className="text-emerald-500"
-                            />
-                            {value}
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2">
+                                {selectedRooms.map((room) => {
+                                    const price = 3628800;
+                                    const total = room.qty * price;
+
+                                    return (
+                                        <div
+                                            key={room.label}
+                                            className="flex items-center gap-3"
+                                        >
+                                            <div className="flex items-center gap-1 min-w-[90px]">
+                                                {room.icon}
+
+                                                <span className="text-[#1d3557] font-medium text-sm">
+                                                    {room.label}
+                                                </span>
+
+                                                <Info
+                                                    size={12}
+                                                    className="text-blue-500"
+                                                />
+                                            </div>
+
+                                            <div className="flex items-center border-2 border-blue-500 rounded-full overflow-hidden h-7">
+                                                <button className="w-7 flex items-center justify-center text-blue-600">
+                                                    -
+                                                </button>
+
+                                                <span className="px-2 text-sm font-medium text-blue-600">
+                                                    {room.qty}
+                                                </span>
+
+                                                <button className="w-7 flex items-center justify-center text-blue-600">
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <div className="flex items-center gap-1 text-sm">
+                                                <span>x</span>
+
+                                                <span className="text-[#2563eb] font-medium">
+                                                    ₫{price.toLocaleString()}
+                                                </span>
+
+                                                <span>=</span>
+
+                                                <span className="text-[#1d3557] font-semibold">
+                                                    ₫{total.toLocaleString()}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 );
-            }
+            },
         },
         {
             field: "strSglDblName",
