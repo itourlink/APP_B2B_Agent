@@ -2,6 +2,7 @@ import apiClient from "@/axios";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
+import { useUser } from "./useAuth";
 
 const fetchListMenu = async (body: any) => {
     const res = await apiClient.post("system/GetWebMenu", body);
@@ -9,20 +10,28 @@ const fetchListMenu = async (body: any) => {
 };
 
 export const useListMenu = () => {
+    const { user } = useUser();
     const { coData } = useListCompanyOwner();
     const companyGUID = coData?.strCompanyGUID;
+
     const query = useQuery({
         queryKey: [
             QUERY_KEYS.MENU.LIST_MENU,
-            companyGUID
+            companyGUID,
+            user?.strCompanyGUID
         ],
-        queryFn: () =>
-            fetchListMenu({
+        queryFn: async () => {
+            console.log("CALL GET WEB MENU");
+
+            return fetchListMenu({
                 strCompanyGUID: companyGUID,
+                strCompanyPartnerGUID: user?.strCompanyGUID,
                 intMenuType: 2
-            }),
-        // enabled: !!companyGUID,
+            });
+        },
+        enabled: !!companyGUID && !!user?.strCompanyGUID,
         placeholderData: keepPreviousData,
+        refetchOnMount: true,
     });
 
     const listData = query.data?.[0] ?? [];

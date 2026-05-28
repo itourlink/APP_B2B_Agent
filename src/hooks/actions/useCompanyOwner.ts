@@ -20,7 +20,7 @@ export const useListCompanyOwner = () => {
 
     const companyNameUrl =
         searchParams.get("company") ||
-        "cong-ty-tnhh-ket-noi-du-lich-8F620"; // fallback
+        "cong-ty-tnhh-ket-noi-du-lich-8F620";
 
     const query = useQuery({
         queryKey: [
