@@ -386,6 +386,26 @@ const HotelDetail = () => {
                 );
             },
         }
+        ,
+        {
+            field: "total",
+            headerName: "Tổng giá",
+
+            render: (_, row) => {
+                const selected = selectedRooms[row.strItemTypeGUID] || [];
+
+                const total = selected.reduce((sum, item) => {
+                    const price = getPrice(row, item);
+                    return sum + item.qty * price;
+                }, 0);
+
+                return (
+                    <span className="font-semibold text-[#2563eb]">
+                        ₫{total.toLocaleString()}
+                    </span>
+                );
+            }
+        }
     ];
 
     if (hotelLoading || ibgLoading) {
