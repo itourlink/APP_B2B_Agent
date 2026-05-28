@@ -13,6 +13,7 @@ import {
     Plus,
     Minus,
     Baby,
+    ShoppingCart,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -403,6 +404,55 @@ const HotelDetail = () => {
                     <span className="font-semibold text-[#2563eb]">
                         ₫{total.toLocaleString()}
                     </span>
+                );
+            }
+        },
+        // {
+        //     field: "stt",
+        //     headerName: "Thao tác",
+        //     render: (_, row) => {
+        //         <div className="flex items-center gap-2">
+        //             {/* <button
+        //                 onClick={() => {
+        //                     console.log("BOOK NOW:", row);
+        //                 }}
+        //                 className="px-3 h-9 text-sm font-medium rounded bg-[#2563eb] text-white hover:bg-blue-700 transition"
+        //             >
+        //                 Đặt ngay
+        //             </button> */}
+
+        //             {/* <button
+        //                 onClick={() => {
+        //                     console.log("ADD TO CART:", row);
+        //                 }}
+        //                 className="w-9 h-9 flex items-center justify-center rounded bg-gray-200 hover:bg-gray-300 transition"
+        //             >
+        //                 <ShoppingCart size={16} />
+        //             </button> */}
+        //         </div>
+        //     }
+        // }
+
+        {
+            field: "action",
+            headerName: "Thao tác",
+            render: (_, row) => {
+                return (
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => console.log("BOOK NOW", row)}
+                            className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
+                        >
+                            Đặt ngay
+                        </button>
+
+                        <button
+                            onClick={() => console.log("ADD CART", row)}
+                            className="w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
+                        >
+                            <ShoppingCart size={16} className="text-slate-700" />
+                        </button>
+                    </div>
                 );
             }
         }
