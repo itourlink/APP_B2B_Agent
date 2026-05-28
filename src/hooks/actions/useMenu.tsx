@@ -21,7 +21,7 @@ export const useListMenu = () => {
                 strCompanyGUID: companyGUID,
                 intMenuType: 2
             }),
-        enabled: !!companyGUID,
+        // enabled: !!companyGUID,
         placeholderData: keepPreviousData,
     });
 
