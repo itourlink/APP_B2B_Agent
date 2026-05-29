@@ -13,7 +13,7 @@ import {
     Baby,
     ShoppingCart,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
@@ -109,6 +109,41 @@ const HotelDetail = () => {
                 return getNum(priceRow.dblPrice);
         }
     };
+
+    useEffect(() => {
+        if (!ibgDataDetail?.length && !ibgDataDetailChild?.length) return;
+
+        const newSelected: any = {};
+
+        ibgDataMain.forEach((row: any) => {
+            const roomTypes = ibgDataDetail.filter(
+                (x: any) => x.strItemTypeGUID === row.strItemTypeGUID
+            );
+
+            const childOptions = ibgDataDetailChild.filter(
+                (x: any) => x.strItemTypeGUID === row.strItemTypeGUID
+            );
+
+            const roomOptions = [
+                ...roomTypes.map((item: any) => ({
+                    label: item.strSglDblName,
+                    qty: 1,
+                    raw: item,
+                })),
+                ...childOptions.map((item: any) => ({
+                    label: item.strAgeName,
+                    qty: 1,
+                    raw: item,
+                })),
+            ];
+
+            if (roomOptions.length > 0) {
+                newSelected[row.strItemTypeGUID] = [roomOptions[0]];
+            }
+        });
+
+        setSelectedRooms(newSelected);
+    }, [ibgDataMain, ibgDataDetail, ibgDataDetailChild]);
 
     const colDefs: ColumnDef<any>[] = [
         {
