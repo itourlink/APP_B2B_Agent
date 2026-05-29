@@ -9,11 +9,11 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PaymentCountdown from './payment-countdown';
-import { isValidValue } from '@/utils/utilts';
 import VoucherList from './voucher-list';
 import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
+import { fDateTime } from '@/utils/format-time';
 
 const PaymentBookingHotelView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
@@ -22,10 +22,10 @@ const PaymentBookingHotelView: React.FC = () => {
     const location = useLocation();
     const bookingPayload =
         location.state?.bookingPayload;
-        
+
     const items =
         bookingPayload?.items || [];
-
+    const room = bookingPayload?.room || {}
     const totalPrice =
         Number(
             bookingPayload?.totalAmount || 0
@@ -219,7 +219,7 @@ const PaymentBookingHotelView: React.FC = () => {
 
             // apply voucher trước
             if (selectedVoucher?.length > 0) {
-
+                console.log("BEFORE ALL");
                 await Promise.all(
                     selectedVoucher.map((voucher: any) =>
                         new Promise((resolve, reject) => {
@@ -230,7 +230,10 @@ const PaymentBookingHotelView: React.FC = () => {
                                     updatedBy: user?.strUserGUID || null,
                                 },
                                 {
-                                    onSuccess: () => resolve(true),
+                                    onSuccess: () => {
+                                        console.log("VOUCHER SUCCESS");
+                                        resolve(true);
+                                    },
 
                                     onError: (err) => {
 
@@ -247,7 +250,7 @@ const PaymentBookingHotelView: React.FC = () => {
                         })
                     )
                 );
-
+                console.log("AFTER ALL");
                 showToast(
                     "success",
                     "Áp dụng voucher thành công",
@@ -267,39 +270,40 @@ const PaymentBookingHotelView: React.FC = () => {
 
                 // HOTEL
                 strSupplierGUID:
-                    location.state?.strSupplierGUID || null,
+                    bookingPayload?.strSupplierGUID || null,
 
                 strPriceLevelGUID:
-                    location.state?.strPriceLevelGUID || null,
+                    bookingPayload?.strPriceLevelGUID || null,
 
                 strPriceListGUID:
-                    location.state?.strPriceListGUID || null,
+                    bookingPayload?.strPriceListGUID || null,
 
                 // ROOM INFO
                 intAdult:
-                    location.state?.intAdult || 0,
+                    bookingPayload?.intAdult || 0,
 
                 strListChildAge:
-                    location.state?.strListChildAge || "",
+                    bookingPayload?.strListChildAge || "",
 
                 strListItemTypeGUID:
-                    location.state?.strListItemTypeGUID || "",
+                    bookingPayload?.strListItemTypeGUID || "",
 
                 strListSupplierChildAgeGUID:
-                    location.state?.strListSupplierChildAgeGUID || "",
+                    bookingPayload?.strListSupplierChildAgeGUID || "",
 
-                strListSurchargeDateGUID:
-                    location.state?.strListSurchargeDateGUID || "",
+                strListSurchargeDateGUID: "",
 
                 // DATE
-                dtmDateFrom:
-                    location.state?.dtmDateFrom || null,
+                dtmDateFrom: bookingPayload?.dtmDateFrom
+                    ? new Date(bookingPayload.dtmDateFrom).toISOString()
+                    : null,
 
-                dtmDateTo:
-                    location.state?.dtmDateTo || null,
+                dtmDateTo: bookingPayload?.dtmDateTo
+                    ? new Date(bookingPayload.dtmDateTo).toISOString()
+                    : null,
 
                 // CURRENCY
-                intCurrencyID: 1,
+                intCurrencyID: user?.intCurrencyID,
 
                 // PAYMENT
                 intPaymentMethodID:
@@ -392,6 +396,10 @@ const PaymentBookingHotelView: React.FC = () => {
 
                     try {
                         const serviceGUID = res?.[0]?.[0]?.strListAgentHostServiceItemGUID;
+                        const intStatusBk = res?.[0]?.[0]?.intStatusBk;
+
+                        console.log("intStatusBk", intStatusBk)
+
                         // call email template
                         if (serviceGUID) {
 
@@ -453,8 +461,20 @@ const PaymentBookingHotelView: React.FC = () => {
                                     serviceGUID,
                             });
                         }
+                        const mapStatusToTab = (status?: number) => {
+                            switch (status) {
+                                case 1:
+                                    return "hold";
+                                case 2:
+                                    return "booked";
+                                default:
+                                    return "suggest";
+                            }
+                        };
 
-                        router.push(`${paths.content.service}?activeTab=booked`);
+                        const activeTab = mapStatusToTab(intStatusBk);
+
+                        router.push(`${paths.content.service}?activeTab=${activeTab}`);
 
                     } catch (err) {
 
@@ -826,7 +846,7 @@ const PaymentBookingHotelView: React.FC = () => {
                             <tbody className="divide-y divide-gray-100 text-center text-gray-700">
                                 {items?.map((item: any, index: number) => (
                                     <tr
-                                        key={item?.strCartServiceItemGUID || index}
+                                        key={index}
                                         className="hover:bg-gray-50"
                                     >
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
@@ -835,34 +855,32 @@ const PaymentBookingHotelView: React.FC = () => {
 
                                         <td className="py-3 px-4 text-left align-top border-r border-gray-100">
                                             <div className="font-semibold text-gray-800">
-                                                {item?.strServiceName}
+                                                {room?.strSupplierName} - {room?.strItemTypeName} - {bookingPayload?.includedBreak}
                                             </div>
 
                                             <div className="text-gray-500 text-[11px] mt-0.5">
-                                                {isValidValue(item?.dtmDateFrom)} -{" "}
-                                                {isValidValue(item?.dtmDateTo)}
+                                                {fDateTime(bookingPayload?.dtmDateFrom)} -
+                                                {fDateTime(bookingPayload?.dtmDateTo)}
                                             </div>
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {extractNumber(item?.intQuantity)}
+                                            {(item?.qty)}
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {formatCurrency(
-                                                item?.dblPriceTotalAgentCom
-                                            )}
+                                            đ0
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
                                             {formatCurrency(
-                                                item?.dblPriceTotal
+                                                item?.total
                                             )}
                                         </td>
 
                                         <td className="py-3 px-3 align-top font-medium">
                                             {formatCurrency(
-                                                Number(item?.dblPriceTotal || 0) * 0.3
+                                                Number(item?.total || 0) * 0.3
                                             )}
                                         </td>
                                     </tr>

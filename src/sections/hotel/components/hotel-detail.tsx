@@ -19,11 +19,25 @@ import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
+import BookingHotelCartPopup from "./booking-hotel-cart-popup";
+import { useToastStore } from "@/zustand/useToastStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addCartForHotel } from "@/hooks/actions/useBooking";
+import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+import { useUser } from "@/hooks/actions/useAuth";
+import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 
 const HotelDetail = () => {
     const location = useLocation();
     const item = location?.state?.item;
     const router = useRouter()
+    const { user } = useUser()
+    const { coData } = useListCompanyOwner();
+    const { showToast } = useToastStore()
+    const queryClient = useQueryClient()
+    const { mutate: addCartForHotelApi } = useMutation({
+        mutationFn: addCartForHotel,
+    });
     const [filters] = useState({
         page: 1,
         pageSize: 1,
@@ -40,6 +54,7 @@ const HotelDetail = () => {
         Record<string, any[]>
     >({});
     const [bookingData, setBookingData] = useState<any | null>(null);
+    const [bookingCartData, setBookingCartData] = useState<any | null>(null);
     const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
     const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
     const { pplfcData } = useListPriceListForCompany(filters2);
@@ -47,6 +62,7 @@ const HotelDetail = () => {
     const hotel = hotelData?.[0] ?? {};
     const strPriceListGUID = pplfcData?.strPriceListGUID;
     const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
+
     const isSupplierPriceReady =
         !!item?.strSupplierGUID &&
         !!strPriceListGUID &&
@@ -159,6 +175,23 @@ const HotelDetail = () => {
         if (name.includes("extra bed")) return 1;
 
         return 0;
+    };
+
+    const handleAddtoCart = (data: any) => {
+        const payload = data;
+
+        addCartForHotelApi(payload, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.CART.LIST_CART],
+                });
+                router.push(paths.cart.list);
+                showToast("success", "Thêm vào giỏ thành công");
+            },
+            onError: () => {
+                showToast("error", "Thêm vào giỏ thất bại");
+            },
+        });
     };
 
     const colDefs: ColumnDef<any>[] = [
@@ -470,10 +503,15 @@ const HotelDetail = () => {
             field: "action",
             headerName: "Thao tác",
             render: (_, row) => {
+
                 return (
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => {
+                                const includedBreak = spbData?.[0]?.find(
+                                    (p: any) => p.strItemTypeGUID === row.strItemTypeGUID
+                                );
+
                                 const selected =
                                     selectedRooms[row.strItemTypeGUID] || [];
 
@@ -532,7 +570,7 @@ const HotelDetail = () => {
                                 const bookingPayload = {
                                     hotel,
                                     room: row,
-
+                                    includedBreak: includedBreak?.strMealIncludedTypeName,
                                     // HOTEL
                                     strSupplierGUID:
                                         hotel?.strSupplierGUID,
@@ -581,7 +619,126 @@ const HotelDetail = () => {
                         </button>
 
                         <button
-                            onClick={() => console.log("ADD CART", row)}
+                            onClick={() => {
+
+                                // const { = 
+                                const includedBreak = spbData?.[0]?.find(
+                                    (p: any) => p.strItemTypeGUID === row.strItemTypeGUID
+                                );
+
+                                const selected =
+                                    selectedRooms[row.strItemTypeGUID] || [];
+
+                                const hasChild = selected.some(
+                                    (x) => x.isChild
+                                );
+
+                                const adultCount = selected.reduce((sum, item) => {
+                                    if (item.isChild) return sum;
+
+                                    const adultPerRoom = getAdultByRoomName(item.label);
+
+                                    return sum + adultPerRoom * item.qty;
+                                }, 0);
+
+                                const childCount = selected.reduce((sum, item) => {
+                                    if (!item.isChild) return sum;
+
+                                    return sum + item.qty;
+                                }, 0);
+
+                                const roomGuidList = selected
+                                    .filter((x) => !x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(
+                                            x.raw?.strItemTypeGUID
+                                        )
+                                    );
+
+                                const childAgeList = selected
+                                    .filter((x) => x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(x.ageFrom)
+                                    );
+
+                                const childGuidList = selected
+                                    .filter((x) => x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(
+                                            x.raw?.strSupplierChildAgeGUID
+                                        )
+                                    );
+
+                                const items = selected.map((room) => {
+                                    const price = getPrice(row, room);
+                                    return {
+                                        label: room.label,
+                                        qty: room.qty,
+                                        price,
+                                        total: room.qty * price,
+                                    };
+                                });
+
+                                const totalAmount = items.reduce((sum, i) => sum + i.total, 0);
+
+                                const bookingCartPayload = {
+                                    hotel,
+                                    room: row,
+                                    includedBreak: includedBreak?.strMealIncludedTypeName,
+
+                                    dtmDateFrom: today,
+                                    dtmDateTo: tomorrow,
+
+                                    adultCount,
+                                    childCount,
+
+                                    strItemTypeName: row.strItemTypeName,
+
+                                    items,
+                                    totalAmount,
+                                };
+
+                                const bookingCartPayloadSubmit = {
+                                    strSupplierGUID: hotel?.strSupplierGUID,
+                                    strCompanyPartnerGUID: user?.strCompanyGUID,
+                                    strCompanyOwnerGUID: coData?.strCompanyGUID,
+
+                                    strPriceLevelGUID,
+                                    strPriceListGUID,
+
+                                    intAdult: adultCount,
+
+                                    strListChildAge:
+                                        childAgeList.length > 0
+                                            ? childAgeList.join(",") + ","
+                                            : "",
+
+                                    strListItemTypeGUID:
+                                        roomGuidList.join(","),
+
+                                    strListSupplierChildAgeGUID:
+                                        childGuidList.join(","),
+
+                                    strListSurchargeDateGUID: "",
+
+                                    dtmDateFrom: today,
+                                    dtmDateTo: tomorrow,
+
+                                    intCurrencyID: user?.intCurrencyID,
+                                };
+
+                                if (hasChild) {
+                                    setBookingCartData({
+                                        displayData: bookingCartPayload,
+                                        submitPayload: bookingCartPayloadSubmit,
+                                    });
+                                } else {
+                                    handleAddtoCart(bookingCartPayloadSubmit);
+                                }
+
+
+                            }}
+
                             className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
                         >
                             <ShoppingCart size={16} className="text-slate-700" />
@@ -773,6 +930,13 @@ const HotelDetail = () => {
                     open={true}
                     data={bookingData}
                     onClose={() => setBookingData(null)}
+                />
+            )}
+            {bookingCartData && (
+                <BookingHotelCartPopup
+                    open={true}
+                    data={bookingCartData}
+                    onClose={() => setBookingCartData(null)}
                 />
             )}
         </div>

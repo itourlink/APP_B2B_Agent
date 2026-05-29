@@ -58,7 +58,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                 <div className="rounded-xl border p-4 space-y-1">
                     <div className="text-xs text-slate-500">Phòng</div>
                     <div className="font-semibold text-slate-900">
-                        {data.strItemTypeName}
+                        {data.strItemTypeName} - {data?.includedBreak}
                     </div>
 
                     {data.meal && (
@@ -77,10 +77,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                     <div className="flex justify-between text-sm">
                         <div>
                             <div className="font-semibold text-slate-900">
-                                {fDateTime(data.checkIn)}
-                            </div>
-                            <div className="text-xs text-slate-500">
-                                {fDateTime(data.checkIn)}
+                                {fDateTime(data.dtmDateFrom)}
                             </div>
                         </div>
 
@@ -88,10 +85,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
 
                         <div>
                             <div className="font-semibold text-slate-900">
-                                {fDateTime(data.checkOut)}
-                            </div>
-                            <div className="text-xs text-slate-500">
-                                {fDateTime(data.checkOut)}
+                                {fDateTime(data.dtmDateTo)}
                             </div>
                         </div>
                     </div>
@@ -144,7 +138,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                 <div className="flex gap-2 pt-2">
                     <button
                         onClick={onClose}
-                        className="flex-1 h-10 rounded-lg border"
+                        className="cursor-pointer flex-1 h-10 rounded-lg border hover:bg-gray-50 "
                     >
                         Huỷ
                     </button>
@@ -158,7 +152,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                                 }
                             );
                         }}
-                        className="flex-1 h-10 rounded-lg bg-[#2566b0] text-white"
+                        className="cursor-pointer flex-1 h-10 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
                     >
                         Xác nhận
                     </button>
