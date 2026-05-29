@@ -1,4 +1,6 @@
 import PanelPopup from "@/components/popup/panel-popup";
+import { useRouter } from "@/routes/hooks/use-router";
+import { paths } from "@/routes/paths";
 import { fDateTime } from "@/utils/format-time";
 
 type Props = {
@@ -8,11 +10,41 @@ type Props = {
 };
 
 const BookingHotelPopup = ({ open, onClose, data }: Props) => {
+    const router = useRouter()
     if (!data) return null;
 
     return (
         <PanelPopup open={open} onClose={onClose} title="Xác nhận đặt phòng">
             <div className="p-5 space-y-4 text-sm">
+
+                {/* GUEST INFO */}
+                <div className="rounded-xl border p-4 bg-amber-50">
+                    <div className="text-xs text-amber-600 mb-2">
+                        Thông tin khách
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                        <div>
+                            <div className="text-slate-500">
+                                Người lớn
+                            </div>
+
+                            <div className="font-semibold text-slate-900">
+                                {data.adultCount || 0} người
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="text-slate-500">
+                                Trẻ em
+                            </div>
+
+                            <div className="font-semibold text-slate-900">
+                                {data.childCount || 0} trẻ
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* HOTEL */}
                 <div className="rounded-xl border p-4 bg-slate-50">
@@ -97,7 +129,7 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                                     {item.label}
                                 </div>
                                 <div className="text-xs text-slate-500">
-                                    Qty: {item.qty}
+                                    Số lượng: {item.qty}
                                 </div>
                             </div>
 
@@ -117,7 +149,17 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                         Huỷ
                     </button>
 
-                    <button className="flex-1 h-10 rounded-lg bg-[#2566b0] text-white">
+                    <button
+                        onClick={() => {
+                            router.replaceParams(
+                                paths.booking.paymentBookingHotel,
+                                {
+                                    bookingPayload: data,
+                                }
+                            );
+                        }}
+                        className="flex-1 h-10 rounded-lg bg-[#2566b0] text-white"
+                    >
                         Xác nhận
                     </button>
                 </div>

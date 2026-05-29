@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForCart, addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { useRouter } from '@/routes/hooks/use-router';
@@ -20,15 +20,16 @@ const PaymentBookingHotelView: React.FC = () => {
     const router = useRouter();
 
     const location = useLocation();
-
+    const bookingPayload =
+        location.state?.bookingPayload;
+        
     const items =
-        location.state?.items || [];
-
-    const strListCartServiceItemGUID =
-        location.state?.strListCartServiceItemGUID || "";
+        bookingPayload?.items || [];
 
     const totalPrice =
-        Number(location.state?.totalPrice || 0);
+        Number(
+            bookingPayload?.totalAmount || 0
+        );
 
     const totalCommission =
         Number(location.state?.totalCommission || 0);

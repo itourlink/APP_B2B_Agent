@@ -17,11 +17,13 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
+import { useRouter } from "@/routes/hooks/use-router";
+import { paths } from "@/routes/paths";
 
 const HotelDetail = () => {
     const location = useLocation();
     const item = location?.state?.item;
-
+    const router = useRouter()
     const [filters] = useState({
         page: 1,
         pageSize: 1,
@@ -146,6 +148,19 @@ const HotelDetail = () => {
     }, [ibgDataMain, ibgDataDetail, ibgDataDetailChild]);
 
 
+    const getAdultByRoomName = (label: string) => {
+        const name = label.toLowerCase();
+
+        if (name.includes("double")) return 2;
+        if (name.includes("twin")) return 2;
+        if (name.includes("triple")) return 3;
+        if (name.includes("3 pax")) return 3;
+        if (name.includes("single")) return 1;
+        if (name.includes("extra bed")) return 1;
+
+        return 0;
+    };
+
     const colDefs: ColumnDef<any>[] = [
         {
             field: "stt",
@@ -217,6 +232,7 @@ const HotelDetail = () => {
                                 qty: 1,
                                 intSglDblID: item.intSglDblID,
                                 raw: item,
+                                isChild: false,
                                 icon: (
                                     <BedDouble
                                         size={14}
@@ -237,7 +253,12 @@ const HotelDetail = () => {
                     label: item.strAgeName,
                     qty: 1,
                     intSglDblID: item.intSupplierChildAgeKeyID,
+
+                    ageFrom: item.intAgeFrom,
+
                     raw: item,
+                    isChild: true,
+
                     icon: (
                         <Baby
                             size={14}
@@ -252,8 +273,10 @@ const HotelDetail = () => {
                     ...childTypeOptions,
                 ];
 
+
                 const selected =
                     selectedRooms[row.strItemTypeGUID] || [];
+
 
                 const firstOption = roomOptions?.[0];
 
@@ -451,7 +474,48 @@ const HotelDetail = () => {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => {
-                                const selected = selectedRooms[row.strItemTypeGUID] || [];
+                                const selected =
+                                    selectedRooms[row.strItemTypeGUID] || [];
+
+                                const hasChild = selected.some(
+                                    (x) => x.isChild
+                                );
+
+                                const adultCount = selected.reduce((sum, item) => {
+                                    if (item.isChild) return sum;
+
+                                    const adultPerRoom = getAdultByRoomName(item.label);
+
+                                    return sum + adultPerRoom * item.qty;
+                                }, 0);
+
+                                const childCount = selected.reduce((sum, item) => {
+                                    if (!item.isChild) return sum;
+
+                                    return sum + item.qty;
+                                }, 0);
+
+                                const roomGuidList = selected
+                                    .filter((x) => !x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(
+                                            x.raw?.strItemTypeGUID
+                                        )
+                                    );
+
+                                const childAgeList = selected
+                                    .filter((x) => x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(x.ageFrom)
+                                    );
+
+                                const childGuidList = selected
+                                    .filter((x) => x.isChild)
+                                    .flatMap((x) =>
+                                        Array(x.qty).fill(
+                                            x.raw?.strSupplierChildAgeGUID
+                                        )
+                                    );
 
                                 const items = selected.map((room) => {
                                     const price = getPrice(row, room);
@@ -465,20 +529,51 @@ const HotelDetail = () => {
 
                                 const totalAmount = items.reduce((sum, i) => sum + i.total, 0);
 
-                                setBookingData({
+                                const bookingPayload = {
                                     hotel,
                                     room: row,
-                                    strItemTypeName: row.strItemTypeName,
-                                    meal: spbData?.[0]?.find(
-                                        (p: any) => p.strItemTypeGUID === row.strItemTypeGUID
-                                    )?.strMealIncludedTypeName,
 
-                                    checkIn: today,
-                                    checkOut: tomorrow,
+                                    // HOTEL
+                                    strSupplierGUID:
+                                        hotel?.strSupplierGUID,
+
+                                    strPriceLevelGUID,
+                                    strPriceListGUID,
+
+                                    // DATE
+                                    dtmDateFrom: today,
+                                    dtmDateTo: tomorrow,
+
+                                    // ROOM INFO
+                                    intAdult: adultCount,
+
+                                    strListChildAge:
+                                        childAgeList.join(",") + ",",
+
+                                    strListItemTypeGUID:
+                                        roomGuidList.join(","),
+
+                                    strListSupplierChildAgeGUID:
+                                        childGuidList.join(","),
+
+                                    // UI
+                                    adultCount,
+                                    childCount,
+
+                                    strItemTypeName:
+                                        row.strItemTypeName,
 
                                     items,
                                     totalAmount,
-                                });
+                                };
+
+                                if (hasChild) {
+                                    setBookingData(bookingPayload);
+                                } else {
+                                    router.replaceParams(paths.booking.paymentBookingHotel, { bookingPayload: bookingPayload });
+                                }
+
+
                             }}
                             className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
                         >
