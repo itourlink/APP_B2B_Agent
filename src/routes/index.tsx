@@ -30,6 +30,7 @@ const VoucherPage = lazy(() => import("@/pages/voucher/list"));
 const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
 const PaymentBookingPage = lazy(() => import("@/pages/booking/payment-booking"));
 const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-booking-cart"));
+const PaymentBookingHotelPage = lazy(() => import("@/pages/booking/payment-booking-hotel"));
 
 // const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
 
@@ -325,6 +326,10 @@ export function Router() {
             {
               path: paths.booking.paymentBookingCart,
               element: <PaymentBookingCartPage />,
+            },
+            {
+              path: paths.booking.paymentBookingHotel,
+              element: <PaymentBookingHotelPage />,
             },
           ],
         },

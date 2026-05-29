@@ -177,3 +177,10 @@ export const addBookingForCart = async (body: any) => {
     );
     return res.data;
 };
+export const addBookingForHotel = async (body: any) => {
+    const res = await apiClient.post(
+        "booking/AddBookingForHotel",
+        body
+    );
+    return res.data;
+};

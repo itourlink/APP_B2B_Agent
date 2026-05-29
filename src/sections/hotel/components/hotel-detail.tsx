@@ -60,13 +60,13 @@ const HotelDetail = () => {
     );
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const spbDataItem = spbData?.[0]
     const ibgDataMain = ibgData?.[0] ?? [];
     const ibgDataDetail = ibgData?.[1] ?? [];
     const ibgDataDetailChild = ibgData?.[3] ?? [];
 
-    console.log("spbData", spbDataItem)
-    console.log("ibgData", ibgData)
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
 
     const getPrice = (row: any, option: any) => {
         const flatSpbData = spbData?.flat?.() || [];
@@ -144,6 +144,7 @@ const HotelDetail = () => {
 
         setSelectedRooms(newSelected);
     }, [ibgDataMain, ibgDataDetail, ibgDataDetailChild]);
+
 
     const colDefs: ColumnDef<any>[] = [
         {
@@ -257,7 +258,7 @@ const HotelDetail = () => {
                 const firstOption = roomOptions?.[0];
 
                 return (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 w-full">
 
                         {/* DROPDOWN */}
                         <RoomDropdown
@@ -295,7 +296,7 @@ const HotelDetail = () => {
                         />
 
                         {/* SELECTED LIST */}
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col">
                             {selected.length > 0 ? (
                                 <div className="flex flex-col gap-2">
                                     {selected.map((room) => {
@@ -304,10 +305,10 @@ const HotelDetail = () => {
                                         return (
                                             <div
                                                 key={room.label}
-                                                className="flex items-center justify-between gap-6"
+                                                className="flex items-center gap-6"
                                             >
                                                 {/* LEFT */}
-                                                <div className="flex items-center gap-2 min-w-[180px]">
+                                                <div className="flex items-center gap-2 w-[100px] shrink-0">
                                                     {room.icon}
 
                                                     <span className="text-[#1d3557] font-medium text-sm">
@@ -316,7 +317,7 @@ const HotelDetail = () => {
                                                 </div>
 
                                                 {/* RIGHT */}
-                                                <div className="flex items-center gap-3 flex-1">
+                                                <div className="flex items-center gap-3 ">
                                                     {/* QTY */}
                                                     <div className="flex items-center border-2 border-blue-500 rounded-full overflow-hidden h-7">
                                                         <button
@@ -467,6 +468,14 @@ const HotelDetail = () => {
                                 setBookingData({
                                     hotel,
                                     room: row,
+                                    strItemTypeName: row.strItemTypeName,
+                                    meal: spbData?.[0]?.find(
+                                        (p: any) => p.strItemTypeGUID === row.strItemTypeGUID
+                                    )?.strMealIncludedTypeName,
+
+                                    checkIn: today,
+                                    checkOut: tomorrow,
+
                                     items,
                                     totalAmount,
                                 });
@@ -513,6 +522,7 @@ const HotelDetail = () => {
             </div>
         );
     }
+
 
     return (
         <div className="bg-slate-50 min-h-screen py-10 px-6">
