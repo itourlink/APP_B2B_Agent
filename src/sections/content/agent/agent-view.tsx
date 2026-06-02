@@ -1,18 +1,19 @@
 import PrimaryButton from "@/components/button/primary-button";
-import CustomFilter from "@/components/form/custom-filter"
+import CustomFilter from "@/components/form/custom-filter";
 import { Building2, RotateCcw, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import Pagination from "@/components/pagination/pagination";
-import type { IAgent } from "@/hooks/interfaces/user";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useCompanyOwnerListInfo } from "@/hooks/actions/useCompanyOwnerInfo";
 
 const AgentView = () => {
-    const { showToast } = useToastStore()
+    const { showToast } = useToastStore();
     const router = useRouter();
+
+    const IS_DEMO_SINGLE_DATA = false;
 
     const [filters, setFilters] = useState({
         nameProvider: "",
@@ -20,62 +21,112 @@ const AgentView = () => {
 
     const [appliedFilters, setAppliedFilters] = useState(filters);
     const [page, setPage] = useState(1);
+
     const pageSize = 5;
 
-    const { data, isError, isLoading, totalRecords } = useCompanyOwnerListInfo({
+    const {
+        data,
+        isError,
+        isLoading,
+        totalRecords,
+    } = useCompanyOwnerListInfo({
         page,
         pageSize,
         nameProvider: appliedFilters.nameProvider,
     });
 
-    const totalPages = Math.ceil(totalRecords / pageSize);
+    const mockSingleData = [
+        {
+            No: 1,
+            strCompanyGUID: "test-guid",
+            strCompanyName: "CÔNG TY TEST",
+            strUrlLink: "cong-ty-tnhh-ket-noi-du-lich-8F620",
+        },
+    ];
 
-    const listData = data;
+    const listData = useMemo(() => {
+        if (IS_DEMO_SINGLE_DATA) {
+            return mockSingleData;
+        }
 
+        return data ?? [];
+    }, [IS_DEMO_SINGLE_DATA, data]);
+
+
+    const finalTotalRecords = IS_DEMO_SINGLE_DATA
+        ? mockSingleData.length
+        : totalRecords;
+
+    const totalPages = Math.ceil(finalTotalRecords / pageSize);
 
     useEffect(() => {
         if (page > totalPages) {
             setPage(1);
         }
-    }, [totalPages]);
+    }, [page, totalPages]);
+
+
+    useEffect(() => {
+        if (
+            !isLoading &&
+            !isError &&
+            listData?.length === 1
+        ) {
+            router.replaceQuery(paths.shop.home, {
+                company: listData[0]?.strUrlLink,
+            });
+        }
+    }, [listData, isLoading, isError]);
 
     const handleSearch = () => {
-        setAppliedFilters(filters)
-        setPage(1)
+        setAppliedFilters(filters);
+        setPage(1);
     };
 
     const handleReset = () => {
         const defaultFilters = {
             nameProvider: "",
         };
+
         setFilters(defaultFilters);
         setAppliedFilters(defaultFilters);
         setPage(1);
     };
 
-    const onChangeFilters = (key: string, value: string | number) => {
-        let newValue: string | number = value;
-
+    const onChangeFilters = (
+        key: string,
+        value: string | number
+    ) => {
         setFilters((prev) => ({
             ...prev,
-            [key]: String(newValue),
+            [key]: String(value),
         }));
     };
 
-    const colDefs: ColumnDef<IAgent>[] = [
+    const colDefs: ColumnDef<any>[] = [
         {
             field: "No",
             headerName: "STT",
-            render: (value) => <span className="text-gray-400 font-medium">{value}</span>,
+            render: (value) => (
+                <span className="text-gray-400 font-medium">
+                    {value}
+                </span>
+            ),
         },
         {
             field: "strCompanyName",
             headerName: "Tên công ty",
             render: (_, row) => (
-                <div className="space-y-0.5 py-1 text-xs">
+                <div className="space-y-0.5 py-1 text-xs w-full">
                     <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm">
-                        <Building2 size={14} className="text-[#4e6d9a]" />
-                        <span className="uppercase tracking-tight">{row?.strCompanyName}</span>
+                        <Building2
+                            size={14}
+                            className="text-[#4e6d9a]"
+                        />
+
+                        <span className="uppercase tracking-tight">
+                            {row?.strCompanyName}
+                        </span>
                     </div>
                 </div>
             ),
@@ -86,11 +137,14 @@ const AgentView = () => {
             render: (_, row) => (
                 <div className="flex items-center gap-2 min-w-[150px]">
                     <button
-                        onClick={() => showToast("info", "Sắp ra mắt")}
+                        onClick={() =>
+                            showToast("info", "Sắp ra mắt")
+                        }
                         className="cursor-pointer px-4 py-1.5 bg-[#004b91] text-white text-[13px] font-medium rounded hover:bg-[#003d76] transition-all shadow-sm"
                     >
                         Tariff
                     </button>
+
                     <button
                         onClick={() =>
                             router.replaceQuery(
@@ -107,7 +161,7 @@ const AgentView = () => {
                     >
                         Shop
                     </button>
-                </div >
+                </div>
             ),
         },
     ];
@@ -115,7 +169,6 @@ const AgentView = () => {
     return (
         <div>
             <div className="flex items-end gap-3">
-
                 <CustomFilter
                     onChangeFilters={onChangeFilters}
                     search={[
@@ -146,7 +199,7 @@ const AgentView = () => {
 
             <div className="pt-4">
                 <TableCore
-                    rowData={listData ?? []}
+                    rowData={listData}
                     columnDefs={colDefs}
                     loading={isLoading}
                 />
@@ -154,13 +207,15 @@ const AgentView = () => {
                 {!isError && (
                     <Pagination
                         currentPage={page}
-                        onPageChange={(value) => setPage(value)}
+                        onPageChange={(value) =>
+                            setPage(value)
+                        }
                         totalPages={totalPages || 1}
                     />
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default AgentView
+export default AgentView;

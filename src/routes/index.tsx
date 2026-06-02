@@ -3,6 +3,7 @@ import { Navigate, Outlet, useRoutes } from "react-router-dom";
 import { paths } from "./paths";
 import InitLayout, { LAYOUT } from "../layouts/init-layout";
 import { SplashScreen } from "@/components/loading";
+import AuthGuard from "./auth-guard";
 // import { AuthRoute } from "./auth-route";
 const TourPage = lazy(() => import("@/pages/tour/list"));
 const TourDetailPage = lazy(() => import("@/pages/tour/detail"));
@@ -114,9 +115,11 @@ export function Router() {
         // INFO LAYOUT
         {
           element: (
-            <InitLayout type={LAYOUT.INFO}>
-              <Outlet />
-            </InitLayout>
+            <AuthGuard>
+              <InitLayout type={LAYOUT.INFO}>
+                <Outlet />
+              </InitLayout>
+            </AuthGuard>
           ),
           children: [
 

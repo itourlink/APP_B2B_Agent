@@ -31,14 +31,26 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// tránh redirect nhiều lần
+let isRedirecting = false;
+
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response.data;
-  },
+  (response: AxiosResponse) => response.data,
   async (error) => {
-    if (error.response?.status === 401) {
-      console.error("Phiên làm việc hết hạn hoặc không có quyền.");
+    const status = error.response?.status;
+
+    if (status === 401) {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+
+      if (token && !isRedirecting) {
+        isRedirecting = true;
+
+        localStorage.removeItem(ACCESS_TOKEN);
+
+        window.location.href = `${import.meta.env.VITE_SERVER_URL}auth/login`;
+      }
     }
+
     return Promise.reject(error);
   }
 );

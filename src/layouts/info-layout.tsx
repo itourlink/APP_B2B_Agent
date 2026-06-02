@@ -16,9 +16,9 @@ export const InfoLayout = ({ children }: Props) => {
 
             <div className="flex flex-1 max-w-360 mx-auto w-full group">
 
-                <aside className="shrink-0">
+                {/* <aside className="shrink-0">
                     <Sidebar />
-                </aside>
+                </aside> */}
 
                 <main className="flex-1 min-w-0 p-6">
                     <div className="min-h-[calc(100vh-200px)]">
