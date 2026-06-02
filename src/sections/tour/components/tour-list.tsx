@@ -5,7 +5,7 @@ import { getUrlImage } from '@/utils/format-image';
 import { formatPrice } from '@/utils/format-number';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
-    
+
 export const TourCard = ({ tour }: any) => {
     const router = useRouter();
 
@@ -106,15 +106,6 @@ const TourList = () => {
     });
     const { tourData, tourLoading, tourError } = useListTour(filters);
 
-    // const totalRecords = tourData?.[0]?.intTotalRecords || 0;
-    // const totalPages = Math.ceil(totalRecords / filters.pageSize);
-    // const handlePageChange = (page: number) => {
-    //     setFilters((prev) => ({
-    //         ...prev,
-    //         page,
-    //     }));
-    // };
-
     if (tourLoading) {
         return (
             <div className="max-w-7xl mx-auto p-6">
@@ -153,17 +144,6 @@ const TourList = () => {
                 <h2 className="text-2xl font-bold text-gray-800">
                     Tour nổi bật
                 </h2>
-                {/* <div className="flex items-center gap-3 bg-white p-1.5 rounded-lg border border-gray-200 shadow-sm">
-                    <span className="text-sm text-gray-500 ml-2">
-                        Hiển thị dạng:
-                    </span>
-                    <button className="cursor-pointer p-1.5 bg-[#2566b0] text-white rounded-md shadow-sm">
-                        <LayoutGrid size={18} />
-                    </button>
-                    <button className="cursor-pointer p-1.5 text-gray-400 hover:bg-gray-100 rounded-md transition-colors">
-                        <List size={18} />
-                    </button>
-                </div> */}
 
                 <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
                     <span className="text-[12px] text-gray-500 ml-2">
@@ -193,7 +173,7 @@ const TourList = () => {
                     </div>
                 </div>
             </div>
-             {tourLoading && (
+            {tourLoading && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {[...Array(8)].map((_, i) => (
                         <TourCardSkeleton key={i} />
@@ -202,41 +182,30 @@ const TourList = () => {
             )}
             {tourError && <TourError />}
 
-          {!tourLoading && !tourError && (
-                          <div
-                              className={
-                                  viewMode === "grid"
-                                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-                                      : "flex flex-col gap-4"
-                              }
-                          >
-                              {tourData?.map((tour: any) =>
-                                  viewMode === "grid" ? (
-                                      <TourCard
-                                          key={tour?.strTourGUID}
-                                          tour={tour}
-                                      />
-                                  ) : (
-                                      <TourListItem
-                                          key={tour?.strTourGUID}
-                                          tour={tour}
-                                      />
-                                    )
-                              )}
-                          </div>
-                      )}
+            {!tourLoading && !tourError && (
+                <div
+                    className={
+                        viewMode === "grid"
+                            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+                            : "flex flex-col gap-4"
+                    }
+                >
+                    {tourData?.map((tour: any) =>
+                        viewMode === "grid" ? (
+                            <TourCard
+                                key={tour?.strTourGUID}
+                                tour={tour}
+                            />
+                        ) : (
+                            <TourListItem
+                                key={tour?.strTourGUID}
+                                tour={tour}
+                            />
+                        )
+                    )}
+                </div>
+            )}
 
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {tourData.map((tour: any) => (
-                    <TourCard key={tour.strTourGUID} tour={tour} />
-                ))}
-            </div> */}
-
-            {/* <Pagination
-                currentPage={filters.page}
-                onPageChange={handlePageChange}
-                totalPages={totalPages || 1}
-            /> */}
         </div>
     );
 };

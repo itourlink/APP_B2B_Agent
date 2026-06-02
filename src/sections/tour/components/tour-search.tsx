@@ -111,7 +111,6 @@ const TourSearch = () => {
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
-        // CLICK TOUR => DETAIL
         if (selectedTourUrl) {
             router.replaceParams(paths.shop.tour.detail, {
                 item: {
@@ -155,9 +154,6 @@ const TourSearch = () => {
                                 data={searchData}
                                 isLoading={searchLoading}
                                 onSelectDestination={(item: any) => {
-
-                                    console.log("CLICK DESTINATION:", item);
-
                                     const isTour =
                                         item?.__type === "tour" &&
                                         typeof item?.strServiceNameUrl === "string";

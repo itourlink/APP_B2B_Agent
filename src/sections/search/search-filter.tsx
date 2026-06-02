@@ -97,7 +97,7 @@ export default function SearchFilter({
     };
 
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sticky top-31 h-fit text-sm">
+        <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sticky top-58 h-fit text-sm">
 
             {/* HEADER */}
             <div className="flex items-center justify-between mb-2">

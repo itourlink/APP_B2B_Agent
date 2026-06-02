@@ -80,7 +80,11 @@ const HotelSearch = () => {
             dtmFilterCheckIn: filters.start,
 
             dtmFilterCheckOut: filters.end,
+
+            strFilterDestinationName:
+                filters.strFilterDestinationName || null,
         };
+
 
         router.pushQuery(
             paths.shop.search,

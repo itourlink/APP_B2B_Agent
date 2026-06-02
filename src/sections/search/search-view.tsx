@@ -96,7 +96,8 @@ const SearchView = () => {
 
   // ================= TEMP FILTER =================
   const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
-  const hotelParams = state?.hotelParams;
+  // const hotelParams = state?.hotelParams;
+  const hotelParams = state?.isSearchHotel || {};
   const [tempSeriesFilter, setTempSeriesFilter] = useState(seriesFilter);
 
   const [tempHotelFilter, setTempHotelFilter] = useState(hotelFilter);
@@ -154,7 +155,8 @@ const SearchView = () => {
         ...hotelParams,
 
         strFilterSupplierName:
-          hotelFilter?.strFilterSupplierName,
+          hotelFilter?.strFilterSupplierName ||
+          hotelParams?.strFilterDestinationName,
 
         strListEasiaCateID:
           hotelFilter?.strListEasiaCateID,
@@ -179,7 +181,8 @@ const SearchView = () => {
         ...hotelParams,
 
         strFilterSupplierName:
-          hotelFilter?.strFilterSupplierName,
+          hotelFilter?.strFilterSupplierName ||
+          hotelParams?.strFilterDestinationName,
 
         strPriceFromRange:
           hotelFilter?.strPriceFromRange,
@@ -284,6 +287,72 @@ const SearchView = () => {
     hotelLoadingState;
 
   const resultCount = rawData?.[0]?.intTotalRecords || 0;
+
+  useEffect(() => {
+    const nextPayload = state?.isSearchTour || {};
+
+    setTourFilter({
+      intCateID: nextPayload?.intCateID ?? null,
+
+      intProductID: nextPayload?.intProductID ?? null,
+
+      strNoOfDayRange: null,
+      strFilterServiceName: null,
+      strListEasiaCateID: null,
+      strListTransportOptionID: null,
+
+      strLocationCode:
+        nextPayload?.strLocationCode ?? null,
+
+      dtmFilterDateValidFrom:
+        nextPayload?.dtmFilterDateValidFrom ?? null,
+
+      dtmFilterDateValidTo:
+        nextPayload?.dtmFilterDateValidTo ?? null,
+
+      strPriceFromRange: null,
+    });
+
+    setSeriesFilter({
+      intCateID: nextPayload?.intCateID ?? null,
+
+      intProductID: nextPayload?.intProductID ?? null,
+
+      strNoOfDayRange: null,
+      strFilterServiceName: null,
+      strListEasiaCateID: null,
+      strListTransportOptionID: null,
+
+      strPriceFromRange: null,
+
+      intNoOfAdult:
+        nextPayload?.intNoOfAdult,
+
+      strListNoOfChild:
+        nextPayload?.strListNoOfChild,
+
+      intNoOfSGLSup:
+        nextPayload?.intNoOfSGLSup,
+
+      intNoOfTPLRec:
+        nextPayload?.intNoOfTPLRec,
+
+      strLocationCode:
+        nextPayload?.strLocationCode ?? null,
+
+      dtmFilterDateValidFrom:
+        nextPayload?.dtmFilterDateValidFrom ?? null,
+
+      dtmFilterDateValidTo:
+        nextPayload?.dtmFilterDateValidTo ?? null,
+    });
+
+    setPageSeries(1);
+    setPageTour(1);
+    setPageHotel(1);
+
+  }, [location.key]);
+
 
   return (
     <div className="">
