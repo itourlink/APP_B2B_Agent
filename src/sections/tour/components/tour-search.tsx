@@ -122,15 +122,6 @@ const TourSearch = () => {
             return;
         }
 
-        // CLICK DESTINATION => SEARCH LIST
-        // router.replaceParams(paths.shop.search, {
-        //     type: "tour",
-        //     isTourSeries: filters.isTourSeries,
-        //     isSearchTour: {
-        //         ...draftFilters2,
-        //     },
-        // });
-
         router.pushQuery(
             paths.shop.search,
             {
@@ -164,7 +155,12 @@ const TourSearch = () => {
                                 data={searchData}
                                 isLoading={searchLoading}
                                 onSelectDestination={(item: any) => {
-                                    const isTour = item?.__type === "tour";
+
+                                    console.log("CLICK DESTINATION:", item);
+
+                                    const isTour =
+                                        item?.__type === "tour" &&
+                                        typeof item?.strServiceNameUrl === "string";
 
                                     setFilters((p: any) => ({
                                         ...p,
