@@ -901,7 +901,17 @@ const PaymentBookingCartView: React.FC = () => {
 
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                                Bạn sẽ thanh toán trước T3, 26 Thg 05, 2026 23:59:59 để hoàn thành quá trình book đặt
+                                Bạn sẽ thanh toán trước{" "}
+                                {new Date().toLocaleString("vi-VN", {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                })}{" "}
+                                để hoàn thành quá trình book đặt
                             </div>
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">

@@ -152,27 +152,44 @@ const BookingForm = ({ item }: Props) => {
         }
     }, [guestValue, selectedStar, joinType]);
 
+    const xmlNoOfChild = useMemo(() => {
+        if (!guestValue.childAges?.length) {
+            return null;
+        }
+
+        return guestValue.childAges
+            .map((age) => `<child>${age}</child>`)
+            .join("");
+    }, [guestValue.childAges]);
+
+
     // ================= PRICE API =================
     const { priceData } = useListPrice({
         enabled: canFetchPrice && !!startDate,
 
         strTourGUID: item?.strTourGUID,
+
         intNoOfAdult: guestValue.adults,
+
         intNoOfSGLSup: guestValue.roomTypes?.sgl,
+
         intNoOfTPLRec: guestValue.roomTypes?.tpl,
 
         dtmFilterDateFrom: startDate
             ? startDate.toISOString()
             : null,
 
+        xmlNoOfChild,
+
         intEasiaCateID: selectedStar,
+
         intJoinTypeID: joinType,
     });
 
     const price = priceData?.[0] ?? [];
 
     const dtmDateTo = startDate
-        ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000)
+        ? new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000)
         : null;
 
     const buildPayload = () => {

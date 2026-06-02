@@ -60,6 +60,8 @@ const HotelDetail = () => {
     const { pplfcData } = useListPriceListForCompany(filters2);
     const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
     const hotel = hotelData?.[0] ?? {};
+
+    console.log("hotel", hotel)
     const strPriceListGUID = pplfcData?.strPriceListGUID;
     const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
@@ -753,12 +755,14 @@ const HotelDetail = () => {
         return (
             <div className="p-10 animate-pulse">
                 <div className="h-8 w-1/3 bg-gray-200 rounded mb-4" />
+
                 <div className="h-4 w-1/4 bg-gray-200 rounded mb-6" />
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         <div className="h-[500px] bg-gray-200 rounded-2xl" />
                     </div>
+
                     <div className="h-[300px] bg-gray-200 rounded-2xl" />
                 </div>
 
@@ -771,6 +775,22 @@ const HotelDetail = () => {
         return (
             <div className="p-10 text-center text-red-500">
                 Có lỗi xảy ra, vui lòng thử lại.
+            </div>
+        );
+    }
+
+    if (Object.keys(hotel).length === 0) {
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-slate-700 mb-2">
+                        Không tìm thấy khách sạn
+                    </h2>
+
+                    <p className="text-slate-500">
+                        Khách sạn không tồn tại hoặc đã bị xoá.
+                    </p>
+                </div>
             </div>
         );
     }

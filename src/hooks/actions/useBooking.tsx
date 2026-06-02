@@ -14,6 +14,7 @@ export const useListPrice = (filters?: {
     intNoOfSGLSup?: number;
     intNoOfTPLRec?: number;
     dtmFilterDateFrom?: string | null;
+    xmlNoOfChild?: string | null;
     intEasiaCateID?: number | null;
     intJoinTypeID?: number | null;
     enabled?: boolean;
@@ -31,7 +32,7 @@ export const useListPrice = (filters?: {
                 strTourGUID: filters?.strTourGUID,
                 strPriceLevelGUID: "",
                 intNoOfAdult: filters?.intNoOfAdult,
-                xmlNoOfChild: "",
+                xmlNoOfChild: filters?.xmlNoOfChild ?? "",
                 intNoOfSGLSup: filters?.intNoOfSGLSup,
                 intNoOfTPLRec: filters?.intNoOfTPLRec,
                 dtmFilterDateFrom: filters?.dtmFilterDateFrom,

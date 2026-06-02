@@ -14,6 +14,7 @@ import VoucherList from './voucher-list';
 import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
+import { fDateTime } from '@/utils/format-time';
 
 const PaymentBookingView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
@@ -22,6 +23,7 @@ const PaymentBookingView: React.FC = () => {
     const item = location.state?.item;
     const price = location.state?.price;
     const payloadItem = location.state?.payload;
+    console.log("isValidValue(price?.strDtmDateFrom)",(payloadItem))
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
@@ -805,7 +807,7 @@ const PaymentBookingView: React.FC = () => {
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{price.No}</td>
                                         <td className="py-3 px-4 text-left align-top border-r border-gray-100">
                                             <div className="font-semibold text-gray-800">{price?.strServiceName}</div>
-                                            <div className="text-gray-500 text-[11px] mt-0.5">{isValidValue(price?.strDtmDateFrom)} - {isValidValue(price?.strDtmDateTo)}</div>
+                                            <div className="text-gray-500 text-[11px] mt-0.5">{fDateTime(isValidValue(payloadItem?.dtmDateFrom))} - {fDateTime(isValidValue(payloadItem?.dtmDateTo))}</div>
                                         </td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
@@ -868,7 +870,17 @@ const PaymentBookingView: React.FC = () => {
 
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                                Bạn sẽ thanh toán trước T3, 26 Thg 05, 2026 23:59:59 để hoàn thành quá trình book đặt
+                                Bạn sẽ thanh toán trước{" "}
+                                {new Date().toLocaleString("vi-VN", {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                })}{" "}
+                                để hoàn thành quá trình book đặt
                             </div>
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">

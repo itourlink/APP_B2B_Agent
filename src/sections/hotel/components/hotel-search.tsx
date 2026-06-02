@@ -42,35 +42,45 @@ const HotelSearch = () => {
         new URLSearchParams(location.search).get("company");
 
     const [isNavigating, setIsNavigating] = useState(false);
+
     const router = useRouter();
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
-    const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
 
-    const [draftFilters, setDraftFilters] = useState(DEFAULT_FILTERS2);
+    // ✅ lưu full hotel object
+    const [selectedHotel, setSelectedHotel] =
+        useState<any | null>(null);
+
+    const [draftFilters, setDraftFilters] =
+        useState(DEFAULT_FILTERS2);
 
     // 👉 dropdown search
-    const { searchDesData, searchDesLoading } = useSearchDesHotel({
-        page: filters.page,
-        pageSize: filters.pageSize,
-        strFilterDestinationName: filters.strFilterDestinationName,
-    });
-
-
+    const { searchDesData, searchDesLoading } =
+        useSearchDesHotel({
+            page: filters.page,
+            pageSize: filters.pageSize,
+            strFilterDestinationName:
+                filters.strFilterDestinationName,
+        });
 
     const handleSearch = () => {
-        if (selectedUrl) {
+
+        // ✅ CLICK HOTEL => đi detail
+        if (selectedHotel) {
+
             setIsNavigating(true);
 
-            router.replaceParams(paths.shop.hotel.detail, {
-                item: {
-                    strSupplierNameURL: selectedUrl,
-                },
-            });
+            router.replaceParams(
+                paths.shop.hotel.detail,
+                {
+                    item: selectedHotel,
+                }
+            );
 
             return;
         }
 
+        // ✅ SEARCH DESTINATION
         const payload = {
             ...draftFilters,
 
@@ -84,7 +94,6 @@ const HotelSearch = () => {
             strFilterDestinationName:
                 filters.strFilterDestinationName || null,
         };
-
 
         router.pushQuery(
             paths.shop.search,
@@ -106,43 +115,75 @@ const HotelSearch = () => {
         <>
             <GenericFilter
                 filters={[
-                    { type: "toggle", key: "series", label: "Đặt phòng ngay" },
+                    {
+                        type: "toggle",
+                        key: "series",
+                        label: "Đặt phòng ngay",
+                    },
 
                     {
                         type: "search",
                         key: "strFilterDestinationName",
                         label: "Điểm đến",
                         placeholder: "Search...",
+
                         renderDropdown: ({ close }) => (
                             <HotelLocationDes
                                 data={searchDesData}
-                                isLoading={searchDesLoading}
-                                onSelectDestination={(item) => {
+                                isLoading={
+                                    searchDesLoading
+                                }
+                                onSelectDestination={(
+                                    item
+                                ) => {
+
+                                    console.log(
+                                        "item",
+                                        item
+                                    );
+
                                     const isHotel =
-                                        typeof item?.strSupplierNameURL === "string" &&
-                                        item.strSupplierNameURL.trim() !== "";
+                                        item?.__type ===
+                                        "hotel";
 
                                     setFilters((p) => ({
                                         ...p,
-                                        strFilterDestinationName: item?.strDestinationName,
+
+                                        strFilterDestinationName:
+                                            item?.strDestinationName,
                                     }));
 
                                     if (isHotel) {
-                                        // 👉 click HOTEL
-                                        setSelectedUrl(item.strSupplierNameURL);
 
-                                        setDraftFilters((prev) => ({
-                                            ...prev,
-                                            strFilterLocationCode: null,
-                                        }));
+                                        // ✅ lưu full object
+                                        setSelectedHotel(
+                                            item
+                                        );
+
+                                        setDraftFilters(
+                                            (prev) => ({
+                                                ...prev,
+
+                                                strFilterLocationCode:
+                                                    null,
+                                            })
+                                        );
+
                                     } else {
-                                        // 👉 click DESTINATION
-                                        setSelectedUrl(null);
 
-                                        setDraftFilters((prev) => ({
-                                            ...prev,
-                                            strFilterLocationCode: item?.strDestinationCode,
-                                        }));
+                                        // ✅ clear selected hotel
+                                        setSelectedHotel(
+                                            null
+                                        );
+
+                                        setDraftFilters(
+                                            (prev) => ({
+                                                ...prev,
+
+                                                strFilterLocationCode:
+                                                    item?.strDestinationCode,
+                                            })
+                                        );
                                     }
 
                                     close();
@@ -155,53 +196,93 @@ const HotelSearch = () => {
                         type: "dateRange",
                         keyStart: "start",
                         keyEnd: "end",
-                        label: "Ngày nhận phòng - Ngày trả phòng",
+                        label:
+                            "Ngày nhận phòng - Ngày trả phòng",
                     },
 
-                    { type: "guestRoom", key: "guestRoom", isRoomDetail: false },
+                    {
+                        type: "guestRoom",
+                        key: "guestRoom",
+                        isRoomDetail: false,
+                    },
                 ]}
+
                 values={filters}
+
                 onChange={(k, v) => {
+
                     setFilters((prev: any) => {
-                        const next = { ...prev, [k]: v };
+
+                        const next = {
+                            ...prev,
+                            [k]: v,
+                        };
 
                         // 👉 ROOM
                         if (k === "guestRoom") {
+
                             setDraftFilters((p) => ({
                                 ...p,
-                                intNoOfRooms: v?.rooms || 1,
+
+                                intNoOfRooms:
+                                    v?.rooms || 1,
                             }));
 
-                            next.guestRoom = v; // ✅ thêm dòng này
+                            next.guestRoom = v;
                         }
 
                         // 👉 DATE
-                        if (k === "start" || k === "end") {
+                        if (
+                            k === "start" ||
+                            k === "end"
+                        ) {
+
                             setDraftFilters((p) => ({
                                 ...p,
-                                dtmFilterCheckIn: k === "start" ? v : p.dtmFilterCheckIn,
-                                dtmFilterCheckOut: k === "end" ? v : p.dtmFilterCheckOut,
+
+                                dtmFilterCheckIn:
+                                    k === "start"
+                                        ? v
+                                        : p.dtmFilterCheckIn,
+
+                                dtmFilterCheckOut:
+                                    k === "end"
+                                        ? v
+                                        : p.dtmFilterCheckOut,
                             }));
 
                             next[k] = v;
                         }
 
+                        // ✅ user gõ tay => reset selected hotel
+                        if (
+                            k ===
+                            "strFilterDestinationName"
+                        ) {
+                            setSelectedHotel(null);
+                        }
+
                         return next;
                     });
                 }}
+
                 onSearch={handleSearch}
             />
 
             {isNavigating && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+
                     <div className="bg-white px-6 py-4 rounded-xl shadow flex items-center gap-3">
+
                         <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
-                        <span>Đang chuyển trang...</span>
+
+                        <span>
+                            Đang chuyển trang...
+                        </span>
                     </div>
                 </div>
             )}
         </>
-
     );
 };
 
