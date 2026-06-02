@@ -417,7 +417,10 @@ const PaymentBookingCartView: React.FC = () => {
                             });
                         }
 
-                        router.push(`${paths.content.service}?activeTab=booked`);
+                        window.open(
+                            "http://localhost:5173/service?activeTab=booked",
+                            "_blank"
+                        );
 
                     } catch (err) {
 

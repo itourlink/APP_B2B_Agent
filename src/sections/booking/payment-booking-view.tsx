@@ -23,7 +23,7 @@ const PaymentBookingView: React.FC = () => {
     const item = location.state?.item;
     const price = location.state?.price;
     const payloadItem = location.state?.payload;
-    console.log("isValidValue(price?.strDtmDateFrom)",(payloadItem))
+    console.log("isValidValue(price?.strDtmDateFrom)", (payloadItem))
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
@@ -371,8 +371,6 @@ const PaymentBookingView: React.FC = () => {
                         const serviceGUID =
                             res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
 
-                        const intStatusBk = res?.[1]?.[0]?.intStatusBk;
-
                         // call email template
                         if (serviceGUID) {
 
@@ -435,20 +433,10 @@ const PaymentBookingView: React.FC = () => {
                             });
                         }
 
-                        const mapStatusToTab = (status?: number) => {
-                            switch (status) {
-                                case 1:
-                                    return "hold";
-                                case 2:
-                                    return "booked";
-                                default:
-                                    return "suggest";
-                            }
-                        };
-
-                        const activeTab = mapStatusToTab(intStatusBk);
-
-                        router.push(`${paths.content.service}?activeTab=${activeTab}`);
+                        window.open(
+                            "http://localhost:5173/service?activeTab=booked",
+                            "_blank"
+                        );
 
                     } catch (err) {
 
