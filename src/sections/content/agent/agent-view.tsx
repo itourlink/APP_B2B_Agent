@@ -66,8 +66,11 @@ const AgentView = () => {
     }, [page, totalPages]);
 
 
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+
     useEffect(() => {
         if (
+            isFirstLoad &&
             !isLoading &&
             !isError &&
             listData?.length === 1
@@ -76,7 +79,11 @@ const AgentView = () => {
                 company: listData[0]?.strUrlLink,
             });
         }
-    }, [listData, isLoading, isError]);
+
+        if (!isLoading) {
+            setIsFirstLoad(false);
+        }
+    }, [listData, isLoading, isError, isFirstLoad]);
 
     const handleSearch = () => {
         setAppliedFilters(filters);
