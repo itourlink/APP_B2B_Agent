@@ -460,7 +460,7 @@ const PaymentBookingHotelView: React.FC = () => {
                         }
 
                         window.open(
-                            "http://localhost:5173/service?activeTab=booked",
+                            "https://myagentmember.itourlink.com/service?activeTab=booked",
                             "_blank"
                         );
 
