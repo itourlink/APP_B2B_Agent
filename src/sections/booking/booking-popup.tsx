@@ -23,20 +23,6 @@ export default function BookingPopup({
     paymentMethod,
 }: Props) {
 
-    const formatCurrency = (amount?: any) => {
-        const value =
-            typeof amount === "number" || typeof amount === "string"
-                ? Number(amount)
-                : 0;
-
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        })
-            .format(isNaN(value) ? 0 : value)
-            .replace("₫", "đ");
-    };
-
     return (
         <PanelPopup
             open={open}
