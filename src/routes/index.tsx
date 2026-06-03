@@ -201,9 +201,11 @@ export function Router() {
         // SHOP LAYOUT
         {
           element: (
-            <InitLayout type={LAYOUT.SHOP}>
-              <Outlet />
-            </InitLayout>
+            <AuthGuard>
+              <InitLayout type={LAYOUT.SHOP}>
+                <Outlet />
+              </InitLayout>
+            </AuthGuard>
           ),
           children: [
             {
@@ -317,9 +319,11 @@ export function Router() {
         // OUT LAYOUT
         {
           element: (
-            <InitLayout type={LAYOUT.OUTSIDE}>
-              <Outlet />
-            </InitLayout>
+            <AuthGuard>
+              <InitLayout type={LAYOUT.OUTSIDE}>
+                <Outlet />
+              </InitLayout>
+            </AuthGuard>
           ),
           children: [
             {

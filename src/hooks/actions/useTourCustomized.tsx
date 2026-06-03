@@ -123,7 +123,7 @@ export const useGetlistSupplierMappingPrice = (filters?: any) => {
         strFilterSupplierName: null,
         strFilterItemTypeName: null,
         strListCityCode: "VN00010001,",
-        intCurrencyView: 3,
+        intCurrencyView: user?.intCurrencyID,
         intPaxCount: 15,
         intCurPage: page,
         intPageSize: pageSize,

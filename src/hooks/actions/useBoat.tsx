@@ -136,7 +136,7 @@ export const useListMappingPrice = (filters?: {
         strPriceRange: null,
         intCurPage: page,
         intPageSize: pageSize,
-        intCurrencyView: 1,
+        intCurrencyView: user?.intCurrencyID,
         strOrder: null,
         tblsReturn: filters?.tblsReturn,
       }),

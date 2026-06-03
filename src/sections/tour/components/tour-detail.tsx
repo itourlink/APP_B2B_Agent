@@ -110,22 +110,26 @@ const TourDetail = () => {
         tdData?.[0]?.[0] || {};
 
     const includedList =
-        ListData?.strIncluded
-            ?.replace(/<\/p>/g, "")
-            ?.split("<p>")
-            ?.filter(Boolean)
-            ?.map((item: any) =>
-                item.replace(/^\s*-\s*/, "")
-            ) || [];
+        typeof ListData?.strIncluded === "string"
+            ? ListData.strIncluded
+                .replace(/<\/p>/g, "")
+                .split("<p>")
+                .filter(Boolean)
+                .map((item: any) =>
+                    item.replace(/^\s*-\s*/, "")
+                )
+            : [];
 
     const exclusionsList =
-        ListData?.strExcluded
-            ?.replace(/<\/p>/g, "")
-            ?.split("<p>")
-            ?.filter(Boolean)
-            ?.map((item: any) =>
-                item.replace(/^\s*-\s*/, "")
-            ) || [];
+        typeof ListData?.strExcluded === "string"
+            ? ListData.strExcluded
+                .replace(/<\/p>/g, "")
+                .split("<p>")
+                .filter(Boolean)
+                .map((item: any) =>
+                    item.replace(/^\s*-\s*/, "")
+                )
+            : [];
 
     return (
         <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">

@@ -255,7 +255,7 @@ export const useListSupplierPriceByAgent = (
                 intPageSize: null,
                 strOrder: null,
                 tblsReturn: "[0][1]",
-                intCurrencyView: 3
+                intCurrencyView: user?.intCurrencyID,
             }),
         enabled: isReady,
         placeholderData: keepPreviousData,
@@ -469,7 +469,7 @@ export const useSearchDesHotel = (filters?: {
         searchDesData: listData,
         totalRecords,
         totalPages,
-        searchDesLoading: query.isLoading,
+        searchDesLoading: query.isFetching,
         searchDesError: query.isError,
     };
 };

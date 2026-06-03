@@ -15,7 +15,6 @@ export const useCompanyOwnerListInfo = (params: {
     nameProvider?: string | null;
     strOrder?: string | null;
     strCompanyNameUrl?: string | null;
-    IsOwnerFriend?: boolean | null;
     tblsReturn?: string | null;
 }) => {
     const { user } = useUser();
@@ -38,7 +37,7 @@ export const useCompanyOwnerListInfo = (params: {
                 strOrder: params.strOrder || null,
                 strFilterCompanyName: params.nameProvider || null,
                 strCompanyNameUrl: params.strCompanyNameUrl || null,
-                IsOwnerFriend: params.IsOwnerFriend,
+                IsOwnerFriend: true,
                 tblsReturn: params.tblsReturn || "[0]",
             }),
         enabled: !!user?.strUserGUID && !!user?.strCompanyGUID,

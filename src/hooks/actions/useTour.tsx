@@ -150,7 +150,7 @@ export const useListTourPublish = (filters?: {
 
                 dtmFilterDateStart: null,
                 strOrder: null,
-                intCurrencyView: 1,
+                intCurrencyView: user?.intCurrencyID,
                 intCurPage: page,
                 intPageSize: pageSize,
                 tblsReturn: "[0]",
@@ -356,7 +356,7 @@ export const useListTourSeries = (filters?: {
 
                 strPriceFromRange,
 
-                intCurrencyView: 1,
+                intCurrencyView: user?.intCurrencyID,
 
                 strLocationCode,
 

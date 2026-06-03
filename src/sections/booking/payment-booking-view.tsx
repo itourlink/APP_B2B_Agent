@@ -20,7 +20,6 @@ const PaymentBookingView: React.FC = () => {
     const item = location.state?.item;
     const price = location.state?.price;
     const payloadItem = location.state?.payload;
-    console.log("isValidValue(price?.strDtmDateFrom)", (payloadItem))
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
     const { user } = useUser()
@@ -430,8 +429,12 @@ const PaymentBookingView: React.FC = () => {
                             });
                         }
 
+                        // window.open(
+                        //     "https://myagentmember.itourlink.com/service?activeTab=booked",
+                        //     "_blank"
+                        // );
                         window.open(
-                            "https://myagentmember.itourlink.com/service?activeTab=booked",
+                            "http://localhost:5173/service?activeTab=booked",
                             "_blank"
                         );
 
