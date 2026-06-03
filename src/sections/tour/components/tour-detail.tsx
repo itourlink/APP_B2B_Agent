@@ -1,5 +1,4 @@
 import {
-    Home,
   MapPin,
   Clock3,
   MessageSquare,
@@ -19,7 +18,7 @@ import {
   useListTourDay,
   useListTourPublish,
 } from "@/hooks/actions/useTour";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 
 /* --- Skeleton + Error --- */
@@ -89,24 +88,24 @@ const TourDetail = () => {
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
     typeof ListData?.strExcluded === "string"
       ? ListData.strExcluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
-                                                                
+
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         {/* LEFT */}
         <div className="flex-1 space-y-10 bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
