@@ -1,4 +1,6 @@
 import PanelPopup from "@/components/popup/panel-popup";
+import { useListCurrency } from "@/hooks/actions/useBooking";
+import { isValidValue } from "@/utils/utilts";
 
 type Props = {
     open: boolean;
@@ -23,6 +25,8 @@ export default function BookingPopup({
     paymentMethod,
 }: Props) {
 
+    const { currencyData } = useListCurrency();
+    
     return (
         <PanelPopup
             open={open}
@@ -42,7 +46,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 1:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
-                            ${(finalDeposit)}
+                            {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
                         </span>
                     </div>
 
@@ -50,7 +54,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 2:</span>
 
                         <span className="font-semibold text-orange-600">
-                            ${(finalDebt)}
+                            {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
                         </span>
                     </div>
 
@@ -58,7 +62,7 @@ export default function BookingPopup({
                         <span>Voucher:</span>
 
                         <span className="font-semibold text-red-500">
-                            -${(totalVoucherAmount)}
+                            -{currencyData?.strCurrencySymbol} {isValidValue(totalVoucherAmount)}
                         </span>
                     </div>
 
