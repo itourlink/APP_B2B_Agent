@@ -124,59 +124,59 @@ export function Router() {
           children: [
 
             {
-              path: paths.content.info,
+              // path: paths.content.info,
               element: <InfoPage />,
             },
             {
-              path: paths.content.requestBooking,
+              // path: paths.content.requestBooking,
               element: <RequestBookingPage />,
             },
             {
-              path: paths.content.detailRequest,
+              // path: paths.content.detailRequest,
               element: <DetailRequestPage />,
             },
             {
-              path: paths.content.requestCustomize,
+              // path: paths.content.requestCustomize,
               element: <RequestCustomizePage />,
             },
             {
-              path: paths.content.detailRequestCustomize,
+              // path: paths.content.detailRequestCustomize,
               element: <DetailRequestCustomizePage />,
             },
             {
-              path: paths.content.quote,
+              // path: paths.content.quote,
               element: <QuotePage />,
             },
             {
-              path: paths.content.detaiQuote,
+              // path: paths.content.detaiQuote,
               element: <DetailQuotePage />,
             },
             {
-              path: paths.content.service,
+              // path: paths.content.service,
               element: <ServicePage />,
             },
             {
-              path: paths.content.detailService,
+              // path: paths.content.detailService,
               element: <DetailServicePage />,
             },
             {
-              path: paths.content.feedback,
+              // path: paths.content.feedback,
               element: <FeedbackPage />,
             },
             {
-              path: paths.content.pricing,
+              // path: paths.content.pricing,
               element: <PricingPage />,
             },
             {
-              path: paths.content.reportFinance,
+              // path: paths.content.reportFinance,
               element: <ReportsFinancePage />,
             },
             {
-              path: paths.content.detailReportFinance,
+              // path: paths.content.detailReportFinance,
               element: <DetailReportsFinancePage />,
             },
             {
-              path: paths.content.reportApproved,
+              // path: paths.content.reportApproved,
               element: <ReportApprovedPage />,
             },
             {
@@ -184,15 +184,15 @@ export function Router() {
               element: <AgentPage />,
             },
             {
-              path: paths.content.tourBookings,
+              // path: paths.content.tourBookings,
               element: <TourBookingsPage />,
             },
             {
-              path: paths.content.tourCancelled,
+              // path: paths.content.tourCancelled,
               element: <TourCancelledPage />,
             },
             {
-              path: paths.content.tourProposals,
+              // path: paths.content.tourProposals,
               element: <TourProposalsPage />,
             },
           ],
