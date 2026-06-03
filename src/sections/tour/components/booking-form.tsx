@@ -41,6 +41,7 @@ type GuestValue = {
     };
 };
 const BookingForm = ({ item }: Props) => {
+    console.log("item", item)
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -184,6 +185,8 @@ const BookingForm = ({ item }: Props) => {
         intEasiaCateID: selectedStar,
 
         intJoinTypeID: joinType,
+
+        strPriceLevelGUID: item?.strPriceLevelGUID ?? "",
     });
 
     const price = priceData?.[0] ?? [];
@@ -264,10 +267,10 @@ const BookingForm = ({ item }: Props) => {
                 {price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
-                            Tổng giá: ₫{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                            Tổng giá: ${price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                            Giá / Khách: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                            Giá / Khách: ${price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
                             Còn lại: {price.intPaxRemain ?? "0"} suất

@@ -56,7 +56,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 1:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
-                            {formatCurrency(finalDeposit)}
+                            ${(finalDeposit)}
                         </span>
                     </div>
 
@@ -64,7 +64,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 2:</span>
 
                         <span className="font-semibold text-orange-600">
-                            {formatCurrency(finalDebt)}
+                            ${(finalDebt)}
                         </span>
                     </div>
 
@@ -72,7 +72,7 @@ export default function BookingPopup({
                         <span>Voucher:</span>
 
                         <span className="font-semibold text-red-500">
-                            -{formatCurrency(totalVoucherAmount)}
+                            -${(totalVoucherAmount)}
                         </span>
                     </div>
 
