@@ -17,9 +17,17 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
       endDate: value.endDate || new Date(),
       key: "selection",
     },
-  ]);
+  ]); 
+
+
+  const  [ isCleared, setIsCleared ] = useState(
+    !value.startDate && !value.endDate
+  );
+
+
 
   useEffect(() => {
+    setIsCleared(!value.startDate && !value.endDate);
     setTemp([
       {
         startDate: value.startDate || new Date(),
@@ -39,13 +47,21 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
         key: "selection",
       },
     ]);
+
+    onApply({
+      startDate: null,
+      endDate: null,
+    })
   };
 
   return (
     <div className="bg-white p-4 rounded-2xl shadow-xl w-90">
       <DateRange
         ranges={temp}
-        onChange={(item: any) => setTemp([item.selection])}
+        onChange={(item: any) => {
+          setIsCleared(false);
+          setTemp([item.selection]);
+        }}
         moveRangeOnFirstSelection={false}
         showDateDisplay={false}
         rangeColors={["#2566b0"]}
@@ -56,7 +72,7 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
         <div>
           <div className="text-gray-500">Start Date</div>
           <div className="font-medium">
-            {format(temp[0].startDate, "dd MMM yyyy")}
+            {isCleared ? "Select Date" : format(temp[0].startDate, "dd MMM yyyy")}
           </div>
         </div>
 
@@ -65,7 +81,7 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
         <div>
           <div className="text-gray-500">End Date</div>
           <div className="font-medium">
-            {format(temp[0].endDate, "dd MMM yyyy")}
+            {isCleared ? "Select Date" : format(temp[0].endDate, "dd MMM yyyy")}
           </div>
         </div>
       </div>
