@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListCurrency } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { TITLES_OPTIONS } from '@/utils/option-data';
@@ -45,8 +45,6 @@ const PaymentBookingView: React.FC = () => {
 
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
-
-
 
     const [selectedBankAccount, setSelectedBankAccount] = useState<any>(null);
 

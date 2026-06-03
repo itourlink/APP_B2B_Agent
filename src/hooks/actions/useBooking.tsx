@@ -194,3 +194,30 @@ export const addCartForHotel = async (body: any) => {
     );
     return res.data;
 };
+
+
+const fetchListCurrency = async (body: any) => {
+    const res = await apiClient.post("public/GetListCurrency", body);
+    return res.data;
+};
+
+export const useListCurrency = () => {
+    const { user } = useUser();
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.CURRENCY],
+        queryFn: () =>
+            fetchListCurrency({
+                intCurrencyID: user?.intCurrencyID,
+                tblsReturn: "[0]"
+            }),
+        enabled: !!user?.intCurrencyID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        currencyData: query.data?.[0]?.[0] ?? [],
+        currencyLoading: query.isLoading,
+        currencyError: query.isError,
+    };
+};
