@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { CameraOff, Star, Search, ChevronDown, ChevronUp } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { CameraOff, Star, Search, ChevronDown, ChevronUp, Home } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import {
   useDetailRestaurant,
 
@@ -8,6 +8,7 @@ import {
 import { useListMappingPrice } from "@/hooks/actions/useBoat";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { getUrlImage } from "@/utils/format-image";
+import { paths } from "@/routes/paths";
 
 const RestaurantDetail = () => {
   const location = useLocation();
@@ -69,6 +70,26 @@ const RestaurantDetail = () => {
 
 
   return (
+    <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
+         <div className="max-w-7xl mx-auto mb-6">
+                <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
+                  <Link
+                    to={paths.shop.restaurant.list}
+                    className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
+                  >
+                    <Home size={20} />
+                  </Link>
+                  <span className="text-slate-400">&gt;</span>
+                  <Link
+                    to={paths.shop.restaurant.list}
+                    className="hover:text-[#2566b0] transition-colors"
+                  ></Link>
+                  <span className="text-slate-600 font-medium line-clamp-1">
+                    {restaurant?.strSupplierName ||
+                      "Chi tiết tour"}
+                  </span>
+                </nav>
+              </div>
     <div className="max-w-[1400px] mx-auto px-6 pb-6 pt-[50px] bg-[#f8f9fa] min-h-screen flex flex-col lg:flex-row gap-8">
       {/* LEFT */}
       <div className="flex-1">
@@ -303,107 +324,8 @@ const RestaurantDetail = () => {
       </div>
     </div>
 
-    //   <div className="max-w-[1400px] mx-auto px-6 pb-6 pt-[50px] bg-[#f8f9fa] min-h-screen flex flex-col lg:flex-row gap-8">
-    //     {/* LEFT */}
-    //     <div className="flex-1">
-    //       <div className="bg-white rounded-xl border p-6">
-    //         <div className="flex flex-col md:flex-row gap-6">
-    //           {/* IMAGE */}
-    //           <div className="w-full md:w-[360px] space-y-3">
-    //             <div className="w-full h-[240px] bg-[#e5e7eb] overflow-hidden rounded-md border">
-    //               {displayImage ? (
-    //                 <img
-    //                   src={displayImage}
-    //                   alt={restaurant?.name || "restaurant"}
-    //                   className="w-full h-full object-cover"
-    //                 />
-    //               ) : (
-    //                 <div className="flex items-center justify-center h-full">
-    //                   <CameraOff className="w-12 h-12 text-gray-400" />
-    //                 </div>
-    //               )}
-    //             </div>
-
-    //             <div className="flex gap-2 flex-wrap">
-    //               {restaurant?.thumbnails?.length ? (
-    //                 restaurant.thumbnails.map((img: string, index: number) => (
-    //                   <button
-    //                     key={`${img}-${index}`}
-    //                     type="button"
-    //                     onClick={() => setActiveImage(img)}
-    //                     className={`w-20 h-14 border rounded overflow-hidden ${
-    //                       displayImage === img
-    //                         ? "border-[#1b4998]"
-    //                         : "border-gray-300"
-    //                     }`}
-    //                   >
-    //                     <img
-    //                       src={img}
-    //                       alt={`thumbnail-${index + 1}`}
-    //                       className="w-full h-full object-cover"
-    //                     />
-    //                   </button>
-    //                 ))
-    //               ) : (
-    //                 <div className="w-full h-14 flex items-center text-sm text-gray-400">
-    //                   Không có ảnh
-    //                 </div>
-    //               )}
-    //             </div>
-    //           </div>
-
-    //           {/* INFO */}
-    //           <div className="flex-1">
-    //             <h1 className="text-3xl font-medium uppercase">
-    //               {restaurant?.name || "Nhà hàng"}
-    //             </h1>
-
-    //             <div className="flex text-orange-400 mt-2">
-    //               {[1, 2, 3, 4, 5].map((star) => (
-    //                 <Star
-    //                   key={star}
-    //                   className={`w-4 h-4 ${
-    //                     star <= (restaurant?.rating ?? 0) ? "fill-current" : ""
-    //                   }`}
-    //                 />
-    //               ))}
-    //             </div>
-
-    //             <div className="mt-4 space-y-3 text-sm">
-    //               <div className="flex items-start gap-2">
-    //                 <MapPin className="w-4 h-4 text-[#1b4998] mt-0.5" />
-    //                 <span>{restaurant?.address || "Chưa có địa chỉ"}</span>
-    //               </div>
-
-    //               <p className="italic text-gray-500">
-    //                 {restaurant?.description || "Chưa có mô tả"}
-    //               </p>
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     {/* RIGHT */}
-    //     <div className="w-full lg:w-[320px]">
-    //       <div className="bg-white p-6 rounded-xl border shadow-sm">
-    //         <h2 className="text-blue-600 font-medium mb-4">Đặt thực đơn</h2>
-
-    //         <input
-    //           defaultValue="11/04/2026"
-    //           className="border px-3 py-2 w-full mb-3 rounded-md"
-    //         />
-
-    //         <select className="border px-3 py-2 w-full mb-3 rounded-md">
-    //           <option>1 N.Lớn - 0 T.Em</option>
-    //         </select>
-
-    //         <button className="w-full bg-blue-600 text-white py-2 rounded-md">
-    //           Xác nhận
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
+    //  
+    </section>
   );
 };
 // {/* <div className=""></div> */}
