@@ -33,7 +33,17 @@ const SearchView = () => {
   const mode = state?.mode; // "quick" | "list"
   const isQuick = mode === "quick";
   const isSearchHotel = mode === "quick" || state?.isSearchHotel;
-  const pageSize = 5;
+  // const pageSize = 5;
+
+  const [pageSize, setPageSize] = useState(10);
+
+  const handlePageSizeChange = (value: number) => {
+    setPageSize(value);
+
+    setPageSeries(1);
+    setPageTour(1);
+    setPageHotel(1);
+  };
 
   const getTotalPages = (listData: any, pageSize: number) => {
     const totalRecords = listData?.[0]?.intTotalRecords || 0;
@@ -191,7 +201,7 @@ const SearchView = () => {
           hotelFilter?.strListEasiaCateID,
 
         intCurPage: pageHotel,
-        intPageSize: 12,
+        intPageSize: pageSize,
         tblsReturn: "[0]",
       }
       : undefined
@@ -206,7 +216,7 @@ const SearchView = () => {
 
   const listHotelTotalPages = getTotalPages(
     listHotel.hotelData,
-    12
+    pageSize
   );
 
   // ================= RESET PAGE =================
@@ -262,7 +272,8 @@ const SearchView = () => {
 
     const totalPages = getTotalPages(
       hotelSource,
-      isQuick ? pageSize : 12
+      pageSize
+      // isQuick ? pageSize : 12
     );
 
     if (pageHotel > totalPages && totalPages > 0) {
@@ -274,6 +285,7 @@ const SearchView = () => {
     listHotel.hotelData,
     pageHotel,
     isQuick,
+    pageSize,
   ]);
 
   // ================= LOADING =================
@@ -567,6 +579,8 @@ const SearchView = () => {
                 currentPage={pageSeries}
                 onPageChange={setPageSeries}
                 totalPages={tsTotalPages || 1}
+                totalRecords={tsData?.[0]?.intTotalRecords || 0 } 
+                onRecordsPerPageChange={handlePageSizeChange}
               />
             )}
 
@@ -625,6 +639,15 @@ const SearchView = () => {
                           ? quickHotelTotalPages || 1
                           : listHotelTotalPages || 1
                       }
+
+                      totalRecords={
+                        isQuick
+                        ? quickHotel.searchData?.[0]?.intTotalRecords || 0
+                        : listHotel.hotelData?.[0]?.intTotalRecords || 0
+                      }
+                      recordsPerPage={pageSize} 
+                      
+                        onRecordsPerPageChange={handlePageSizeChange}
                     />
                   </>
                 )}
@@ -639,12 +662,14 @@ const SearchView = () => {
                 ))}
               </div>
             )}
-
             {!isSeries && !isSearchHotel && !tdpLoading && (
               <Pagination
                 currentPage={pageTour}
                 onPageChange={setPageTour}
-                totalPages={tourTotalPages || 1}
+                totalPages={tourTotalPages || 1} 
+                totalRecords = {tdpData?.[0]?.intTotalRecords || 0 }
+                recordsPerPage={pageSize}
+                onRecordsPerPageChange={handlePageSizeChange}
               />
             )}
           </div>
