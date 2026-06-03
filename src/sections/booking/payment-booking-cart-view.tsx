@@ -2,8 +2,6 @@ import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForCart, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
-import { useRouter } from '@/routes/hooks/use-router';
-import { paths } from '@/routes/paths';
 import { TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
@@ -17,7 +15,6 @@ import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 
 const PaymentBookingCartView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
-    const router = useRouter();
 
     const location = useLocation();
 
