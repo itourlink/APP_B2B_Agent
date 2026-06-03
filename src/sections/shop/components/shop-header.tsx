@@ -132,7 +132,7 @@ const ShopHeader = () => {
         const hasCompanyInUrl = link.includes("company=");
 
         if (!company && !hasCompanyInUrl) {
-            router.push(paths.content.info);
+            router.push(paths.content.agent);
             return;
         }
 

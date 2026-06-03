@@ -414,15 +414,15 @@ const PaymentBookingCartView: React.FC = () => {
                             });
                         }
 
-                        // window.open(
-                        //     "https://myagentmember.itourlink.com/service?activeTab=booked",
-                        //     "_blank"
-                        // );
-
                         window.open(
-                            "http://localhost:5173/service?activeTab=booked",
+                            "https://myagentmember.itourlink.com/service?activeTab=booked",
                             "_blank"
                         );
+
+                        // window.open(
+                        //     "http://localhost:5173/service?activeTab=booked",
+                        //     "_blank"
+                        // );
 
                     } catch (err) {
 

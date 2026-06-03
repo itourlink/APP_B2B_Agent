@@ -16,6 +16,7 @@ export const useListPrice = (filters?: {
     intNoOfTPLRec?: number;
     dtmFilterDateFrom?: string | null;
     xmlNoOfChild?: string | null;
+    strPriceLevelGUID?: string | null;
     intEasiaCateID?: number | null;
     intJoinTypeID?: number | null;
     enabled?: boolean;
@@ -31,7 +32,7 @@ export const useListPrice = (filters?: {
             fetchListPrice({
                 strTourPriceItemLevelGUID: null,
                 strTourGUID: filters?.strTourGUID,
-                strPriceLevelGUID: "",
+                strPriceLevelGUID: filters?.strPriceLevelGUID ?? "",
                 intNoOfAdult: filters?.intNoOfAdult,
                 xmlNoOfChild: filters?.xmlNoOfChild ?? "",
                 intNoOfSGLSup: filters?.intNoOfSGLSup,
@@ -192,4 +193,31 @@ export const addCartForHotel = async (body: any) => {
         body
     );
     return res.data;
+};
+
+
+const fetchListCurrency = async (body: any) => {
+    const res = await apiClient.post("public/GetListCurrency", body);
+    return res.data;
+};
+
+export const useListCurrency = () => {
+    const { user } = useUser();
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.CURRENCY],
+        queryFn: () =>
+            fetchListCurrency({
+                intCurrencyID: user?.intCurrencyID,
+                tblsReturn: "[0]"
+            }),
+        enabled: !!user?.intCurrencyID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        currencyData: query.data?.[0]?.[0] ?? [],
+        currencyLoading: query.isLoading,
+        currencyError: query.isError,
+    };
 };

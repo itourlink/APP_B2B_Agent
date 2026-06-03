@@ -1,4 +1,6 @@
 import PanelPopup from "@/components/popup/panel-popup";
+import { useListCurrency } from "@/hooks/actions/useBooking";
+import { isValidValue } from "@/utils/utilts";
 
 type Props = {
     open: boolean;
@@ -23,20 +25,8 @@ export default function BookingPopup({
     paymentMethod,
 }: Props) {
 
-    const formatCurrency = (amount?: any) => {
-        const value =
-            typeof amount === "number" || typeof amount === "string"
-                ? Number(amount)
-                : 0;
-
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        })
-            .format(isNaN(value) ? 0 : value)
-            .replace("₫", "đ");
-    };
-
+    const { currencyData } = useListCurrency();
+    
     return (
         <PanelPopup
             open={open}
@@ -56,7 +46,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 1:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
-                            {formatCurrency(finalDeposit)}
+                            {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
                         </span>
                     </div>
 
@@ -64,7 +54,7 @@ export default function BookingPopup({
                         <span>Thanh toán đợt 2:</span>
 
                         <span className="font-semibold text-orange-600">
-                            {formatCurrency(finalDebt)}
+                            {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
                         </span>
                     </div>
 
@@ -72,7 +62,7 @@ export default function BookingPopup({
                         <span>Voucher:</span>
 
                         <span className="font-semibold text-red-500">
-                            -{formatCurrency(totalVoucherAmount)}
+                            -{currencyData?.strCurrencySymbol} {isValidValue(totalVoucherAmount)}
                         </span>
                     </div>
 

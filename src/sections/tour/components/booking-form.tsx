@@ -14,7 +14,7 @@ import { format } from "date-fns";
 
 import DatePopup from "@/components/generic-filter/date-popup";
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
-import { useListPrice } from "@/hooks/actions/useBooking";
+import { useListCurrency, useListPrice } from "@/hooks/actions/useBooking";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addCartForTour } from "@/hooks/actions/useCart";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
@@ -44,12 +44,12 @@ const BookingForm = ({ item }: Props) => {
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyData } = useListCurrency();
 
+    console.log("currencyData", currencyData);
     const { showToast } = useToastStore();
 
     const route = useRouter();
-    // const { t } = useTranslate();
-
 
     const [canFetchPrice, setCanFetchPrice] = useState(false);
     // ================= STATE =================
@@ -184,6 +184,8 @@ const BookingForm = ({ item }: Props) => {
         intEasiaCateID: selectedStar,
 
         intJoinTypeID: joinType,
+
+        strPriceLevelGUID: item?.strPriceLevelGUID ?? "",
     });
 
     const price = priceData?.[0] ?? [];
@@ -264,10 +266,10 @@ const BookingForm = ({ item }: Props) => {
                 {price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
-                            Tổng giá: ₫{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                            Tổng giá: {currencyData?.strCurrencySymbol} {price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                            Giá / Khách: ₫{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                            Giá / Khách: {currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
                             Còn lại: {price.intPaxRemain ?? "0"} suất

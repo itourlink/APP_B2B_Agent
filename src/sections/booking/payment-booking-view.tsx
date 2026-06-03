@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListCurrency } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { TITLES_OPTIONS } from '@/utils/option-data';
@@ -22,8 +22,9 @@ const PaymentBookingView: React.FC = () => {
     const payloadItem = location.state?.payload;
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
-    const { user } = useUser()
+    const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyData } = useListCurrency();
     const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
     const [isShowVoucher, setIsShowVoucher] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
@@ -44,21 +45,6 @@ const PaymentBookingView: React.FC = () => {
 
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
-
-    // Helper định dạng tiền tệ Việt Nam (đ)
-    const formatCurrency = (amount?: any) => {
-        const value =
-            typeof amount === "number" || typeof amount === "string"
-                ? Number(amount)
-                : 0;
-
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        })
-            .format(isNaN(value) ? 0 : value)
-            .replace("₫", "đ");
-    };
 
     const [selectedBankAccount, setSelectedBankAccount] = useState<any>(null);
 
@@ -429,14 +415,15 @@ const PaymentBookingView: React.FC = () => {
                             });
                         }
 
-                        // window.open(
-                        //     "https://myagentmember.itourlink.com/service?activeTab=booked",
-                        //     "_blank"
-                        // );
                         window.open(
-                            "http://localhost:5173/service?activeTab=booked",
+                            "https://myagentmember.itourlink.com/service?activeTab=booked",
                             "_blank"
                         );
+                        
+                        // window.open(
+                        //     "http://localhost:5173/service?activeTab=booked",
+                        //     "_blank"
+                        // );
 
                     } catch (err) {
 
@@ -798,17 +785,17 @@ const PaymentBookingView: React.FC = () => {
                                             <div className="text-gray-500 text-[11px] mt-0.5">{fDateTime(isValidValue(payloadItem?.dtmDateFrom))} - {fDateTime(isValidValue(payloadItem?.dtmDateTo))}</div>
                                         </td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{formatCurrency(price?.dblTotalPrice)}</td>
-                                        <td className="py-3 px-3 align-top font-medium">{formatCurrency(totalDeposit)}</td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100">{isValidValue(price?.dblTotalPriceCom)}</td>
+                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">{currencyData?.strCurrencySymbol} {isValidValue(price?.dblTotalPrice)}</td>
+                                        <td className="py-3 px-3 align-top font-medium">{currencyData?.strCurrencySymbol} {isValidValue(totalDeposit)}</td>
                                     </tr>
                                     <tr className="bg-gray-50/50 font-semibold">
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
                                         <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
-                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPriceCom)}</td>
-                                        <td className="py-2 px-3 border-r border-gray-100">{formatCurrency(price?.dblTotalPrice)}</td>
-                                        <td className="py-2 px-3">{formatCurrency(totalDeposit)}</td>
+                                        <td className="py-2 px-3 border-r border-gray-100">{isValidValue(price?.dblTotalPriceCom)}</td>
+                                        <td className="py-2 px-3 border-r border-gray-100">{currencyData?.strCurrencySymbol} {isValidValue(price?.dblTotalPrice)}</td>
+                                        <td className="py-2 px-3">{currencyData?.strCurrencySymbol} {isValidValue(totalDeposit)}</td>
                                     </tr>
                                 </React.Fragment>
                             </tbody>
@@ -852,7 +839,7 @@ const PaymentBookingView: React.FC = () => {
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
-                                    {formatCurrency(finalDeposit)}
+                                    {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
                                 </span>
                             </div>
 
@@ -874,7 +861,7 @@ const PaymentBookingView: React.FC = () => {
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
                                 <span className="font-semibold text-gray-800">
-                                    {formatCurrency(finalDebt)}
+                                    {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
                                 </span>
                             </div>
                         </div>

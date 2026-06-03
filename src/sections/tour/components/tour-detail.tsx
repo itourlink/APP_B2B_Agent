@@ -1,5 +1,5 @@
 import {
-    Home,
+  Home,
   MapPin,
   Clock3,
   MessageSquare,
@@ -107,25 +107,26 @@ const TourDetail = () => {
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
-            <div className="max-w-7xl mx-auto mb-6">
-      <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
-        <Link
-          to={paths.shop.tour.list}
-          className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
-        >
-          <Home size={20} />
-        </Link>
-        <span className="text-slate-400">&gt;</span>
-        <Link
-          to={paths.shop.tour.list}
-          className="hover:text-[#2566b0] transition-colors"
-        >
-        </Link>
-        <span className="text-slate-600 font-medium line-clamp-1">
-          {ListData?.strTourName || ListData?.strServiceName || "Chi tiết tour"}
-        </span>
-      </nav>
-    </div>
+      <div className="max-w-7xl mx-auto mb-6">
+        <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
+          <Link
+            to={paths.shop.tour.list}
+            className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
+          >
+            <Home size={20} />
+          </Link>
+          <span className="text-slate-400">&gt;</span>
+          <Link
+            to={paths.shop.tour.list}
+            className="hover:text-[#2566b0] transition-colors"
+          ></Link>
+          <span className="text-slate-600 font-medium line-clamp-1">
+            {ListData?.strTourName ||
+              ListData?.strServiceName ||
+              "Chi tiết tour"}
+          </span>
+        </nav>
+      </div>
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         {/* LEFT */}
