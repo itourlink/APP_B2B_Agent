@@ -95,7 +95,7 @@ const TourSearch = () => {
 
     const [draftFilters2, setDraftFilters2] = useState(DEFAULT_FILTERS2);
 
-    const [selectedTourUrl, setSelectedTourUrl] = useState<string | null>(null);
+    const [selectedTour, setSelectedTour] = useState<any>(null);
 
     const searchPayload = {
         intCurPage: filters.page,
@@ -111,11 +111,9 @@ const TourSearch = () => {
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
-        if (selectedTourUrl) {
+        if (selectedTour) {
             router.replaceParams(paths.shop.tour.detail, {
-                item: {
-                    strServiceNameUrl: selectedTourUrl,
-                },
+                item: selectedTour
             });
 
             return;
@@ -165,14 +163,17 @@ const TourSearch = () => {
                                     }));
 
                                     if (isTour) {
-                                        setSelectedTourUrl(item?.strServiceNameUrl);
+
+                                        setSelectedTour(item);
 
                                         setDraftFilters2((prev) => ({
                                             ...prev,
                                             strLocationCode: null,
                                         }));
+
                                     } else {
-                                        setSelectedTourUrl(null);
+
+                                        setSelectedTour(null);
 
                                         setDraftFilters2((prev) => ({
                                             ...prev,
@@ -203,7 +204,7 @@ const TourSearch = () => {
 
                         if (k === "isTourSeries") {
                             setDraftFilters2(DEFAULT_FILTERS2);
-                            setSelectedTourUrl(null);
+                            setSelectedTour(null);
 
                             return {
                                 ...DEFAULT_FILTERS,

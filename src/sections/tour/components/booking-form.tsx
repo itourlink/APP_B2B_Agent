@@ -46,7 +46,6 @@ const BookingForm = ({ item }: Props) => {
     const { coData } = useListCompanyOwner();
     const { currencyData } = useListCurrency();
 
-    console.log("currencyData", currencyData);
     const { showToast } = useToastStore();
 
     const route = useRouter();

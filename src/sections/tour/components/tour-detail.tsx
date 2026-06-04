@@ -50,8 +50,15 @@ const TourDetail = () => {
   const [filters2] = useState({
     page: 1,
     pageSize: 4,
-    intCateID: item?.item?.intCateID,
+
+    intCateID:
+      item?.item?.intCateID &&
+        Object.keys(item?.item?.intCateID || {}).length > 0
+        ? item?.item?.intCateID
+        : null,
+
     intProductID: item?.item?.intProductID,
+
     strLocationCode: null,
   });
 
@@ -90,19 +97,19 @@ const TourDetail = () => {
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
     typeof ListData?.strExcluded === "string"
       ? ListData.strExcluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   return (
