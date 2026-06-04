@@ -9,6 +9,7 @@ interface Props {
   onClose?: () => void;
   onBack?: () => void;
   hideBack?: boolean;
+  lang?: boolean;
   children: React.ReactNode;
   subChildren?: React.ReactNode;
   title?: string;
@@ -23,6 +24,7 @@ const PanelPopup = ({
   onClose,
   onBack,
   hideBack,
+  lang,
   children,
   subChildren,
   title,
@@ -117,7 +119,6 @@ const PanelPopup = ({
 
                     </div>
 
-                    <div className=""><Lang /></div>
                   </div>
 
                   {onClose && (
@@ -129,6 +130,13 @@ const PanelPopup = ({
                       <X size={18} />
                     </button>
                   )}
+
+                  {lang && (
+                    <div className="ml-2">
+                      <Lang />
+                    </div>
+                  )}
+
                 </div>
 
                 <div
