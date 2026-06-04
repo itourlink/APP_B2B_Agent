@@ -8,6 +8,7 @@ import { useToastStore } from "@/zustand/useToastStore";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useCompanyOwnerListInfo } from "@/hooks/actions/useCompanyOwnerInfo";
+import PanelPopup from "@/components/popup/panel-popup";
 
 const AgentView = () => {
     const { showToast } = useToastStore();
@@ -174,54 +175,61 @@ const AgentView = () => {
     ];
 
     return (
-        <div>
-            <div className="flex items-end gap-3">
-                <CustomFilter
-                    onChangeFilters={onChangeFilters}
-                    search={[
-                        {
-                            keySearch: "nameProvider",
-                            value: filters.nameProvider,
-                            placeHoder: "Tên đại lý",
-                        },
-                    ]}
-                />
-
-                <div className="flex gap-2 mt-3">
-                    <PrimaryButton
-                        text="Tìm kiếm"
-                        onClick={handleSearch}
-                        className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
-                        prefixIcon={<Search size={18} />}
+        <PanelPopup
+            title="Danh sách đại lý"
+            open={true}
+            className="w-[90vw] max-w-none"
+        >
+            <div>
+                <div className="flex items-end gap-3">
+                    <CustomFilter
+                        onChangeFilters={onChangeFilters}
+                        search={[
+                            {
+                                keySearch: "nameProvider",
+                                value: filters.nameProvider,
+                                placeHoder: "Tên đại lý",
+                            },
+                        ]}
                     />
 
-                    <PrimaryButton
-                        text="Reset"
-                        onClick={handleReset}
-                        className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
-                        prefixIcon={<RotateCcw size={18} />}
+                    <div className="flex gap-2 mt-3">
+                        <PrimaryButton
+                            text="Tìm kiếm"
+                            onClick={handleSearch}
+                            className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
+                            prefixIcon={<Search size={18} />}
+                        />
+
+                        <PrimaryButton
+                            text="Reset"
+                            onClick={handleReset}
+                            className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
+                            prefixIcon={<RotateCcw size={18} />}
+                        />
+                    </div>
+                </div>
+
+                <div className="pt-4">
+                    <TableCore
+                        rowData={listData}
+                        columnDefs={colDefs}
+                        loading={isLoading}
                     />
+
+                    {!isError && (
+                        <Pagination
+                            currentPage={page}
+                            onPageChange={(value) =>
+                                setPage(value)
+                            }
+                            totalPages={totalPages || 1}
+                        />
+                    )}
                 </div>
             </div>
+        </PanelPopup>
 
-            <div className="pt-4">
-                <TableCore
-                    rowData={listData}
-                    columnDefs={colDefs}
-                    loading={isLoading}
-                />
-
-                {!isError && (
-                    <Pagination
-                        currentPage={page}
-                        onPageChange={(value) =>
-                            setPage(value)
-                        }
-                        totalPages={totalPages || 1}
-                    />
-                )}
-            </div>
-        </div>
     );
 };
 

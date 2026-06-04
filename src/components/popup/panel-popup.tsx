@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+import Lang from "../lang/lang";
 
 interface Props {
   open: boolean;
@@ -90,7 +91,7 @@ const PanelPopup = ({
                 )}
               >
                 <div className="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 md:px-6">
-                  <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     {onBack && !hideBack && (
                       <button
                         type="button"
@@ -113,7 +114,10 @@ const PanelPopup = ({
                           {description}
                         </p>
                       )}
+
                     </div>
+
+                    <div className=""><Lang /></div>
                   </div>
 
                   {onClose && (
