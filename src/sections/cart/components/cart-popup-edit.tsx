@@ -153,7 +153,7 @@ const CartPopupEdit = ({
             onChange={(e) =>
                 setSelectedLevel(e.target.value)
             }
-            className="
+            className=" cursor-pointer
                 h-10 w-full rounded
                 border border-gray-300
                 bg-white px-3
@@ -161,7 +161,7 @@ const CartPopupEdit = ({
                 focus:border-[#004b91]
             "
             >
-            <option value={selectedLevel}>
+            <option className="cursor-pointer" value={selectedLevel}>
                 {Array(
                 Number(detailTour?.strListEasiaCateID || 0)
                 )

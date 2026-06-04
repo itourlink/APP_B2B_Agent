@@ -1,5 +1,4 @@
-// components/auth/auth-guard.tsx
-
+import { SplashScreen } from "@/components/loading";
 import { CONFIG } from "@/config-global";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useEffect } from "react";
@@ -18,7 +17,7 @@ export default function AuthGuard({ children }: Props) {
     }, [user, userLoading]);
 
     if (userLoading) {
-        return <div>Loading...</div>;
+        return <SplashScreen />;
     }
 
     if (!user) {

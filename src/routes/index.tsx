@@ -4,7 +4,7 @@ import { paths } from "./paths";
 import InitLayout, { LAYOUT } from "../layouts/init-layout";
 import { SplashScreen } from "@/components/loading";
 import AuthGuard from "./auth-guard";
-// import { AuthRoute } from "./auth-route";
+import CompanyGuard from "./company-guard";
 const TourPage = lazy(() => import("@/pages/tour/list"));
 const TourDetailPage = lazy(() => import("@/pages/tour/detail"));
 const BoatPage = lazy(() => import("@/pages/boat/list"));
@@ -21,7 +21,6 @@ const NotificationPage = lazy(() => import("@/pages/notification/notification"))
 const HotelPage = lazy(() => import("@/pages/hotel/list"));
 const HotelDetailPage = lazy(() => import("@/pages/hotel/detail"));
 const Page404Page = lazy(() => import("@/pages/error/page404"));
-// const AgentTestPage = lazy(() => import("@/pages/agent-test/list"));
 const AgentCompanyPage = lazy(() => import("@/pages/agent-company/list"));
 const SearchPage = lazy(() => import("@/pages/search/search"));
 const CartPage = lazy(() => import("@/pages/cart/list"));
@@ -32,15 +31,6 @@ const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
 const PaymentBookingPage = lazy(() => import("@/pages/booking/payment-booking"));
 const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-booking-cart"));
 const PaymentBookingHotelPage = lazy(() => import("@/pages/booking/payment-booking-hotel"));
-
-// const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
-
-// import InitLayout, { LAYOUT } from "@/layouts/init-layout";
-// import RootRedirect from "./root-redirect";
-
-
-////////////////////////////
-
 const InfoPage = lazy(() => import("@/pages/content/info"));
 const RequestBookingPage = lazy(() => import("@/pages/content/request-booking"));
 const DetailRequestPage = lazy(() => import("@/pages/content/detail-request"));
@@ -61,7 +51,6 @@ const TourCancelledPage = lazy(() => import("@/pages/content/tour-cancelled"));
 const TourProposalsPage = lazy(() => import("@/pages/content/tour-proposals"));
 const DetailTourPage = lazy(() => import("@/pages/content/detail-tour"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
-
 
 export function Router() {
   // const isLoading = true;
@@ -202,9 +191,11 @@ export function Router() {
         {
           element: (
             <AuthGuard>
-              <InitLayout type={LAYOUT.SHOP}>
-                <Outlet />
-              </InitLayout>
+              <CompanyGuard>
+                <InitLayout type={LAYOUT.SHOP}>
+                  <Outlet />
+                </InitLayout>
+              </CompanyGuard>
             </AuthGuard>
           ),
           children: [
@@ -320,9 +311,11 @@ export function Router() {
         {
           element: (
             <AuthGuard>
-              <InitLayout type={LAYOUT.OUTSIDE}>
-                <Outlet />
-              </InitLayout>
+              <CompanyGuard>
+                <InitLayout type={LAYOUT.OUTSIDE}>
+                  <Outlet />
+                </InitLayout>
+              </CompanyGuard>
             </AuthGuard>
           ),
           children: [
