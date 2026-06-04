@@ -253,8 +253,12 @@ const PaymentBookingCartView: React.FC = () => {
             const companyGUID =
                 coData?.strCompanyGUID || null;
 
+            // const serviceUrl =
+            //     "http://localhost:5173/service?activeTab=booked";
             const serviceUrl =
-                "http://localhost:5173/service?activeTab=booked";
+                "https://myagentmember.itourlink.com/service?activeTab=booked";
+
+
 
             // PAYLOAD BOOKING
             const payload = {
