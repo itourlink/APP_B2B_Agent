@@ -1,7 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { useFormContext, Controller, useFormState } from "react-hook-form";
+import {
+  useFormContext,
+  Controller,
+  useFormState,
+} from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { twMerge } from "tailwind-merge";
 
 type Option = {
@@ -17,44 +22,67 @@ type Props = {
   };
   options: Option[];
   placeholder?: string;
+  disabled?: boolean;
 };
 
 export function RHFMultiSelect({
   name,
   label,
   options,
-  placeholder = "Select...",
+  placeholder,
+  disabled = false,
 }: Props) {
+  const { t } = useTranslation("hook-form");
+
   const { control, clearErrors } = useFormContext();
 
   const [open, setOpen] = useState(false);
+
   const [search, setSearch] = useState("");
 
   const ref = useRef<HTMLDivElement>(null);
 
   const { errors } = useFormState({ name });
+
   const error = errors[name];
 
-  // Click outside to close
+  // =========================
+  // CLICK OUTSIDE
+  // =========================
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (
+        ref.current &&
+        !ref.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
 
     return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
   }, []);
 
-  // Auto clear error
+  // =========================
+  // AUTO CLEAR ERROR
+  // =========================
+
   useEffect(() => {
     if (error) {
-      const t = setTimeout(() => clearErrors(name), 3000);
+      const timeout = setTimeout(() => {
+        clearErrors(name);
+      }, 3000);
 
-      return () => clearTimeout(t);
+      return () => clearTimeout(timeout);
     }
   }, [error, name, clearErrors]);
 
@@ -63,71 +91,99 @@ export function RHFMultiSelect({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        const selectedValues: string[] =
-          typeof field.value === "string"
-            ? field.value.split(",").filter(Boolean)
-            : [];
+        const selectedValues: (string | number)[] =
+          field.value || [];
 
         const filteredOptions = options.filter((opt) =>
-          opt.label.toLowerCase().includes(search.toLowerCase())
+          opt.label
+            .toLowerCase()
+            .includes(search.toLowerCase())
         );
 
-        // FIX: keep value as csv string
-        const toggleValue = (val: string | number) => {
-          const value = String(val);
+        const toggleValue = (
+          val: string | number
+        ) => {
+          if (disabled) return;
 
-          let updatedValues: string[];
-
-          if (selectedValues.includes(value)) {
-            updatedValues = selectedValues.filter((v) => v !== value);
+          if (selectedValues.includes(val)) {
+            field.onChange(
+              selectedValues.filter((v) => v !== val)
+            );
           } else {
-            updatedValues = [...selectedValues, value];
+            field.onChange([
+              ...selectedValues,
+              val,
+            ]);
           }
-
-          field.onChange(updatedValues.join(","));
         };
 
         return (
-          <div className="flex flex-col gap-1 w-full relative" ref={ref}>
+          <div
+            className="flex flex-col gap-1 w-full relative"
+            ref={ref}
+          >
             {/* LABEL */}
+
             {label && (
-              <div className="flex gap-1 text-mdMedium mb-1">
+              <div className="flex gap-1 mb-1">
                 <span>{label.text}</span>
-                <span className="text-red-400">{label.icon}</span>
+
+                <span className="text-red-400">
+                  {label.icon}
+                </span>
               </div>
             )}
 
             {/* INPUT BOX */}
+
             <div
-              onClick={() => setOpen(!open)}
+              onClick={() => {
+                if (!disabled) {
+                  setOpen((prev) => !prev);
+                }
+              }}
               className={twMerge(
-                "flex items-center flex-wrap gap-2 text px-4 py-2 min-h-[48px] rounded-[10px] cursor-pointer border",
-                error ? "border-red-500" : "border-gray-300"
+                "flex items-center flex-wrap gap-2 px-4 py-2 min-h-[48px] rounded-[10px] border transition-all",
+                disabled
+                  ? "bg-gray-100 opacity-60 cursor-not-allowed"
+                  : "bg-white cursor-pointer",
+                error
+                  ? "border-red-500"
+                  : "border-gray-300"
               )}
             >
-              {/* SELECTED TAGS */}
+              {/* PLACEHOLDER */}
+
               {selectedValues.length === 0 ? (
-                <span className="text-[#b7b9c0]">{placeholder}</span>
+                <span className="text-[#b7b9c0]">
+                  {placeholder ||
+                    t("selectPlaceholder")}
+                </span>
               ) : (
                 selectedValues.map((val) => {
-                  // FIX: compare same type
                   const opt = options.find(
-                    (o) => String(o.value) === val
+                    (o) => o.value === val
                   );
 
                   return (
                     <div
                       key={val}
-                      className="flex items-center gap-1 bg-white border border-gray-300 rounded-md px-2"
-                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-black border border-gray-300 rounded-md px-2 py-1 bg-blue-50/80"
+                      onClick={(e) =>
+                        e.stopPropagation()
+                      }
                     >
                       <span>{opt?.label}</span>
 
-                      <X
-                        size={14}
-                        className="cursor-pointer"
-                        onClick={() => toggleValue(val)}
-                      />
+                      {!disabled && (
+                        <X
+                          size={14}
+                          className="cursor-pointer"
+                          onClick={() =>
+                            toggleValue(val)
+                          }
+                        />
+                      )}
                     </div>
                   );
                 })
@@ -142,56 +198,85 @@ export function RHFMultiSelect({
             </div>
 
             {/* DROPDOWN */}
+
             <AnimatePresence>
-              {open && (
+              {open && !disabled && (
                 <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute left-0 right-0 top-full z-10 mt-2 bg-white border border-gray-300 rounded-xl shadow-xl max-h-60 overflow-auto"
+                  initial={{
+                    opacity: 0,
+                    y: 6,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 6,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                  }}
+                  className="absolute z-10 top-full mt-2 w-full border border-gray-300 bg-white rounded-xl shadow-xl max-h-60 overflow-auto"
                 >
-                  {/* SEARCH BOX */}
-                  <div className="sticky top-0 p-2 bg-white border-b border-gray-300">
+                  {/* SEARCH */}
+
+                  <div className="sticky top-0 p-2 border-b border-gray-300 bg-white">
                     <input
                       value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search..."
-                      className="w-full px-3 py-2 rounded-md bg-gray-300 text-black outline-none"
-                      onClick={(e) => e.stopPropagation()}
+                      disabled={disabled}
+                      onChange={(e) =>
+                        setSearch(e.target.value)
+                      }
+                      placeholder={t(
+                        "searchPlaceholder"
+                      )}
+                      className="w-full px-3 py-2 rounded-md outline-none"
+                      onClick={(e) =>
+                        e.stopPropagation()
+                      }
                     />
                   </div>
 
                   {/* OPTIONS */}
-                  {filteredOptions.map((opt) => {
-                    // FIX: compare same type
-                    const active = selectedValues.includes(
-                      String(opt.value)
-                    );
 
-                    return (
-                      <div
-                        key={opt.value}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleValue(opt.value);
-                        }}
-                        className={twMerge(
-                          "px-4 py-2 cursor-pointer",
-                          active
-                            ? "bg-gray-200 text-gray-500"
-                            : "hover:bg-gray-100"
-                        )}
-                      >
-                        {opt.label}
-                      </div>
-                    );
-                  })}
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((opt) => {
+                      const active =
+                        selectedValues.includes(
+                          opt.value
+                        );
+
+                      return (
+                        <div
+                          key={opt.value}
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            toggleValue(opt.value);
+                          }}
+                          className={twMerge(
+                            "px-4 py-2 cursor-pointer transition-all",
+                            active
+                              ? "bg-[#4a6fa5] text-white"
+                              : "hover:bg-[#4a6fa5] hover:text-white"
+                          )}
+                        >
+                          {opt.label}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="px-4 py-3 text-sm text-gray-400">
+                      {t("noData")}
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* ERROR */}
+
             {error && (
               <div className="text-red-500 text-xs mt-1">
                 {error.message}

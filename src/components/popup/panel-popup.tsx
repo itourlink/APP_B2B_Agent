@@ -2,14 +2,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
-import Lang from "../lang/lang";
 
 interface Props {
   open: boolean;
   onClose?: () => void;
   onBack?: () => void;
   hideBack?: boolean;
-  lang?: boolean;
   children: React.ReactNode;
   subChildren?: React.ReactNode;
   title?: string;
@@ -17,6 +15,7 @@ interface Props {
   isOverflowHidden?: boolean;
   className?: string;
   footer?: React.ReactNode;
+  bodyClassName?: string;
 }
 
 const PanelPopup = ({
@@ -24,13 +23,13 @@ const PanelPopup = ({
   onClose,
   onBack,
   hideBack,
-  lang,
   children,
   subChildren,
   title,
   description,
   className,
   footer,
+  bodyClassName,
 }: Props) => {
   useEffect(() => {
     if (open) {
@@ -74,7 +73,7 @@ const PanelPopup = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[99999] overflow-y-auto bg-black/50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] overflow-y-auto bg-black/50 p-4 backdrop-blur-sm"
           onClick={onClose}
         >
           <div className="flex min-h-full items-center justify-center">
@@ -93,7 +92,7 @@ const PanelPopup = ({
                 )}
               >
                 <div className="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 md:px-6">
-                  <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
                     {onBack && !hideBack && (
                       <button
                         type="button"
@@ -116,9 +115,7 @@ const PanelPopup = ({
                           {description}
                         </p>
                       )}
-
                     </div>
-
                   </div>
 
                   {onClose && (
@@ -130,19 +127,13 @@ const PanelPopup = ({
                       <X size={18} />
                     </button>
                   )}
-
-                  {lang && (
-                    <div className="ml-2">
-                      <Lang />
-                    </div>
-                  )}
-
                 </div>
 
                 <div
                   className={twMerge(
                     "min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-6",
-                    bodyMaxHeightClass
+                    bodyMaxHeightClass,
+                    bodyClassName
                   )}
                 >
                   {children}

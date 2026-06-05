@@ -99,7 +99,9 @@ export const QUERY_KEYS = {
         LIST_VOUCHER: "LIST_VOUCHER",
     },
     MEDIA: {
-        LIST_MEDIA: "LIST_MEDIA"
+        LIST_MEDIA: "LIST_MEDIA",
+        SEND_MAIL: "SEND_MAIL",
+        HTML_TOUR_CUSTOMIZED_EXPORT: "HTML_TOUR_CUSTOMIZED_EXPORT",
     },
     BOOKING: {
         LIST_PRICE: "LIST_PRICE",
@@ -110,4 +112,6 @@ export const QUERY_KEYS = {
         EMAIL_SEND_AGENT_HOST: "EMAIL_SEND_AGENT_HOST",
         CURRENCY: "CURRENCY"
     },
+    COMBOBOX_BY_CODE: "COMBOBOX_BY_CODE",
+
 };

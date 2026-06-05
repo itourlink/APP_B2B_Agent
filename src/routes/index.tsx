@@ -33,6 +33,7 @@ const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-bookin
 const PaymentBookingHotelPage = lazy(() => import("@/pages/booking/payment-booking-hotel"));
 const AgentPage = lazy(() => import("@/pages/content/agent"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
+const DetailTourPage = lazy(() => import("@/pages/content/detail-tour"));
 
 export function Router() {
   // const isLoading = true;
@@ -62,6 +63,10 @@ export function Router() {
             {
               path: paths.content.agentHost,
               element: <AgentHostPage />,
+            },
+            {
+              path: paths.content.detailTour,
+              element: <DetailTourPage />,
             },
           ],
         },
