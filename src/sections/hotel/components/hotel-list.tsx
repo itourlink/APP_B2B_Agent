@@ -6,8 +6,10 @@ import { formatPrice } from '@/utils/format-number';
 import { isValidValue } from '@/utils/utilts';
 import { Building2, MapPin, Star, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const HotelCard = ({ hotel }: any) => {
+    const { t } = useTranslation("hotel")
     const router = useRouter();
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full group">
@@ -28,7 +30,7 @@ export const HotelCard = ({ hotel }: any) => {
                     <div className="flex items-center gap-2">
                         <Building2 size={14} className="text-gray-400 shrink-0" />
 
-                        <span>Khách sạn</span>
+                        <span>{t("hotel")}</span>
 
                         <div className="flex items-center ml-1">
                             {[...Array(5)].map((_, i) => (
@@ -61,7 +63,7 @@ export const HotelCard = ({ hotel }: any) => {
 
                     <div className="relative flex justify-center">
                         <span className="bg-gray-50 px-3 text-[11px] font-bold text-gray-900 italic tracking-wider">
-                            Tăng giá/Giảm giá
+                            {t("markupDiscount")}
                         </span>
                     </div>
                 </div>
@@ -69,7 +71,7 @@ export const HotelCard = ({ hotel }: any) => {
                 <div className="mt-auto flex items-end justify-between">
                     <div>
                         <p className="text-[11px] text-gray-500 mb-0.5">
-                            Giá từ
+                             {t("priceFrom")}
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-xl leading-none">
@@ -85,7 +87,7 @@ export const HotelCard = ({ hotel }: any) => {
                         }
                         className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                     >
-                        Xem chi tiết
+                        {t("viewDetail")}
                     </button>
                 </div>
             </div>
@@ -95,6 +97,7 @@ export const HotelCard = ({ hotel }: any) => {
 
 export const HotelCardList = ({ hotel }: any) => {
     const router = useRouter();
+     const { t } = useTranslation("hotel");
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-48 group">
@@ -135,7 +138,7 @@ export const HotelCardList = ({ hotel }: any) => {
                                 className="text-gray-400 shrink-0"
                             />
 
-                            <span>Khách sạn</span>
+                            <span>{t("hotel")}</span>
                         </div>
 
                         <div className="flex items-start gap-2">
@@ -154,7 +157,7 @@ export const HotelCardList = ({ hotel }: any) => {
                 <div className="flex items-end justify-between pt-4 border-t border-gray-50">
                     <div>
                         <p className="text-[12px] text-gray-500 mb-0.5">
-                            Giá từ
+                           {t("priceFrom")}
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-2xl leading-none">
@@ -170,7 +173,7 @@ export const HotelCardList = ({ hotel }: any) => {
                         }
                         className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
                     >
-                        Xem chi tiết
+                      {t("viewDetail")}
                     </button>
                 </div>
             </div>
@@ -185,7 +188,7 @@ const HotelList = () => {
         strSupplierGUID: null,
         tblsReturn: "[0]",
     });
-
+    const { t } = useTranslation("hotel")
     const { hotelData, hotelLoading, hotelError } =
         useListHotel(filters);
 
@@ -195,12 +198,12 @@ const HotelList = () => {
         <div className="max-w-7xl mx-auto p-6 bg-white min-h-screen">
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-2xl font-bold text-gray-800">
-                    Khách Sạn Nổi Bật
+               {t("featuredHotels")}
                 </h2>
 
                 <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
                     <span className="text-[12px] text-gray-500 ml-2">
-                        Hiển thị dạng:
+                       {t("displayMode")}
                     </span>
 
                     <div className="flex gap-1">
@@ -281,8 +284,12 @@ const HotelCardSkeleton = () => (
     </div>
 );
 
-const HotelError = () => (
+const HotelError = () => {
+  const { t } = useTranslation("hotel");
+
+  return (
     <div className="text-center py-20 text-red-500">
-        Không tải được danh sách khách sạn
+      {t("loadHotelListFailed")}
     </div>
-);
+  );
+};

@@ -33,8 +33,10 @@ import { addCartForHotel } from "@/hooks/actions/useBooking";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { useTranslation } from "react-i18next";
 
 const HotelDetail = () => {
+  const { t } = useTranslation("hotel");
   const location = useLocation();
   const item = location?.state?.item;
   const router = useRouter();
@@ -42,17 +44,19 @@ const HotelDetail = () => {
   const { coData } = useListCompanyOwner();
   const { showToast } = useToastStore();
   const queryClient = useQueryClient();
-  const company =
-    new URLSearchParams(location.search).get("company") || "";
+  const company = new URLSearchParams(location.search).get("company") || "";
+
   const { mutate: addCartForHotelApi } = useMutation({
     mutationFn: addCartForHotel,
   });
+
   const [filters] = useState({
     page: 1,
     pageSize: 1,
     strSupplierGUID: item?.strSupplierGUID,
     tblsReturn: "[0][1]",
   });
+
   const [filters2] = useState({
     strSupplierGUID: item?.strSupplierGUID,
     tblsReturn: "[0][1]",
@@ -62,29 +66,34 @@ const HotelDetail = () => {
   const [selectedRooms, setSelectedRooms] = useState<Record<string, any[]>>({});
   const [bookingData, setBookingData] = useState<any | null>(null);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
+
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
+
   const hotel = hotelData?.[0] ?? {};
 
   console.log("hotel", hotel);
+
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
   const isSupplierPriceReady =
     !!item?.strSupplierGUID && !!strPriceListGUID && !!strPriceLevelGUID;
+
   const { spbData } = useListSupplierPriceByAgent(
     isSupplierPriceReady
       ? {
-        strSupplierGUID: item?.strSupplierGUID,
-        strPriceListGUID,
-        strPriceLevelGUID,
-      }
+          strSupplierGUID: item?.strSupplierGUID,
+          strPriceListGUID,
+          strPriceLevelGUID,
+        }
       : undefined,
   );
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const ibgDataMain = ibgData?.[0] ?? [];
   const ibgDataDetail = ibgData?.[1] ?? [];
   const ibgDataDetailChild = ibgData?.[3] ?? [];
@@ -192,10 +201,10 @@ const HotelDetail = () => {
         });
 
         router.push(`${paths.shop.cart.list}`);
-        showToast("success", "Thêm vào giỏ thành công");
+        showToast("success", t("addToCartSuccess"));
       },
       onError: () => {
-        showToast("error", "Thêm vào giỏ thất bại");
+        showToast("error", t("addToCartFailed"));
       },
     });
   };
@@ -203,14 +212,14 @@ const HotelDetail = () => {
   const colDefs: ColumnDef<any>[] = [
     {
       field: "stt",
-      headerName: "STT",
+      headerName: t("no"),
       render: (_, __, rowIndex) => (
         <span className="text-gray-400 font-medium">{rowIndex + 1}</span>
       ),
     },
     {
       field: "No",
-      headerName: "Image",
+      headerName: t("image"),
       render: (_) => {
         const imageUrl = getUrlImage(hotel?.strSupplierImage);
 
@@ -226,11 +235,12 @@ const HotelDetail = () => {
     },
     {
       field: "strItemTypeName",
-      headerName: "Tên phòng",
+      headerName: t("roomName"),
       render: (value, row) => {
         const price = spbData?.[0]?.find(
           (p: any) => p.strItemTypeGUID === row.strItemTypeGUID,
         );
+
         return (
           <div>
             <div>{value}</div>
@@ -245,11 +255,9 @@ const HotelDetail = () => {
         );
       },
     },
-
     {
       field: "strSglDblName",
-      headerName: "Loại phòng",
-
+      headerName: t("roomType"),
       render: (_, row) => {
         const isOpen = openId === row.strItemTypeGUID;
 
@@ -283,12 +291,9 @@ const HotelDetail = () => {
           label: item.strAgeName,
           qty: 1,
           intSglDblID: item.intSupplierChildAgeKeyID,
-
           ageFrom: item.intAgeFrom,
-
           raw: item,
           isChild: true,
-
           icon: <Baby size={14} className="text-pink-500" />,
         }));
 
@@ -331,6 +336,7 @@ const HotelDetail = () => {
                   {selected.map((room) => {
                     const price = getPrice(row, room);
                     const total = room.qty * price;
+
                     return (
                       <div key={room.label} className="flex items-center gap-6">
                         {/* LEFT */}
@@ -358,9 +364,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                          ...x,
-                                          qty: Math.max(1, x.qty - 1),
-                                        }
+                                            ...x,
+                                            qty: Math.max(1, x.qty - 1),
+                                          }
                                         : x,
                                     ),
                                   };
@@ -386,9 +392,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                          ...x,
-                                          qty: x.qty + 1,
-                                        }
+                                            ...x,
+                                            qty: x.qty + 1,
+                                          }
                                         : x,
                                     ),
                                   };
@@ -432,8 +438,7 @@ const HotelDetail = () => {
     },
     {
       field: "total",
-      headerName: "Tổng giá",
-
+      headerName: t("totalPrice"),
       render: (_, row) => {
         const selected = selectedRooms[row.strItemTypeGUID] || [];
 
@@ -449,10 +454,9 @@ const HotelDetail = () => {
         );
       },
     },
-
     {
       field: "action",
-      headerName: "Thao tác",
+      headerName: t("actions"),
       render: (_, row) => {
         return (
           <div className="flex items-center gap-2">
@@ -496,6 +500,7 @@ const HotelDetail = () => {
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
+
                   return {
                     label: room.label,
                     qty: room.qty,
@@ -510,6 +515,7 @@ const HotelDetail = () => {
                   hotel,
                   room: row,
                   includedBreak: includedBreak?.strMealIncludedTypeName,
+
                   // HOTEL
                   strSupplierGUID: hotel?.strSupplierGUID,
 
@@ -549,7 +555,7 @@ const HotelDetail = () => {
               }}
               className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
             >
-              Đặt ngay
+              {t("bookNow")}
             </button>
 
             <button
@@ -593,6 +599,7 @@ const HotelDetail = () => {
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
+
                   return {
                     label: room.label,
                     qty: room.qty,
@@ -631,7 +638,9 @@ const HotelDetail = () => {
                   intAdult: adultCount,
 
                   strListChildAge:
-                    childAgeList.length > 0 ? childAgeList.join(",") + "," : "",
+                    childAgeList.length > 0
+                      ? childAgeList.join(",") + ","
+                      : "",
 
                   strListItemTypeGUID: roomGuidList.join(","),
 
@@ -687,7 +696,7 @@ const HotelDetail = () => {
   if (hotelError || ibgError) {
     return (
       <div className="p-10 text-center text-red-500">
-        Có lỗi xảy ra, vui lòng thử lại.
+        {t("loadHotelDetailFailed")}
       </div>
     );
   }
@@ -697,12 +706,10 @@ const HotelDetail = () => {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-slate-700 mb-2">
-            Không tìm thấy khách sạn
+            {t("hotelNotFound")}
           </h2>
 
-          <p className="text-slate-500">
-            Khách sạn không tồn tại hoặc đã bị xoá.
-          </p>
+          <p className="text-slate-500">{t("hotelNotFoundDesc")}</p>
         </div>
       </div>
     );
@@ -719,16 +726,20 @@ const HotelDetail = () => {
           >
             <Home size={20} />
           </Link>
+
           <span className="text-slate-400">&gt;</span>
+
           <Link
             to={paths.shop.hotel.list + `?company=${company}`}
             className="hover:text-[#2566b0] transition-colors"
           ></Link>
+
           <span className="text-slate-600 font-medium line-clamp-1">
-            {hotel?.strSupplierName || "Chi tiết hotel"}
+            {hotel?.strSupplierName || t("hotelDetail")}
           </span>
         </nav>
       </div>
+
       <div className="max-w-7xl mx-auto space-y-8 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
@@ -765,7 +776,7 @@ const HotelDetail = () => {
                 onClick={() => {
                   setPreviewImage(
                     getUrlImage(hotel?.strSupplierImage) ||
-                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
+                      "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
                   );
                 }}
                 src={
@@ -781,7 +792,7 @@ const HotelDetail = () => {
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-fit">
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-slate-900 mb-3">
-                Giới thiệu
+                {t("introduction")}
               </h3>
 
               <div className="p-4 text-sm">
@@ -790,7 +801,7 @@ const HotelDetail = () => {
                     dangerouslySetInnerHTML={{ __html: hotel?.strDescription }}
                   />
                 ) : (
-                  <span>Chưa có nội dung</span>
+                  <span>{t("noContent")}</span>
                 )}
               </div>
             </div>
@@ -799,10 +810,12 @@ const HotelDetail = () => {
 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-5 border-b border-slate-200 flex items-center gap-3">
-            <h2 className="text-xl font-bold text-slate-900">Chọn phòng</h2>
+            <h2 className="text-xl font-bold text-slate-900">
+              {t("chooseRoom")}
+            </h2>
 
             <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-              Message
+              {t("message")}
             </button>
           </div>
 
@@ -817,27 +830,29 @@ const HotelDetail = () => {
           <div className="bg-white border border-slate-200 rounded-2xl p-6">
             <h3 className="flex items-center gap-2 font-bold text-emerald-600 mb-3">
               <CheckCircle2 size={18} />
-              Bao gồm
+              {t("included")}
             </h3>
-            <p className="text-sm text-slate-600">Không có dữ liệu</p>
+
+            <p className="text-sm text-slate-600">{t("noData")}</p>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-2xl p-6">
             <h3 className="flex items-center gap-2 font-bold text-red-600 mb-3">
               <XCircle size={18} />
-              Không bao gồm
+              {t("notIncluded")}
             </h3>
-            <p className="text-sm text-slate-600">Không có dữ liệu</p>
+
+            <p className="text-sm text-slate-600">{t("noData")}</p>
           </div>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
             <Info size={18} className="text-[#2566b0]" />
-            Điều khoản
+            {t("terms")}
           </h3>
 
-          <p className="text-sm text-slate-600">Không có dữ liệu</p>
+          <p className="text-sm text-slate-600">{t("noData")}</p>
         </div>
       </div>
 
@@ -852,8 +867,9 @@ const HotelDetail = () => {
           >
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h2 className="text-xl font-bold text-slate-800">
-                Xem chi tiết hình ảnh
+                {t("viewImageDetail")}
               </h2>
+
               <button
                 onClick={() => setPreviewImage(null)}
                 className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
@@ -883,6 +899,7 @@ const HotelDetail = () => {
           onClose={() => setBookingData(null)}
         />
       )}
+
       {bookingCartData && (
         <BookingHotelCartPopup
           open={true}
