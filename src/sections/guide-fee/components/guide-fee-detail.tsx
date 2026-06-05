@@ -3,23 +3,26 @@ import {
   Star,
   Filter,
   RefreshCcw,
+  Home,
 } from "lucide-react";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDetailGuideFee } from "@/hooks/actions/useGuideFee";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { useListMappingPrice } from "@/hooks/actions/useBoat";
+import { paths } from "@/routes/paths";
 
 const GuideFeeDetail = () => {
   const location = useLocation();
   const item = location?.state?.item;
-
+  const companyUrl =
+    new URLSearchParams(location.search).get("company") || "";
   const [filters] = useState({
     page: 1,
     pageSize: 1,
     strSupplierGUID: item?.strSupplierGUID,
   });
-  
+
   const { gfData } = useDetailGuideFee(filters);
 
   const guideFee = gfData?.[0]?.[0];
@@ -31,31 +34,31 @@ const GuideFeeDetail = () => {
     strSupplierGUID: item?.strSupplierGUID,
     tblsReturn: "[0]",
   });
-  const { mpData, mpLoading,  } = useListMappingPrice(filters3) 
+  const { mpData, mpLoading, } = useListMappingPrice(filters3)
 
   const colDefs: ColumnDef<any>[] = [
     {
       field: "No",
-      headerName:"STT",
+      headerName: "STT",
       render: (value: any) => (
         <span className="text-gray-400 font-medium">{value}</span>
       ),
     },
     {
-       field: "No",
-      headerName:"Tên nhà cung cấp",
+      field: "No",
+      headerName: "Tên nhà cung cấp",
 
     },
     {
-       field: "No",
-      headerName:"Tên hướng dẫn",
+      field: "No",
+      headerName: "Tên hướng dẫn",
     },
     {
-       field: "No",
-      headerName:"Action",
+      field: "No",
+      headerName: "Action",
     }
   ]
-  
+
 
   // const [showVehicleFilter, setShowVehicleFilter] = useState(false);
 
@@ -64,7 +67,27 @@ const GuideFeeDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#f4f6f8]">
+      <div className="mx-auto max-w-[1400px] px-6 py-6">
+        <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
+          <Link
+            to={paths.shop.guide.list + `?company=${companyUrl}`}
+            className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
+          >
+            <Home size={20} />
+          </Link>
+          <span className="text-slate-400">&gt;</span>
+          <Link
+            to={paths.shop.guide.list + `?company=${companyUrl}`}
+            className="hover:text-[#2566b0] transition-colors"
+          ></Link>
+          <span className="text-slate-600 font-medium line-clamp-1">
+            {guideFee?.strSupplierName ||
+              "Chi tiết nhà xe" /* Nếu có tên nhà xe thì hiển thị, không có thì hiển thị "Chi tiết nhà xe" */}
+          </span>
+        </nav>
+      </div>
       <div className="max-w-[1400px] mx-auto px-6 pt-10 pb-10 flex flex-col lg:flex-row gap-8">
+
         {/* LEFT */}
         <div className="flex-1 space-y-8">
           {/* ===== INFO ===== */}

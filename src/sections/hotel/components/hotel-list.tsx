@@ -9,7 +9,6 @@ import { useState } from 'react';
 
 export const HotelCard = ({ hotel }: any) => {
     const router = useRouter();
-
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full group">
             <div className="relative h-44 overflow-hidden">

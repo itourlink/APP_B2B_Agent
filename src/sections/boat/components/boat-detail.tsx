@@ -14,6 +14,8 @@ import { paths } from "@/routes/paths";
 const BoatDetail = () => {
   const location = useLocation();
   const item = location?.state?.item;
+  const companyUrl =
+    new URLSearchParams(location.search).get("company") || "";
   const [filters] = useState({
     strSupplierGUID: item?.strSupplierGUID,
   });
@@ -158,14 +160,14 @@ const BoatDetail = () => {
         <div className="max-w-7xl mx-auto mb-6">
           <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
             <Link
-              to={paths.shop.boat.list}
+              to={paths.shop.boat.list + `?company=${companyUrl}`}
               className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
             >
               <Home size={20} />
             </Link>
             <span className="text-slate-400">&gt;</span>
             <Link
-              to={paths.shop.boat.list}
+              to={paths.shop.boat.list + `?company=${companyUrl}`}
               className="hover:text-[#2566b0] transition-colors"
             ></Link>
             <span className="text-slate-600 font-medium line-clamp-1">
@@ -194,11 +196,10 @@ const BoatDetail = () => {
                   <button
                     key={index}
                     onClick={() => setActiveImg(imgUrl)}
-                    className={`cursor-pointer aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all ${
-                      activeImg === imgUrl
+                    className={`cursor-pointer aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all ${activeImg === imgUrl
                         ? "border-[#2566b0]"
                         : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
+                      }`}
                   >
                     <img src={imgUrl} className="w-full h-full object-cover" />
                   </button>

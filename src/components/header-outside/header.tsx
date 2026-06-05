@@ -19,8 +19,10 @@ const HeaderOutside = () => {
   const router = useRouter();
   const { user, userLoading } = useUser();
 
+  const company =
+    new URLSearchParams(location.search).get("company") || "";
+
   const handleLogin = async () => {
-    const company = new URLSearchParams(window.location.search).get("company");
 
     if (company) {
       localStorage.setItem("company", company);
@@ -55,10 +57,6 @@ const HeaderOutside = () => {
   };
 
 
-
-  const company =
-    new URLSearchParams(location.search).get("company") || "";
-
   return (
     <div className="bg-white px-6 fixed top-0 left-0 w-full z-51 shadow h-30 flex flex-col justify-center gap-5">
       <div className="flex items-center justify-between">
@@ -83,7 +81,7 @@ const HeaderOutside = () => {
             <Currency />
             <CartIcon />
             <Notification />
-            <button onClick={() => router.push(paths.content.requestBooking)} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+            <button onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
               Yêu cầu của tôi
             </button>
             <TourCustomized />

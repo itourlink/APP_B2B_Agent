@@ -46,6 +46,9 @@ const BookingForm = ({ item }: Props) => {
     const { coData } = useListCompanyOwner();
     const { currencyData } = useListCurrency();
 
+    const company =
+        new URLSearchParams(location.search).get("company") || "";
+
     const { showToast } = useToastStore();
 
     const route = useRouter();
@@ -224,7 +227,8 @@ const BookingForm = ({ item }: Props) => {
                 queryClient.invalidateQueries({
                     queryKey: [QUERY_KEYS.CART.LIST_CART],
                 });
-                route.push(paths.cart.list);
+
+                route.push(`${paths.shop.cart.list}?company=${company}`);
                 showToast("success", "Thêm vào giỏ thành công");
             },
             onError: () => {

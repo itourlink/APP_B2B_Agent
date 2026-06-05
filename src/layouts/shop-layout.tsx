@@ -9,7 +9,7 @@ const ShopLayout = ({ children }: Props) => {
     return (
         <div className="min-h-screen">
             <ShopHeader />
-            <div className="p-3">
+            <div className="">
                 {children}
             </div>
             <Footer />

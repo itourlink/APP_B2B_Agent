@@ -71,7 +71,7 @@ const BookingHotelCartPopup = ({
 
                 onClose();
 
-                router.push(paths.cart.list);
+                router.push(paths.shop.cart.list);
             },
 
             onError: () => {

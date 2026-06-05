@@ -19,6 +19,10 @@ const NotificationPopup = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const user = useUserStore((state) => state.user);
+
+  const company =
+    new URLSearchParams(location.search).get("company") || "";
+
   const [page] = useState(1);
   const pageSize = 3;
   const { data, isLoading, isError } = useQuery({
@@ -51,7 +55,7 @@ const NotificationPopup = () => {
             queryKey: [QUERY_KEYS.USER.LIST_AGENT_NOTIFY],
           });
 
-          router.push(paths.shop.notification.list);
+          router.push(`${paths.shop.notification.list}?company=${company}`);
         },
       },
     );
@@ -134,7 +138,7 @@ const NotificationPopup = () => {
           </div>
 
           <button
-            onClick={() => router.push(paths.shop.notification.list)}
+            onClick={() => router.push(`${paths.shop.notification.list}?company=${company}`)}
             className="cursor-pointer p-2 border-t border-gray-50 mt-1 w-full py-2 text-[12px] text-gray-500 hover:text-[#004b91] hover:bg-gray-50 rounded-lg transition-colors font-medium"
           >
             Xem tất cả thông báo

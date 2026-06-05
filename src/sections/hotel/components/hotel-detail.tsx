@@ -42,6 +42,8 @@ const HotelDetail = () => {
   const { coData } = useListCompanyOwner();
   const { showToast } = useToastStore();
   const queryClient = useQueryClient();
+  const company =
+    new URLSearchParams(location.search).get("company") || "";
   const { mutate: addCartForHotelApi } = useMutation({
     mutationFn: addCartForHotel,
   });
@@ -75,10 +77,10 @@ const HotelDetail = () => {
   const { spbData } = useListSupplierPriceByAgent(
     isSupplierPriceReady
       ? {
-          strSupplierGUID: item?.strSupplierGUID,
-          strPriceListGUID,
-          strPriceLevelGUID,
-        }
+        strSupplierGUID: item?.strSupplierGUID,
+        strPriceListGUID,
+        strPriceLevelGUID,
+      }
       : undefined,
   );
 
@@ -188,7 +190,8 @@ const HotelDetail = () => {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.CART.LIST_CART],
         });
-        router.push(paths.cart.list);
+
+        router.push(`${paths.shop.cart.list}`);
         showToast("success", "Thêm vào giỏ thành công");
       },
       onError: () => {
@@ -208,10 +211,8 @@ const HotelDetail = () => {
     {
       field: "No",
       headerName: "Image",
-      render: (value) => {
-        const imageUrl =
-          getUrlImage(value) ||
-          "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image";
+      render: (_) => {
+        const imageUrl = getUrlImage(hotel?.strSupplierImage);
 
         return (
           <img
@@ -357,9 +358,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                            ...x,
-                                            qty: Math.max(1, x.qty - 1),
-                                          }
+                                          ...x,
+                                          qty: Math.max(1, x.qty - 1),
+                                        }
                                         : x,
                                     ),
                                   };
@@ -385,9 +386,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                            ...x,
-                                            qty: x.qty + 1,
-                                          }
+                                          ...x,
+                                          qty: x.qty + 1,
+                                        }
                                         : x,
                                     ),
                                   };
@@ -709,18 +710,18 @@ const HotelDetail = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-6">
-        {/* BREADCRUMB */}
+      {/* BREADCRUMB */}
       <div className="max-w-7xl mx-auto mb-6">
         <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
           <Link
-            to={paths.shop.hotel.list}
+            to={paths.shop.hotel.list + `?company=${company}`}
             className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
           >
             <Home size={20} />
           </Link>
           <span className="text-slate-400">&gt;</span>
           <Link
-            to={paths.shop.hotel.list}
+            to={paths.shop.hotel.list + `?company=${company}`}
             className="hover:text-[#2566b0] transition-colors"
           ></Link>
           <span className="text-slate-600 font-medium line-clamp-1">
@@ -764,7 +765,7 @@ const HotelDetail = () => {
                 onClick={() => {
                   setPreviewImage(
                     getUrlImage(hotel?.strSupplierImage) ||
-                      "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
+                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
                   );
                 }}
                 src={
