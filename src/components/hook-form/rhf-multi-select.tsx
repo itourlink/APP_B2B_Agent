@@ -92,7 +92,9 @@ export function RHFMultiSelect({
       control={control}
       render={({ field, fieldState: { error } }) => {
         const selectedValues: (string | number)[] =
-          field.value || [];
+          Array.isArray(field.value)
+            ? field.value
+            : [];
 
         const filteredOptions = options.filter((opt) =>
           opt.label

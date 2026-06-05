@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+import Lang from "../lang/lang";
 
 interface Props {
   open: boolean;
@@ -13,6 +14,7 @@ interface Props {
   title?: string;
   description?: string;
   isOverflowHidden?: boolean;
+  lang?: boolean;
   className?: string;
   footer?: React.ReactNode;
   bodyClassName?: string;
@@ -29,6 +31,7 @@ const PanelPopup = ({
   description,
   className,
   footer,
+  lang,
   bodyClassName,
 }: Props) => {
   useEffect(() => {
@@ -126,6 +129,11 @@ const PanelPopup = ({
                     >
                       <X size={18} />
                     </button>
+                  )}
+
+                  {lang && (
+                    <Lang/>
+
                   )}
                 </div>
 
