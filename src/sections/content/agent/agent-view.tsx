@@ -183,7 +183,14 @@ const AgentView = () => {
             lang={true}
         >
             <div>
-                <div className="flex items-end gap-3">
+                <div
+                    className="flex items-end gap-3"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
+                >
                     <CustomFilter
                         onChangeFilters={onChangeFilters}
                         search={[
