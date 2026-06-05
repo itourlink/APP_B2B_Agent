@@ -1,9 +1,12 @@
 import { useListCompanyPartner } from '@/hooks/actions/useCompanyOwner';
+import { useTranslate } from '@/locales';
 import { getUrlImage } from '@/utils/format-image';
 import { Mail, Phone, MapPin, Link2 } from 'lucide-react';
 
 
 const PartnerCard = ({ partner }: any) => {
+    const { t } = useTranslate("tour")
+
     return (
         <div className="relative group overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] 
                         transition-all duration-300 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]
@@ -35,20 +38,20 @@ const PartnerCard = ({ partner }: any) => {
                         <div className="space-y-3 pt-2 border-t border-gray-100">
                             <button className="flex items-center gap-2.5 text-[#2566b0] text-sm font-medium hover:underline group-hover:underline">
                                 <Link2 size={14} className="text-[#2566b0]" />
-                                <span>[Liên kết tarrif]</span>
+                                <span>[{t("tariffLink")}]</span>
                             </button>
 
                             <div className="flex items-start gap-3">
                                 <MapPin size={16} className="text-gray-400 mt-1 shrink-0" />
                                 <p className="text-gray-700 text-[15px] leading-relaxed line-clamp-2">
-                                    <span className="font-semibold text-gray-800">Địa chỉ:</span> {partner?.strCompanyAddr}
+                                    <span className="font-semibold text-gray-800">{t("address")}:</span> {partner?.strCompanyAddr}
                                 </p>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 <Phone size={16} className="text-gray-400 shrink-0" />
                                 <p className="text-gray-700 text-[15px]">
-                                    <span className="font-semibold text-gray-800">Di động:</span> {partner?.strCompanyPhone}
+                                    <span className="font-semibold text-gray-800">{t("mobile")}:</span> {partner?.strCompanyPhone}
                                 </p>
                             </div>
 
@@ -71,6 +74,8 @@ const PartnerCard = ({ partner }: any) => {
 };
 
 const Partner = () => {
+    const { t } = useTranslate("tour")
+
     const { tpData, tpLoading, tpError } = useListCompanyPartner();
 
     if (tpLoading) return <PartnerSkeleton />;
@@ -80,7 +85,7 @@ const Partner = () => {
         <section className="max-w-7xl mx-auto p-10 bg-gray-50 min-h-screen">
             <div className="text-center mb-16 relative">
                 <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
-                    Các Đối Tác Của Bạn
+                    {t("yourPartners")}
                 </h2>
             </div>
 
@@ -123,10 +128,12 @@ const PartnerSkeleton = () => {
 };
 
 const PartnerError = () => {
+    const { t } = useTranslate("tour")
+
     return (
         <div className="text-center py-20">
             <p className="text-red-500 font-medium">
-                Không tải được danh sách đối tác
+                {t("partnerListLoadError")}
             </p>
         </div>
     );

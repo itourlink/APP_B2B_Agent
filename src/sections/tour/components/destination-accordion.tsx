@@ -1,8 +1,11 @@
 import { useCompanyDes } from '@/hooks/actions/useCompanyOwner';
+import { useTranslate } from '@/locales';
 import { getUrlImage } from '@/utils/format-image';
 import { useState } from 'react';
 
 const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }: any) => {
+    const { t } = useTranslate("tour")
+
     return (
         <div
             className={`relative rounded-xl overflow-hidden transition-all duration-700 ease-in-out cursor-pointer group 
@@ -32,7 +35,7 @@ const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }:
                 <div className={`mt-4 transition-all duration-500 ease-out 
           ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                     <button className="cursor-pointer border border-white/80 text-white/90 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:border-white transition-colors duration-200">
-                        Xem tất cả
+                        {t("viewAll")}
                     </button>
                 </div>
             </div>
@@ -41,6 +44,8 @@ const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }:
 };
 
 const DestinationAccordion = () => {
+    const { t } = useTranslate("tour")
+
     const [filters] = useState({
         page: 1,
         pageSize: 4,
@@ -59,7 +64,7 @@ const DestinationAccordion = () => {
         <div className="max-w-7xl mx-auto p-6 bg-white min-h-screen">
             <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
-                    Các điểm đến hàng đầu
+                    {t("topDestinations")}
                 </h2>
             </div>
 
@@ -94,10 +99,11 @@ const DestinationSkeleton = () => {
 };
 
 const DestinationError = () => {
+    const { t } = useTranslate("tour")
     return (
         <div className="text-center py-20">
             <p className="text-red-500 font-medium">
-                Có lỗi xảy ra, vui lòng thử lại
+                {t("somethingWentWrongPleaseTryAgain")}
             </p>
         </div>
     );
@@ -105,10 +111,12 @@ const DestinationError = () => {
 
 
 const DestinationEmpty = () => {
+    const { t } = useTranslate("tour")
+
     return (
         <div className="text-center py-20">
             <p className="text-gray-500 font-medium">
-                Không có dữ liệu điểm đến
+                {t("noDestinationData")}
             </p>
         </div>
     );

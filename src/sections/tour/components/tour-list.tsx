@@ -1,4 +1,5 @@
 import { useListTour } from '@/hooks/actions/useTour';
+import { useTranslate } from '@/locales';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
@@ -7,6 +8,7 @@ import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 
 export const TourCard = ({ tour }: any) => {
+    const { t } = useTranslate("tour")
     const router = useRouter();
 
     return (
@@ -27,29 +29,29 @@ export const TourCard = ({ tour }: any) => {
                 <div className="space-y-2 mb-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                         <Flag size={14} className="text-gray-400" />
-                        <span className="truncate">Bởi: {tour?.strOwnerCompanyName}</span>
+                        <span className="truncate">{t("by")}: {tour?.strOwnerCompanyName}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Clock size={14} className="text-gray-400" />
-                        <span>Thời lượng: {tour?.intNoOfDay} Ngày / {Number(tour?.intNoOfDay) - 1} Đêm</span>
+                        <span>{t("duration")}: {tour?.intNoOfDay} {t("day")} / {Number(tour?.intNoOfDay) - 1} {t("night")}</span>
                     </div>
                     <div className="flex items-start gap-2">
                         <MapPin size={14} className="text-gray-400 mt-1 shrink-0" />
                         <span className="line-clamp-2 leading-snug">
-                            Các điểm đến: {tour?.strListTourDestinationName}
+                            {t("destinations")}: {tour?.strListTourDestinationName}
                         </span>
                     </div>
                 </div>
 
                 <div className="mb-4">
                     <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
-                        {tour?.strLangCode === "CATEID_SETTOUR" ? "Tour hằng ngày" : "Trọn gói"}
+                        {tour?.strLangCode === "CATEID_SETTOUR" ? t("dailyTour") : t("package")}
                     </span>
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                     <div>
-                        <p className="text-xs text-gray-500">Giá từ</p>
+                        <p className="text-xs text-gray-500">{t("priceFrom")}</p>
                         <p className="text-[#2563eb] font-bold text-xl">
                             {formatPrice(tour?.dblPriceFrom)}
                         </p>
@@ -58,7 +60,7 @@ export const TourCard = ({ tour }: any) => {
                         onClick={() => router.replaceParams(paths.shop.tour.detail, { item: tour })}
                         className="cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                     >
-                        Xem chi tiết
+                        {t("viewDetails")}
                     </button>
                 </div>
             </div>
@@ -97,7 +99,7 @@ const TourCardSkeleton = () => {
 };
 
 const TourList = () => {
-
+    const { t } = useTranslate("tour")
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     const [filters] = useState({
@@ -122,7 +124,7 @@ const TourList = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <p className="text-red-500 text-sm">
-                    Có lỗi xảy ra khi tải tour
+                    {t("tourLoadingError")}
                 </p>
             </div>
         );
@@ -132,7 +134,7 @@ const TourList = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <p className="text-gray-500 text-sm">
-                    Không có tour nào
+                    {t("noTours")}
                 </p>
             </div>
         );
@@ -142,12 +144,12 @@ const TourList = () => {
         <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-2xl font-bold text-gray-800">
-                    Tour nổi bật
+                    {t("featuredTours")}
                 </h2>
 
                 <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
                     <span className="text-[12px] text-gray-500 ml-2">
-                        Hiển thị dạng:
+                        {t("displayMode")}:
                     </span>
 
                     <div className="flex gap-1">
@@ -212,12 +214,16 @@ const TourList = () => {
 
 export default TourList;
 
-const TourError = () => (
-    <div className="text-center py-20 text-red-500">
-        Không tải được danh sách tour
-    </div>
-);
+const TourError = () => {
+    const { t } = useTranslate("tour")
+    return (
+        <div className="text-center py-20 text-red-500">
+            {t("tourListLoadError")}
+        </div>
+    )
+};
 const TourListItem = ({ tour }: any) => {
+    const { t } = useTranslate("tour")
     const router = useRouter();
 
     return (
@@ -238,9 +244,7 @@ const TourListItem = ({ tour }: any) => {
                         </h3>
 
                         <span className="shrink-0 bg-[#e6f0ff] text-[#2563eb] text-xs font-semibold px-3 py-1 rounded-full">
-                            {tour?.strLangCode === "CATEID_SETTOUR"
-                                ? "Tour hằng ngày"
-                                : "Trọn gói"}
+                            {tour?.strLangCode === "CATEID_SETTOUR" ? t("dailyTour") : t("package")}
                         </span>
                     </div>
 
@@ -248,15 +252,14 @@ const TourListItem = ({ tour }: any) => {
                         <div className="flex items-center gap-2">
                             <Flag size={16} className="text-gray-400 shrink-0" />
                             <span className="truncate">
-                                Bởi: {tour?.strOwnerCompanyName || "--"}
+                                {t("by")}: {tour?.strOwnerCompanyName || "--"}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <Clock size={16} className="text-gray-400 shrink-0" />
                             <span>
-                                Thời lượng: {tour?.intNoOfDay || 0} Ngày /{" "}
-                                {Math.max(Number(tour?.intNoOfDay || 1) - 1, 0)} Đêm
+                                {t("duration")}: {tour?.intNoOfDay} {t("day")} / {Number(tour?.intNoOfDay) - 1} {t("night")}
                             </span>
                         </div>
 
@@ -266,7 +269,7 @@ const TourListItem = ({ tour }: any) => {
                                 className="text-gray-400 mt-0.5 shrink-0"
                             />
                             <span className="line-clamp-2 leading-relaxed">
-                                Các điểm đến: {tour?.strListTourDestinationName || "--"}
+                                {t("destinations")}: {tour?.strListTourDestinationName || "--"}
                             </span>
                         </div>
                     </div>
@@ -275,7 +278,7 @@ const TourListItem = ({ tour }: any) => {
                 <div className="flex items-end justify-between pt-4 border-t border-gray-50">
                     <div>
                         <p className="text-[12px] text-gray-500 mb-0.5">
-                            Giá từ
+                            {t("priceFrom")}
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-2xl leading-none">
@@ -291,7 +294,7 @@ const TourListItem = ({ tour }: any) => {
                         }
                         className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
                     >
-                        Xem chi tiết
+                        {t("viewDetails")}
                     </button>
                 </div>
             </div>
