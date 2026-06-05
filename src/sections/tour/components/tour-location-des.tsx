@@ -146,10 +146,14 @@ const TourLocationDes = ({
                                 }
                                 className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
                             >
-                                <Flag
+                                <div
+                                    className=" w-5 cursor-pointer"    
+                                >
+                                    <Flag
                                     className="text-[#2566b0] mt-1"
                                     size={18}
                                 />
+                                </div>
 
                                 <div className="font-medium text-left">
                                     {tour?.strDestinationName}
