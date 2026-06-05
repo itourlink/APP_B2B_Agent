@@ -2,6 +2,7 @@ import { useCompanyDes } from '@/hooks/actions/useCompanyOwner';
 import { getUrlImage } from '@/utils/format-image';
 import { ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const TopDestinationCard = ({ dest }: any) => {
     if (!dest?.strCityImage) {
@@ -46,6 +47,7 @@ const TopDestinationCard = ({ dest }: any) => {
 };
 
 const DestinationCarousel = () => {
+    const { t } = useTranslation("hotel")
 
     const [filters] = useState({
         page: 1,
@@ -70,7 +72,7 @@ const DestinationCarousel = () => {
         <section className="bg-white p-10 max-w-7xl mx-auto rounded-[32px] shadow-[0_16px_32px_-8px_rgba(0,0,0,0.03)] my-16">
             <div className="text-center mb-16 relative">
                 <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
-                    Các Đối Tác Của Bạn
+                    {t("yourPartners")}
                 </h2>
             </div>
 
@@ -90,7 +92,7 @@ const DestinationCarousel = () => {
 
                     {!tcdLoading && tcdError && (
                         <div className="text-red-500 text-center w-full">
-                            Có lỗi xảy ra, vui lòng thử lại.
+                             {t("loadPartnerFailed")}
                         </div>
                     )}
 

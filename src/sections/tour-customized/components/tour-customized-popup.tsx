@@ -33,7 +33,7 @@ export const Schema = z
         adults: z.coerce.number().min(1, "Tối thiểu 1 người lớn"),
         children: z.coerce.number().default(0),
 
-        category: z.string().min(1, "Vui lòng chọn Loại"),
+        category: z.array(z.string()).min(1, "Vui lòng chọn Loại"),
 
         remark: z.string().optional(),
 
@@ -159,7 +159,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             intTWN: data.twn,
             intTPL: data.tpl,
 
-            dtmDateFrom: data.dateStart,
+             dtmDateFrom: new Date(data.dateStart).toISOString(),
 
             strServiceName: data.tourName,
 
@@ -168,7 +168,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             intCurrencyID: data.currency, // nếu là ID thì giữ number/string ID
 
-            strListEasiaCateID: data.category,
+          strListEasiaCateID: data.category.join(","),
 
             strRemark: data.remark,
 
