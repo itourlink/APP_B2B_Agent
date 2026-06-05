@@ -5,20 +5,17 @@ export const slidesTour = [
     {
         id: 1,
         image: banner1,
-        titleKey: "tourBanner1Title",
-        descKey: "tourBanner1Desc",
+        key: "slidesTour1",
     },
     {
         id: 2,
         image: banner2,
-        titleKey: "tourBanner2Title",
-        descKey: "tourBanner2Desc",
+        key: "slidesTour2",
     },
     {
         id: 3,
         image: banner3,
-        titleKey: "tourBanner3Title",
-        descKey: "tourBanner3Desc",
+        key: "slidesTour3",
     },
 ];
 

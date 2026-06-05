@@ -8,6 +8,7 @@ import DatePopup from "./date-popup";
 import TypeSelect, { type Option } from "./type-select";
 import GuestRoomPopup from "./guess-room-popup";
 import TourTypeSelect from "./tour-type-select";
+import { useTranslate } from "@/locales";
 
 
 
@@ -44,6 +45,7 @@ export const GenericFilter = ({
     onChange,
     onSearch,
 }: Props) => {
+    const { t } = useTranslate("genericFilter")
     const guestRef = useRef<HTMLDivElement>(null);
     const dateRef = useRef<HTMLDivElement>(null);
     const dateOneRef = useRef<HTMLDivElement>(null);
@@ -81,7 +83,7 @@ export const GenericFilter = ({
                         <StarIcon currentColor="#6b7280" />
 
                         <div className="text-sm font-semibold">
-                            {item.label || "Toggle"}
+                            {item.label || t("toggle")}
                         </div>
 
                         <div
@@ -107,7 +109,7 @@ export const GenericFilter = ({
                         <Search size={18} />
 
                         <div>
-                            <div className="text-sm font-semibold">{item.label ?? "Search"}</div>
+                            <div className="text-sm font-semibold">{item.label ?? t("search")}</div>
 
                             <input
                                 value={values[item.key] || ""}
@@ -146,10 +148,10 @@ export const GenericFilter = ({
                             <Users size={18} />
                             <div>
                                 <div className="text-sm font-semibold">
-                                    {item.label || "Guest"}
+                                    {item.label || t("guest")}
                                 </div>
                                 <div className="text-sm">
-                                    {values[item.key]?.adults || 1} Adult
+                                    {values[item.key]?.adults || 1} {t("adult")}
                                 </div>
                             </div>
                         </button>
@@ -194,12 +196,12 @@ export const GenericFilter = ({
                             <Users size={18} />
                             <div>
                                 <div className="text-sm font-semibold">
-                                    {item.label || "Guest & Room"}
+                                    {item.label || t("guestAndRoom")}
                                 </div>
 
                                 <div className="text-sm">
-                                    {val.rooms} Room • {val.adults} Adult
-                                    {val.children > 0 ? ` • ${val.children} Child` : ""}
+                                    {val.rooms} {t("room")} • {val.adults} {t("adult")}
+                                    {val.children > 0 ? ` • ${val.children} ${t("child")}` : ""}
                                 </div>
                             </div>
                         </button>
@@ -208,7 +210,7 @@ export const GenericFilter = ({
                             <div className="absolute top-20 z-50">
                                 <GuestRoomPopup
                                     isOpen
-                                    isRoomDetail={item.isRoomDetail ?? false} 
+                                    isRoomDetail={item.isRoomDetail ?? false}
                                     value={val}
                                     onDone={(newVal) => {
                                         onChange(item.key, newVal);
@@ -229,7 +231,7 @@ export const GenericFilter = ({
                             className="cursor-pointer"
                         >
                             <div className="text-sm font-semibold">
-                                {item.label || "Date Range"}
+                                {item.label || t("dateRange")}
                             </div>
                             <div className="text-sm">
                                 {values[item.keyStart] && values[item.keyEnd]
@@ -237,7 +239,7 @@ export const GenericFilter = ({
                                         values[item.keyEnd],
                                         "dd/MM"
                                     )}`
-                                    : "Select Date"}
+                                    : t("selectDate")}
                             </div>
                         </button>
 
@@ -270,12 +272,12 @@ export const GenericFilter = ({
                             className="cursor-pointer"
                         >
                             <div className="text-sm font-semibold">
-                                {item.label || "Date"}
+                                {item.label || t("date")}
                             </div>
                             <div className="text-sm">
                                 {values[item.key]
                                     ? format(values[item.key], "dd/MM")
-                                    : "Select Date"}
+                                    : t("selectDate")}
                             </div>
                         </button>
 
@@ -301,7 +303,7 @@ export const GenericFilter = ({
                         <Badge size={18} />
                         <div>
                             <div className="text-sm font-semibold">
-                                {item.label || "Select"}
+                                {item.label || t("select")}
                             </div>
 
                             <TypeSelect
@@ -317,7 +319,7 @@ export const GenericFilter = ({
                 return (
                     <div className="flex flex-col gap-1">
                         <div className="text-sm font-semibold">
-                            {item.label || "Tour Type"}
+                            {item.label || t("tourType")}
                         </div>
                         <TourTypeSelect
                             value={values[item.key] || { mainType: "all", subType: "all" }}
@@ -364,7 +366,7 @@ export const GenericFilter = ({
                     className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-[#2566b0] hover:bg-[#003566] text-white rounded-lg"
                 >
                     <SearchIcon size={16} />
-                    Search
+                    {t("search")}
                 </button>
             </div>
         </div>

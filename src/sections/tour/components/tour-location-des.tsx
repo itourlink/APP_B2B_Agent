@@ -1,3 +1,4 @@
+import { useTranslate } from "@/locales";
 import { MapPin, Flag, Map } from "lucide-react";
 
 type Props = {
@@ -12,6 +13,7 @@ const TourLocationDes = ({
     onSelectDestination,
 }: Props) => {
 
+    const { t } = useTranslate("tour")
     /**
      * API đôi khi trả:
      * [[...]]
@@ -66,7 +68,7 @@ const TourLocationDes = ({
 
                     <div className="mb-2 w-6 h-6 border-4 border-gray-300 border-t-[#4a6fa5] rounded-full animate-spin"></div>
 
-                    Đang tìm tour phù hợp...
+                    {t("searchingSuitableTours")}
                 </div>
             </div>
         );
@@ -82,7 +84,7 @@ const TourLocationDes = ({
                         className="mb-2"
                     />
 
-                    Không tìm thấy kết quả phù hợp
+                    {t("noMatchingResults")}
                 </div>
             </div>
         );
@@ -99,7 +101,7 @@ const TourLocationDes = ({
 
                         <MapPin size={14} />
 
-                        DESTINATION
+                        {t("destination")}
                     </div>
 
                     <button
@@ -147,12 +149,12 @@ const TourLocationDes = ({
                                 className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
                             >
                                 <div
-                                    className=" w-5 cursor-pointer"    
+                                    className=" w-5 cursor-pointer"
                                 >
                                     <Flag
-                                    className="text-[#2566b0] mt-1"
-                                    size={18}
-                                />
+                                        className="text-[#2566b0] mt-1"
+                                        size={18}
+                                    />
                                 </div>
 
                                 <div className="font-medium text-left">

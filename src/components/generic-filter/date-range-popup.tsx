@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { DateRange } from "react-date-range";
+import { useTranslate } from "@/locales";
 
 type Props = {
   isOpen?: boolean;
@@ -11,16 +12,17 @@ type Props = {
   onApply: (range: Props["value"]) => void;
 };
 const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
+  const { t } = useTranslate("genericFilter")
   const [temp, setTemp] = useState([
     {
       startDate: value.startDate || new Date(),
       endDate: value.endDate || new Date(),
       key: "selection",
     },
-  ]); 
+  ]);
 
 
-  const  [ isCleared, setIsCleared ] = useState(
+  const [isCleared, setIsCleared] = useState(
     !value.startDate && !value.endDate
   );
 
@@ -70,18 +72,18 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
 
       <div className="flex justify-between mt-4 text-sm bg-gray-100 p-3 rounded-lg">
         <div>
-          <div className="text-gray-500">Start Date</div>
+          <div className="text-gray-500">{t("startDate")}</div>
           <div className="font-medium">
-            {isCleared ? "Select Date" : format(temp[0].startDate, "dd MMM yyyy")}
+            {isCleared ? t("selectDate") : format(temp[0].startDate, "dd MMM yyyy")}
           </div>
         </div>
 
         <div className="flex items-center">→</div>
 
         <div>
-          <div className="text-gray-500">End Date</div>
+          <div className="text-gray-500">{t("endDate")}</div>
           <div className="font-medium">
-            {isCleared ? "Select Date" : format(temp[0].endDate, "dd MMM yyyy")}
+            {isCleared ? t("selectDate") : format(temp[0].endDate, "dd MMM yyyy")}
           </div>
         </div>
       </div>
@@ -92,7 +94,7 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
           onClick={handleClear}
           className="px-4 py-2 bg-gray-200 hover:bg-gray-300 transition rounded-lg cursor-pointer"
         >
-          Clear
+          {t("clear")}
         </button>
 
         <button
@@ -104,7 +106,7 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
           }
           className="px-4 py-2 bg-[#4a6fa5] hover:bg-[#3b5b7e] transition text-white rounded-lg cursor-pointer"
         >
-          Apply
+          {t("apply")}
         </button>
       </div>
     </div>

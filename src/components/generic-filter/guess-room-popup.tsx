@@ -1,3 +1,4 @@
+import { useTranslate } from "@/locales";
 import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -29,6 +30,7 @@ const defaultRoomTypes: RoomTypes = {
 };
 
 const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) => {
+    const { t } = useTranslate("genericFilter")
     const safeValue = value || {
         rooms: 1,
         adults: 1,
@@ -103,10 +105,10 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
     };
 
     const ROOM_CONFIG: { key: keyof RoomTypes; label: string }[] = [
-        { key: "sgl", label: "SGL Room(s)" },
-        { key: "dbl", label: "DBL Room(s)" },
-        { key: "twn", label: "TWN Room(s)" },
-        { key: "tpl", label: "TPL Room(s)" },
+        { key: "sgl", label: t("sglRooms") },
+        { key: "dbl", label: t("dblRooms") },
+        { key: "twn", label: t("twnRooms") },
+        { key: "tpl", label: t("tplRooms") },
     ];
     return (
         <div className="w-[320px] bg-white rounded-2xl shadow-lg p-4">
@@ -117,9 +119,9 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                     onClick={() => isRoomDetail && setOpenRoomDetail(!openRoomDetail)}
                 >
                     <div>
-                        <div className="font-semibold">Rooms</div>
+                        <div className="font-semibold">{t("rooms")}</div>
                         <div className="text-sm text-gray-500">
-                            Number of rooms
+                            {t("numberOfRooms")}
                         </div>
                     </div>
 
@@ -141,7 +143,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                         </div>
                     ) : (
                         <div className="text-sm text-gray-500">
-                            {rooms} Room <ChevronDownIcon className="w-4 h-4 inline-block" />
+                            {rooms} {t("room")} <ChevronDownIcon className="w-4 h-4 inline-block" />
                         </div>
                     )}
                 </div>
@@ -184,8 +186,8 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
             {/* Adults */}
             <div className="flex justify-between items-center mb-4">
                 <div>
-                    <div className="font-semibold">Adults</div>
-                    <div className="text-sm text-gray-500">Ages 18 or above</div>
+                    <div className="font-semibold">{t("adults")}</div>
+                    <div className="text-sm text-gray-500">{t("ages18OrAbove")}</div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -210,8 +212,8 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
             {/* Children */}
             <div className="flex justify-between items-center my-4">
                 <div>
-                    <div className="font-semibold">Children</div>
-                    <div className="text-sm text-gray-500">Ages 1-17</div>
+                    <div className="font-semibold">{t("children")}</div>
+                    <div className="text-sm text-gray-500">{t("ages")} 1-17</div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -242,7 +244,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                             key={index}
                             className="flex justify-between items-center mb-3"
                         >
-                            <span>Child {index + 1}</span>
+                            <span>{t("child")} {index + 1}</span>
 
                             <select
                                 value={age}
@@ -253,7 +255,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                             >
                                 {ages.map((a) => (
                                     <option key={a} value={a}>
-                                        {a} years
+                                        {a} {t("years")}
                                     </option>
                                 ))}
                             </select>
@@ -275,7 +277,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                 }
                 className="w-full mt-4 bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white py-2 rounded-lg cursor-pointer transition"
             >
-                Apply
+                {t("apply")}
             </button>
         </div>
     );

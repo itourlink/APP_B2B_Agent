@@ -1,0 +1,28 @@
+{
+    "slidesTour1": {
+        "title": "Explore the world with iTourGo",
+        "desc": "Experience amazing journeys at the best prices"
+    },
+    "slidesTour2": {
+        "title": "Smart travel",
+        "desc": "Connecting thousands of high-quality travel services"
+    },
+    "slidesTour3": {
+        "title": "Memorable journeys",
+        "desc": "Create unforgettable memories with us"
+    },
+    "exploreNow": "Explore now",
+    "all": "All",
+    "dailyTour": "Daily Tour",
+    "packageTour": "Package Tour",
+    "fixedTour": "Fixed Tour",
+    "fit": "FIT",
+    "git": "GIT",
+    "excursion": "Excursion",
+    "transportPackages": "Transport Packages",
+    "search": "Search",
+    "searchPlaceholder": "Search Tour, Destination...",
+    "searchingSuitableTours": "Searching for suitable tours...",
+    "noMatchingResults": "No matching results found",
+    "destination": "DESTINATION"
+}

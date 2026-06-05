@@ -1,0 +1,28 @@
+{
+    "slidesTour1": {
+        "title": "Khám phá thế giới cùng iTourGo",
+        "desc": "Trải nghiệm những chuyến đi tuyệt vời với giá tốt nhất"
+    },
+    "slidesTour2": {
+        "title": "Du lịch thông minh",
+        "desc": "Kết nối hàng ngàn dịch vụ du lịch chất lượng cao"
+    },
+    "slidesTour3": {
+        "title": "Hành trình đáng nhớ",
+        "desc": "Tạo nên kỷ niệm không thể quên cùng chúng tôi"
+    },
+    "exploreNow": "Khám phá ngay",
+    "all": "Tất cả",
+    "dailyTour": "Tour hằng ngày",
+    "packageTour": "Tour trọn gói",
+    "fixedTour": "Tour cố định",
+    "fit": "FIT",
+    "git": "GIT",
+    "excursion": "Excursion",
+    "transportPackages": "Gói vận chuyển",
+    "search": "Tìm kiếm",
+    "searchPlaceholder": "Tìm kiếm tour, điểm đến...",
+    "searchingSuitableTours": "Đang tìm tour phù hợp...",
+    "noMatchingResults": "Không tìm thấy kết quả phù hợp",
+    "destination": "ĐIỂM ĐẾN"
+}

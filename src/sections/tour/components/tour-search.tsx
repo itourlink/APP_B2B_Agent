@@ -5,23 +5,7 @@ import TourLocationDes from "./tour-location-des";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import { useLocation } from "react-router-dom";
-
-const TOUR_TYPE_OPTIONS = [
-    { label: "Tất cả", value: "all" },
-    { label: "Tour hằng ngày", value: "18" },
-    { label: "Tour trọn gói", value: "19" },
-    { label: "Tour cố định", value: "33" },
-];
-
-const getTourSubOptions = () => {
-    return [
-        { label: "Tất cả", value: "all" },
-        { label: "FIT", value: "1" },
-        { label: "GIT", value: "2" },
-        { label: "Excursion", value: "100" },
-        { label: "Transports Packages", value: "101" },
-    ];
-};
+import { useTranslate } from "@/locales";
 
 const DEFAULT_FILTERS = {
     page: 1,
@@ -84,6 +68,26 @@ const formatDate = (date: Date | null) => {
 };
 
 const TourSearch = () => {
+    const { t } = useTranslate("tour")
+
+    const TOUR_TYPE_OPTIONS = [
+        { label: t("all"), value: "all" },
+        { label: t("dailyTour"), value: "18" },
+        { label: t("packageTour"), value: "19" },
+        { label: t("fixedTour"), value: "33" },
+    ];
+
+    const getTourSubOptions = () => {
+        return [
+            { label: t("all"), value: "all" },
+            { label: t("fit"), value: "1" },
+            { label: t("git"), value: "2" },
+            { label: t("excursion"), value: "100" },
+            { label: t("transportPackages"), value: "101" },
+        ];
+    };
+
+
     const location = useLocation();
 
     const company =
@@ -145,8 +149,8 @@ const TourSearch = () => {
                     {
                         type: "search",
                         key: "strFilterDestinationName",
-                        label: "Search",
-                        placeholder: "Search...",
+                        label: t("search"),
+                        placeholder: t("searchPlaceholder"),
                         renderDropdown: ({ close }) => (
                             <TourLocationDes
                                 data={searchData}

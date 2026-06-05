@@ -1,7 +1,10 @@
+import { useTranslate } from "@/locales";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const BannerSlider = ({ slides = [] }: { slides: any[] }) => {
+    const { t } = useTranslate("tour");
+
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -45,13 +48,13 @@ const BannerSlider = ({ slides = [] }: { slides: any[] }) => {
 
                     <div className="absolute bottom-20 left-10 max-w-xl text-white z-30">
                         <h2 className="text-5xl font-bold mb-4 animate-[fadeUp_0.8s_ease]">
-                            {slide.title}
+                            {t(`${slide.key}.title`)}
                         </h2>
                         <p className="text-lg mb-6 opacity-90 animate-[fadeUp_1s_ease]">
-                            {slide.desc}
+                            {t(`${slide.key}.desc`)}
                         </p>
                         <button className="px-6 py-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition">
-                            Khám phá ngay
+                            {t("exploreNow")}
                         </button>
                     </div>
                 </div>
