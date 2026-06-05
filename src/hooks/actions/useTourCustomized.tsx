@@ -226,6 +226,122 @@ export const useGetlistTourPublish = (filters?: any) => {
     totalPages,
     isLoading: query.isLoading,
     isFetching: query.isFetching,
+    isError: query.isError,
     refetch: query.refetch,
+  };
+};
+
+const toIsoDateString = (value?: string | Date | null) => {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value.toISOString();
+  }
+
+  const normalizedValue = value.trim();
+
+  if (!normalizedValue) return null;
+
+  const mmddyyyyMatch = normalizedValue.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+  );
+
+  if (mmddyyyyMatch) {
+    const [, month, day, year] = mmddyyyyMatch;
+
+    return new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day)),
+    ).toISOString();
+  }
+
+  const yyyymmddMatch = normalizedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (yyyymmddMatch) {
+    const [, year, month, day] = yyyymmddMatch;
+
+    return new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day)),
+    ).toISOString();
+  }
+
+  const parsedDate = new Date(normalizedValue);
+
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString();
+};
+
+
+export const useGetListSupplierMappingPrice = (filters?: any) => {
+  const { user } = useUser();
+
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 10;
+
+  const intCateID = Number(filters?.intCateID ?? 1);
+
+  const payload = {
+    strUserGUID: user?.strUserGUID ?? null,
+
+    strSupplierMappingPriceGUID: null,
+    strCompanyGUID: null,
+    strSupplierGUID: null,
+    strPriceListGUID: null,
+    strPriceLevelGUID: null,
+
+    intComTypeID: 0,
+    intCateID,
+
+    intBoatPriceTypeID: intCateID === 3 ? 3 : null,
+
+    intEasiaCateID: filters?.intEasiaCateID
+      ? Number(filters.intEasiaCateID)
+      : null,
+
+    strPriceRange: filters?.strPriceRange ?? "",
+
+    dtmFilterDateFrom: toIsoDateString(filters?.dtmFilterDateFrom),
+    dtmFilterDateTo: toIsoDateString(filters?.dtmFilterDateTo),
+
+    strFilterSupplierName: filters?.strFilterSupplierName ?? "",
+    strFilterItemTypeName: null,
+
+    strListCityCode: filters?.strListCityCode ?? null,
+
+    intCurrencyView: filters?.intCurrencyView ?? user?.intCurrencyID ?? 1,
+
+    intPaxCount: filters?.intPaxCount ?? filters?.intTotalPax ?? null,
+
+    intCurPage: page,
+    intPageSize: pageSize,
+
+    strOrder: null,
+    tblsReturn: "[0]",
+    intTypeID: filters?.intTypeID ?? 1,
+  };
+
+  const query = useQuery({
+    queryKey: [
+      QUERY_KEYS.TOUR_CUSTOMER.LIST_SUP_MAP_PRICE,
+      user?.strUserGUID,
+      payload,
+    ],
+    queryFn: () => fetchGetListSupplierMappingPrice(payload),
+    enabled: !!filters && !!user?.strUserGUID,
+    placeholderData: keepPreviousData,
+  });
+
+  const listData = query.data?.[0] ?? [];
+  const totalRecords = listData?.[0]?.intTotalRecords || 0;
+  const totalPages = totalRecords > 0 ? Math.ceil(totalRecords / pageSize) : 0;
+
+  return {
+    supListMapData: listData,
+    totalRecords,
+    totalPages,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+    payload,
   };
 };

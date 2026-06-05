@@ -46,7 +46,9 @@ const BookingForm = ({ item }: Props) => {
     const { coData } = useListCompanyOwner();
     const { currencyData } = useListCurrency();
 
-    console.log("currencyData", currencyData);
+    const company =
+        new URLSearchParams(location.search).get("company") || "";
+
     const { showToast } = useToastStore();
 
     const route = useRouter();
@@ -225,7 +227,8 @@ const BookingForm = ({ item }: Props) => {
                 queryClient.invalidateQueries({
                     queryKey: [QUERY_KEYS.CART.LIST_CART],
                 });
-                route.push(paths.cart.list);
+
+                route.push(`${paths.shop.cart.list}?company=${company}`);
                 showToast("success", "Thêm vào giỏ thành công");
             },
             onError: () => {
@@ -362,10 +365,10 @@ const BookingForm = ({ item }: Props) => {
                                 e.target.value ? Number(e.target.value) : null
                             )
                         }
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
+                        className="cursor-pointer w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
                     >
                         {starList.map((star: number) => (
-                            <option key={star} value={star}>
+                            <option key={star} value={star} className="cursor-pointer">
                                 {"⭐".repeat(star)} ({star} sao)
                             </option>
                         ))}

@@ -8,11 +8,13 @@ import { useToastStore } from "@/zustand/useToastStore";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useCompanyOwnerListInfo } from "@/hooks/actions/useCompanyOwnerInfo";
+import PanelPopup from "@/components/popup/panel-popup";
+import { useTranslate } from "@/locales";
 
 const AgentView = () => {
     const { showToast } = useToastStore();
     const router = useRouter();
-
+    const { t } = useTranslate("agent");
     const IS_DEMO_SINGLE_DATA = false;
 
     const [filters, setFilters] = useState({
@@ -113,7 +115,7 @@ const AgentView = () => {
     const colDefs: ColumnDef<any>[] = [
         {
             field: "No",
-            headerName: "STT",
+            headerName: t("no"),
             render: (value) => (
                 <span className="text-gray-400 font-medium">
                     {value}
@@ -122,7 +124,7 @@ const AgentView = () => {
         },
         {
             field: "strCompanyName",
-            headerName: "Tên công ty",
+            headerName: t("companyName"),
             render: (_, row) => (
                 <div className="space-y-0.5 py-1 text-xs w-full">
                     <div className="flex items-center gap-2 text-[#004b91] font-semibold text-sm">
@@ -140,7 +142,7 @@ const AgentView = () => {
         },
         {
             field: "No",
-            headerName: "Thao tác",
+            headerName: t("action"),
             render: (_, row) => (
                 <div className="flex items-center gap-2 min-w-[150px]">
                     <button
@@ -174,54 +176,62 @@ const AgentView = () => {
     ];
 
     return (
-        <div>
-            <div className="flex items-end gap-3">
-                <CustomFilter
-                    onChangeFilters={onChangeFilters}
-                    search={[
-                        {
-                            keySearch: "nameProvider",
-                            value: filters.nameProvider,
-                            placeHoder: "Tên đại lý",
-                        },
-                    ]}
-                />
-
-                <div className="flex gap-2 mt-3">
-                    <PrimaryButton
-                        text="Tìm kiếm"
-                        onClick={handleSearch}
-                        className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
-                        prefixIcon={<Search size={18} />}
+        <PanelPopup
+            title={t("agentList")}
+            open={true}
+            className="w-[90vw] max-w-none"
+            lang={true}
+        >
+            <div>
+                <div className="flex items-end gap-3">
+                    <CustomFilter
+                        onChangeFilters={onChangeFilters}
+                        search={[
+                            {
+                                keySearch: "nameProvider",
+                                value: filters.nameProvider,
+                                placeHoder: t("agentName"),
+                            },
+                        ]}
                     />
 
-                    <PrimaryButton
-                        text="Reset"
-                        onClick={handleReset}
-                        className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
-                        prefixIcon={<RotateCcw size={18} />}
+                    <div className="flex gap-2 mt-3">
+                        <PrimaryButton
+                            text={t("search")}
+                            onClick={handleSearch}
+                            className="bg-[#4e6d9a] hover:bg-[#3d567a] rounded-lg px-4 py-2 text-sm w-fit"
+                            prefixIcon={<Search size={18} />}
+                        />
+
+                        <PrimaryButton
+                            text={t("reset")}
+                            onClick={handleReset}
+                            className="bg-gray-200 hover:bg-gray-300 text-black rounded-lg px-4 py-2 text-sm w-fit"
+                            prefixIcon={<RotateCcw size={18} />}
+                        />
+                    </div>
+                </div>
+
+                <div className="pt-4">
+                    <TableCore
+                        rowData={listData}
+                        columnDefs={colDefs}
+                        loading={isLoading}
                     />
+
+                    {!isError && (
+                        <Pagination
+                            currentPage={page}
+                            onPageChange={(value) =>
+                                setPage(value)
+                            }
+                            totalPages={totalPages || 1}
+                        />
+                    )}
                 </div>
             </div>
+        </PanelPopup>
 
-            <div className="pt-4">
-                <TableCore
-                    rowData={listData}
-                    columnDefs={colDefs}
-                    loading={isLoading}
-                />
-
-                {!isError && (
-                    <Pagination
-                        currentPage={page}
-                        onPageChange={(value) =>
-                            setPage(value)
-                        }
-                        totalPages={totalPages || 1}
-                    />
-                )}
-            </div>
-        </div>
     );
 };
 

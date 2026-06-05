@@ -10,7 +10,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import {
   addTourCustomizedSerByListDays,
-  useListServiceTourCustomized,
+  getListServiceTourCustomized,
 } from "@/hooks/actions/useUser";
 import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
@@ -62,7 +62,7 @@ const UpdateNoOfDay = ({
       item?.strTourCustomizedGUID,
     ],
     queryFn: () =>
-      useListServiceTourCustomized({
+      getListServiceTourCustomized({
         strTourCustomizedGUID: item?.strTourCustomizedGUID || "",
         strTourCustomizedDayGUID: null,
       }),
@@ -72,6 +72,7 @@ const UpdateNoOfDay = ({
 
   const listData = data?.[0] ?? [];
   const groupedDays = groupByDay(listData);
+
 
   useEffect(() => {
     if (!listData?.length || !strTourCustomizedPriceItemGUID) return;
@@ -91,7 +92,6 @@ const UpdateNoOfDay = ({
       prev.includes(day) ? prev.filter((id) => id !== day) : [...prev, day]
     );
   };
-
   const handleUpdate = async () => {
     const payload = {
       strTourCustomizedPriceItemGUID,

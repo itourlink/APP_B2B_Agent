@@ -16,8 +16,8 @@ import { CONFIG } from "@/config-global";
 import AuthUserInfo from "@/sections/auth/components/auth-user-info";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListMenu } from "@/hooks/actions/useMenu";
-import { buildMenu } from "@/components/header/data-menu";
 import { useEffect } from "react";
+import { buildMenu } from "@/components/header-outside/data-menu";
 
 const ShopHeader = () => {
     const router = useRouter();
@@ -96,17 +96,28 @@ const ShopHeader = () => {
         (item) => item && isPathMatch(item)
     );
 
+    const isAgentCompanyPage =
+        pathname.startsWith(paths.shop.agentCompany.list);
+
+    const isSaleChannelPage =
+        pathname.startsWith(paths.shop.salesChannel.list);
+
+    const isCartPage =
+        pathname.startsWith(paths.shop.cart.list);
+    const isNotificationPage =
+        pathname.startsWith(paths.shop.notification.list);
+
     useEffect(() => {
         if (!menu?.length) return;
 
         // SEARCH PAGE => KHÔNG REDIRECT
-        if (isSearchPage) return;
+        if (isSearchPage || isAgentCompanyPage || isSaleChannelPage || isCartPage || isNotificationPage) return;
 
         const firstItem = menu[0];
 
         if (!firstItem?.link) return;
 
-        if (!hasActive) {
+        if (!hasActive && !isAgentCompanyPage && !isSaleChannelPage && !isCartPage && !isNotificationPage) {
             const pathname = firstItem.link.split("?")[0];
 
             const search = company
@@ -151,7 +162,7 @@ const ShopHeader = () => {
                 <div className="flex items-center gap-5">
                     <button
                         onClick={() =>
-                               window.location.href = "https://myagentmarket.itourlink.com"
+                            window.location.href = "https://myagentmarket.itourlink.com"
                             // window.location.href = "http://localhost:5177/"
 
                         }
@@ -167,7 +178,7 @@ const ShopHeader = () => {
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
 
                     <button
-                        onClick={() => window.location.href = "https://myagentmember.itourlink.com/agent"}
+                        onClick={() => window.open("https://myagentmember.itourlink.com/agent", "_blank")}
                         // onClick={() => window.location.href = "http://localhost:5177/"}
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                     >
@@ -196,9 +207,7 @@ const ShopHeader = () => {
                         <Notification />
 
                         <button
-                            onClick={() =>
-                                router.push(paths.content.requestBooking)
-                            }
+                            onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")}
                             className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                         >
                             Yêu cầu của tôi

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { MapPin, Pen, Plus, X } from "lucide-react";
+import { Pen, Plus, X } from "lucide-react";
 import {
   keepPreviousData,
   useMutation,
@@ -12,7 +12,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import {
   useAddDayTourCustomized,
-  useListServiceTourCustomized,
+  getListServiceTourCustomized,
 } from "@/hooks/actions/useUser";
 import { useTranslate } from "@/locales";
 import { useToastStore } from "@/zustand/useToastStore";
@@ -20,7 +20,6 @@ import { useToastStore } from "@/zustand/useToastStore";
 import AddAccommodationD from "./add-accommodation-d";
 import AddImageD from "./add-image-d";
 import AddManual from "./add-manually-d";
-import AddServiceMenuD from "./add-service-menu-d";
 import AddShippingServicesD from "./add-shipping-services-d";
 import AddToursD from "./add-tours-d";
 import ChangeDayOrder from "./change-day-order";
@@ -28,6 +27,8 @@ import DetailTourInEx from "./detail-tour-in-ex";
 import DetailTourPrice from "./detail-tour-price";
 import ListDaySidebar from "./list-day-sidebar";
 import ListTour from "./list-tour";
+import MapView from "./map/map-view";
+import AddServiceSingleD from "./add-service-single-d";
 
 interface DetailTourContentProps {
   itemListData?: any;
@@ -54,32 +55,85 @@ export const DetailTourContent = ({
   const queryClient = useQueryClient();
   const location = useLocation();
   const item = location.state?.item;
-
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [openManualPopup, setOpenManualPopup] = useState(false);
   const [selectedDay, setSelectedDay] = useState<any>(null);
+  const [selectedDayGUID, setSelectedDayGUID] = useState<string | null>(null);
+  const [setMapDay] = useState<any>(null);
+  const dayRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const renderServiceContent = () => {
     switch (selectedService) {
       case "accommodation":
-        return <AddAccommodationD />;
+        return (
+          <AddAccommodationD
+            strUserGUID={itemDetail?.strUserGUID || null}
+            strCompanyGUID={itemListData?.strCompanyGUID || null}
+            itemListour={currentMapDay ?? {}}
+            dtmDateFrom={
+              currentMapDay?.dtmDateFrom || itemListData?.dtmDateFrom || null
+            }
+            dtmDateTo={
+              currentMapDay?.dtmDateTo || itemListData?.dtmDateTo || null
+            }
+            intPaxCount={itemListData?.intTotalPax || null}
+          />
+        );
       case "image":
         return <AddImageD />;
       case "service":
-        return <AddServiceMenuD />;
+        return (
+          <AddServiceSingleD
+            item={itemListData ?? {}}
+            itemListour={currentMapDay ?? {}}
+            strTourCustomizedDayGUID={currentMapDay?.strTourCustomizedDayGUID}
+            dtmDateFrom={
+              currentMapDay?.dtmDateFrom || itemListData?.dtmDateFrom || null
+            }
+            dtmDateTo={
+              currentMapDay?.dtmDateTo || itemListData?.dtmDateTo || null
+            }
+            intPaxCount={itemListData?.intTotalPax || null}
+            intCurrencyView={itemListData?.intCurrencyID || null}
+          />
+        );
       case "shipping":
-        return <AddShippingServicesD />;
+        return (
+          <AddShippingServicesD
+            item={itemListData ?? {}}
+            itemListour={currentMapDay ?? {}}
+            strTourCustomizedDayGUID={currentMapDay?.strTourCustomizedDayGUID}
+          />
+        );
       case "tours":
-        return <AddToursD />;
+        return <AddToursD
+          item={itemListData ?? {}}
+          itemListour={currentMapDay ?? {}}
+          strTourCustomizedDayGUID={
+            currentMapDay?.strTourCustomizedDayGUID
+          }
+        />
       default:
         return null;
     }
   };
 
-  const handleSelectService = (value: string, dayItems?: any) => {
+  const handleSelectService = (
+    value: string,
+    dayItems?: any
+  ) => {
+    const firstDay = dayItems?.[0];
+
+    if (firstDay?.strTourCustomizedDayGUID) {
+      setSelectedDayGUID(
+        firstDay.strTourCustomizedDayGUID
+      );
+    }
+
     if (value === "manual") {
       setOpenManualPopup(true);
-      setSelectedDay(dayItems?.[0]);
+      setSelectedDay(firstDay);
       return;
     }
 
@@ -101,7 +155,7 @@ export const DetailTourContent = ({
       item?.strTourCustomizedGUID,
     ],
     queryFn: () =>
-      useListServiceTourCustomized({
+      getListServiceTourCustomized({
         strTourCustomizedGUID: item?.strTourCustomizedGUID,
         strTourCustomizedDayGUID: null,
       }),
@@ -127,12 +181,10 @@ export const DetailTourContent = ({
     return Object.values(map);
   };
 
-  const {
-    mutate: useAddDayTourCustomizedApi,
-    isPending: isLoading,
-  } = useMutation({
-    mutationFn: useAddDayTourCustomized,
-  });
+  const { mutate: useAddDayTourCustomizedApi, isPending: isLoading } =
+    useMutation({
+      mutationFn: useAddDayTourCustomized,
+    });
 
   const handleAddTourNow = () => {
     const totalDay = groupByDay(listData).length;
@@ -164,57 +216,112 @@ export const DetailTourContent = ({
     });
   };
 
+  const groupedDays = groupByDay(listData);
+
+  const handleClickSideBarDay = (dayGUID: string) => {
+    setSelectedDayGUID(dayGUID);
+
+    const selectedGroup = groupedDays.find(
+      (items) => items?.[0]?.strTourCustomizedDayGUID === dayGUID,
+    );
+
+    if (selectedGroup) {
+      setMapDay(selectedGroup[0]);
+    }
+
+    const container = contentRef.current;
+    const target = dayRefs.current[dayGUID];
+
+    if (!container || !target) return;
+
+    container.scrollTo({
+      top: target.offsetTop - 200,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    if (!selectedDayGUID && groupedDays?.length) {
+      setSelectedDayGUID(groupedDays?.[0]?.[0]?.strTourCustomizedDayGUID);
+    }
+  }, [groupedDays, selectedDayGUID]);
+
+  const currentMapDay = groupedDays
+    .flat()
+    .find((item) => item.strTourCustomizedDayGUID === selectedDayGUID);
+
   return (
-    <div className="flex h-full overflow-hidden bg-gray-50 font-sans">
+    <div className="flex h-[calc(100vh-154px)] min-h-0 overflow-hidden bg-gray-50 font-sans">
       <div
         className={
           isPopupOpen
-            ? "flex w-20 flex-col items-center gap-4 border-r border-gray-100 bg-white py-6 opacity-50 transition-opacity pointer-events-none lg:w-48"
-            : "flex w-20 flex-col items-center gap-4 border-r border-gray-100 bg-white py-6 lg:w-48"
+            ? "h-full min-h-0 w-20 shrink-0 overflow-y-auto border-r border-gray-100 bg-white py-6 opacity-50 transition-opacity pointer-events-none lg:w-48"
+            : "h-full min-h-0 w-20 shrink-0 overflow-y-auto border-r border-gray-100 bg-white py-6 lg:w-48"
         }
       >
-        <ListDaySidebar item={item ?? ""} />
+        {/* <ListDaySidebar item={item ?? ""} /> */}
+        <div className="flex min-h-full flex-col items-center gap-4">
+          <ListDaySidebar
+            groupedDays={groupedDays}
+            selectedDayGUID={selectedDayGUID}
+            onSelectDay={handleClickSideBarDay}
+          />
 
-        <button
-          onClick={() => setIsPopupOpen(true)}
-          className="group flex h-12 w-12 items-center justify-center gap-2 rounded-xl bg-blue-50 text-[#004b91] transition-all hover:bg-blue-100 lg:h-10 lg:w-40"
-        >
-          <Pen size={18} />
+          <button
+            onClick={() => setIsPopupOpen(true)}
+            className="group flex h-12 w-12 items-center justify-center gap-2 rounded-xl bg-blue-50 text-[#004b91] transition-all hover:bg-blue-100 lg:h-10 lg:w-40"
+          >
+            <Pen size={18} />
 
-          <span className="hidden text-xs font-bold uppercase tracking-tight lg:inline">
-            {t("editDay")}
-          </span>
-        </button>
+            <span className="cursor-pointer hidden text-xs font-bold uppercase tracking-tight lg:inline">
+              {t("editDay")}
+            </span>
+          </button>
 
-        <button
-          className="group flex h-12 w-12 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 text-gray-400 transition-all hover:border-[#004b91] hover:text-[#004b91] lg:h-10 lg:w-40"
-          onClick={handleAddTourNow}
-        >
-          <Plus size={18} />
+          <button
+            className="group flex h-12 w-12 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 text-gray-400 transition-all hover:border-[#004b91] hover:text-[#004b91] lg:h-10 lg:w-40"
+            onClick={handleAddTourNow}
+          >
+            <Plus size={18} />
 
-          <span className="hidden text-xs font-bold uppercase tracking-tight lg:inline">
-            {isLoading ? t("loading") : t("addDay")}
-          </span>
-        </button>
+            <span className="hidden text-xs font-bold uppercase tracking-tight lg:inline">
+              {isLoading ? t("loading") : t("addDay")}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div
+        ref={contentRef}
         className={
           isPopupOpen
-            ? "pointer-events-none flex-1 overflow-hidden space-y-6 bg-white px-8 py-6"
-            : "flex-1 space-y-6 overflow-y-auto bg-white px-8 py-6"
+            ? "pointer-events-none h-full min-h-0 flex-1 overflow-hidden space-y-6 bg-white px-8 py-6"
+            : "h-full min-h-0 flex-1 space-y-6 overflow-y-auto bg-white px-8 py-6"
         }
       >
-        {groupByDay(listData).map((items: any[], index) => (
-          <div key={index} className="space-y-4">
-            <ListTour
-              item={items}
-              itemDetail={itemDetail ?? ""}
-              itemListData={itemListData}
-              onChange={(val) => handleSelectService(val, items)}
-            />
-          </div>
-        ))}
+        {groupedDays.map((items: any[], index) => {
+          const firstItem = items?.[0];
+          const dayGUID = firstItem?.strTourCustomizedDayGUID;
+
+          return (
+            <div
+              key={dayGUID || index}
+              ref={(element) => {
+                if (dayGUID) {
+                  dayRefs.current[dayGUID] = element;
+                }
+              }}
+              className="space-y-4"
+            >
+              <ListTour
+                item={items}
+                itemDetail={itemDetail ?? ""}
+                itemListData={itemListData}
+                onChange={(val) => handleSelectService(val, items)}
+              />
+            </div>
+          );
+        })}
 
         <DetailTourInEx item={item} />
         <DetailTourPrice item={item} />
@@ -227,7 +334,9 @@ export const DetailTourContent = ({
         className="w-[800px]"
       >
         <ChangeDayOrder
-          strTourCustomizedGUID={item?.strTourCustomizedGUID || tourCustomizedGUID}
+          strTourCustomizedGUID={
+            item?.strTourCustomizedGUID || tourCustomizedGUID
+          }
           onChanged={(val) => setHasChange(val)}
           onClose={handleClosePopup}
           onSave={handleSave}
@@ -245,7 +354,7 @@ export const DetailTourContent = ({
         className="w-[900px]"
       >
         <AddManual
-          strTourCustomizedDayGUID={itemListData?.strTourCustomizedGUID}
+          strTourCustomizedDayGUID={currentMapDay?.strTourCustomizedDayGUID}
           selectedDay={selectedDay}
           onClose={() => {
             setOpenManualPopup(false);
@@ -278,17 +387,7 @@ export const DetailTourContent = ({
           </div>
         ) : (
           <>
-            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 text-gray-400">
-              <MapPin size={48} strokeWidth={1} />
-
-              <span className="text-sm font-medium tracking-tight">
-                {t("mapApiLoadingArea")}
-              </span>
-            </div>
-
-            <div className="absolute bottom-4 right-4 rounded border border-gray-100 bg-white/80 px-2 py-1 text-[10px] text-gray-500 backdrop-blur">
-              © OpenStreetMap contributors
-            </div>
+            <MapView selectedDay={currentMapDay || groupedDays?.[0]?.[0]} />
           </>
         )}
       </div>

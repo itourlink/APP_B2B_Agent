@@ -78,6 +78,7 @@ const ListTour = ({ item, itemDetail, onChange, itemListData }: Props) => {
   };
 
   const firstItem = item?.[0];
+
   const [dayTitle, setDayTitle] = useState(firstItem?.strDayTitle || "");
   const locations = parseLocations(String(firstItem?.strListLocation));
   const menuItems = getMenuItems(t);
@@ -207,7 +208,7 @@ const ListTour = ({ item, itemDetail, onChange, itemListData }: Props) => {
             <div className="text-[12px] text-gray-500">({safe(row?.strCateName)})</div>
 
             <select
-              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
+              className="cursor-pointer rounded-md border border-gray-300 bg-white px-2 py-1 text-sm"
               value={String(row?.strListEasiaCateID || "")}
               onChange={(event) => {
                 upTourCateAPI({

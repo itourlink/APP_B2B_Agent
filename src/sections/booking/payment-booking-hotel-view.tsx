@@ -216,7 +216,6 @@ const PaymentBookingHotelView: React.FC = () => {
 
             // apply voucher trước
             if (selectedVoucher?.length > 0) {
-                console.log("BEFORE ALL");
                 await Promise.all(
                     selectedVoucher.map((voucher: any) =>
                         new Promise((resolve, reject) => {
@@ -247,7 +246,6 @@ const PaymentBookingHotelView: React.FC = () => {
                         })
                     )
                 );
-                console.log("AFTER ALL");
                 showToast(
                     "success",
                     "Áp dụng voucher thành công",
@@ -461,7 +459,7 @@ const PaymentBookingHotelView: React.FC = () => {
                             "_blank"
                         );
 
-                        //  window.open(
+                        // window.open(
                         //     "http://localhost:5173/service?activeTab=booked",
                         //     "_blank"
                         // );

@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { ArrowLeft, Calendar, Copy, Play, SquarePen, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Copy,
+  Play,
+  SquarePen,
+  Users,
+  ChevronDown,
+  X,
+  Plus,
+} from "lucide-react";
 
 import PanelPopup from "@/components/popup/panel-popup";
 import { useTranslate } from "@/locales";
@@ -10,6 +20,9 @@ import { useToastStore } from "@/zustand/useToastStore";
 
 import DetailTourHeaderPopup from "./detail-tour-header-popup";
 import UpdatePriceMarkup from "./update-price-markup";
+import DetailTourHeaderPopupVer from "./detail-tour-header-popup-ver";
+import EmailTourCustomize from "./email/email-tourcustomize";
+import PreviewPDF from "./preview/previewPDF";
 
 interface HeaderProps {
   item?: any;
@@ -17,11 +30,7 @@ interface HeaderProps {
   isLocked?: boolean;
 }
 
-export const DetailTourHeader = ({
-  item,
-  onUpdate,
-  isLocked,
-}: HeaderProps) => {
+export const DetailTourHeader = ({ item, onUpdate, isLocked }: HeaderProps) => {
   const { t } = useTranslate("tourcustomize");
   const router = useRouter();
   const { showToast } = useToastStore();
@@ -30,7 +39,9 @@ export const DetailTourHeader = ({
     update: false,
   });
   const [openCustomerPopup, setOpenCustomerPopup] = useState(false);
-
+  const [openVerPopup, setOpenVerPopup] = useState(false);
+  const [openEmailPopup, setOpenEmailPopup] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
   return (
     <div
       className={
@@ -46,7 +57,10 @@ export const DetailTourHeader = ({
 
         <div className="space-y-1">
           <div className="group relative inline-block">
-            <button onClick={onUpdate} className="flex cursor-pointer items-center gap-2">
+            <button
+              onClick={onUpdate}
+              className="flex cursor-pointer items-center gap-2"
+            >
               <h1 className="text-xl font-bold tracking-tight text-gray-800">
                 {item?.strServiceName || t("noTourName")}
               </h1>
@@ -73,7 +87,11 @@ export const DetailTourHeader = ({
             <span className="text-gray-300">|</span>
 
             <div className="flex items-center font-medium text-gray-700">
-              [<span className="mx-0.5 flex items-center text-[10px]">{item?.strEasiaCateName}</span>]
+              [
+              <span className="mx-0.5 flex items-center text-[10px]">
+                {item?.strEasiaCateName}
+              </span>
+              ]
             </div>
 
             <span className="text-gray-300">|</span>
@@ -102,6 +120,41 @@ export const DetailTourHeader = ({
                 </span>
               </div>
             </div>
+            <span className="text-gray-300">|</span>
+
+            <div className="flex items-center gap-1 text-[13px] text-gray-700">
+              <span className="font-medium">Ver</span>
+
+              <button
+                type="button"
+                onClick={() => setOpenVerPopup(true)}
+                className="cursor-pointer flex items-center gap-0.5 rounded px-1 text-gray-700 hover:bg-gray-100 hover:text-[#004b91]"
+              >
+                <Plus size={12} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setOpenVerPopup(true)}
+                className="cursor-pointer flex items-center gap-0.5 rounded px-1 text-gray-700 hover:bg-gray-100 hover:text-[#004b91]"
+              >
+                <span className="font-semibold">{item?.intVersion || 1}</span>
+                <ChevronDown size={13} />
+              </button>
+
+              <button
+                type="button"
+                className="cursor-pointer rounded px-1 text-gray-400 hover:bg-red-50 hover:text-red-500"
+              >
+                <X size={12} />
+              </button>
+            </div>
+
+            <DetailTourHeaderPopupVer
+              open={openVerPopup}
+              onClose={() => setOpenVerPopup(false)}
+              tourCustomizedGUID={item?.strTourCustomizedGUID || ""}
+            />
           </div>
         </div>
       </div>
@@ -128,20 +181,27 @@ export const DetailTourHeader = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-lg border border-blue-400 px-4 py-2 text-[13px] font-bold uppercase text-[#004b91] transition-all hover:bg-blue-50">
+          <button
+            onClick={() => setOpenEmailPopup(true)}
+            className="cursor-pointer rounded-lg border border-blue-400 px-4 py-2 text-[13px] font-bold uppercase text-[#004b91] transition-all hover:bg-blue-50"
+          >
             {t("sendEmail")}
           </button>
 
-          <button className="rounded-lg bg-[#004b91] px-5 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#003c73]">
+          {/* <button className="cursor-pointer rounded-lg bg-[#004b91] px-5 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#003c73]">
             {t("book")}
-          </button>
+          </button> */}
 
-          <button className="flex items-center gap-2 rounded-lg bg-[#ff9800] px-4 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#f57c00]">
+          <button className="cursor-pointer flex items-center gap-2 rounded-lg bg-[#ff9800] px-4 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#f57c00]">
             <Play size={14} className="fill-current" />
             {t("preview")}
           </button>
 
-          <button className="flex items-center gap-2 rounded-lg bg-[#1e5bab] px-4 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#154a8a]">
+          <button
+            type="button"
+            onClick={() => setOpenPreview(true)}
+            className="cursor-pointer flex items-center gap-2 rounded-lg bg-[#1e5bab] px-4 py-2 text-[13px] font-bold uppercase text-white transition-all hover:bg-[#154a8a]"
+          >
             <Play size={14} className="fill-current" />
             {t("previewPdfDemo")}
           </button>
@@ -171,6 +231,29 @@ export const DetailTourHeader = ({
           strTourCustomizedGUID={item?.strTourCustomizedGUID || ""}
           strTourCode={item?.strTourCode || ""}
         />
+      </PanelPopup>
+
+      <PanelPopup
+        title={t("sendEmail")}
+        open={openEmailPopup}
+        onClose={() => setOpenEmailPopup(false)}
+        className="w-[950px]"
+      >
+        <EmailTourCustomize
+          open={openEmailPopup}
+          strTourCustomizedGUID={item?.strTourCustomizedGUID || ""}
+          onClose={() => setOpenEmailPopup(false)}
+        />
+      </PanelPopup>
+
+      <PanelPopup
+        title={t("preview")}
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        className="max-w-[100vw]"
+        bodyClassName="p-0"
+      >
+        <PreviewPDF strTourCustomizedGUID={item?.strTourCustomizedGUID} />
       </PanelPopup>
     </div>
   );

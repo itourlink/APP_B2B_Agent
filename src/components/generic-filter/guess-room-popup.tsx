@@ -275,7 +275,7 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                 }
                 className="w-full mt-4 bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white py-2 rounded-lg cursor-pointer transition"
             >
-                Done
+                Apply
             </button>
         </div>
     );

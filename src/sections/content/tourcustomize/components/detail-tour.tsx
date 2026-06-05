@@ -37,7 +37,7 @@ export const DetailTour = () => {
   const listData = data?.[0]?.[0] ?? [];
 
   return (
-    <div className={isPopupOpen ? "h-screen overflow-hidden" : "mt-30"}>
+    <div className={isPopupOpen ? "h-screen overflow-hidden" : "mt-28"}>
       <DetailTourHeader
         item={listData}
         onUpdate={() => setIsUpdate(true)}

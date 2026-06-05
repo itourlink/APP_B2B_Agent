@@ -41,6 +41,8 @@ const TourDetail = () => {
 
   const item = location.state;
 
+  const company =
+    new URLSearchParams(location.search).get("company") || "";
   const [filters] = useState({
     page: 1,
     pageSize: 1,
@@ -50,8 +52,15 @@ const TourDetail = () => {
   const [filters2] = useState({
     page: 1,
     pageSize: 4,
-    intCateID: item?.item?.intCateID,
+
+    intCateID:
+      item?.item?.intCateID &&
+        Object.keys(item?.item?.intCateID || {}).length > 0
+        ? item?.item?.intCateID
+        : null,
+
     intProductID: item?.item?.intProductID,
+
     strLocationCode: null,
   });
 
@@ -90,19 +99,19 @@ const TourDetail = () => {
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
     typeof ListData?.strExcluded === "string"
       ? ListData.strExcluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   return (
@@ -110,14 +119,14 @@ const TourDetail = () => {
       <div className="max-w-7xl mx-auto mb-6">
         <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
           <Link
-            to={paths.shop.tour.list}
+            to={paths.shop.tour.list + `?company=${company}`}
             className="flex items-center text-slate-400 hover:text-[#2566b0] transition-colors"
           >
             <Home size={20} />
           </Link>
           <span className="text-slate-400">&gt;</span>
           <Link
-            to={paths.shop.tour.list}
+            to={paths.shop.tour.list + `?company=${company}`}
             className="hover:text-[#2566b0] transition-colors"
           ></Link>
           <span className="text-slate-600 font-medium line-clamp-1">

@@ -15,6 +15,7 @@ interface Props {
   isOverflowHidden?: boolean;
   className?: string;
   footer?: React.ReactNode;
+  bodyClassName?: string;
 }
 
 const PanelPopup = ({
@@ -28,6 +29,7 @@ const PanelPopup = ({
   description,
   className,
   footer,
+  bodyClassName,
 }: Props) => {
   useEffect(() => {
     if (open) {
@@ -71,7 +73,7 @@ const PanelPopup = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[99999] overflow-y-auto bg-black/50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] overflow-y-auto bg-black/50 p-4 backdrop-blur-sm"
           onClick={onClose}
         >
           <div className="flex min-h-full items-center justify-center">
@@ -130,7 +132,8 @@ const PanelPopup = ({
                 <div
                   className={twMerge(
                     "min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-6",
-                    bodyMaxHeightClass
+                    bodyMaxHeightClass,
+                    bodyClassName
                   )}
                 >
                   {children}

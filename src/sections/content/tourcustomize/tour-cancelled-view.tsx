@@ -34,9 +34,14 @@ const TourCancelledView = () => {
   });
 
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const PAGE_SIZE_STORAGE_KEY = "pagination_page_size:tour-cancelled-view";
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const savedPageSize = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
+
+    return savedPageSize ? Number(savedPageSize) : 10;
+  });
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED, page],
+    queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED, page, pageSize],
     queryFn: () =>
       useListTourCustomized({
         strTourCustomizedGUID: null,
@@ -55,6 +60,10 @@ const TourCancelledView = () => {
 
   const totalRecords = listData?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
+
+  useEffect(() => {
+    localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(pageSize));
+  }, [pageSize]);
 
   useEffect(() => {
     if (page > totalPages) {
@@ -118,7 +127,7 @@ const TourCancelledView = () => {
       field: "strServiceName",
       headerName: t("serviceName"),
       render: (_, row) => (
-        <div className="space-y-0.5 py-1 min-w-[200px] text-xs flex items-center justify-center gap-2">
+        <div className="space-y-0.5 py-1 min-w-[200px] text-xs flex items-center justify-start gap-2">
           <button
             onClick={() =>
               router.replaceParams(paths.content.detailTour, { item: row })
@@ -277,6 +286,12 @@ const TourCancelledView = () => {
             currentPage={page}
             onPageChange={(value) => setPage(value)}
             totalPages={totalPages || 1}
+            totalRecords={totalRecords}
+            recordsPerPage={pageSize}
+            onRecordsPerPageChange={(value) => {
+              setPageSize(value);
+              setPage(1);
+            }}
           />
         )}
       </div>

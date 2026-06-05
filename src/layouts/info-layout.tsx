@@ -1,6 +1,3 @@
-import Footer from "@/components/footer-info/footer";
-import Header from "@/components/header-info/header";
-
 interface Props {
     children: React.ReactNode;
 }
@@ -9,9 +6,9 @@ export const InfoLayout = ({ children }: Props) => {
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
 
-            <header className="sticky top-0 z-50">
+            {/* <header className="sticky top-0 z-50">
                 <Header />
-            </header>
+            </header> */}
 
             <div className="flex flex-1 max-w-360 mx-auto w-full group">
 
@@ -19,14 +16,12 @@ export const InfoLayout = ({ children }: Props) => {
                     <Sidebar />
                 </aside> */}
 
-                <main className="flex-1 min-w-0 p-6">
-                    <div className="min-h-[calc(100vh-200px)]">
-                        {children}
-                    </div>
+                <main>
+                    {children}
                 </main>
             </div>
 
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 };

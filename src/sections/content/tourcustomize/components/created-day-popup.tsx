@@ -1,6 +1,6 @@
 import { Popup } from "@/components/popup/popup";
 import { useTranslate } from "@/locales";
-import AddTourCustomize from "../../info/components/add-tour-customize";
+import AddTourCustomize from "./add-tour-customize";
 
 interface CreatedDayPopupProps {
   open: boolean;

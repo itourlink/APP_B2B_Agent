@@ -126,7 +126,7 @@ export const useGetOverViewTourCustomized = async (body: any) => {
         body
     )
     return res.data;
-}   
+}
 export const AddTourCustomizedPriceItemByManual = async (body: any) => {
     const res = await apiClient.post(
         "tourcustomized/AddTourCustomizedPriceItemByManual",
@@ -411,3 +411,18 @@ export const useDelCustomer = async (body: any) => {
     return res.data;
 };
 
+export const getListServiceTourCustomized = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/GetListServicesTourCustomized",
+        body
+    );
+    return res.data;
+};
+
+export const useAddCopyTourCustomized = async (body: any) => {
+    const res = await apiClient.post(
+        "tourcustomized/AddCopyTourCustomized",
+        body
+    );
+    return res.data;
+}

@@ -4,7 +4,7 @@ import { paths } from "./paths";
 import InitLayout, { LAYOUT } from "../layouts/init-layout";
 import { SplashScreen } from "@/components/loading";
 import AuthGuard from "./auth-guard";
-// import { AuthRoute } from "./auth-route";
+import CompanyGuard from "./company-guard";
 const TourPage = lazy(() => import("@/pages/tour/list"));
 const TourDetailPage = lazy(() => import("@/pages/tour/detail"));
 const BoatPage = lazy(() => import("@/pages/boat/list"));
@@ -21,7 +21,6 @@ const NotificationPage = lazy(() => import("@/pages/notification/notification"))
 const HotelPage = lazy(() => import("@/pages/hotel/list"));
 const HotelDetailPage = lazy(() => import("@/pages/hotel/detail"));
 const Page404Page = lazy(() => import("@/pages/error/page404"));
-// const AgentTestPage = lazy(() => import("@/pages/agent-test/list"));
 const AgentCompanyPage = lazy(() => import("@/pages/agent-company/list"));
 const SearchPage = lazy(() => import("@/pages/search/search"));
 const CartPage = lazy(() => import("@/pages/cart/list"));
@@ -32,36 +31,9 @@ const VoucherDetailPage = lazy(() => import("@/pages/voucher/detail"));
 const PaymentBookingPage = lazy(() => import("@/pages/booking/payment-booking"));
 const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-booking-cart"));
 const PaymentBookingHotelPage = lazy(() => import("@/pages/booking/payment-booking-hotel"));
-
-// const CartDetailPage = lazy(() => import("@/pages/cart/detail"));
-
-// import InitLayout, { LAYOUT } from "@/layouts/init-layout";
-// import RootRedirect from "./root-redirect";
-
-
-////////////////////////////
-
-const InfoPage = lazy(() => import("@/pages/content/info"));
-const RequestBookingPage = lazy(() => import("@/pages/content/request-booking"));
-const DetailRequestPage = lazy(() => import("@/pages/content/detail-request"));
-const RequestCustomizePage = lazy(() => import("@/pages/content/request-customize"));
-const DetailRequestCustomizePage = lazy(() => import("@/pages/content/detail-request-customize"));
-const QuotePage = lazy(() => import("@/pages/content/quote"));
-const DetailQuotePage = lazy(() => import("@/pages/content/detail-quote"));
-const ServicePage = lazy(() => import("@/pages/content/service"));
-const DetailServicePage = lazy(() => import("@/pages/content/detail-service"));
-const FeedbackPage = lazy(() => import("@/pages/content/feedback"));
-const PricingPage = lazy(() => import("@/pages/content/pricing"));
-const ReportsFinancePage = lazy(() => import("@/pages/content/report-finance"));
-const DetailReportsFinancePage = lazy(() => import("@/pages/content/detail-report-finance"));
-const ReportApprovedPage = lazy(() => import("@/pages/content/report-approved"));
 const AgentPage = lazy(() => import("@/pages/content/agent"));
-const TourBookingsPage = lazy(() => import("@/pages/content/tour-bookings"));
-const TourCancelledPage = lazy(() => import("@/pages/content/tour-cancelled"));
-const TourProposalsPage = lazy(() => import("@/pages/content/tour-proposals"));
-const DetailTourPage = lazy(() => import("@/pages/content/detail-tour"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
-
+const DetailTourPage = lazy(() => import("@/pages/content/detail-tour"));
 
 export function Router() {
   // const isLoading = true;
@@ -81,34 +53,21 @@ export function Router() {
         // OVERLAY LAYOUT
         {
           element: (
-            // <AuthRoute>
-            <InitLayout type={LAYOUT.OVERLAY}>
-              <Outlet />
-            </InitLayout>
-            // </AuthRoute >
+            <AuthGuard>
+              <InitLayout type={LAYOUT.OVERLAY}>
+                <Outlet />
+              </InitLayout>
+            </AuthGuard>
           ),
           children: [
-            {
-              path: paths.overlay.notification,
-              element: <NotificationPage />,
-            },
-            {
-              path: paths.overlay.cart,
-              element: <CartPage />,
-            },
-
-            //path temp of content
-            {
-              path: paths.content.detailTour,
-              element: <DetailTourPage />,
-            },
-
             {
               path: paths.content.agentHost,
               element: <AgentHostPage />,
             },
-
-
+            {
+              path: paths.content.detailTour,
+              element: <DetailTourPage />,
+            },
           ],
         },
 
@@ -122,78 +81,9 @@ export function Router() {
             </AuthGuard>
           ),
           children: [
-
-            {
-              path: paths.content.info,
-              element: <InfoPage />,
-            },
-            {
-              path: paths.content.requestBooking,
-              element: <RequestBookingPage />,
-            },
-            {
-              path: paths.content.detailRequest,
-              element: <DetailRequestPage />,
-            },
-            {
-              path: paths.content.requestCustomize,
-              element: <RequestCustomizePage />,
-            },
-            {
-              path: paths.content.detailRequestCustomize,
-              element: <DetailRequestCustomizePage />,
-            },
-            {
-              path: paths.content.quote,
-              element: <QuotePage />,
-            },
-            {
-              path: paths.content.detaiQuote,
-              element: <DetailQuotePage />,
-            },
-            {
-              path: paths.content.service,
-              element: <ServicePage />,
-            },
-            {
-              path: paths.content.detailService,
-              element: <DetailServicePage />,
-            },
-            {
-              path: paths.content.feedback,
-              element: <FeedbackPage />,
-            },
-            {
-              path: paths.content.pricing,
-              element: <PricingPage />,
-            },
-            {
-              path: paths.content.reportFinance,
-              element: <ReportsFinancePage />,
-            },
-            {
-              path: paths.content.detailReportFinance,
-              element: <DetailReportsFinancePage />,
-            },
-            {
-              path: paths.content.reportApproved,
-              element: <ReportApprovedPage />,
-            },
             {
               path: paths.content.agent,
               element: <AgentPage />,
-            },
-            {
-              path: paths.content.tourBookings,
-              element: <TourBookingsPage />,
-            },
-            {
-              path: paths.content.tourCancelled,
-              element: <TourCancelledPage />,
-            },
-            {
-              path: paths.content.tourProposals,
-              element: <TourProposalsPage />,
             },
           ],
         },
@@ -202,9 +92,11 @@ export function Router() {
         {
           element: (
             <AuthGuard>
-              <InitLayout type={LAYOUT.SHOP}>
-                <Outlet />
-              </InitLayout>
+              <CompanyGuard>
+                <InitLayout type={LAYOUT.SHOP}>
+                  <Outlet />
+                </InitLayout>
+              </CompanyGuard>
             </AuthGuard>
           ),
           children: [
@@ -320,9 +212,11 @@ export function Router() {
         {
           element: (
             <AuthGuard>
-              <InitLayout type={LAYOUT.OUTSIDE}>
-                <Outlet />
-              </InitLayout>
+              <CompanyGuard>
+                <InitLayout type={LAYOUT.OUTSIDE}>
+                  <Outlet />
+                </InitLayout>
+              </CompanyGuard>
             </AuthGuard>
           ),
           children: [
@@ -342,8 +236,6 @@ export function Router() {
         },
       ],
     },
-
-
 
     { path: paths.page404, element: <Page404Page /> },
     { path: "*", element: <Navigate to={paths.page404} replace /> },

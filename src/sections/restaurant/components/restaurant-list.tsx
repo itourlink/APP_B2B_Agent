@@ -34,8 +34,8 @@ const RestaurantCardGrid = ({
           src={
             restaurant?.strSupplierImage
               ? getUrlImage(
-                  restaurant?.strSupplierImage
-                )
+                restaurant?.strSupplierImage
+              )
               : "https://placehold.co/600x400?text=Restaurant"
           }
           alt={restaurant?.strSupplierName}
@@ -58,7 +58,7 @@ const RestaurantCardGrid = ({
               size={14}
               className={
                 i <
-                (restaurant?.intEasiaCateID || 0)
+                  (restaurant?.intEasiaCateID || 0)
                   ? "fill-orange-400 text-orange-400"
                   : "text-gray-300"
               }
@@ -106,7 +106,7 @@ const RestaurantCardGrid = ({
 
             <p className="text-xl font-bold leading-none text-[#2563eb]">
               {restaurant?.dblPriceFrom === "$0" ||
-              restaurant?.dblPriceFrom === "N/A"
+                restaurant?.dblPriceFrom === "N/A"
                 ? "N/A"
                 : restaurant?.dblPriceFrom}
             </p>
@@ -122,6 +122,7 @@ const RestaurantCardGrid = ({
               )
             }
             className="
+            cursor-pointer
               rounded-lg
               border
               border-blue-200
@@ -162,8 +163,8 @@ const RestaurantCardList = ({
           src={
             restaurant?.strSupplierImage
               ? getUrlImage(
-                  restaurant?.strSupplierImage
-                )
+                restaurant?.strSupplierImage
+              )
               : "https://placehold.co/600x400?text=Restaurant"
           }
           alt={restaurant?.strSupplierName}
@@ -219,7 +220,7 @@ const RestaurantCardList = ({
 
             <p className="text-[38px] font-bold leading-none text-[#2563eb]">
               {restaurant?.dblPriceFrom === "$0" ||
-              restaurant?.dblPriceFrom === "N/A"
+                restaurant?.dblPriceFrom === "N/A"
                 ? "N/A"
                 : restaurant?.dblPriceFrom}
             </p>
@@ -236,7 +237,7 @@ const RestaurantCardList = ({
                 size={16}
                 className={
                   i <
-                  (restaurant?.intEasiaCateID || 0)
+                    (restaurant?.intEasiaCateID || 0)
                     ? "fill-orange-400 text-orange-400"
                     : "text-gray-300"
                 }
@@ -381,11 +382,10 @@ export const RestaurantList = () => {
           {/* GRID */}
           <button
             onClick={() => setViewMode("grid")}
-            className={`rounded-md p-1.5 transition-all ${
-              viewMode === "grid"
+            className={`rounded-md p-1.5 transition-all ${viewMode === "grid"
                 ? "bg-blue-600 text-white shadow-sm"
                 : "text-gray-400 hover:bg-gray-100"
-            }`}
+              }`}
           >
             <LayoutGrid size={18} />
           </button>
@@ -393,11 +393,10 @@ export const RestaurantList = () => {
           {/* LIST */}
           <button
             onClick={() => setViewMode("list")}
-            className={`rounded-md p-1.5 transition-all ${
-              viewMode === "list"
+            className={`rounded-md p-1.5 transition-all ${viewMode === "list"
                 ? "bg-blue-600 text-white shadow-sm"
                 : "text-gray-400 hover:bg-gray-100"
-            }`}
+              }`}
           >
             <List size={18} />
           </button>

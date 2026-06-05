@@ -1,6 +1,6 @@
-import { TranslateIcon } from "@/assets/icons/auth/translate-icon";
 import { allLangs, useTranslate, type LanguageValue } from "@/locales";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -71,15 +71,27 @@ export const SelectLangs = ({
   };
   return (
     <div
-      onMouseEnter={() => {
-        handleEnter();
-      }}
-      onMouseLeave={() => {
-        handleLeave();
-      }}
-      className="flex w-10 h-10 relative justify-center items-center gap-2.5 rounded-lg border border-[rgba(64,64,64,0.5)]"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="flex h-10 items-center gap-2 rounded-lg border border-[rgba(64,64,64,0.5)] px-3 relative cursor-pointer"
     >
-      <TranslateIcon />
+      <img
+        src={selectedLang.icon}
+        alt={selectedLang.label}
+        className="w-5 h-5 rounded-full"
+      />
+
+      <span className="text-sm font-medium uppercase ">
+        {selectedLang.value}
+      </span>
+
+      <ChevronDown
+        className={twMerge(
+          "w-4 h-4 transition-transform duration-200 ",
+          open && "rotate-180"
+        )}
+      />
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -89,7 +101,7 @@ export const SelectLangs = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute w-36 bg-white/20 backdrop-blur-md rounded-2xl right-0 top-[110%] overflow-hidden z-50 p-2 space-y-1 shadow-xl border border-[rgba(64,64,64,0.5)]"
+            className="absolute w-40 bg-white/20 backdrop-blur-md rounded-2xl right-0 top-[110%] overflow-hidden z-50 p-2 space-y-1 shadow-xl border border-[rgba(64,64,64,0.5)]"
           >
             {listLangs.map((lang) => (
               <div
@@ -99,14 +111,20 @@ export const SelectLangs = ({
                   handleLeave();
                 }}
                 className={twMerge(
-                  "flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors",
+                  "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors",
                   "hover:bg-[#4a6fa5] hover:text-white",
-                  selectedLang.value === lang.value && "bg-[#4a6fa5] text-white ",
+                  selectedLang.value === lang.value &&
+                  "bg-[#4a6fa5] text-white",
                   selectedLang.value !== lang.value && "text-black"
                 )}
               >
-                <img src={lang.icon} alt={lang.label} className="w-5 h-5" />
-                <p className="">{lang.label}</p>
+                <img
+                  src={lang.icon}
+                  alt={lang.label}
+                  className="w-5 h-5 rounded-full"
+                />
+
+                <p className="text-sm font-medium">{lang.label}</p>
               </div>
             ))}
           </motion.div>

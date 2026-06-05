@@ -175,47 +175,55 @@ const PaymentBookingView: React.FC = () => {
     ]);
 
     const handleBooking = async () => {
-
         try {
-
             // apply voucher trước
             if (selectedVoucher?.length > 0) {
-
                 await Promise.all(
-                    selectedVoucher.map((voucher: any) =>
-                        new Promise((resolve, reject) => {
+                    selectedVoucher.map(
+                        (voucher: any) =>
+                            new Promise((resolve, reject) => {
+                                markUsedVoucherApi(
+                                    {
+                                        VoucherCode:
+                                            voucher?.voucherCode,
 
-                            markUsedVoucherApi(
-                                {
-                                    VoucherCode: voucher?.voucherCode,
-                                    updatedBy: user?.strUserGUID || null,
-                                },
-                                {
-                                    onSuccess: () => resolve(true),
-
-                                    onError: (err) => {
-
-                                        showToast(
-                                            "error",
-                                            "Áp dụng voucher thất bại",
-                                        );
-
-                                        reject(err);
+                                        updatedBy:
+                                            user?.strUserGUID ||
+                                            null,
                                     },
-                                }
-                            );
+                                    {
+                                        onSuccess: () =>
+                                            resolve(true),
 
-                        })
+                                        onError: (err) => {
+                                            showToast(
+                                                "error",
+                                                "Áp dụng voucher thất bại"
+                                            );
+
+                                            reject(err);
+                                        },
+                                    }
+                                );
+                            })
                     )
                 );
 
                 showToast(
                     "success",
-                    "Áp dụng voucher thành công",
+                    "Áp dụng voucher thành công"
                 );
             }
 
-            // payload booking
+            const companyGUID =
+                coData?.strCompanyGUID || null;
+
+            // const serviceUrl =
+            //     "http://localhost:5173/service?activeTab=booked";
+            
+            const serviceUrl =
+                "https://myagentmember.itourlink.com/service?activeTab=booked";
+
             const payload = {
                 strUserGUID:
                     user?.strUserGUID || null,
@@ -224,13 +232,14 @@ const PaymentBookingView: React.FC = () => {
                     user?.strCompanyGUID || null,
 
                 strCompanyOwnerGUID:
-                    coData?.strCompanyGUID || null,
+                    companyGUID,
 
                 strTourGUID:
                     item?.strTourGUID || null,
 
                 strTourPriceItemLevelGUID:
-                    price?.strTourPriceItemLevelGUID || null,
+                    price?.strTourPriceItemLevelGUID ||
+                    null,
 
                 strDepartureTourLevelGUID:
                     null,
@@ -239,7 +248,8 @@ const PaymentBookingView: React.FC = () => {
                     payloadItem?.intAdult || 0,
 
                 strListChildAge:
-                    payloadItem?.strListChildAge || null,
+                    payloadItem?.strListChildAge ||
+                    null,
 
                 intSGL:
                     payloadItem?.intSGL || 0,
@@ -254,7 +264,8 @@ const PaymentBookingView: React.FC = () => {
                     payloadItem?.intTPL || 0,
 
                 dtmDateFrom:
-                    payloadItem?.dtmDateFrom || null,
+                    payloadItem?.dtmDateFrom ||
+                    null,
 
                 dtmDateTo:
                     null,
@@ -267,7 +278,8 @@ const PaymentBookingView: React.FC = () => {
 
                 intSaluteID:
                     isShowTravellerForm
-                        ? travellerForm?.intSaluteID || null
+                        ? travellerForm?.intSaluteID ||
+                        null
                         : null,
 
                 intAgeID:
@@ -280,17 +292,20 @@ const PaymentBookingView: React.FC = () => {
 
                 strPassengerFirstName:
                     isShowTravellerForm
-                        ? travellerForm?.strPassengerFirstName || null
+                        ? travellerForm?.strPassengerFirstName ||
+                        null
                         : null,
 
                 strPassengerLastName:
                     isShowTravellerForm
-                        ? travellerForm?.strPassengerLastName || null
+                        ? travellerForm?.strPassengerLastName ||
+                        null
                         : null,
 
                 dtmPassengerBirthday:
                     isShowTravellerForm
-                        ? travellerForm?.dtmPassengerBirthday || null
+                        ? travellerForm?.dtmPassengerBirthday ||
+                        null
                         : null,
 
                 dtmPasspostExpirationDate:
@@ -298,17 +313,20 @@ const PaymentBookingView: React.FC = () => {
 
                 strPassengerEmail:
                     isShowTravellerForm
-                        ? travellerForm?.strPassengerEmail || null
+                        ? travellerForm?.strPassengerEmail ||
+                        null
                         : null,
 
                 strPassengerPhone:
                     isShowTravellerForm
-                        ? travellerForm?.strPassengerPhone || null
+                        ? travellerForm?.strPassengerPhone ||
+                        null
                         : null,
 
                 strPassengerRemark:
                     isShowTravellerForm
-                        ? travellerForm?.strPassengerRemark || null
+                        ? travellerForm?.strPassengerRemark ||
+                        null
                         : null,
 
                 strPassport:
@@ -316,140 +334,167 @@ const PaymentBookingView: React.FC = () => {
 
                 strCountryGUID:
                     isShowTravellerForm
-                        ? travellerForm?.strCountryGUID || null
+                        ? travellerForm?.strCountryGUID ||
+                        null
                         : null,
 
                 IsTraveller:
                     isShowTravellerForm,
 
                 intPaymentMethodID:
-                    paymentMethod === "Bank transfer"
+                    paymentMethod ===
+                        "Bank transfer"
                         ? 1
                         : 2,
 
                 strCompanyBankAccountGUID:
-                    selectedBankAccount?.strCompanyBankAccountGUID || null,
+                    selectedBankAccount?.strCompanyBankAccountGUID ||
+                    null,
 
                 VoucherCode:
                     selectedVoucher?.length > 0
                         ? selectedVoucher
-                            .map((item: any) => item?.voucherCode)
+                            .map(
+                                (item: any) =>
+                                    item?.voucherCode
+                            )
                             .filter(Boolean)
                             .join(",")
                         : null,
             };
 
             addBookingForTourApi(payload, {
-
                 onSuccess: async (res) => {
-
                     showToast(
                         "success",
                         "Đặt thành công"
                     );
 
                     try {
-
                         const serviceGUID =
-                            res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
+                            res?.[1]?.[0]
+                                ?.strListAgentHostServiceItemGUID;
 
-                        // call email template
+                        // chỉ xử lý TMS khi có serviceGUID
                         if (serviceGUID) {
+                            // get email template
+                            const emailData =
+                                await fetchGetEmailSendAGHByAGBApi(
+                                    {
+                                        strBookingGUID:
+                                            null,
 
-                            const emailTemplateRes =
-                                await fetchGetEmailSendAGHByAGBApi({
-                                    strBookingGUID: null,
-                                    strCompanyGUID: coData?.strCompanyGUID,
-                                    strListAgentHostServiceItemGUID: serviceGUID,
-                                    intLangID: user?.intLangID,
-                                    strEmailTemplateCode: "BKK",
-                                });
+                                        strCompanyGUID:
+                                            companyGUID,
 
-                            const emailData = emailTemplateRes;
+                                        strListAgentHostServiceItemGUID:
+                                            serviceGUID,
+
+                                        intLangID:
+                                            user?.intLangID,
+
+                                        strEmailTemplateCode:
+                                            "BKK",
+                                    }
+                                );
 
                             // send email
                             if (emailData) {
+                                await fetchGetSendEmailApi(
+                                    {
+                                        strEmailsSendTo:
+                                            emailData?.strEmailsSendTo ||
+                                            null,
 
-                                await fetchGetSendEmailApi({
+                                        strEmailsCC:
+                                            emailData?.strEmailsCC ||
+                                            null,
 
-                                    strEmailsSendTo:
-                                        emailData?.strEmailsSendTo || null,
+                                        strEmailsBCC:
+                                            emailData?.strEmailsBCC ||
+                                            null,
 
-                                    strEmailsCC:
-                                        emailData?.strEmailsCC || null,
+                                        strAttachments:
+                                            null,
 
-                                    strEmailsBCC:
-                                        emailData?.strEmailsBCC || null,
+                                        strSubject:
+                                            emailData?.strEmailTemplateSubject ||
+                                            null,
 
-                                    strAttachments:
-                                        null,
+                                        IsBodyHtml:
+                                            true,
 
-                                    strSubject:
-                                        emailData?.strEmailTemplateSubject || null,
+                                        strBody:
+                                            emailData?.strEmailTemplateContent ||
+                                            null,
 
-                                    IsBodyHtml:
-                                        true,
-
-                                    strBody:
-                                        emailData?.strEmailTemplateContent || null,
-
-                                    intEmailConfigID:
-                                        null,
-                                });
+                                        intEmailConfigID:
+                                            null,
+                                    }
+                                );
                             }
 
-                            await listAGTMS({
-                                strCompanyGUID:
-                                    coData?.strCompanyGUID,
+                            // call TMS APIs song song
+                            await Promise.all([
+                                listAGTMS({
+                                    strCompanyGUID:
+                                        companyGUID,
 
-                                strListAgentHostServiceItemGUID:
-                                    serviceGUID,
-                            });
+                                    strListAgentHostServiceItemGUID:
+                                        serviceGUID,
+                                }),
 
-                            await detailAGTMS({
-                                strAgentHostCompanyGUID:
-                                    coData?.strCompanyGUID,
+                                detailAGTMS({
+                                    strAgentHostCompanyGUID:
+                                        companyGUID,
 
-                                strListAgentHostServiceItemGUID:
-                                    serviceGUID,
-                            });
+                                    strListAgentHostServiceItemGUID:
+                                        serviceGUID,
+                                }),
+                            ]);
                         }
 
+                        // luôn đá trang
                         window.open(
-                            "https://myagentmember.itourlink.com/service?activeTab=booked",
+                            serviceUrl,
                             "_blank"
                         );
-                        
-                        // window.open(
-                        //     "http://localhost:5173/service?activeTab=booked",
-                        //     "_blank"
-                        // );
-
                     } catch (err) {
+                        console.log(
+                            "TMS ERROR",
+                            err
+                        );
 
-                        console.log("TMS ERROR", err);
+                        // lỗi TMS vẫn cho đá trang
+                        window.open(
+                            serviceUrl,
+                            "_blank"
+                        );
                     }
                 },
 
                 onError: (err) => {
-
                     showToast(
                         "error",
                         "Đặt thất bại"
                     );
 
-                    console.log("BOOKING ERROR", err);
+                    console.log(
+                        "BOOKING ERROR",
+                        err
+                    );
                 },
             });
-
         } catch (err) {
-
             showToast(
                 "error",
                 "Voucher không hợp lệ hoặc đã được sử dụng"
             );
 
-            console.log("VOUCHER ERROR", err);
+            console.log(
+                "VOUCHER ERROR",
+                err
+            );
         }
     };
 

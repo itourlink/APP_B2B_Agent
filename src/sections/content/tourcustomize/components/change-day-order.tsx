@@ -12,7 +12,7 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import {
   useAddDayTourCustomized,
   useDelDayTourCustomized,
-  useListServiceTourCustomized,
+  getListServiceTourCustomized,
 } from "@/hooks/actions/useUser";
 import { useTranslate } from "@/locales";
 import { fDateTime } from "@/utils/format-time";
@@ -70,7 +70,7 @@ const ChangeDayOrder = ({
       item?.strTourCustomizedGUID,
     ],
     queryFn: () =>
-      useListServiceTourCustomized({
+      getListServiceTourCustomized({
         strTourCustomizedGUID: item?.strTourCustomizedGUID || "",
         strTourCustomizedDayGUID: null,
       }),

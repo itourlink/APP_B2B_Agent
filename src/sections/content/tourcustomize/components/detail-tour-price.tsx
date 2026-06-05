@@ -66,7 +66,7 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
   const adultLabel = firstItem
     ? t("adultWithCount", { count: firstItem.intAdult })
     : "Adult";
-  const tplLabel = t("tplReductionWithCount", { count: 3 });
+  // const tplLabel = t("tplReductionWithCount", { count: 3 });
 
   return (
     <div className="space-y-4 pt-4 font-sans">
@@ -101,9 +101,9 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
               <th className="px-4 py-3 text-right font-semibold text-[#4a6fa5]">
                 {adultLabel}
               </th>
-              <th className="px-4 py-3 text-right font-semibold text-[#4a6fa5]">
+              {/* <th className="px-4 py-3 text-right font-semibold text-[#4a6fa5]">
                 {tplLabel}
-              </th>
+              </th> */}
             </tr>
           </thead>
 
@@ -137,12 +137,12 @@ const DetailTourPrice = ({ item }: DetailTourPriceProps) => {
                         maximumFractionDigits: 2,
                       })}
                     </td>
-                    <td
+                    {/* <td
                       className={`px-4 py-3 text-right ${isTotal ? "font-bold text-gray-800" : "text-gray-600"}`}
                     >
-                      {row.dblPriceTPLRed < 0 ? "-" : ""}$
+                      {row.dblPriceTPLRed < 0 ? "-" : ""}$d
                       {Math.abs(row.dblPriceTPLRed || 0).toLocaleString()}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })

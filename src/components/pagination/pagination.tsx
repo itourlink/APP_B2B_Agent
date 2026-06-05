@@ -168,7 +168,7 @@ const Pagination = (props: PaginationProps) => {
             type="button"
             onClick={() => onPageChange(safeCurrentPage - 1)}
             disabled={safeCurrentPage === 1}
-            className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-all hover:border-[#4a6fa5] hover:text-[#4a6fa5] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
+            className="cursor-pointer inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-all hover:border-[#4a6fa5] hover:text-[#4a6fa5] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
           >
             <ChevronLeft size={16} />
             <span className="hidden sm:inline">{t("previous")}</span>
@@ -204,7 +204,7 @@ const Pagination = (props: PaginationProps) => {
             type="button"
             onClick={() => onPageChange(safeCurrentPage + 1)}
             disabled={safeCurrentPage === safeTotalPages}
-            className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-all hover:border-[#4a6fa5] hover:text-[#4a6fa5] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
+            className="cursor-pointer inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-all hover:border-[#4a6fa5] hover:text-[#4a6fa5] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
           >
             <span className="hidden sm:inline">{t("next")}</span>
             <ChevronRight size={16} />

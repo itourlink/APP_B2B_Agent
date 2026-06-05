@@ -51,8 +51,8 @@ const GuideCardGrid = ({
                     src={
                         guide?.strSupplierImage
                             ? getUrlImage(
-                                  guide?.strSupplierImage
-                              )
+                                guide?.strSupplierImage
+                            )
                             : "https://placehold.co/600x400?text=Guide"
                     }
                     alt={guide?.strSupplierName}
@@ -78,8 +78,8 @@ const GuideCardGrid = ({
                             size={14}
                             className={
                                 i <
-                                (guide?.intEasiaCateID ||
-                                    0)
+                                    (guide?.intEasiaCateID ||
+                                        0)
                                     ? "fill-orange-400 text-orange-400"
                                     : "text-gray-300"
                             }
@@ -118,7 +118,7 @@ const GuideCardGrid = ({
                         <p className="text-xl font-bold leading-none text-[#2563eb]">
                             {guide?.dblMaxPriceFrom ===
                                 "$0" ||
-                            guide?.dblMaxPriceFrom ===
+                                guide?.dblMaxPriceFrom ===
                                 "N/A"
                                 ? "N/A"
                                 : guide?.dblMaxPriceFrom}
@@ -128,6 +128,7 @@ const GuideCardGrid = ({
                     <button
                         onClick={() => router.replaceParams(paths.shop.guide.detail, { item: guide })}
                         className="
+                        cursor-pointer
                             rounded-lg
                             border
                             border-blue-200
@@ -164,8 +165,8 @@ const GuideCardList = ({
         const supplierGuidQuery =
             guide?.strSupplierGUID
                 ? `?supplierGuid=${encodeURIComponent(
-                      guide.strSupplierGUID
-                  )}`
+                    guide.strSupplierGUID
+                )}`
                 : "";
 
         router.replaceParams(
@@ -187,8 +188,8 @@ const GuideCardList = ({
                     src={
                         guide?.strSupplierImage
                             ? getUrlImage(
-                                  guide?.strSupplierImage
-                              )
+                                guide?.strSupplierImage
+                            )
                             : "https://placehold.co/600x400?text=Guide"
                     }
                     alt={guide?.strSupplierName}
@@ -239,7 +240,7 @@ const GuideCardList = ({
                         <p className="text-[38px] font-bold leading-none text-[#2563eb]">
                             {guide?.dblMaxPriceFrom ===
                                 "$0" ||
-                            guide?.dblMaxPriceFrom ===
+                                guide?.dblMaxPriceFrom ===
                                 "N/A"
                                 ? "N/A"
                                 : guide?.dblMaxPriceFrom}
@@ -257,8 +258,8 @@ const GuideCardList = ({
                                 size={16}
                                 className={
                                     i <
-                                    (guide?.intEasiaCateID ||
-                                        0)
+                                        (guide?.intEasiaCateID ||
+                                            0)
                                         ? "fill-orange-400 text-orange-400"
                                         : "text-gray-300"
                                 }
@@ -270,6 +271,7 @@ const GuideCardList = ({
                     <button
                         onClick={handleNavigate}
                         className="
+                        cursor-pointer
                             rounded-xl
                             bg-[#2563eb]
                             px-6
@@ -327,11 +329,10 @@ const GuideFeeList = () => {
                             onClick={() =>
                                 setViewMode("grid")
                             }
-                            className={`cursor-pointer rounded-md p-1.5 transition-all ${
-                                viewMode === "grid"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
-                            }`}
+                            className={`cursor-pointer rounded-md p-1.5 transition-all ${viewMode === "grid"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <LayoutGrid size={16} />
                         </button>
@@ -341,11 +342,10 @@ const GuideFeeList = () => {
                             onClick={() =>
                                 setViewMode("list")
                             }
-                            className={`cursor-pointer rounded-md p-1.5 transition-all ${
-                                viewMode === "list"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
-                            }`}
+                            className={`cursor-pointer rounded-md p-1.5 transition-all ${viewMode === "list"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <List size={16} />
                         </button>

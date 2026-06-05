@@ -106,6 +106,7 @@ const VehicleCardGrid = ({ vehicle }: any) => {
                             )
                         }
                         className="
+                        cursor-pointer
                             rounded-lg
                             border
                             border-blue-200
@@ -263,22 +264,20 @@ const VehicleList = () => {
 
                     <button
                         onClick={() => setViewMode("grid")}
-                        className={`rounded-md p-1.5 transition-all ${
-                            viewMode === "grid"
+                        className={`rounded-md p-1.5 transition-all ${viewMode === "grid"
                                 ? "bg-blue-600 text-white shadow-sm"
                                 : "text-gray-400 hover:bg-gray-100"
-                        }`}
+                            }`}
                     >
                         <LayoutGrid size={18} />
                     </button>
 
                     <button
                         onClick={() => setViewMode("list")}
-                        className={`rounded-md p-1.5 transition-all ${
-                            viewMode === "list"
+                        className={`rounded-md p-1.5 transition-all ${viewMode === "list"
                                 ? "bg-blue-600 text-white shadow-sm"
                                 : "text-gray-400 hover:bg-gray-100"
-                        }`}
+                            }`}
                     >
                         <List size={18} />
                     </button>

@@ -11,8 +11,8 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { useListCity } from "@/hooks/actions/useCity";
 import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
 import { useTranslate } from "@/locales";
-import { TITLES_OPTIONS } from "@/utils/option-data";
 import { useToastStore } from "@/zustand/useToastStore";
+import { TITLES_OPTIONS } from "@/utils/option-data";
 
 interface Props {
   formId?: string;

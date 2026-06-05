@@ -15,10 +15,10 @@ import { listCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { updTourCustomized } from "@/hooks/actions/useUser";
 import { useDebounce } from "@/hooks/components/use-debounce";
 import { useTranslate } from "@/locales";
-import { AgentHostSelect } from "../../request/components/agent-host-select";
-import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/option-data";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useUserStore } from "@/zustand/useUserStore";
+import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/option-data";
+import { AgentHostSelect } from "./agent-host-select";
 
 type SchemaType = {
   agentHost: string;

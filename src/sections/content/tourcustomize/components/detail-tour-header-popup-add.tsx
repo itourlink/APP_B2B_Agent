@@ -9,8 +9,8 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useTranslate } from "@/locales";
-import { TITLES_OPTIONS } from "@/utils/option-data";
 import { useToastStore } from "@/zustand/useToastStore";
+import { TITLES_OPTIONS } from "@/utils/option-data";
 
 interface Props {
   formId?: string;
@@ -157,7 +157,7 @@ const DetailTourHeaderPopupAdd = ({
             {...register("intSaluteID")}
             className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm text-gray-700 outline-none transition focus:border-[#004b91] md:max-w-[110px]"
           >
-            {TITLES_OPTIONS.map((option) => (
+            {TITLES_OPTIONS.map((option:any) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

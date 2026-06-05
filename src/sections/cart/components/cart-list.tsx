@@ -189,6 +189,7 @@ const CartList = () => {
                 type="button"
                 onClick={() => handleOpenEdit(row)}
                 className="
+                cursor-pointer
                   flex h-7 w-7 items-center justify-center
                   rounded bg-blue-50
                   text-[#1f5fa9]
@@ -269,7 +270,7 @@ const CartList = () => {
   }
 
   return (
-    <div className="w-full min-h-screen mt-30">
+    <div className="w-full min-h-screen">
       <div className="max-w-[1320px] mx-auto px-6 py-10">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-800">

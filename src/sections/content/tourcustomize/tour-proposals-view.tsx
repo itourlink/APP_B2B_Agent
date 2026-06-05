@@ -36,15 +36,24 @@ const TourProposalsView = () => {
   const [open, setOpen] = useState({
     delete: false,
   });
-
+  const PAGE_SIZE_STORAGE_KEY = "tour_customized_page_size";
   const [appliedFilters, setAppliedFilters] = useState(filters);
   const [item, setItem] = useState<ITourCustomized | null>(null);
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const savedPageSize = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
+
+    return savedPageSize ? Number(savedPageSize) : 10;
+  });
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED, page, appliedFilters],
-    queryFn: () =>
-      useListTourCustomized({
+    queryKey: [
+      QUERY_KEYS.USER.LIST_TOUR_CUSTOMIZED,
+      page,
+      pageSize,
+      appliedFilters,
+    ],
+    queryFn: () => {
+      return useListTourCustomized({
         strTourCustomizedGUID: null,
         strFilter: appliedFilters?.nameTour || null,
         intTourStepID: 2,
@@ -54,14 +63,17 @@ const TourProposalsView = () => {
         intCurPage: page,
         intPageSize: pageSize,
         tblsReturn: "[0]",
-      }),
+      });
+    },
     placeholderData: keepPreviousData,
   });
   const listData = data?.[0] ?? [];
 
   const totalRecords = listData?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
-
+  useEffect(() => {
+  localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(pageSize));
+}, [pageSize]);
   useEffect(() => {
     if (page > totalPages) {
       setPage(1);
@@ -112,7 +124,7 @@ const TourProposalsView = () => {
       field: "strServiceName",
       headerName: t("serviceName"),
       render: (_, row) => (
-        <div className="space-y-0.5 py-1 min-w-[200px] text-xs flex items-center justify-center gap-2">
+        <div className="space-y-0.5 py-1 min-w-[200px] text-left text-xs flex items-center justify-start gap-2">
           <button
             onClick={() =>
               router.replaceParams(paths.content.detailTour, { item: row })
@@ -273,6 +285,12 @@ const TourProposalsView = () => {
             currentPage={page}
             onPageChange={(value) => setPage(value)}
             totalPages={totalPages || 1}
+            totalRecords={totalRecords}
+            recordsPerPage={pageSize}
+            onRecordsPerPageChange={(value) => {
+              setPageSize(value);
+              setPage(1);
+            }}
           />
         )}
       </div>

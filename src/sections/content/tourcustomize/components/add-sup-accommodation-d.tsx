@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Field, Form } from "@/components/hook-form";
 import PanelPopup from "@/components/popup/panel-popup";
 import { useTranslate } from "@/locales";
+import { useMemo } from "react";
 
 const schema = zod.object({
   day1: zod.array(zod.string()).default([]),
@@ -16,7 +17,7 @@ const schema = zod.object({
 
 type SchemaType = zod.infer<typeof schema>;
 
-const AddSupAccommodationD = ({ open, onClose }: any) => {
+const AddSupAccommodationD = ({ open, onClose, item, itemListour }: any) => {
   const { t } = useTranslate("tourcustomize");
 
   const timeOptions = [
@@ -70,7 +71,11 @@ const AddSupAccommodationD = ({ open, onClose }: any) => {
       setValue("day2", []);
     }
   };
+    const selectedDayOrder = useMemo(() => {
+      return itemListour?.intDayOrder || item?.intDayOrder || "";
+    }, [item?.intDayOrder, itemListour?.intDayOrder]);
 
+  
   return (
     <PanelPopup open={open} onClose={onClose} title="" className="w-[980px]">
       <Form methods={methods} onSubmit={onSubmit}>
@@ -88,7 +93,7 @@ const AddSupAccommodationD = ({ open, onClose }: any) => {
               </div>
 
               <span className="text-[30px] font-bold leading-none text-[#f28c28]">
-                $21.6
+                {item?.dblPrice || itemListour?.dblPrice}
               </span>
             </div>
           </div>
@@ -99,7 +104,7 @@ const AddSupAccommodationD = ({ open, onClose }: any) => {
                 <Field.Check name="enableDay1" />
 
                 <span className="text-[16px] font-medium">
-                  {t("dayWithNumber", { number: 1 })}
+                  {t("dayWithNumber", { number: selectedDayOrder })}
                 </span>
               </div>
 
