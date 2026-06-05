@@ -19,6 +19,7 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
+import type { SubmitErrorHandler } from "react-hook-form";
 
 
 export const Schema = z
@@ -98,7 +99,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             adults: 30,
             children: 3,
 
-            category: "1",
+            category: ["1"],
 
             remark: "<p>Ghi chú</p>",
 
@@ -159,7 +160,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             intTWN: data.twn,
             intTPL: data.tpl,
 
-             dtmDateFrom: new Date(data.dateStart).toISOString(),
+            dtmDateFrom: new Date(data.dateStart).toISOString(),
 
             strServiceName: data.tourName,
 
@@ -168,7 +169,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             intCurrencyID: data.currency, // nếu là ID thì giữ number/string ID
 
-          strListEasiaCateID: data.category.join(","),
+            strListEasiaCateID: data.category.join(","),
 
             strRemark: data.remark,
 
@@ -208,7 +209,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     }
 
 
-    const onINValid = (_: any) => {
+    const onINValid: SubmitErrorHandler<SchemaType> = () => {
         showToast("error", "Vui lòng kiểm tra lại thông tin");
     }
     const onSubmit = handleSubmit(onValid, onINValid);
