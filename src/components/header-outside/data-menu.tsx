@@ -105,6 +105,7 @@ export const menuConfigByGUID: Record<string, any> = {
 
 export const buildMenu = (
   apiMenu: any[] = [],
+  t: any,
 ) => {
   return apiMenu
     ?.filter((item) => item?.IsShowMenu)
@@ -116,7 +117,9 @@ export const buildMenu = (
 
       return {
         id: item.strWebMenuGUID,
-        title: item.strMenuName || "",
+
+        title: t(config.type),
+
         type: config.type,
         link: config.link,
         match: config.match,

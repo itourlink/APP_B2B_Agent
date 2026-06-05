@@ -18,11 +18,12 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { useListMenu } from "@/hooks/actions/useMenu";
 import { useEffect } from "react";
 import { buildMenu } from "@/components/header-outside/data-menu";
+import { useTranslate } from "@/locales";
 
 const ShopHeader = () => {
     const router = useRouter();
     const location = useLocation();
-
+    const { t } = useTranslate("header")
     const pathname = location.pathname;
 
     const company =
@@ -46,7 +47,7 @@ const ShopHeader = () => {
     };
 
     const { menuData } = useListMenu();
-    const menu = buildMenu(menuData || []);
+    const menu = buildMenu(menuData || [], t);
 
     const { user, userLoading } = useUser();
 
@@ -182,7 +183,7 @@ const ShopHeader = () => {
                         // onClick={() => window.location.href = "http://localhost:5177/"}
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                     >
-                        Member
+                        {t("member")}
                     </button>
 
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
@@ -195,7 +196,7 @@ const ShopHeader = () => {
                         }
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                     >
-                        Thiết lập kênh bán
+                        {t("salesChannelSettings")}
                     </button>
                 </div>
 
@@ -210,7 +211,7 @@ const ShopHeader = () => {
                             onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")}
                             className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                         >
-                            Yêu cầu của tôi
+                            {t("listAgentHost")}
                         </button>
 
                         <TourCustomized />
@@ -223,7 +224,7 @@ const ShopHeader = () => {
                             }
                             className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                         >
-                            Danh sách Agent Host
+                            {t("myRequest")}
                         </button>
                     </div>
 

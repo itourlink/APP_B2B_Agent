@@ -5,20 +5,20 @@ export const slidesTour = [
     {
         id: 1,
         image: banner1,
-        title: "Khám phá thế giới cùng iTourGo",
-        desc: "Trải nghiệm những chuyến đi tuyệt vời với giá tốt nhất",
+        titleKey: "tourBanner1Title",
+        descKey: "tourBanner1Desc",
     },
     {
         id: 2,
         image: banner2,
-        title: "Du lịch thông minh",
-        desc: "Kết nối hàng ngàn dịch vụ du lịch chất lượng cao",
+        titleKey: "tourBanner2Title",
+        descKey: "tourBanner2Desc",
     },
     {
         id: 3,
         image: banner3,
-        title: "Hành trình đáng nhớ",
-        desc: "Tạo nên kỷ niệm không thể quên cùng chúng tôi",
+        titleKey: "tourBanner3Title",
+        descKey: "tourBanner3Desc",
     },
 ];
 

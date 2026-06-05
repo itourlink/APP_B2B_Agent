@@ -5,11 +5,13 @@ import { getUrlImage } from "@/utils/format-image";
 import { CONFIG } from "@/config-global";
 import { truncateEmail, truncateText } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
+import { useTranslate } from "@/locales";
 
 const AuthUserInfo = () => {
     const { user, userLoading } = useUser();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslate("header")
 
     useEffect(() => {
         const handleClickOutside = (event: any) => {
@@ -63,7 +65,7 @@ const AuthUserInfo = () => {
                             // router.push(paths.content.info);
                             window.open("https://myagentmember.itourlink.com", "_blank");
                         }} className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
-                            <User size={18} /> Hồ Sơ Cá Nhân
+                            <User size={18} /> {t("profile")}
                         </button>
                         {/* <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
                             <FileText size={18} /> Đơn đặt của tôi
@@ -75,7 +77,7 @@ const AuthUserInfo = () => {
 
                     <div className="mt-2 pt-2 border-t border-slate-50">
                         <button onClick={() => handleLogout()} className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 transition-colors font-medium text-sm">
-                            <LogOut size={18} /> Đăng xuất
+                            <LogOut size={18} /> {t("logout")}
                         </button>
                     </div>
                 </div>

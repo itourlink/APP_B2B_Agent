@@ -102,26 +102,3 @@ export const menuConfigByGUID: Record<string, any> = {
     icon: <FlightIcon width="18px" height="18px" />,
   },
 };
-
-export const buildMenu = (
-  apiMenu: any[] = [],
-) => {
-  return apiMenu
-    ?.filter((item) => item?.IsShowMenu)
-    ?.map((item) => {
-      const config =
-        menuConfigByGUID[item.strWebMenuGUID];
-
-      if (!config) return null;
-
-      return {
-        id: item.strWebMenuGUID,
-        title: item.strMenuName || "",
-        type: config.type,
-        link: config.link,
-        match: config.match,
-        icon: config.icon,
-      };
-    })
-    .filter(Boolean);
-};

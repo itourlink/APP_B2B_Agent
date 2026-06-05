@@ -4,5 +4,17 @@
     "login": "Login",
     "information": "Information",
     "serviceBookingList": "Service Booking List",
-    "logout": "Logout"
+    "myRequest": "My Request",
+    "member": "Member",
+    "salesChannelSettings": "Sales Channel Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "tour": "Tour",
+    "hotel": "Hotel",
+    "boat": "Boat",
+    "vehicle": "Transport",
+    "voucher": "Voucher",
+    "restaurant": "Restaurant",
+    "guide": "Guide",
+    "flight": "Flight"
 }

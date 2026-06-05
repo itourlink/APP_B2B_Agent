@@ -4,5 +4,17 @@
     "login": "Đăng nhập",
     "information": "Thông tin",
     "serviceBookingList": "Danh sách Đặt DV",
-    "logout": "Đăng xuất"
+    "myRequest": "Yêu cầu của tôi",
+    "member": "Thành viên",
+    "salesChannelSettings": "Thiết lập kênh bán",
+    "profile": "Hồ Sơ Cá Nhân",
+    "logout": "Đăng xuất",
+    "tour": "Tour",
+    "hotel": "Hotel",
+    "boat": "Boat",
+    "vehicle": "Transport",
+    "voucher": "Voucher",
+    "restaurant": "Restaurant",
+    "guide": "Guide",
+    "flight": "Flight"
 }
