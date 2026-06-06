@@ -46,21 +46,24 @@ const TourLocationDes = ({
         return true;
     };
 
-    /**
-     * destination:
-     * - không có strTourGUID
-     *
-     * tours:
-     * - có strTourGUID
-     */
-    const destination = flatData?.find(
-        (item) => !isValidValue(item?.strTourGUID)
+
+    const isRealString = (v: any) =>
+        typeof v === "string" && v.trim().length > 0;
+
+    const destination = flatData.filter(
+        (item) =>
+            !isRealString(item?.strTourGUID) &&
+            !isRealString(item?.strServiceNameUrl)
     );
 
-    const tours = flatData?.filter(
-        (item) => isValidValue(item?.strTourGUID)
+    const tours = flatData.filter(
+        (item) =>
+            isRealString(item?.strTourGUID) &&
+            isRealString(item?.strServiceNameUrl)
     );
 
+    console.log("destination", destination)
+    console.log("tours", tours)
     if (isLoading) {
         return (
             <div className="w-105 bg-white rounded-xl shadow-lg border border-gray-300 text-sm">
@@ -94,34 +97,36 @@ const TourLocationDes = ({
         <div className="w-105 bg-white rounded-xl shadow-lg border border-gray-300 text-sm max-h-100 overflow-y-auto pb-4">
 
             {/* DESTINATION */}
-            {destination && (
+            {destination?.length > 0 && (
                 <div className="border-b border-gray-300">
-
                     <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold p-4">
-
                         <MapPin size={14} />
-
                         {t("destination")}
                     </div>
 
-                    <button
-                        onClick={() =>
-                            onSelectDestination?.({
-                                ...destination,
-                                __type: "destination",
-                            })
-                        }
-                        className="flex gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
-                    >
-                        <MapPin
-                            className="text-[#2566b0] mt-1"
-                            size={18}
-                        />
+                    {destination.map((item) => (
+                        <button
+                            key={item.strDestinationCode}
+                            onClick={() =>
+                                onSelectDestination?.({
+                                    ...item,
+                                    __type: "destination",
+                                })
+                            }
+                            className="flex items-start gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
+                        >
+                            <MapPin
+                                className="text-[#2566b0] mt-0.5 shrink-0"
+                                size={18}
+                            />
 
-                        <div className="font-semibold text-left">
-                            {destination?.strDestinationName}
-                        </div>
-                    </button>
+                            <div className="text-left">
+                                <div className="font-semibold text-gray-900">
+                                    {item.strDestinationName}
+                                </div>
+                            </div>
+                        </button>
+                    ))}
                 </div>
             )}
 
