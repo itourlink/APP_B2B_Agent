@@ -12,7 +12,7 @@ import VoucherList from './voucher-list';
 import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
-import { fDate, fDateTime } from '@/utils/format-time';
+import { fDate } from '@/utils/format-time';
 import { addDays } from 'date-fns';
 
 const PaymentBookingView: React.FC = () => {

@@ -472,7 +472,7 @@ const PaymentBookingCartView: React.FC = () => {
                     }
                 },
 
-                onError: (err) => {
+                onError: (_) => {
                     showToast(
                         "error",
                         "Đặt thất bại"
