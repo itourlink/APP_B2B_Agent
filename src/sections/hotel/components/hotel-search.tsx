@@ -137,11 +137,6 @@ const HotelSearch = () => {
                                     item
                                 ) => {
 
-                                    console.log(
-                                        "item",
-                                        item
-                                    );
-
                                     const isHotel =
                                         item?.__type ===
                                         "hotel";

@@ -38,3 +38,19 @@ export function fDateTime(date: DatePickerFormat, format?: string) {
 
     return `${thu}, ${formatted}`;
 }
+
+export function fDate(date: DatePickerFormat, format?: string) {
+    if (!date) return null;
+
+    const d = dayjs(date);
+    if (!d.isValid()) return "Invalid time value";
+
+    const day = d.day();
+    const thu = day === 0 ? "CN" : `T${day + 1}`;
+
+    const formatted = d
+        .locale(i18next.language)
+        .format(format ?? formatStr.date); // bỏ giờ
+
+    return `${thu}, ${formatted}`;
+}

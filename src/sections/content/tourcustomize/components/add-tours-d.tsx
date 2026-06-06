@@ -62,11 +62,10 @@ const AddToursD = ({ item, itemListour, strTourCustomizedDayGUID }: Props) => {
       to: "",
     },
   });
-      const selectedDayOrder = useMemo(() => {
-        return itemListour?.intDayOrder || item?.intDayOrder || "";
-      }, [item?.intDayOrder, itemListour?.intDayOrder]);
-  console.log("itemList", itemListour)
-  
+  const selectedDayOrder = useMemo(() => {
+    return itemListour?.intDayOrder || item?.intDayOrder || "";
+  }, [item?.intDayOrder, itemListour?.intDayOrder]);
+
   useEffect(() => {
     if (!defaultLocationCode) return;
 

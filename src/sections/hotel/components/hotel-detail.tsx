@@ -74,8 +74,6 @@ const HotelDetail = () => {
 
   const hotel = hotelData?.[0] ?? {};
 
-  console.log("hotel", hotel);
-
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 

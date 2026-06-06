@@ -12,7 +12,8 @@ import VoucherList from './voucher-list';
 import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
-import { fDateTime } from '@/utils/format-time';
+import { fDate, fDateTime } from '@/utils/format-time';
+import { addDays } from 'date-fns';
 
 const PaymentBookingView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
@@ -220,7 +221,7 @@ const PaymentBookingView: React.FC = () => {
 
             // const serviceUrl =
             //     "http://localhost:5173/service?activeTab=booked";
-            
+
             const serviceUrl =
                 "https://myagentmember.itourlink.com/service?activeTab=booked";
 
@@ -473,16 +474,12 @@ const PaymentBookingView: React.FC = () => {
                     }
                 },
 
-                onError: (err) => {
+                onError: (_) => {
                     showToast(
                         "error",
                         "Đặt thất bại"
                     );
 
-                    console.log(
-                        "BOOKING ERROR",
-                        err
-                    );
                 },
             });
         } catch (err) {
@@ -491,10 +488,6 @@ const PaymentBookingView: React.FC = () => {
                 "Voucher không hợp lệ hoặc đã được sử dụng"
             );
 
-            console.log(
-                "VOUCHER ERROR",
-                err
-            );
         }
     };
 
@@ -827,7 +820,15 @@ const PaymentBookingView: React.FC = () => {
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{price.No}</td>
                                         <td className="py-3 px-4 text-left align-top border-r border-gray-100">
                                             <div className="font-semibold text-gray-800">{price?.strServiceName}</div>
-                                            <div className="text-gray-500 text-[11px] mt-0.5">{fDateTime(isValidValue(payloadItem?.dtmDateFrom))} - {fDateTime(isValidValue(payloadItem?.dtmDateTo))}</div>
+                                            <div className="text-gray-500 text-[11px] mt-0.5">
+                                                {fDate(isValidValue(payloadItem?.dtmDateFrom))} -{" "}
+                                                {fDate(
+                                                    addDays(
+                                                        new Date(isValidValue(payloadItem?.dtmDateFrom)),
+                                                        item?.intNoOfDay || 0
+                                                    )
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{totalGuests}</td>
                                         <td className="py-3 px-3 align-top border-r border-gray-100">{isValidValue(price?.dblTotalPriceCom)}</td>

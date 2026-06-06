@@ -85,7 +85,6 @@ const AddManual = ({
   strTourCustomizedDayGUID,
 }: AddManualProps) => {
 
-  console.log("strTourCustomizedDayGUID", strTourCustomizedDayGUID)
   const { t } = useTranslate("tourcustomize");
   const [isOvernight, setIsOvernight] = useState(false);
   const [isPriceByRoom, setIsPriceByRoom] = useState(false);

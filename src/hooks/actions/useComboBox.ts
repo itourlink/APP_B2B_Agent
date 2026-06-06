@@ -24,7 +24,6 @@ const fetchComboboxByCode = async (body: ComboboxByCodePayload) => {
     "public/GetComboboxByCode",
     body
   );
-   console.log("GetComboboxByCode raw response", res.data);
   return res.data;
 };
 

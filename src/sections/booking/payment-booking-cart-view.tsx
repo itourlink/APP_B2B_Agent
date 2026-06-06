@@ -12,6 +12,7 @@ import VoucherList from './voucher-list';
 import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
+import { fDate } from '@/utils/format-time';
 
 const PaymentBookingCartView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
@@ -462,10 +463,6 @@ const PaymentBookingCartView: React.FC = () => {
                             "_blank"
                         );
                     } catch (err) {
-                        console.log(
-                            "TMS ERROR",
-                            err
-                        );
 
                         // lỗi TMS vẫn đá trang
                         window.open(
@@ -481,21 +478,12 @@ const PaymentBookingCartView: React.FC = () => {
                         "Đặt thất bại"
                     );
 
-                    console.log(
-                        "BOOKING ERROR",
-                        err
-                    );
                 },
             });
         } catch (err) {
             showToast(
                 "error",
                 "Voucher không hợp lệ hoặc đã được sử dụng"
-            );
-
-            console.log(
-                "VOUCHER ERROR",
-                err
             );
         }
     };
@@ -856,8 +844,8 @@ const PaymentBookingCartView: React.FC = () => {
                                             </div>
 
                                             <div className="text-gray-500 text-[11px] mt-0.5">
-                                                {isValidValue(item?.dtmDateFrom)} -{" "}
-                                                {isValidValue(item?.dtmDateTo)}
+                                                {isValidValue(fDate(item?.dtmDateFrom))} -{" "}
+                                                {isValidValue(fDate(item?.dtmDateTo))}
                                             </div>
                                         </td>
 

@@ -227,7 +227,6 @@ const PaymentBookingHotelView: React.FC = () => {
                                 },
                                 {
                                     onSuccess: () => {
-                                        console.log("VOUCHER SUCCESS");
                                         resolve(true);
                                     },
 
@@ -487,7 +486,6 @@ const PaymentBookingHotelView: React.FC = () => {
                 "Voucher không hợp lệ hoặc đã được sử dụng"
             );
 
-            console.log("VOUCHER ERROR", err);
         }
     };
 
