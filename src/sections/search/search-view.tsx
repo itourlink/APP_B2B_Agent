@@ -136,10 +136,10 @@ const SearchView = () => {
         pageSize,
         ...tourFilter,
 
-        strFilterServiceName:
-          tourFilter?.strFilterServiceName ||
-          searchTourPayload?.strFilterDestinationName ||
-          null,
+        // strFilterServiceName:
+        //   tourFilter?.strFilterServiceName ||
+        //   searchTourPayload?.strFilterDestinationName ||
+        //   null,
       }
       : null,
   );

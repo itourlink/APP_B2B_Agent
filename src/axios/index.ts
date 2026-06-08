@@ -16,9 +16,11 @@ export const apiClient: AxiosInstance = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     const language = localStorage.getItem("i18nextLng") || "vi";
+
+    config.headers = config.headers ?? {};
 
     config.headers["Accept-Language"] = language;
 
@@ -28,27 +30,28 @@ apiClient.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 // tránh redirect nhiều lần
 let isRedirecting = false;
 
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => response.data,
-  async (error) => {
+  (response: AxiosResponse) => {
+    return response.data;
+  },
+  (error) => {
+
     const status = error.response?.status;
 
-    if (status === 401) {
-      const token = localStorage.getItem(ACCESS_TOKEN);
+    if (status === 401 && !isRedirecting) {
+      isRedirecting = true;
 
-      if (token && !isRedirecting) {
-        isRedirecting = true;
+      localStorage.removeItem(ACCESS_TOKEN);
 
-        localStorage.removeItem(ACCESS_TOKEN);
-
-        window.location.href = `${import.meta.env.VITE_SERVER_URL}auth/login`;
-      }
+      window.location.href = `${import.meta.env.VITE_SERVER_URL}auth/login`;
     }
 
     return Promise.reject(error);
