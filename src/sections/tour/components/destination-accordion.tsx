@@ -2,6 +2,7 @@ import { useCompanyDes } from '@/hooks/actions/useCompanyOwner';
 import { useTranslate } from '@/locales';
 import { getUrlImage } from '@/utils/format-image';
 import { useState } from 'react';
+import imgDefault from "@/assets/images/default-image.jpg"
 
 const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }: any) => {
     const { t } = useTranslate("tour")
@@ -18,9 +19,13 @@ const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }:
             onMouseLeave={onMouseLeave}
         >
             <img
-                src={getUrlImage(destination?.strCityImage)}
+                src={getUrlImage(destination?.strCityImage) || imgDefault}
                 alt={destination?.strDestinationName}
                 className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = imgDefault;
+                }}
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>

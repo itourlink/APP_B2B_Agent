@@ -6,7 +6,7 @@ import { getUrlImage } from '@/utils/format-image';
 import { formatPrice } from '@/utils/format-number';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
-
+import imgDefault from "@/assets/images/default-image.jpg"
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -147,7 +147,6 @@ const TourCardSkeleton = () => {
     );
 };
 
-
 const TourError = () => {
     const { t } = useTranslate("tour")
     return (
@@ -186,9 +185,15 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                 }
             >
                 <img
-                    src={getUrlImage(tour?.strTourImageUrl)}
+                    src={
+                        tour?.strTourImageUrl === "" ||
+                            (typeof tour?.strTourImageUrl === "object" &&
+                                Object.keys(tour?.strTourImageUrl).length === 0)
+                            ? imgDefault
+                            : getUrlImage(tour?.strTourImageUrl)
+                    }
                     alt={tour?.strTourName}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover hover:scale-105 transition-all duration-500"
                 />
             </div>
 
@@ -314,5 +319,3 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
         </div>
     );
 };
-
-

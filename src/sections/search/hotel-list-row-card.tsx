@@ -5,6 +5,7 @@ import { getUrlImage } from "@/utils/format-image";
 import { isValidValue } from "@/utils/utilts";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
+import imgDefault from "@/assets/images/default-image.jpg"
 
 type Props = {
     hotel: any;
@@ -12,11 +13,20 @@ type Props = {
 
 const HotelListRowCard = ({ hotel }: Props) => {
     const router = useRouter();
+
+    const imageSrc =
+        hotel?.strSupplierImage === "" ||
+            (typeof hotel?.strSupplierImage === "object" &&
+                hotel?.strSupplierImage !== null &&
+                Object.keys(hotel?.strSupplierImage).length === 0)
+            ? imgDefault
+            : getUrlImage(isValidValue(hotel?.strSupplierImage));
+
     return (
         <div className="flex border border-slate-300 rounded-xl p-4 bg-white shadow-sm gap-4">
             {/* IMAGE */}
             <img
-                src={getUrlImage(isValidValue(hotel?.strSupplierImage))}
+                src={imageSrc}
                 alt={isValidValue(hotel?.strSupplierName)}
                 className="w-48 h-full object-cover rounded-lg"
             />

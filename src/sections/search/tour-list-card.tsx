@@ -9,6 +9,7 @@ import {
     MapPin,
     Star,
 } from "lucide-react";
+import imgDefault from "@/assets/images/default-image.jpg"
 
 export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
@@ -27,9 +28,15 @@ export const TourListCard = ({ tour }: any) => {
             {/* IMAGE */}
             <div className="relative h-48 overflow-hidden">
                 <img
-                    src={getUrlImage(
-                        String(isValidValue(tour?.strTourImageUrl))
-                    )}
+                    src={
+                        tour?.strTourImageUrl === "" ||
+                            (typeof tour?.strTourImageUrl === "object" &&
+                                Object.keys(tour?.strTourImageUrl).length === 0)
+                            ? imgDefault
+                            : getUrlImage(
+                                String(isValidValue(tour?.strTourImageUrl))
+                            )
+                    }
                     alt={String(isValidValue(tour?.strTourName))}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />

@@ -2,7 +2,6 @@ import { useLocation } from "react-router-dom";
 import { useListTourPublish, useListTourSeries } from "@/hooks/actions/useTour";
 import { TourListCard } from "./tour-list-card";
 import { useListHotel, useSearchHotel } from "@/hooks/actions/useHotel";
-import { HotelCard } from "../hotel/components/hotel-list";
 import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
 import { isValidValue } from "@/utils/utilts";
@@ -16,8 +15,11 @@ import { useUser } from "@/hooks/actions/useAuth";
 import HotelListRowCard from "./hotel-list-row-card";
 import TourSearch from "../tour/components/tour-search";
 import HotelSearch from "../hotel/components/hotel-search";
+import { HotelCard } from "../hotel/components/hotel-card";
+import imgDefault from "@/assets/images/default-image.jpg"
 
 const SearchView = () => {
+
   const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
@@ -452,6 +454,15 @@ const SearchView = () => {
             {!tsLoading && !!isSeries && (
               <div className="grid gap-6">
                 {rawData?.map((item: any, index: number) => {
+
+                  const imageSrc =
+                    item?.strTourImageUrl === "" ||
+                      (typeof item?.strTourImageUrl === "object" &&
+                        item?.strTourImageUrl !== null &&
+                        Object.keys(item?.strTourImageUrl).length === 0)
+                      ? imgDefault
+                      : getUrlImage(isValidValue(item?.strTourImageUrl));
+
                   return (
                     <div
                       key={index}
@@ -460,7 +471,7 @@ const SearchView = () => {
                       {/* IMAGE */}
                       <div className="w-1/3">
                         <img
-                          src={getUrlImage(isValidValue(item?.strTourImageUrl))}
+                          src={imageSrc}
                           alt={isValidValue(item?.strTourName)}
                           className="w-full h-full object-cover rounded-xl"
                         />
@@ -579,7 +590,7 @@ const SearchView = () => {
                 currentPage={pageSeries}
                 onPageChange={setPageSeries}
                 totalPages={tsTotalPages || 1}
-                totalRecords={tsData?.[0]?.intTotalRecords || 0 } 
+                totalRecords={tsData?.[0]?.intTotalRecords || 0}
                 onRecordsPerPageChange={handlePageSizeChange}
               />
             )}
@@ -642,12 +653,12 @@ const SearchView = () => {
 
                       totalRecords={
                         isQuick
-                        ? quickHotel.searchData?.[0]?.intTotalRecords || 0
-                        : listHotel.hotelData?.[0]?.intTotalRecords || 0
+                          ? quickHotel.searchData?.[0]?.intTotalRecords || 0
+                          : listHotel.hotelData?.[0]?.intTotalRecords || 0
                       }
-                      recordsPerPage={pageSize} 
-                      
-                        onRecordsPerPageChange={handlePageSizeChange}
+                      recordsPerPage={pageSize}
+
+                      onRecordsPerPageChange={handlePageSizeChange}
                     />
                   </>
                 )}
@@ -666,8 +677,8 @@ const SearchView = () => {
               <Pagination
                 currentPage={pageTour}
                 onPageChange={setPageTour}
-                totalPages={tourTotalPages || 1} 
-                totalRecords = {tdpData?.[0]?.intTotalRecords || 0 }
+                totalPages={tourTotalPages || 1}
+                totalRecords={tdpData?.[0]?.intTotalRecords || 0}
                 recordsPerPage={pageSize}
                 onRecordsPerPageChange={handlePageSizeChange}
               />
