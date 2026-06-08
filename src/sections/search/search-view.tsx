@@ -135,10 +135,14 @@ const SearchView = () => {
         page: pageTour,
         pageSize,
         ...tourFilter,
+
+        strFilterServiceName:
+          tourFilter?.strFilterServiceName ||
+          searchTourPayload?.strFilterDestinationName ||
+          null,
       }
       : null,
   );
-
   const { tsData, tsLoading } = useListTourSeries(
     isSeries
       ? {

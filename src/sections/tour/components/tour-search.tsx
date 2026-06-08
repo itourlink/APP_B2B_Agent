@@ -115,6 +115,7 @@ const TourSearch = () => {
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
+
         if (selectedTour) {
             router.replaceParams(paths.shop.tour.detail, {
                 item: selectedTour
@@ -131,13 +132,13 @@ const TourSearch = () => {
             },
             {
                 isTourSeries: filters.isTourSeries,
-
                 isSearchTour: {
                     ...draftFilters2,
+                    strFilterDestinationName:
+                        filters.strFilterDestinationName,
                 },
             }
         );
-
     };
 
     return (
