@@ -12,7 +12,6 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
-import { TourCard } from "./tour-list";
 import BookingForm from "./booking-form";
 import {
   useDetailTour,
@@ -22,6 +21,7 @@ import {
 import { useLocation, Link } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
+import { TourCard } from "./tour-card";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (

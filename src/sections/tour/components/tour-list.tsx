@@ -7,96 +7,6 @@ import { formatPrice } from '@/utils/format-number';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 
-export const TourCard = ({ tour }: any) => {
-    const { t } = useTranslate("tour")
-    const router = useRouter();
-
-    return (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
-            <div className="relative h-48 overflow-hidden">
-                <img
-                    src={getUrlImage(tour?.strTourImageUrl)}
-                    alt={tour?.strTourName}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-            </div>
-
-            <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-[#1a4a8d] font-bold text-lg leading-tight uppercase mb-4 h-14 line-clamp-2">
-                    {tour?.strTourName}
-                </h3>
-
-                <div className="space-y-2 mb-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                        <Flag size={14} className="text-gray-400" />
-                        <span className="truncate">{t("by")}: {tour?.strOwnerCompanyName}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Clock size={14} className="text-gray-400" />
-                        <span>{t("duration")}: {tour?.intNoOfDay} {t("day")} / {Number(tour?.intNoOfDay) - 1} {t("night")}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                        <MapPin size={14} className="text-gray-400 mt-1 shrink-0" />
-                        <span className="line-clamp-2 leading-snug">
-                            {t("destinations")}: {tour?.strListTourDestinationName}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="mb-4">
-                    <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
-                        {tour?.strLangCode === "CATEID_SETTOUR" ? t("dailyTour") : t("package")}
-                    </span>
-                </div>
-
-                <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div>
-                        <p className="text-xs text-gray-500">{t("priceFrom")}</p>
-                        <p className="text-[#2563eb] font-bold text-xl">
-                            {formatPrice(tour?.dblPriceFrom)}
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => router.replaceParams(paths.shop.tour.detail, { item: tour })}
-                        className="cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                    >
-                        {t("viewDetails")}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-
-const TourCardSkeleton = () => {
-    return (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm animate-pulse">
-            <div className="h-48 bg-gray-200" />
-
-            <div className="p-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4" />
-
-                <div className="space-y-2 mb-4">
-                    <div className="h-3 bg-gray-200 rounded w-2/3" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2" />
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                </div>
-
-                <div className="h-6 bg-gray-200 rounded-full w-24 mb-4" />
-
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                    <div>
-                        <div className="h-3 bg-gray-200 rounded w-12 mb-2" />
-                        <div className="h-5 bg-gray-200 rounded w-20" />
-                    </div>
-                    <div className="h-8 bg-gray-200 rounded w-24" />
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -192,19 +102,13 @@ const TourList = () => {
                             : "flex flex-col gap-4"
                     }
                 >
-                    {tourData?.map((tour: any) =>
-                        viewMode === "grid" ? (
-                            <TourCard
-                                key={tour?.strTourGUID}
-                                tour={tour}
-                            />
-                        ) : (
-                            <TourListItem
-                                key={tour?.strTourGUID}
-                                tour={tour}
-                            />
-                        )
-                    )}
+                    {tourData?.map((tour: any) => (
+                        <TourItem
+                            key={tour.strTourGUID}
+                            tour={tour}
+                            viewMode={viewMode}
+                        />
+                    ))}
                 </div>
             )}
 
@@ -214,6 +118,36 @@ const TourList = () => {
 
 export default TourList;
 
+const TourCardSkeleton = () => {
+    return (
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm animate-pulse">
+            <div className="h-48 bg-gray-200" />
+
+            <div className="p-4">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4" />
+
+                <div className="space-y-2 mb-4">
+                    <div className="h-3 bg-gray-200 rounded w-2/3" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                    <div className="h-3 bg-gray-200 rounded w-full" />
+                </div>
+
+                <div className="h-6 bg-gray-200 rounded-full w-24 mb-4" />
+
+                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                    <div>
+                        <div className="h-3 bg-gray-200 rounded w-12 mb-2" />
+                        <div className="h-5 bg-gray-200 rounded w-20" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded w-24" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
 const TourError = () => {
     const { t } = useTranslate("tour")
     return (
@@ -222,66 +156,141 @@ const TourError = () => {
         </div>
     )
 };
-const TourListItem = ({ tour }: any) => {
-    const { t } = useTranslate("tour")
+
+
+type TourItemProps = {
+    tour: any;
+    viewMode: "grid" | "list";
+};
+
+const TourItem = ({ tour, viewMode }: TourItemProps) => {
+    const { t } = useTranslate("tour");
     const router = useRouter();
 
+    const isGrid = viewMode === "grid";
+
     return (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-56 group">
-            <div className="relative w-80 overflow-hidden shrink-0">
+        <div
+            className={
+                isGrid
+                    ? "bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
+                    : "bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex h-56 group"
+            }
+        >
+            {/* Image */}
+            <div
+                className={
+                    isGrid
+                        ? "relative h-48 overflow-hidden"
+                        : "relative w-80 overflow-hidden shrink-0"
+                }
+            >
                 <img
                     src={getUrlImage(tour?.strTourImageUrl)}
                     alt={tour?.strTourName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
             </div>
 
-            <div className="p-5 flex flex-col flex-grow justify-between min-w-0">
+            {/* Content */}
+            <div
+                className={
+                    isGrid
+                        ? "p-4 flex flex-col flex-grow"
+                        : "p-5 flex flex-col flex-grow justify-between min-w-0"
+                }
+            >
                 <div>
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                        <h3 className="text-gray-900 font-bold text-lg leading-tight uppercase line-clamp-2">
+                    {isGrid ? (
+                        <h3 className="text-[#1a4a8d] font-bold text-lg leading-tight uppercase mb-4 h-14 line-clamp-2">
                             {tour?.strTourName}
                         </h3>
+                    ) : (
+                        <div className="flex items-start justify-between gap-4 mb-3">
+                            <h3 className="text-gray-900 font-bold text-lg leading-tight uppercase line-clamp-2">
+                                {tour?.strTourName}
+                            </h3>
 
-                        <span className="shrink-0 bg-[#e6f0ff] text-[#2563eb] text-xs font-semibold px-3 py-1 rounded-full">
-                            {tour?.strLangCode === "CATEID_SETTOUR" ? t("dailyTour") : t("package")}
-                        </span>
-                    </div>
+                            <span className="shrink-0 bg-[#e6f0ff] text-[#2563eb] text-xs font-semibold px-3 py-1 rounded-full">
+                                {tour?.strLangCode === "CATEID_SETTOUR"
+                                    ? t("dailyTour")
+                                    : t("package")}
+                            </span>
+                        </div>
+                    )}
 
-                    <div className="space-y-2.5 text-[14px] text-gray-600">
+                    <div
+                        className={
+                            isGrid
+                                ? "space-y-2 mb-4 text-sm text-gray-600"
+                                : "space-y-2.5 text-[14px] text-gray-600"
+                        }
+                    >
                         <div className="flex items-center gap-2">
-                            <Flag size={16} className="text-gray-400 shrink-0" />
+                            <Flag
+                                size={isGrid ? 14 : 16}
+                                className="text-gray-400 shrink-0"
+                            />
                             <span className="truncate">
                                 {t("by")}: {tour?.strOwnerCompanyName || "--"}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Clock size={16} className="text-gray-400 shrink-0" />
+                            <Clock
+                                size={isGrid ? 14 : 16}
+                                className="text-gray-400 shrink-0"
+                            />
                             <span>
-                                {t("duration")}: {tour?.intNoOfDay} {t("day")} / {Number(tour?.intNoOfDay) - 1} {t("night")}
+                                {t("duration")}: {tour?.intNoOfDay} {t("day")} /
+                                {" "}
+                                {Number(tour?.intNoOfDay) - 1} {t("night")}
                             </span>
                         </div>
 
                         <div className="flex items-start gap-2">
                             <MapPin
-                                size={16}
+                                size={isGrid ? 14 : 16}
                                 className="text-gray-400 mt-0.5 shrink-0"
                             />
                             <span className="line-clamp-2 leading-relaxed">
-                                {t("destinations")}: {tour?.strListTourDestinationName || "--"}
+                                {t("destinations")}:
+                                {" "}
+                                {tour?.strListTourDestinationName || "--"}
                             </span>
                         </div>
                     </div>
+
+                    {isGrid && (
+                        <div className="mb-4">
+                            <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
+                                {tour?.strLangCode === "CATEID_SETTOUR"
+                                    ? t("dailyTour")
+                                    : t("package")}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex items-end justify-between pt-4 border-t border-gray-50">
+                <div
+                    className={
+                        isGrid
+                            ? "mt-auto pt-4 border-t border-gray-100 flex items-center justify-between"
+                            : "flex items-end justify-between pt-4 border-t border-gray-50"
+                    }
+                >
                     <div>
-                        <p className="text-[12px] text-gray-500 mb-0.5">
+                        <p className="text-xs text-gray-500">
                             {t("priceFrom")}
                         </p>
 
-                        <p className="text-[#2563eb] font-bold text-2xl leading-none">
+                        <p
+                            className={
+                                isGrid
+                                    ? "text-[#2563eb] font-bold text-xl"
+                                    : "text-[#2563eb] font-bold text-2xl leading-none"
+                            }
+                        >
                             {formatPrice(tour?.dblPriceFrom)}
                         </p>
                     </div>
@@ -292,7 +301,11 @@ const TourListItem = ({ tour }: any) => {
                                 item: tour,
                             })
                         }
-                        className="cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+                        className={
+                            isGrid
+                                ? "cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                : "cursor-pointer bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+                        }
                     >
                         {t("viewDetails")}
                     </button>
@@ -301,3 +314,5 @@ const TourListItem = ({ tour }: any) => {
         </div>
     );
 };
+
+
