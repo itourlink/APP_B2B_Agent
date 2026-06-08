@@ -111,9 +111,9 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
         { key: "tpl", label: t("tplRooms") },
     ];
     return (
-        <div className="w-[320px] bg-white rounded-2xl shadow-lg p-4">
+        <div className="w-[520px] bg-white rounded-2xl shadow-lg p-4">
             {/* Rooms */}
-            <div className="mb-4">
+            <div className="mb-2">
                 <div
                     className="flex justify-between items-center cursor-pointer"
                     onClick={() => isRoomDetail && setOpenRoomDetail(!openRoomDetail)}
@@ -183,86 +183,93 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
 
             <div className="w-full h-px bg-gray-300"></div>
 
-            {/* Adults */}
-            <div className="flex justify-between items-center mb-4">
-                <div>
-                    <div className="font-semibold">{t("adults")}</div>
-                    <div className="text-sm text-gray-500">{t("ages18OrAbove")}</div>
-                </div>
+            <div className="flex gap-5 items-start">
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setAdults((p) => Math.max(1, p - 1))}
-                        className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                        -
-                    </button>
-                    <span>{adults}</span>
-                    <button
-                        onClick={() => setAdults((p) => p + 1)}
-                        className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                        +
-                    </button>
-                </div>
-            </div>
+                {/* Adults */}
+                <div className="flex justify-between items-center w-full mt-1 mb-4">
+                    <div>
+                        <div className="font-semibold">{t("adults")}</div>
+                        <div className="text-sm text-gray-500">{t("ages18OrAbove")}</div>
+                    </div>
 
-            <div className="w-full h-px bg-gray-300"></div>
-
-            {/* Children */}
-            <div className="flex justify-between items-center my-4">
-                <div>
-                    <div className="font-semibold">{t("children")}</div>
-                    <div className="text-sm text-gray-500">{t("ages")} 1-17</div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => handleChildrenChange("dec")}
-                        className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                        -
-                    </button>
-                    <span>{children}</span>
-                    <button
-                        onClick={() => handleChildrenChange("inc")}
-                        className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                        +
-                    </button>
-                </div>
-            </div>
-
-            {/* Children list */}
-            {children > 0 && (
-                <div
-                    className={`mt-2 pr-2 ${children >= 4 ? "max-h-30 overflow-y-auto " : ""
-                        }`}
-                >
-                    {childAges.map((age, index) => (
-                        <div
-                            key={index}
-                            className="flex justify-between items-center mb-3"
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setAdults((p) => Math.max(1, p - 1))}
+                            className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
                         >
-                            <span>{t("child")} {index + 1}</span>
-
-                            <select
-                                value={age}
-                                onChange={(e) =>
-                                    handleAgeChange(index, Number(e.target.value))
-                                }
-                                className="border border-gray-300 rounded-md px-2 py-1 cursor-pointer focus:outline-0"
-                            >
-                                {ages.map((a) => (
-                                    <option key={a} value={a}>
-                                        {a} {t("years")}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    ))}
+                            -
+                        </button>
+                        <span>{adults}</span>
+                        <button
+                            onClick={() => setAdults((p) => p + 1)}
+                            className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
-            )}
+
+                <div className="border-l border-gray-300 self-stretch my-5"></div>
+
+                {/* Children */}
+                <div className="w-full">
+
+                    <div className="flex justify-between items-center my-1">
+                        <div>
+                            <div className="font-semibold">{t("children")}</div>
+                            <div className="text-sm text-gray-500">{t("ages")} 1-17</div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => handleChildrenChange("dec")}
+                                className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
+                            >
+                                -
+                            </button>
+                            <span>{children}</span>
+                            <button
+                                onClick={() => handleChildrenChange("inc")}
+                                className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center cursor-pointer"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Children list */}
+                    {children > 0 && (
+                        <div
+                            className={`mt-1 pr-2 ${children >= 4 ? "max-h-27 overflow-y-auto " : ""
+                                }`}
+                        >
+                            {childAges.map((age, index) => (
+                                <div
+                                    key={index}
+                                    className="flex justify-between items-center mb-1"
+                                >
+                                    <span>{t("child")} {index + 1}</span>
+
+                                    <select
+                                        value={age}
+                                        onChange={(e) =>
+                                            handleAgeChange(index, Number(e.target.value))
+                                        }
+                                        className="border border-gray-300 rounded-md px-2 py-1 cursor-pointer focus:outline-0"
+                                    >
+                                        {ages.map((a) => (
+                                            <option key={a} value={a}>
+                                                {a} {t("years")}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+            </div>
 
             {/* Done button */}
             <button
