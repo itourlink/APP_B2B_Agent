@@ -12,7 +12,7 @@ export const getUrlImage = (path?: unknown) => {
     .map((segment) => encodeURIComponent(segment))
     .join("/");
 
-  return `${baseUrlImage}/${encodedPath}`;
+  return `${baseUrlImage}${encodedPath}`;
 };
 
 export const getUrlImageUp = (path?: string) => {
