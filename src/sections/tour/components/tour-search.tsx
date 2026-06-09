@@ -1,6 +1,6 @@
 import { GenericFilter } from "@/components/generic-filter/generic-filter";
 import { useSearchTour } from "@/hooks/actions/useTour";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TourLocationDes from "./tour-location-des";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
@@ -101,6 +101,41 @@ const TourSearch = () => {
 
     const [selectedTour, setSelectedTour] = useState<any>(null);
 
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const raw = params.get("tourSearchState");
+
+        if (!raw) return;
+
+        try {
+            const parsed = JSON.parse(raw);
+
+            setFilters((prev) => {
+                // chỉ hydrate lần đầu / hoặc khi empty
+                if (prev?.strFilterDestinationName && prev?.isTourSeries !== undefined) {
+                    return prev;
+                }
+
+                return {
+                    ...prev,
+                    ...parsed.filters,
+                };
+            });
+
+            setDraftFilters2((prev) => {
+                if (prev?.intNoOfAdult) return prev;
+
+                return {
+                    ...prev,
+                    ...parsed.draftFilters2,
+                };
+            });
+
+            setSelectedTour(parsed.selectedTour || null);
+        } catch { }
+    }, [location.search]);
+
     const searchPayload = {
         intCurPage: filters.page,
         intPageSize: filters.pageSize,
@@ -115,6 +150,11 @@ const TourSearch = () => {
     const { searchData, searchLoading } = useSearchTour(searchPayload);
 
     const handleSearch = () => {
+        const snapshot = {
+            filters,
+            draftFilters2,
+            selectedTour,
+        };
 
         if (selectedTour) {
             router.replaceParams(paths.shop.tour.detail, {
@@ -129,6 +169,7 @@ const TourSearch = () => {
             {
                 company,
                 type: "tour",
+                tourSearchState: JSON.stringify(snapshot),
             },
             {
                 isTourSeries: filters.isTourSeries,

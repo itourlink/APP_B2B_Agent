@@ -28,7 +28,13 @@ const SearchView = () => {
       .get("type");
   const isSeries = state?.isTourSeries;
   const searchTourPayload = state?.isSearchTour || {};
-
+  const searchSnapshot = state?.tourSearchState
+    ? JSON.parse(state.tourSearchState)
+    : null;
+  const hotelSearchSnapshot =
+    state?.hotelSearchState
+      ? JSON.parse(state.hotelSearchState)
+      : null;
   const [pageSeries, setPageSeries] = useState(1);
   const [pageTour, setPageTour] = useState(1);
   const [pageHotel, setPageHotel] = useState(1);
@@ -108,8 +114,10 @@ const SearchView = () => {
 
   // ================= TEMP FILTER =================
   const [tempTourFilter, setTempTourFilter] = useState(tourFilter);
-  // const hotelParams = state?.hotelParams;
-  const hotelParams = state?.isSearchHotel || {};
+  const hotelParams =
+    hotelSearchSnapshot?.draftFilters ||
+    state?.isSearchHotel ||
+    {};
   const [tempSeriesFilter, setTempSeriesFilter] = useState(seriesFilter);
 
   const [tempHotelFilter, setTempHotelFilter] = useState(hotelFilter);
@@ -307,62 +315,47 @@ const SearchView = () => {
   const resultCount = rawData?.[0]?.intTotalRecords || 0;
 
   useEffect(() => {
-    const nextPayload = state?.isSearchTour || {};
+    const nextPayload =
+      searchSnapshot?.draftFilters2 ||
+      state?.isSearchTour ||
+      {};
 
     setTourFilter({
       intCateID: nextPayload?.intCateID ?? null,
-
       intProductID: nextPayload?.intProductID ?? null,
-
       strNoOfDayRange: null,
       strFilterServiceName: null,
       strListEasiaCateID: null,
       strListTransportOptionID: null,
-
-      strLocationCode:
-        nextPayload?.strLocationCode ?? null,
-
-      dtmFilterDateValidFrom:
-        nextPayload?.dtmFilterDateValidFrom ?? null,
-
-      dtmFilterDateValidTo:
-        nextPayload?.dtmFilterDateValidTo ?? null,
-
+      strLocationCode: nextPayload?.strLocationCode ?? null,
+      dtmFilterDateValidFrom: nextPayload?.dtmFilterDateValidFrom ?? null,
+      dtmFilterDateValidTo: nextPayload?.dtmFilterDateValidTo ?? null,
       strPriceFromRange: null,
     });
 
     setSeriesFilter({
       intCateID: nextPayload?.intCateID ?? null,
-
       intProductID: nextPayload?.intProductID ?? null,
-
       strNoOfDayRange: null,
       strFilterServiceName: null,
       strListEasiaCateID: null,
       strListTransportOptionID: null,
-
       strPriceFromRange: null,
+      intNoOfAdult: nextPayload?.intNoOfAdult,
+      strListNoOfChild: nextPayload?.strListNoOfChild,
+      intNoOfSGLSup: nextPayload?.intNoOfSGLSup,
+      intNoOfTPLRec: nextPayload?.intNoOfTPLRec,
+      strLocationCode: nextPayload?.strLocationCode ?? null,
+      dtmFilterDateValidFrom: nextPayload?.dtmFilterDateValidFrom ?? null,
+      dtmFilterDateValidTo: nextPayload?.dtmFilterDateValidTo ?? null,
+    });
 
-      intNoOfAdult:
-        nextPayload?.intNoOfAdult,
+    // HOTEL
 
-      strListNoOfChild:
-        nextPayload?.strListNoOfChild,
-
-      intNoOfSGLSup:
-        nextPayload?.intNoOfSGLSup,
-
-      intNoOfTPLRec:
-        nextPayload?.intNoOfTPLRec,
-
-      strLocationCode:
-        nextPayload?.strLocationCode ?? null,
-
-      dtmFilterDateValidFrom:
-        nextPayload?.dtmFilterDateValidFrom ?? null,
-
-      dtmFilterDateValidTo:
-        nextPayload?.dtmFilterDateValidTo ?? null,
+    setHotelFilter({
+      strFilterSupplierName: null,
+      strPriceFromRange: null,
+      strListEasiaCateID: null,
     });
 
     setPageSeries(1);

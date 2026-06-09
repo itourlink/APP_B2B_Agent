@@ -1,7 +1,7 @@
 import { GenericFilter } from "@/components/generic-filter/generic-filter";
 import HotelLocationDes from "./hotel-location-des";
 import { useRouter } from "@/routes/hooks/use-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { paths } from "@/routes/paths";
 import { useSearchDesHotel } from "@/hooks/actions/useHotel";
 import { useLocation } from "react-router-dom";
@@ -63,7 +63,45 @@ const HotelSearch = () => {
                 filters.strFilterDestinationName,
         });
 
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+
+        const raw = params.get("hotelSearchState");
+
+        if (!raw) return;
+
+        try {
+            const parsed = JSON.parse(raw);
+
+            setFilters((prev) => {
+                if (prev?.strFilterDestinationName) {
+                    return prev;
+                }
+
+                return {
+                    ...prev,
+                    ...parsed.filters,
+                };
+            });
+
+            setDraftFilters((prev) => ({
+                ...prev,
+                ...parsed.draftFilters,
+            }));
+
+            setSelectedHotel(
+                parsed.selectedHotel || null
+            );
+        } catch { }
+    }, [location.search]);
+
     const handleSearch = () => {
+        const snapshot = {
+            filters,
+            draftFilters,
+            selectedHotel,
+        };
+
 
         // ✅ CLICK HOTEL => đi detail
         if (selectedHotel) {
@@ -100,13 +138,11 @@ const HotelSearch = () => {
             {
                 company,
                 type: "hotel",
+                hotelSearchState: JSON.stringify(snapshot),
             },
             {
                 isSearchHotel: payload,
-
-                mode: filters.series
-                    ? "quick"
-                    : "list",
+                mode: filters.series ? "quick" : "list",
             }
         );
     };
