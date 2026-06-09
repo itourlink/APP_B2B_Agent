@@ -20,9 +20,9 @@ export const SelectCurrency = ({
   handleLeave,
 }: Props) => {
 
-  const { data: currencyOptions = [], isLoading: isCurrencyLoading } =
+  const { data: currencyOptions = [], isLoading: _ } =
     useComboboxByCode("075");
-    
+
   console.log("currencyOptions", currencyOptions)
 
   const [selected, setSelected] = useState(listCurrency[0]);
