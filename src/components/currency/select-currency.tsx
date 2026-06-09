@@ -1,3 +1,4 @@
+import { useComboboxByCode } from "@/hooks/actions/useComboBox";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -6,6 +7,7 @@ const listCurrency = [
   { label: "VND", value: "vnd", symbol: "₫" },
   { label: "USD", value: "usd", symbol: "$" },
 ];
+
 interface Props {
   open: boolean;
   handleEnter: () => void;
@@ -17,6 +19,12 @@ export const SelectCurrency = ({
   handleEnter,
   handleLeave,
 }: Props) => {
+
+  const { data: currencyOptions = [], isLoading: isCurrencyLoading } =
+    useComboboxByCode("075");
+    
+  console.log("currencyOptions", currencyOptions)
+
   const [selected, setSelected] = useState(listCurrency[0]);
 
   return (

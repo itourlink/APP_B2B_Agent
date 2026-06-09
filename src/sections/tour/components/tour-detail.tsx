@@ -114,6 +114,8 @@ const TourDetail = () => {
         .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
+
+  console.log("getUrlImage(ListData?.strTourImageUrl)", getUrlImage(ListData?.strTourImageUrl))
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
       <div className="max-w-7xl mx-auto mb-6">
@@ -415,7 +417,10 @@ const TourDetail = () => {
         {!tdpLoading && !tdpError && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tdpData?.map((t: any) => (
-              <TourCard key={t.id} tour={t} />
+              <TourCard
+                key={t.strTourGUID}
+                tour={t}
+              />
             ))}
           </div>
         )}

@@ -119,7 +119,9 @@ const PaymentBookingView: React.FC = () => {
     const totalGuests =
         (payloadItem?.intAdult || 0) + totalChildren;
 
-    const totalDeposit = Number(price?.dblTotalPrice || 0) * (Number(paytermData?.dblPaymentPercentage) / 100);
+    const totalDeposit =
+        Number(price?.dblTotalPrice || 0) *
+        ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
 
     const totalDebt = Number(price?.dblTotalPrice || 0) - Number(totalDeposit);
     const [finalVoucherPayment] = useState(
