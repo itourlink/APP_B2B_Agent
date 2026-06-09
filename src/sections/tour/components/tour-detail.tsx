@@ -22,7 +22,6 @@ import { useLocation, Link } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
 import { TourCard } from "./tour-card";
-import { isValidValue } from "@/utils/utilts";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
