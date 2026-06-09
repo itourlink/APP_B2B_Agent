@@ -46,5 +46,6 @@
     "address": "Địa chỉ",
     "mobile": "Di động",
     "yourPartners": "Các Đối Tác Của Bạn",
-    "partnerListLoadError": "Không tải được danh sách đối tác"
+    "partnerListLoadError": "Không tải được danh sách đối tác",
+    "destinationS": "Điểm đến"
 }

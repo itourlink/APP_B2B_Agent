@@ -191,7 +191,7 @@ const TourSearch = () => {
                     {
                         type: "search",
                         key: "strFilterDestinationName",
-                        label: t("search"),
+                        label: t("destinationS"),
                         placeholder: t("searchPlaceholder"),
                         renderDropdown: ({ close }) => (
                             <TourLocationDes

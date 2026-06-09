@@ -46,5 +46,6 @@
     "address": "Address",
     "mobile": "Mobile",
     "yourPartners": "Your Partners",
-    "partnerListLoadError": "Unable to load partner list"
+    "partnerListLoadError": "Unable to load partner list",
+    "destinationS": "Destination"
 }
