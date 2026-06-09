@@ -22,6 +22,7 @@ import { useLocation, Link } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
 import { TourCard } from "./tour-card";
+import { isValidValue } from "@/utils/utilts";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -115,7 +116,10 @@ const TourDetail = () => {
       : [];
 
 
-  console.log("getUrlImage(ListData?.strTourImageUrl)", getUrlImage(ListData?.strTourImageUrl))
+  const remark =
+    typeof ListData?.strRemark === "string"
+      ? ListData.strRemark
+      : "";
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
       <div className="max-w-7xl mx-auto mb-6">
@@ -239,21 +243,27 @@ const TourDetail = () => {
 
           {/* DESCRIPTION */}
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-slate-900">Mô tả</h2>
+            <h2 className="text-xl font-bold text-slate-900">
+              Mô tả
+            </h2>
 
             {tdLoading ? (
               <SkeletonBlock />
             ) : tdError ? (
               <ErrorBlock />
-            ) : ListData?.strRemark ? (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: ListData?.strRemark,
-                }}
-              />
-            ) : (
-              <span className="text-slate-500 text-sm">Không có dữ liệu</span>
-            )}
+            ) :
+              remark.trim() ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: remark,
+                  }}
+                />
+              ) : (
+                <span className="text-slate-500 text-sm">
+                  Không có dữ liệu
+                </span>
+              )
+            }
           </div>
 
           {/* ITINERARY */}
