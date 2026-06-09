@@ -92,3 +92,12 @@ export const REFUNDS_OPTIONS = [
     { label: "Refund", value: "1" },
     { label: "Commission", value: "2" },
 ];
+
+export const statusTabMap: Record<number, string> = {
+    1: "hold",
+    2: "booked",
+    3: "moving",
+    4: "done",
+    5: "cancel",
+    6: "suggest",
+};

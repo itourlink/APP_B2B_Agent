@@ -2,7 +2,7 @@ import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForCart, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
-import { TITLES_OPTIONS } from '@/utils/option-data';
+import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -254,12 +254,10 @@ const PaymentBookingCartView: React.FC = () => {
             const companyGUID =
                 coData?.strCompanyGUID || null;
 
-            // const serviceUrl =
-            //     "http://localhost:5173/service?activeTab=booked";
-            const serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=booked";
-
-
+            // let serviceUrl =
+            //     "http://localhost:5173/service?activeTab=hold";
+            let serviceUrl =
+                "https://myagentmember.itourlink.com/service?activeTab=hold";
 
             // PAYLOAD BOOKING
             const payload = {

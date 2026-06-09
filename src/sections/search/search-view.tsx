@@ -435,12 +435,6 @@ const SearchView = () => {
               {loading ? "Loading..." : `Tìm thấy ${resultCount} kết quả`}
             </div>
 
-            {resultCount === 0 && !loading && (
-              <div className="text-center py-10 text-gray-500">
-                Tìm thấy 0 kết quả
-              </div>
-            )}
-
             {/* SERIES */}
             {tsLoading && isSeries && (
               <div className="flex items-center justify-center py-20">

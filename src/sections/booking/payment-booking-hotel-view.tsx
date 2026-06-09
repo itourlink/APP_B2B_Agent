@@ -2,7 +2,7 @@ import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
-import { TITLES_OPTIONS } from '@/utils/option-data';
+import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -379,6 +379,9 @@ const PaymentBookingHotelView: React.FC = () => {
                         : null,
             };
 
+            let serviceUrl =
+                "https://myagentmember.itourlink.com/service?activeTab=hold";
+
             addBookingForHotelApi(payload, {
 
                 onSuccess: async (res) => {
@@ -390,6 +393,9 @@ const PaymentBookingHotelView: React.FC = () => {
 
                     try {
                         const serviceGUID = res?.[0]?.[0]?.strListAgentHostServiceItemGUID;
+                        const intBK = res?.[0]?.[0]?.intStatusBk
+                        const activeTab =
+                            statusTabMap[intBK] ?? "hold";
 
                         // call email template
                         if (serviceGUID) {
@@ -453,8 +459,12 @@ const PaymentBookingHotelView: React.FC = () => {
                             });
                         }
 
+                        serviceUrl =
+                            `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
+
+                        // luôn đá trang
                         window.open(
-                            "https://myagentmember.itourlink.com/service?activeTab=booked",
+                            serviceUrl,
                             "_blank"
                         );
 

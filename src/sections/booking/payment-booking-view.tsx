@@ -2,7 +2,7 @@ import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListCurrency } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
-import { TITLES_OPTIONS } from '@/utils/option-data';
+import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -219,12 +219,6 @@ const PaymentBookingView: React.FC = () => {
             const companyGUID =
                 coData?.strCompanyGUID || null;
 
-            // const serviceUrl =
-            //     "http://localhost:5173/service?activeTab=booked";
-
-            const serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=booked";
-
             const payload = {
                 strUserGUID:
                     user?.strUserGUID || null,
@@ -364,6 +358,13 @@ const PaymentBookingView: React.FC = () => {
                         : null,
             };
 
+            // let serviceUrl =
+            //     "http://localhost:5173/service?activeTab=hold";
+
+
+            let serviceUrl =
+                "https://myagentmember.itourlink.com/service?activeTab=hold";
+
             addBookingForTourApi(payload, {
                 onSuccess: async (res) => {
                     showToast(
@@ -454,6 +455,14 @@ const PaymentBookingView: React.FC = () => {
                                 }),
                             ]);
                         }
+
+                        const intBK = res?.[1]?.[0]?.intStatusBk;
+
+                        const activeTab =
+                            statusTabMap[intBK] ?? "hold";
+
+                        serviceUrl =
+                            `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
 
                         // luôn đá trang
                         window.open(

@@ -36,3 +36,4 @@ export const pushWithCompany = (router: any, link: string) => {
         ...(company && { company }),
     });
 };
+

@@ -47,8 +47,6 @@ const TourLocationDes = ({
             isRealString(item?.strServiceNameUrl)
     );
 
-    console.log("destination", destination)
-    console.log("tours", tours)
     if (isLoading) {
         return (
             <div className="w-105 bg-white rounded-xl shadow-lg border border-gray-300 text-sm">

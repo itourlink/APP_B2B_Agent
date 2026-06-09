@@ -14,49 +14,22 @@ const HotelLocationDes = ({
 }: Props) => {
   const { t } = useTranslation("hotel");
 
-  /**
-   * API đôi khi trả:
-   * [[...]]
-   * nên flatten về [...]
-   */
   const flatData = Array.isArray(data?.[0]) ? data[0] : data;
 
-  /**
-   * Check value hợp lệ
-   * Bắt luôn:
-   * null
-   * undefined
-   * {}
-   */
-  const isValidValue = (value: any) => {
-    if (value == null) {
-      return false;
-    }
 
-    if (
-      typeof value === "object" &&
-      !Array.isArray(value) &&
-      Object.keys(value).length === 0
-    ) {
-      return false;
-    }
+  const isRealString = (v: any) =>
+    typeof v === "string" && v.trim().length > 0;
 
-    return true;
-  };
-
-  /**
-   * destination:
-   * - không có strSupplierGUID
-   *
-   * hotels:
-   * - có strSupplierGUID
-   */
-  const destination = flatData?.find(
-    (item) => !isValidValue(item?.strSupplierGUID),
+  const destinations = flatData.filter(
+    (item) =>
+      !isRealString(item?.strSupplierGUID) &&
+      !isRealString(item?.strSupplierNameURL)
   );
 
-  const hotels = flatData?.filter((item) =>
-    isValidValue(item?.strSupplierGUID),
+  const hotels = flatData.filter(
+    (item) =>
+      isRealString(item?.strSupplierGUID) &&
+      isRealString(item?.strSupplierNameURL)
   );
 
   if (isLoading) {
@@ -86,29 +59,34 @@ const HotelLocationDes = ({
   return (
     <div className="w-105 bg-white rounded-xl shadow-lg border border-gray-300 text-sm max-h-100 overflow-y-auto pb-4">
       {/* DESTINATION */}
-      {destination && (
+      {destinations.length > 0 && (
         <div className="border-b border-gray-300">
           <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold p-4">
             <MapPin size={14} />
-
             {t("destination")}
           </div>
 
-          <button
-            onClick={() =>
-              onSelectDestination?.({
-                ...destination,
-                __type: "destination",
-              })
-            }
-            className="flex gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
-          >
-            <MapPin className="text-[#2566b0] mt-1" size={18} />
+          {destinations.map((destination, index) => (
+            <button
+              key={destination?.strDestinationGUID || index}
+              onClick={() =>
+                onSelectDestination?.({
+                  ...destination,
+                  __type: "destination",
+                })
+              }
+              className="flex gap-3 w-full hover:bg-[#e9e9e981] px-4 py-3 transition cursor-pointer"
+            >
+              <MapPin
+                className="text-[#2566b0] mt-1"
+                size={18}
+              />
 
-            <div className="font-semibold text-left">
-              {destination?.strDestinationName}
-            </div>
-          </button>
+              <div className="font-semibold text-left">
+                {destination?.strDestinationName}
+              </div>
+            </button>
+          ))}
         </div>
       )}
 
@@ -116,7 +94,9 @@ const HotelLocationDes = ({
       {hotels.length > 0 && (
         <div>
           <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold p-4">
-            <Map size={14} />
+            <div className="w-5">
+              <Map size={14} />
+            </div>
 
             {t("hotels")}
           </div>
@@ -133,7 +113,9 @@ const HotelLocationDes = ({
                 }
                 className="flex gap-3 hover:bg-[#e9e9e981] px-4 py-3 cursor-pointer"
               >
-                <Flag className="text-[#2566b0] mt-1" size={18} />
+                <div className="w-5">
+                  <Flag className="text-[#2566b0] mt-1" size={18} />
+                </div>
 
                 <div className="font-medium text-left">
                   {hotel?.strDestinationName}
