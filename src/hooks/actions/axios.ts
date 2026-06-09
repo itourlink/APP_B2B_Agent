@@ -37,7 +37,6 @@ export function catchAsync<T>(fn: () => Promise<T>): () => Promise<T> {
     try {
       return await fn();
     } catch (err) {
-      console.error("Error:", err);
       throw err;
     }
   };

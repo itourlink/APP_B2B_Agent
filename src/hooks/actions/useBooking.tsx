@@ -221,3 +221,41 @@ export const useListCurrency = () => {
         currencyError: query.isError,
     };
 };
+
+
+export const fetchTourPaymentTerm = async (body: any) => {
+    const res = await apiClient.post(
+        "tour/GetListTourPaymentTerm",
+        body
+    );
+    return res.data;
+};
+
+
+export const useListTourPaymentTerm = (filters?: {
+    strTourGUID?: string;
+}) => {
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.PAYMENT_TERM, filters],
+        queryFn: () =>
+            fetchTourPaymentTerm({
+                strTourPaymentTermGUID: null,
+                strTourGUID: filters?.strTourGUID,
+                IsActive: null,
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: "IsDepositOnBook desc,intDayTo desc",
+                tblsReturn: "[0]"
+            }),
+        enabled: !!filters?.strTourGUID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        paytermData: query.data?.[0]?.[0] ?? [],
+        paytermtLoading: query.isLoading,
+        paytermError: query.isError,
+    };
+};

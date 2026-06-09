@@ -136,11 +136,6 @@ const HotelItem = ({ hotel, viewMode }: HotelItemProps) => {
             ? imgDefault
             : getUrlImage(isValidValue(hotel?.strSupplierImage));
 
-    console.log(
-        "strSupplierImage",
-        hotel?.strSupplierImage,
-        typeof hotel?.strSupplierImage
-    );
     return (
         <div
             className={

@@ -1,5 +1,5 @@
 import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListCurrency } from '@/hooks/actions/useBooking';
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListCurrency, useListTourPaymentTerm } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
@@ -76,7 +76,9 @@ const PaymentBookingView: React.FC = () => {
     const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
         useDetailAGTransTMSMutation();
 
-
+    const { paytermData } = useListTourPaymentTerm({
+        strTourGUID: item?.strTourGUID
+    })
 
     const { ctData } = useListCity({
         strTableName: "MC02",
@@ -117,7 +119,7 @@ const PaymentBookingView: React.FC = () => {
     const totalGuests =
         (payloadItem?.intAdult || 0) + totalChildren;
 
-    const totalDeposit = Number(price?.dblTotalPrice || 0) * 0.3;
+    const totalDeposit = Number(price?.dblTotalPrice || 0) * (Number(paytermData?.dblPaymentPercentage) / 100);
 
     const totalDebt = Number(price?.dblTotalPrice || 0) - Number(totalDeposit);
     const [finalVoucherPayment] = useState(
