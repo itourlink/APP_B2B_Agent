@@ -14,8 +14,6 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useEffect, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
-import { useRouter } from "@/routes/hooks/use-router";
-import { paths } from "@/routes/paths";
 import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
 import type { SubmitErrorHandler } from "react-hook-form";
