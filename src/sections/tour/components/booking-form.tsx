@@ -23,6 +23,7 @@ import { useToastStore } from "@/zustand/useToastStore";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
+import { useTranslate } from "@/locales";
 
 interface Props {
     item?: any;
@@ -41,6 +42,7 @@ type GuestValue = {
     };
 };
 const BookingForm = ({ item }: Props) => {
+    const { t } = useTranslate("tour")
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -135,9 +137,9 @@ const BookingForm = ({ item }: Props) => {
             .map((id: number) => ({
                 value: id,
                 label: id === 1
-                    ? "Joined Tour"
+                    ?  t("joinedTour")
                     : id === 2
-                        ? "Private Tour"
+                        ? t("privateTour")
                         : `Type ${id}`,
             }));
     }, [item]);
@@ -229,10 +231,10 @@ const BookingForm = ({ item }: Props) => {
                 });
 
                 route.push(`${paths.shop.cart.list}?company=${company}`);
-                showToast("success", "Thêm vào giỏ thành công");
+               showToast("success", t("addToCartSuccess"));
             },
             onError: () => {
-                showToast("error", "Thêm vào giỏ thất bại");
+                showToast("error", t("addToCartFailed"));
             },
         });
     };
@@ -249,9 +251,9 @@ const BookingForm = ({ item }: Props) => {
                 {/* HEADER */}
                 <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-lg font-bold">Đặt tour</h3>
+                        <h3 className="text-lg font-bold"> {t("addTour")}</h3>
                         <p className="text-[11px] text-slate-500">
-                            Nhập thông tin để hiển thị giá
+                           {t("enterInfoToShowPrice")}
                         </p>
                     </div>
 
@@ -269,20 +271,20 @@ const BookingForm = ({ item }: Props) => {
                 {price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
-                            Tổng giá: {currencyData?.strCurrencySymbol} {price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("totalPrice")}:{currencyData?.strCurrencySymbol} {price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                            Giá / Khách: {currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                           {t("pricePerGuest")}:{currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                            Còn lại: {price.intPaxRemain ?? "0"} suất
+                            {t("remainingSlots")}: {price.intPaxRemain ?? "0"} {t("slots")}
                         </div>
                     </div>
                 )}
 
                 {/* DATE */}
                 <div ref={dateRef}>
-                    <label className="text-[11px] font-semibold">Ngày bắt đầu</label>
+                    <label className="text-[11px] font-semibold">  {t("startDate")}</label>
 
                     <button
                         onClick={() =>
@@ -293,7 +295,7 @@ const BookingForm = ({ item }: Props) => {
                         <span>
                             {startDate
                                 ? format(startDate, "dd/MM/yyyy")
-                                : "Chọn ngày"}
+                                : t("selectDate")}
                         </span>
 
                         <Calendar size={14} />
@@ -319,7 +321,7 @@ const BookingForm = ({ item }: Props) => {
 
                 {/* GUEST */}
                 <div ref={guestRef}>
-                    <label className="text-[11px] font-semibold">Số lượng khách</label>
+                    <label className="text-[11px] font-semibold"> {t("numberOfGuests")}</label>
 
                     <button
                         onClick={() =>
@@ -331,8 +333,8 @@ const BookingForm = ({ item }: Props) => {
                             <Users size={14} />
 
                             <span>
-                                {guestValue.adults} NL • {guestValue.children} TE •{" "}
-                                {guestValue.rooms} Phòng
+                                {guestValue.adults}  {t("adultShort")} • {guestValue.children} {t("childShort")} •{" "}
+                                {guestValue.rooms} {t("room")}
                             </span>
                         </div>
 
@@ -356,7 +358,7 @@ const BookingForm = ({ item }: Props) => {
 
                 {/* STAR */}
                 <div>
-                    <label className="text-[11px] font-semibold">Hạng Tour</label>
+                    <label className="text-[11px] font-semibold"> {t("tourCategory")}</label>
 
                     <select
                         value={selectedStar ?? ""}
@@ -369,7 +371,7 @@ const BookingForm = ({ item }: Props) => {
                     >
                         {starList.map((star: number) => (
                             <option key={star} value={star} className="cursor-pointer">
-                                {"⭐".repeat(star)} ({star} sao)
+                                {"⭐".repeat(star)} ({star} {t("star")})
                             </option>
                         ))}
                     </select>
@@ -377,7 +379,7 @@ const BookingForm = ({ item }: Props) => {
 
                 {/* TYPE */}
                 <div>
-                    <label className="text-[11px] font-semibold">Loại hình</label>
+                    <label className="text-[11px] font-semibold">  {t("tourType")}</label>
 
                     <select
                         value={joinType || ""}
@@ -398,7 +400,7 @@ const BookingForm = ({ item }: Props) => {
                     disabled={!startDate || !price?.strTourPriceItemLevelGUID}
                     className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
-                    Đặt ngay
+                   {t("bookNow")}
                 </button>
 
                 <button
@@ -406,7 +408,7 @@ const BookingForm = ({ item }: Props) => {
                     disabled={!startDate || !price?.strTourPriceItemLevelGUID}
                     className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
-                    Thêm vào giỏ
+                    {t("addToCart")}
                 </button>
             </div>
         </div>

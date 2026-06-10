@@ -186,7 +186,7 @@ const TourSearch = () => {
         <div>
             <GenericFilter
                 filters={[
-                    { type: "toggle", key: "isTourSeries", label: "Tour Series" },
+                    { type: "toggle", key: "isTourSeries", label: t("tourSeries") },
 
                     {
                         type: "search",

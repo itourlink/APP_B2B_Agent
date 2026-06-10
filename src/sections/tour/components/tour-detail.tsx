@@ -22,6 +22,7 @@ import { useLocation, Link } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
 import { TourCard } from "./tour-card";
+import { useTranslate } from "@/locales";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -32,11 +33,18 @@ const SkeletonBlock = () => (
   </div>
 );
 
-const ErrorBlock = () => (
-  <div className="text-red-500 text-sm">Có lỗi xảy ra</div>
-);
+const ErrorBlock = () => {
+  const { t } = useTranslate("tour");
+
+  return (
+    <div className="text-red-500 text-sm">
+      {t("errorOccurred")}
+    </div>
+  );
+};
 
 const TourDetail = () => {
+  const { t } = useTranslate("tour")
   const location = useLocation();
 
   const item = location.state;
@@ -137,7 +145,7 @@ const TourDetail = () => {
           <span className="text-slate-600 font-medium line-clamp-1">
             {ListData?.strTourName ||
               ListData?.strServiceName ||
-              "Chi tiết tour"}
+              t("tourDetail")}
           </span>
         </nav>
       </div>
@@ -178,23 +186,23 @@ const TourDetail = () => {
                       <Clock3 size={16} />
                       Quy mô: {ListData?.intPaxMin}
                       {" - "}
-                      {ListData?.intPaxMax} khách
+                      {ListData?.intPaxMax}{t("guests")}
                     </div>
 
                     <div className="flex items-center gap-1">
                       <Clock3 size={16} />
-                      {ListData?.intNoOfDay} Ngày /{" "}
-                      {(ListData?.intNoOfDay || 0) - 1} Đêm
+                      {ListData?.intNoOfDay} {t("daysNights")} /{" "}
+                      {(ListData?.intNoOfDay || 0) - 1} {t("daysNights")}
                     </div>
 
                     <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center">
                       <MessageSquare size={14} className="mr-1" />
-                      Nhắn tin
+                     {t("message")}
                     </button>
                   </div>
 
                   <div className="flex items-center gap-2 text-slate-500">
-                    <span className="text-sm font-semibold">Share:</span>
+                    <span className="text-sm font-semibold">{t("share")}:</span>
 
                     {[
                       {
@@ -243,7 +251,7 @@ const TourDetail = () => {
           {/* DESCRIPTION */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-900">
-              Mô tả
+           {t("description")}
             </h2>
 
             {tdLoading ? (
@@ -259,7 +267,7 @@ const TourDetail = () => {
                 />
               ) : (
                 <span className="text-slate-500 text-sm">
-                  Không có dữ liệu
+                {t("noData")}
                 </span>
               )
             }
@@ -268,7 +276,7 @@ const TourDetail = () => {
           {/* ITINERARY */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">Lịch trình</h2>
+              <h2 className="text-xl font-bold text-slate-900">{t("itinerary")}</h2>
 
               <button
                 type="button"
@@ -280,7 +288,7 @@ const TourDetail = () => {
                                     hover:underline
                                 "
               >
-                {openAll ? "Thu gọn" : "Hiển thị tất cả"}
+               {openAll ? t("collapse") : t("showAll")}
               </button>
             </div>
 
@@ -316,7 +324,7 @@ const TourDetail = () => {
                                             "
                     >
                       <div className="font-semibold text-slate-800">
-                        Ngày {tdd?.No}
+                       {t("day")} {tdd?.No}
                       </div>
 
                       {isOpen ? (
@@ -335,7 +343,7 @@ const TourDetail = () => {
                             }}
                           />
                         ) : (
-                          <span>Chưa có nội dung</span>
+                          <span>{t("noContentYet")}</span>
                         )}
                       </div>
                     )}
@@ -347,7 +355,7 @@ const TourDetail = () => {
           {/* INCLUDED / EXCLUDED */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-bold mb-3">Bao gồm</h3>
+              <h3 className="font-bold mb-3">{t("included")}</h3>
 
               <div className="space-y-2">
                 {includedList.map((item: any, i: any) => (
@@ -366,7 +374,7 @@ const TourDetail = () => {
             </div>
 
             <div>
-              <h3 className="font-bold mb-3">Không bao gồm</h3>
+              <h3 className="font-bold mb-3">{t("excluded")}</h3>
 
               <div className="space-y-2">
                 {exclusionsList.map((item: any, i: any) => (
@@ -387,7 +395,7 @@ const TourDetail = () => {
 
           {/* TERMS */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Các điều khoản</h2>
+            <h2 className="text-xl font-bold mb-4">{t("termsAndConditions")}</h2>
 
             {tdLoading ? (
               <SkeletonBlock />
@@ -401,7 +409,7 @@ const TourDetail = () => {
                 }}
               />
             ) : (
-              <span className="text-sm">Không có dữ liệu</span>
+              <span className="text-sm">{t("noData")}</span>
             )}
           </div>
         </div>
@@ -417,7 +425,7 @@ const TourDetail = () => {
       {/* RELATED */}
       <div className="max-w-7xl m-auto mt-20">
         <h2 className="text-2xl font-bold mb-6 text-center">
-          Bạn có thể quan tâm
+        {t("youMayAlsoLike")}
         </h2>
 
         {tdpLoading && <SkeletonBlock />}
