@@ -198,7 +198,7 @@ const HotelDetail = () => {
           queryKey: [QUERY_KEYS.CART.LIST_CART],
         });
 
-        router.push(`${paths.shop.cart.list}`);
+        router.push(`${paths.shop.cart.list}?company=${company}`);
         showToast("success", t("addToCartSuccess"));
       },
       onError: () => {
