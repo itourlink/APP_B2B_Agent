@@ -13,8 +13,10 @@ import BookingPopup from './booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDate } from '@/utils/format-time';
+import { useTranslate } from '@/locales';
 
 const PaymentBookingCartView: React.FC = () => {
+    const { t } = useTranslate("book");
     const { setGlobalLoading } = useGlobalLoading();
 
     const location = useLocation();
@@ -234,7 +236,7 @@ const PaymentBookingCartView: React.FC = () => {
                                         onError: (err) => {
                                             showToast(
                                                 "error",
-                                                "Áp dụng voucher thất bại"
+                                                t("voucherApplyFailed")
                                             );
 
                                             reject(err);
@@ -247,7 +249,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                 showToast(
                     "success",
-                    "Áp dụng voucher thành công"
+                    t("voucherApplySuccess")
                 );
             }
 
@@ -368,7 +370,7 @@ const PaymentBookingCartView: React.FC = () => {
                 onSuccess: async (res) => {
                     showToast(
                         "success",
-                        "Đặt thành công"
+                        t("bookingSuccess")
                     );
 
                     try {
@@ -473,7 +475,7 @@ const PaymentBookingCartView: React.FC = () => {
                 onError: (_) => {
                     showToast(
                         "error",
-                        "Đặt thất bại"
+                        t("bookingFailed")
                     );
 
                 },
@@ -481,7 +483,7 @@ const PaymentBookingCartView: React.FC = () => {
         } catch (err) {
             showToast(
                 "error",
-                "Voucher không hợp lệ hoặc đã được sử dụng"
+                t("invalidVoucher")
             );
         }
     };
@@ -497,15 +499,15 @@ const PaymentBookingCartView: React.FC = () => {
 
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <div className="bg-gray-50 border-b border-gray-200 px-5 py-3">
-                        <h2 className="text-base font-semibold text-gray-700">Liên Hệ Chính</h2>
+                        <h2 className="text-base font-semibold text-gray-700">{t("mainContact")}</h2>
                     </div>
                     <div className="p-5 space-y-2 text-sm">
                         <div className="flex gap-2">
-                            <span className="font-medium text-gray-600 min-w-[90px]">Họ và tên:</span>
+                            <span className="font-medium text-gray-600 min-w-[90px]">{t("fullName")}</span>
                             <span className="text-gray-800">{user?.strFullName}</span>
                         </div>
                         <div className="flex gap-2">
-                            <span className="font-medium text-gray-600 min-w-[90px]">Email:</span>
+                            <span className="font-medium text-gray-600 min-w-[90px]">{t("email")}</span>
                             <span className="text-gray-800 font-light">{user?.strEmail}</span>
                         </div>
 
@@ -525,7 +527,7 @@ const PaymentBookingCartView: React.FC = () => {
                             </label>
 
                             <span className="text-sm font-medium text-gray-600">
-                                Có phải khách du lịch
+                                {t("isTraveller")}
                             </span>
                         </div>
                     </div>
@@ -535,7 +537,7 @@ const PaymentBookingCartView: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
                                 {/* Danh xưng */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Danh xưng <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("title")} <span className="text-red-500">*</span></label>
                                     <select
                                         name="intSaluteID"
                                         value={
@@ -565,7 +567,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 {/* Tên */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Tên <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("firstName")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         name="strPassengerFirstName"
@@ -582,13 +584,13 @@ const PaymentBookingCartView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập tên"
+                                        placeholder={t("enterFirstName")}
                                     />
                                 </div>
 
                                 {/* Họ và đệm */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Họ và đệm <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("lastName")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         name="strPassengerLastName"
@@ -605,7 +607,7 @@ const PaymentBookingCartView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập họ và đệm"
+                                        placeholder={t("enterLastName")}
                                     />
 
                                 </div>
@@ -619,7 +621,7 @@ const PaymentBookingCartView: React.FC = () => {
                                     }}
                                 >
                                     <label className="block text-gray-700 font-medium mb-1">
-                                        Quốc tịch <span className="text-red-500">*</span>
+                                        {t("nationality")} <span className="text-red-500">*</span>
                                     </label>
 
                                     {/* Select box */}
@@ -628,7 +630,7 @@ const PaymentBookingCartView: React.FC = () => {
                                         className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
                                     >
                                         <span className={selectedCountry ? "text-black" : "text-gray-400"}>
-                                            {selectedCountry?.label || "--- Chọn quốc gia ---"}
+                                            {selectedCountry?.label || t("selectCountry")}
                                         </span>
 
                                         <span className="text-gray-500 text-sm">⌄</span>
@@ -645,7 +647,7 @@ const PaymentBookingCartView: React.FC = () => {
                                                     type="text"
                                                     value={countrySearch}
                                                     onChange={(e) => setCountrySearch(e.target.value)}
-                                                    placeholder="Search..."
+                                                    placeholder={t("search")}
                                                     onClick={(e) => e.stopPropagation()}
                                                     className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-blue-500"
                                                 />
@@ -673,7 +675,7 @@ const PaymentBookingCartView: React.FC = () => {
                                                     ))
                                                 ) : (
                                                     <div className="px-3 py-2 text-sm text-gray-400">
-                                                        Không tìm thấy quốc gia
+                                                        {t("countryNotFound")}
                                                     </div>
                                                 )}
                                             </div>
@@ -683,19 +685,19 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 {/* Độ tuổi */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Độ tuổi <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("age")} <span className="text-red-500">*</span></label>
                                     <select
                                         name="intAgeID"
                                         disabled
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-gray-100"
                                     >
-                                        <option value="3">Adults</option>
+                                        <option value="3">{t("adults")}</option>
                                     </select>
                                 </div>
 
                                 {/* Ngày sinh */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Ngày sinh</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("dateOfBirth")}</label>
                                     <input
                                         type="date"
                                         name="dtmPassengerBirthday"
@@ -740,7 +742,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 {/* Số điện thoại */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Số điện thoại</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("phoneNumber")}</label>
                                     <input
                                         type="text"
                                         name="strPassengerPhone"
@@ -757,7 +759,7 @@ const PaymentBookingCartView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập số điện thoại"
+                                        placeholder={t("enterPhoneNumber")}
                                     />
                                 </div>
                             </div>
@@ -778,7 +780,7 @@ const PaymentBookingCartView: React.FC = () => {
                                             })
                                         )
                                     }
-                                    placeholder="Ghi chú"
+                                    placeholder={t("note")}
                                     rows={3}
                                     className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
                                 />
@@ -793,7 +795,7 @@ const PaymentBookingCartView: React.FC = () => {
                     {/* Header công ty */}
                     <div className="bg-gray-50 border-b border-gray-200 px-5 py-3 flex items-center gap-2">
                         <span className="text-gray-600 text-lg">💼</span>
-                        <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">CÔNG TY KẾT NỐI DU LỊCH</h2>
+                        <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">{t("travelConnectionCompany")}</h2>
                     </div>
 
                     <div className="overflow-x-auto">
@@ -801,27 +803,27 @@ const PaymentBookingCartView: React.FC = () => {
                             <thead>
                                 <tr className="bg-[#1e5bb4] text-white font-medium text-center">
                                     <th className="py-2 px-3 border border-[#1a52a3] w-12">
-                                        STT
+                                        {t("no")}
                                     </th>
 
                                     <th className="py-2 px-4 border border-[#1a52a3] text-left">
-                                        Tên dịch vụ
+                                        {t("serviceName")}
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        Tổng số khách
+                                        {t("totalGuests")}
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        Tổng giá hoa hồng dư
+                                        {t("totalCommissionPrice")}
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        Tổng giá
+                                        {t("totalPrice")}
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        Tổng Tiền Thanh Toán
+                                        {t("totalPaymentAmount")}
                                     </th>
                                 </tr>
                             </thead>
@@ -908,7 +910,7 @@ const PaymentBookingCartView: React.FC = () => {
                                 className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
                             >
                                 <span>🎟️</span>
-                                Voucher
+                                {t("voucher")}
                             </button>
 
                             <VoucherList
@@ -925,7 +927,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                             {selectedVoucher && (
                                 <div className="mt-2 text-xs text-green-600 font-medium">
-                                    Đã chọn voucher: {selectedVoucher?.VoucherCode}
+                                    {t("selectedVoucher")}: {selectedVoucher?.VoucherCode}
                                 </div>
                             )}
                         </div>
@@ -933,7 +935,7 @@ const PaymentBookingCartView: React.FC = () => {
                         {/* Thông tin các đợt thanh toán và Alert */}
                         <div className="text-xs space-y-2 pt-2">
                             <div className="flex justify-between items-center">
-                                <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
+                                <span className="font-medium text-gray-700">{t("paymentFirstInstallment")}</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
                                     {formatCurrency(finalDeposit)}
                                 </span>
@@ -941,7 +943,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                                Bạn sẽ thanh toán trước{" "}
+                                {t("paymentNoticePrefix")}{" "}
                                 {new Date().toLocaleString("vi-VN", {
                                     weekday: "short",
                                     day: "2-digit",
@@ -951,11 +953,11 @@ const PaymentBookingCartView: React.FC = () => {
                                     minute: "2-digit",
                                     second: "2-digit",
                                 })}{" "}
-                                để hoàn thành quá trình book đặt
+                                {t("paymentNoticeSuffix")}
                             </div>
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-                                <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
+                                <span className="font-medium text-gray-700">{t("paymentSecondInstallment")}</span>
                                 <span className="font-semibold text-gray-800">
                                     {formatCurrency(finalDebt)}
                                 </span>
@@ -966,7 +968,7 @@ const PaymentBookingCartView: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
                             <div>
                                 <label className="block font-medium text-gray-700 mb-1.5">
-                                    Phương Thức Thanh Toán
+                                    {t("paymentMethod")}
                                 </label>
 
                                 <select
@@ -974,8 +976,8 @@ const PaymentBookingCartView: React.FC = () => {
                                     onChange={(e) => setPaymentMethod(e.target.value)}
                                     className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
                                 >
-                                    <option value="Bank transfer">Bank transfer</option>
-                                    <option value="Payment online">Payment online</option>
+                                    <option value="Bank transfer">{t("bankTransfer")}</option>
+                                    <option value="Payment online">{t("paymentOnline")}</option>
                                 </select>
                             </div>
 
@@ -983,7 +985,7 @@ const PaymentBookingCartView: React.FC = () => {
                             {paymentMethod === "Bank transfer" && (
                                 <div>
                                     <label className="block font-medium text-gray-700 mb-1.5">
-                                        Tài khoản ngân hàng
+                                        {t("bankAccount")}
                                     </label>
 
                                     <select
@@ -1017,7 +1019,7 @@ const PaymentBookingCartView: React.FC = () => {
                             <div className="flex flex-col items-center text-center text-xs space-y-1.5 py-6 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 mt-4">
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Tên tài khoản:
+                                        {t("accountName")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.accountName}
@@ -1026,7 +1028,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Mã tài khoản:
+                                        {t("accountNumber")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.accountNumber}
@@ -1035,7 +1037,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Bank Name:
+                                        {t("bankName")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.bankName}
@@ -1044,7 +1046,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Bank Add:
+                                        {t("bankAddress")}
                                     </span>{" "}
                                     <span className="text-gray-700">
                                         {bankInfo.bankAddress}
@@ -1053,7 +1055,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        SwiftCode:
+                                        {t("swiftCode")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.swiftCode}
@@ -1064,13 +1066,13 @@ const PaymentBookingCartView: React.FC = () => {
                                     <div className="w-32 h-32 bg-white border border-gray-200 p-2 rounded flex items-center justify-center shadow-inner">
                                         <img
                                             src={bankInfo.qrPlaceholder}
-                                            alt="QR Code Thanh Toán"
+                                            alt={t("qrCodePayment")}
                                             className="w-full h-full object-contain"
                                         />
                                     </div>
 
                                     <span className="text-[10px] text-gray-400 mt-1">
-                                        QR Code
+                                        {t("qrCode")}
                                     </span>
                                 </div>
                             </div>
@@ -1085,7 +1087,7 @@ const PaymentBookingCartView: React.FC = () => {
                                         e.target.value
                                     )
                                 }
-                                placeholder="Ghi chú"
+                                placeholder={t("note")}
                                 rows={3}
                                 className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
                             />
@@ -1097,7 +1099,7 @@ const PaymentBookingCartView: React.FC = () => {
                                 disabled={isLoading}
                                 className="cursor-pointer bg-[#0f4c81] hover:bg-[#0b3a63] text-white font-medium text-xs py-2 px-6 rounded shadow transition-colors duration-150 disabled:opacity-50"
                             >
-                                {isLoading ? "Đang đặt..." : "Đặt Ngay"}
+                                {isLoading ? t("bookingProcessing") : t("bookingNow")}
                             </button>
                         </div>
 

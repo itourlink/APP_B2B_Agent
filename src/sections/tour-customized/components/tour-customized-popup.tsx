@@ -4,7 +4,7 @@ import { z as zod } from "zod";
 
 import { Field, Form } from "@/components/hook-form";
 import { useToastStore } from "@/zustand/useToastStore";
-import { RotateCcw, Trash2 } from "lucide-react";
+import { RotateCcw, Trash2, CircleX } from "lucide-react";
 import { CURRENCYS_OPTIONS, STARS2_OPTIONS } from "@/utils/option-data";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
@@ -13,63 +13,65 @@ import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useEffect, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
-import { CircleX } from "lucide-react";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
 import type { SubmitErrorHandler } from "react-hook-form";
+import { useTranslate } from "@/locales";
 
-
-export const Schema = z
-    .object({
-        agentHost: z.string().min(1, "Vui lòng chọn Agent Host"),
-        currency: z.string().min(1, "Vui lòng chọn ĐVTT"),
-        tourName: z.string().min(1, "Tên Tour là bắt buộc"),
-        dateStart: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
-
-        nationality: z.string().min(1, "Vui lòng chọn Quốc tịch"),
-
-        adults: z.coerce.number().min(1, "Tối thiểu 1 người lớn"),
-        children: z.coerce.number().default(0),
-
-        category: z.array(z.string()).min(1, "Vui lòng chọn Loại"),
-
-        remark: z.string().optional(),
-
-        // room types
-        sgl: z.coerce.number().min(0).default(0),
-        dbl: z.coerce.number().min(0).default(0),
-        twn: z.coerce.number().min(0).default(0),
-        tpl: z.coerce.number().min(0).default(0),
-
-        // list điểm đến (required)
-        listLocation: z.string().min(1, "Vui lòng chọn thêm điểm đến"),
-
-        bannerImg: z.any().optional(),
-
-        country: z.string().optional(),
-        city: z.string().optional(),
-    })
-    .refine(
-        (data) =>
-            data.sgl > 0 || data.dbl > 0 || data.twn > 0 || data.tpl > 0,
-        {
-            message: "Phải nhập ít nhất 1 phòng trong SGL / DBL / TWN / TPL",
-            path: ["sgl"],
-        }
-    );
-
-type SchemaType = zod.infer<typeof Schema>;
 type Props = {
     onClose: () => void;
 };
+
 const TourCustomizedPopup = ({ onClose }: Props) => {
+    const { t } = useTranslate("tourcustomize");
+
+    const Schema = z
+        .object({
+            agentHost: z.string().min(1, t("selectAgentHost")),
+            currency: z.string().min(1, t("selectCurrency")),
+            tourName: z.string().min(1, t("tourNameRequired")),
+            dateStart: z.string().min(1, t("startDateRequired")),
+
+            nationality: z.string().min(1, t("selectNationality")),
+
+            adults: z.coerce.number().min(1, t("minimumOneAdult")),
+            children: z.coerce.number(),
+
+            category: z.array(z.string()).min(1, t("selectCategory")),
+
+            remark: z.string().optional(),
+
+            sgl: z.coerce.number().min(0),
+            dbl: z.coerce.number().min(0),
+            twn: z.coerce.number().min(0),
+            tpl: z.coerce.number().min(0),
+
+            listLocation: z.string().min(1, t("selectDestination")),
+
+            bannerImg: z.any().optional(),
+
+            country: z.string().optional(),
+            city: z.string().optional(),
+        })
+        .refine(
+            (data) =>
+                data.sgl > 0 || data.dbl > 0 || data.twn > 0 || data.tpl > 0,
+            {
+                message: t("minimumOneRoom"),
+                path: ["sgl"],
+            }
+        );
+
+    type SchemaType = zod.infer<typeof Schema>;
+
     const { user } = useUser();
-    const router = useRouter()
+    const router = useRouter();
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
+
     const AGENT_HOST_OPTIONS = coData
         ? [
             {
@@ -79,37 +81,17 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         ]
         : [];
 
-
     const { showToast } = useToastStore();
+
     const methods = useForm<SchemaType>({
         resolver: zodResolver(Schema) as any,
-        defaultValues: {
-            agentHost: coData?.strCompanyGUID || "",
-            currency: "",
-            tourName: "",
-            dateStart: "2026-04-25",
-
-            nationality: "",
-
-            sgl: 0,
-            dbl: 2,
-            twn: 0,
-            tpl: 0,
-
-            adults: 30,
-            children: 3,
-
-            category: ["1"],
-
-            remark: "<p>Ghi chú</p>",
-
-            bannerImg: "",
-
-            listLocation: "",
-        }
     });
 
-    const { handleSubmit, formState: { isSubmitting }, setValue } = methods;
+    const {
+        handleSubmit,
+        formState: { isSubmitting },
+        setValue,
+    } = methods;
 
     const { mutate: addNewTourCustomizedApi, isPending: isLoading } = useMutation({
         mutationFn: addNewTourCustomized,
@@ -125,29 +107,31 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         const isDuplicateTourName = existingTourNames.some(
             (name) => name.trim().toLowerCase() === data.tourName.trim().toLowerCase()
         );
+
         if (isDuplicateTourName) {
             methods.setError("tourName", {
                 type: "manual",
-                message: "Tên tour đã tồn tại",
+                message: t("tourNameExists"),
             });
             return;
         }
 
-
-
         if (locations.length === 0) {
-            showToast("error", "Vui lòng thêm điểm đến");
+            showToast("error", t("addDestination"));
             return;
         }
+
         const currentCountry = methods.getValues("country");
         const currentCity = methods.getValues("city");
+
         if (currentCountry && currentCity) {
-            const confirmMissing = window.confirm("Vui lòng chọn thêm điểm đến");
+            const confirmMissing = window.confirm(t("addDestination"));
             if (!confirmMissing) return;
         }
+
         const payload = {
             strCompanyGUID: user?.strCompanyGUID || "",
-            strCompanyAgentHostGUID: data.agentHost, // nếu đang là GUID thì OK, không thì cần map lại
+            strCompanyAgentHostGUID: data.agentHost,
 
             intLangID: null,
             strCountryGUID: data.nationality,
@@ -167,7 +151,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             intNoOfDay: null,
             intPerPaxID: null,
 
-            intCurrencyID: data.currency, // nếu là ID thì giữ number/string ID
+            intCurrencyID: data.currency,
 
             strListEasiaCateID: data.category.join(","),
 
@@ -175,15 +159,15 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             strListLocation: buildListLocation(),
         };
+
         addNewTourCustomizedApi(payload, {
             onSuccess: async (res: any) => {
-                showToast("success", "Thêm tour tùy chỉnh thành công");
+                showToast("success", t("customTourAddedSuccess"));
 
                 const guid = res?.[0]?.[0]?.strTourCustomizedGUID;
 
                 if (!guid) return;
 
-                // delay 1 chút cho backend insert xong
                 setTimeout(async () => {
                     const detail = await useListTourCustomized({
                         strTourCustomizedGUID: guid,
@@ -194,24 +178,28 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         strOrder: null,
                         intCurPage: 1,
                         intPageSize: 5,
-                        tblsReturn: "[0]"
+                        tblsReturn: "[0]",
                     });
 
                     onClose();
-                    const itemDetailTour = detail?.[0]?.[0]
-                    router.replaceParams(paths.content.detailTour, { item: itemDetailTour })
+
+                    const itemDetailTour = detail?.[0]?.[0];
+
+                    router.replaceParams(paths.content.detailTour, {
+                        item: itemDetailTour,
+                    });
                 }, 500);
             },
             onError: () => {
-                showToast("error", "Thêm tour tùy chỉnh thất bại");
+                showToast("error", t("customTourAddedFailed"));
             },
         });
-    }
-
+    };
 
     const onINValid: SubmitErrorHandler<SchemaType> = () => {
-        showToast("error", "Vui lòng kiểm tra lại thông tin");
-    }
+        showToast("error", t("checkInformationAgain"));
+    };
+
     const onSubmit = handleSubmit(onValid, onINValid);
 
     useEffect(() => {
@@ -223,14 +211,12 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         }
     }, [coData]);
 
-
-    // quốc gia
-
     const { ctData } = useListCity({
         strTableName: "MC02",
-        strFeildSelect: "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
+        strFeildSelect:
+            "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
         strWhere: "WHERE (IsActive=1)  ORDER BY MC02_CountryName ASC ",
-    })
+    });
 
     const COUNTRY_OPTIONS = ctData.map((item: any) => ({
         label: item.strName,
@@ -242,8 +228,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         value: item.code,
     }));
 
-
-    // thành phố
     const { ctData: ntData } = useListCity({
         strTableName: "MC04",
         strFeildSelect: "MC04_CityCode AS strCityCode,MC04_CityName AS strCityName",
@@ -258,41 +242,37 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         value: item.strCityCode,
     }));
 
-
     const [locations, setLocations] = useState<
         { countryCode: string; cityCode: string; nights: number }[]
     >([]);
 
     const watchedCountry = methods.watch("country");
 
-    // xóa lỗi khi gõ lại tên tour
     const watchedTourName = methods.watch("tourName");
+
     useEffect(() => {
         if (watchedTourName) {
-            methods.clearErrors("tourName")
+            methods.clearErrors("tourName");
         }
-    }, [watchedTourName])
-    // xóa lỗi nationality khi chọn quốc gia
-    const watchedNationality = methods.watch("nationality")
+    }, [watchedTourName]);
+
+    const watchedNationality = methods.watch("nationality");
 
     useEffect(() => {
-        if (watchedNationality)
-            methods.clearErrors("nationality")
-    }, [watchedNationality])
-
+        if (watchedNationality) {
+            methods.clearErrors("nationality");
+        }
+    }, [watchedNationality]);
 
     const handleAddLocation = () => {
         const countryVal = methods.getValues("country");
         const cityVal = methods.getValues("city");
 
-        if (!countryVal) return showToast("error", "Vui lòng chọn quốc gia");
-        if (!cityVal) return showToast("error", "Vui lòng chọn thành phố");
+        if (!countryVal) return showToast("error", t("selectCountry"));
+        if (!cityVal) return showToast("error", t("selectCity"));
         if (!countryVal || !cityVal) return;
 
-
-
         setLocations((prev) => {
-            // tránh duplicate city
             if (prev.some((x) => x.cityCode === cityVal)) return prev;
 
             return [
@@ -305,7 +285,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             ];
         });
 
-        // reset form fields
         methods.setValue("city", "");
         methods.clearErrors(["country", "city", "listLocation"]);
     };
@@ -314,32 +293,30 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         if (!watchedCountry) return;
 
         setNationalityCode(watchedCountry);
-
-        // reset city khi đổi country
         methods.setValue("city", "");
     }, [watchedCountry]);
 
-
     const buildListLocation = () => {
-        return locations
-            .map((x) => `${x.cityCode}!${x.nights}`)
-            .join("#") + (locations.length ? "#" : "");
+        return (
+            locations.map((x) => `${x.cityCode}!${x.nights}`).join("#") +
+            (locations.length ? "#" : "")
+        );
     };
 
-    // keep form field `listLocation` in sync with locations state
     useEffect(() => {
         methods.setValue("listLocation", buildListLocation());
     }, [locations]);
 
-    // initialize from existing form value if any (parse format CITYCODE!N#...)
     useEffect(() => {
         const initial = methods.getValues("listLocation") || "";
         if (!initial) return;
+
         const parsed = initial
             .split("#")
             .filter(Boolean)
-            .map((t) => {
-                const [cityCode, nights] = t.split("!");
+            .map((item) => {
+                const [cityCode, nights] = item.split("!");
+
                 return {
                     countryCode: "",
                     cityCode: cityCode || "",
@@ -376,11 +353,15 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     <div className="flex-1">
                         <Field.Select
                             name="agentHost"
-                            label={{ text: "Agent Host", icon: <span className="text-red-500">*</span> }}
+                            label={{
+                                text: t("agentHost"),
+                                icon: <span className="text-red-500">*</span>,
+                            }}
                             options={AGENT_HOST_OPTIONS}
                             disabled={coLoading || AGENT_HOST_OPTIONS.length === 0}
                         />
                     </div>
+
                     <button
                         type="button"
                         className="p-2.5 text-gray-400 hover:text-[#004b91] bg-gray-50 rounded-lg mb-1"
@@ -391,56 +372,70 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
                 <Field.Select
                     name="currency"
-                    label={{ text: "ĐVTT", icon: <span className="text-red-500">*</span> }}
+                    label={{
+                        text: t("currency"),
+                        icon: <span className="text-red-500">*</span>,
+                    }}
                     options={CURRENCYS_OPTIONS}
                 />
 
                 <Field.SearchSelect
                     name="nationality"
-                    label={{ text: "Nationality" }}
+                    label={{ text: t("nationality") }}
                     options={COUNTRY_OPTIONS}
                 />
 
-
-
                 <Field.Text
                     name="tourName"
-                    label={{ text: "Tour name", icon: <span className="text-red-500">*</span> }}
-                    placeholder="Nhập tên tour..."
+                    label={{
+                        text: t("tourName"),
+                        icon: <span className="text-red-500">*</span>,
+                    }}
+                    placeholder={t("enterTourName")}
                 />
 
                 <Field.Text
                     name="dateStart"
                     type="date"
-                    label={{ text: "Date Start", icon: <span className="text-red-500">*</span> }}
+                    label={{
+                        text: t("dateStart"),
+                        icon: <span className="text-red-500">*</span>,
+                    }}
                 />
 
-                <Field.Text name="sgl" type="number" label={{ text: "SGL" }} />
-                <Field.Text name="dbl" type="number" label={{ text: "DBL" }} />
-                <Field.Text name="twn" type="number" label={{ text: "TWN" }} />
-                <Field.Text name="tpl" type="number" label={{ text: "TPL" }} />
+                <Field.Text name="sgl" type="number" label={{ text: t("singleRoom") }} />
+                <Field.Text name="dbl" type="number" label={{ text: t("doubleRoom") }} />
+                <Field.Text name="twn" type="number" label={{ text: t("twinRoom") }} />
+                <Field.Text name="tpl" type="number" label={{ text: t("tripleRoom") }} />
 
                 <Field.Text
                     name="adults"
                     type="number"
-                    label={{ text: "No of Adults", icon: <span className="text-red-500">*</span> }}
+                    label={{
+                        text: t("adults"),
+                        icon: <span className="text-red-500">*</span>,
+                    }}
                 />
 
                 <Field.Text
                     name="children"
                     type="number"
-                    label={{ text: "No of Child" }}
+                    label={{ text: t("children") }}
                 />
 
                 <Field.MultiSelect
                     name="category"
-                    label={{ text: "Category", icon: <span className="text-red-500">*</span> }}
+                    label={{
+                        text: t("category"),
+                        icon: <span className="text-red-500">*</span>,
+                    }}
                     options={STARS2_OPTIONS}
                 />
             </div>
 
             <div className="space-y-2 border border-slate-200 rounded-2xl p-4">
-                <label className="">Danh sách điểm đến</label>
+                <label>{t("destinationList")}</label>
+
                 {methods.formState.errors.listLocation && (
                     <div className="flex items-center gap-2 text-red-500 text-xs mt-2 px-4">
                         <CircleX size={16} />
@@ -469,7 +464,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         onClick={handleAddLocation}
                         className="px-4 py-2 bg-[#004b91] text-white rounded-lg text-sm cursor-pointer hover:bg-[#003d75] transition"
                     >
-                        Thêm điểm đến
+                        {t("addDestinationButton")}
                     </button>
                 </div>
 
@@ -479,7 +474,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                             key={index}
                             className="flex items-center justify-between gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
                         >
-                            {/* LEFT: location info */}
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold text-gray-800">
                                     {item.cityCode}
@@ -489,9 +483,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                                 </span>
                             </div>
 
-                            {/* CENTER: nights */}
                             <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">Nights</span>
+                                <span className="text-xs text-gray-500">
+                                    {t("nights")}
+                                </span>
 
                                 <select
                                     value={item.nights}
@@ -514,7 +509,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                                 </select>
                             </div>
 
-                            {/* RIGHT: delete */}
                             <button
                                 onClick={() =>
                                     setLocations((prev) => prev.filter((_, i) => i !== index))
@@ -526,27 +520,21 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         </div>
                     ))}
                 </div>
-
-
             </div>
 
-
-
             <div className="space-y-2">
-                <label className="">Remark</label>
+                <label>{t("remark")}</label>
+
                 <div className="rounded-2xl overflow-hidden border border-gray-200">
                     <Field.Editor name="remark" />
                 </div>
             </div>
 
-
             <BannerMediaField
-                title="Banner IMG"
+                title={t("bannerImg")}
                 value={preview}
                 onChange={(path) => {
-                    setPreview(
-                        `${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`
-                    );
+                    setPreview(`${CONFIG.serverUrlSP}${path.replace(/^\//, "")}`);
 
                     setValue("bannerImg", path);
                 }}
@@ -558,14 +546,14 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     disabled={isSubmitting || isLoading}
                     className="cursor-pointer w-full px-16 py-2.5 bg-[#004b91] hover:bg-[#003d75] rounded-lg text-white transition-colors disabled:opacity-50"
                 >
-                    {isSubmitting || isLoading ? "Đang lưu..." : "Lưu"}
+                    {isSubmitting || isLoading ? t("saving") : t("save")}
                 </button>
             </div>
         </div>
     );
 
     return (
-        <div className="">
+        <div>
             <Form methods={methods} onSubmit={onSubmit}>
                 {renderForm}
             </Form>

@@ -17,9 +17,10 @@ import TourSearch from "../tour/components/tour-search";
 import HotelSearch from "../hotel/components/hotel-search";
 import { HotelCard } from "../hotel/components/hotel-card";
 import imgDefault from "@/assets/images/default-image.jpg"
+import { useTranslate } from "@/locales";
 
 const SearchView = () => {
-
+  const { t } = useTranslate("search")
   const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
@@ -371,7 +372,7 @@ const SearchView = () => {
         {searchType === "tour" && (
           <TourSearch />
         )}
-
+            
         {searchType === "hotel" && (
           <HotelSearch />
         )}
@@ -432,7 +433,7 @@ const SearchView = () => {
           {/* CONTENT */}
           <div className="lg:col-span-9">
             <div className="text-2xl font-semibold mb-6">
-              {loading ? "Loading..." : `Tìm thấy ${resultCount} kết quả`}
+              {loading ? t("loading") : t("searchResultCount", { count: resultCount })}
             </div>
 
             {/* SERIES */}
@@ -494,7 +495,7 @@ const SearchView = () => {
                               <Flag size={16} />
 
                               <span>
-                                Bởi:
+                               {t("by")}:
                                 <span className="font-medium ml-1">
                                   {isValidValue(item?.strOwnerCompanyName)}
                                 </span>
@@ -504,21 +505,21 @@ const SearchView = () => {
                             <div className="flex items-center gap-2">
                               <Users size={16} />
 
-                              <span>Tổng: {isValidValue(item?.intPaxMax)}</span>
+                              <span>{t("total")}: {isValidValue(item?.intPaxMax)}</span>
                             </div>
 
                             <div className="flex items-center gap-2">
                               <Clock size={16} />
 
                               <span>
-                                Thời lượng: {isValidValue(item?.intNoOfDay)}{" "}
-                                Days
+                                 {t("duration")}: {isValidValue(item?.intNoOfDay)}{" "}
+                                 {t("days")}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-2">
                               <span className="font-bold">
-                                Đã bán: {isValidValue(item?.intTotalPaxUsed)}
+                               {t("sold")} : {isValidValue(item?.intTotalPaxUsed)}
                               </span>
                             </div>
 
@@ -526,25 +527,25 @@ const SearchView = () => {
                               <MapPin size={16} />
 
                               <span>
-                                Các điểm đến:{" "}
+                               {t("destinations")}:{" "}
                                 {isValidValue(item?.strListTourDestinationName)}
                               </span>
                             </div>
 
                             <div className="space-y-1">
                               <div className="text-blue-600 font-bold">
-                                + Trống: {isValidValue(item?.intTotalPaxRemain)}
+                                +  {t("available")}: {isValidValue(item?.intTotalPaxRemain)}
                               </div>
 
                               <div className="text-blue-600 font-bold">
-                                + Giữ chỗ: {isValidValue(item?.intTotalPaxHold)}
+                                +{t("hold")}: {isValidValue(item?.intTotalPaxHold)}
                               </div>
                             </div>
                           </div>
 
                           <span className="inline-block mt-4 px-3 py-1 bg-blue-100 text-blue-500 rounded-full text-xs font-medium">
                             {isValidValue(item?.strTourTypeName) ||
-                              "Tour hằng ngày"}
+                              t("dailyTour")}
                           </span>
                         </div>
                       </div>
@@ -552,7 +553,7 @@ const SearchView = () => {
                       {/* PRICE */}
                       <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
                         <div className="text-gray-700 font-bold text-lg mb-1">
-                          Giá :
+                          {t("price")} :
                         </div>
 
                         <div className="text-blue-600 text-3xl font-extrabold mb-4">
@@ -563,11 +564,11 @@ const SearchView = () => {
                           onClick={() => router.push(paths.content.agent)}
                           className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors"
                         >
-                          Đặt Ngay
+                         {t("bookNow")}
                         </button>
 
                         <button className="mt-2 text-xs font-bold text-black uppercase bg-gray-100 px-2 py-1 rounded shadow-inner">
-                          Tăng giá/Giảm giá
+                          {t("increaseDecreasePrice")}
                         </button>
                       </div>
                     </div>
@@ -609,7 +610,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                            Không có dữ liệu Khách sạn
+                          {t("noHotelData")}
                           </div>
                         )}
                       </>
@@ -626,7 +627,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                            Không có dữ liệu Khách sạn
+                          {t("noHotelData")}
                           </div>
                         )}
                       </>

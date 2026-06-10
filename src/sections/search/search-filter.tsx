@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { useState } from "react";
 import ReactSlider from "react-slider";
+import { useTranslate } from "@/locales";
 
 const transportList = [
     { label: "Vietnam Airline", value: "1" },
@@ -26,13 +27,10 @@ type Props = {
     isSeries?: boolean;
     isHotel?: boolean;
     isQuick?: boolean;
-
     tourFilter: any;
     setTourFilter: any;
-
     seriesFilter: any;
     setSeriesFilter: any;
-
     onApply?: () => void;
 };
 
@@ -40,24 +38,18 @@ export default function SearchFilter({
     isSeries,
     isHotel,
     isQuick,
-
     tourFilter,
     setTourFilter,
-
     seriesFilter,
     setSeriesFilter,
-
     onApply,
 }: Props) {
-
+    const { t } = useTranslate("search");
     const [priceRange, setPriceRange] = useState([0, 250]);
     const [dayRange, setDayRange] = useState([1, 10]);
 
-    const currentFilter =
-        isSeries ? seriesFilter : tourFilter;
-
-    const setCurrentFilter =
-        isSeries ? setSeriesFilter : setTourFilter;
+    const currentFilter = isSeries ? seriesFilter : tourFilter;
+    const setCurrentFilter = isSeries ? setSeriesFilter : setTourFilter;
 
     const resetFilter = () => {
         setPriceRange([0, 250]);
@@ -66,26 +58,17 @@ export default function SearchFilter({
         const resetData = {
             intCateID: null,
             intProductID: null,
-
             strNoOfDayRange: null,
-
             strFilterServiceName: null,
             strFilterSupplierName: null,
-
             strListEasiaCateID: null,
             strListTransportOptionID: null,
-
             strPriceFromRange: null,
-
-            strLocationCode:
-                currentFilter?.strLocationCode ?? "VN0000",
-
+            strLocationCode: currentFilter?.strLocationCode ?? "VN0000",
             dtmFilterDateValidFrom: null,
             dtmFilterDateValidTo: null,
-
             intNoOfAdult: 2,
             strListNoOfChild: null,
-
             intNoOfSGLSup: 0,
             intNoOfTPLRec: 0,
         };
@@ -98,27 +81,22 @@ export default function SearchFilter({
 
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sticky top-58 h-fit text-sm">
-
-            {/* HEADER */}
             <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-sm">
-                    Lọc kết quả
-                </h3>
+                <h3 className="font-semibold text-sm">{t("filterResults")}</h3>
 
                 <button
                     onClick={() => resetFilter()}
                     className="text-xs text-blue-500 hover:underline cursor-pointer"
                 >
-                    Đặt lại
+                    {t("reset")}
                 </button>
             </div>
 
             <div className="border-b mb-3" />
 
-            {/* KEYWORD */}
             <div className="mb-3">
                 <label className="text-xs font-medium mb-1 block">
-                    Tên tour / khách sạn
+                    {t("tourOrHotelName")}
                 </label>
 
                 <input
@@ -131,27 +109,19 @@ export default function SearchFilter({
                     onChange={(e) =>
                         setCurrentFilter((prev: any) => ({
                             ...prev,
-
                             ...(isHotel
-                                ? {
-                                    strFilterSupplierName: e.target.value,
-                                }
-                                : {
-                                    strFilterServiceName: e.target.value,
-                                }),
+                                ? { strFilterSupplierName: e.target.value }
+                                : { strFilterServiceName: e.target.value }),
                         }))
                     }
-                    placeholder="Nhập từ khóa..."
+                    placeholder={t("enterKeyword")}
                     className="w-full border border-slate-300 rounded-md h-8 px-2 text-xs"
                 />
             </div>
 
-            {/* PRICE */}
             {(!isHotel || !isQuick) && (
                 <div className="mb-4">
-                    <h4 className="text-xs font-medium mb-2">
-                        Giá (USD)
-                    </h4>
+                    <h4 className="text-xs font-medium mb-2">{t("priceUsd")}</h4>
 
                     <ReactSlider
                         className="w-full h-2"
@@ -172,12 +142,7 @@ export default function SearchFilter({
                         renderTrack={(props: any, state: any) => (
                             <div
                                 {...props}
-                                className={`
-                                    h-2 rounded
-                                    ${state.index === 1
-                                        ? "bg-blue-600"
-                                        : "bg-slate-200"}
-                                `}
+                                className={`h-2 rounded ${state.index === 1 ? "bg-blue-600" : "bg-slate-200"}`}
                             />
                         )}
                     />
@@ -189,12 +154,9 @@ export default function SearchFilter({
                 </div>
             )}
 
-            {/* DAY */}
             {!isHotel && (
                 <div className="mb-4">
-                    <h4 className="text-xs font-medium mb-2">
-                        Số ngày
-                    </h4>
+                    <h4 className="text-xs font-medium mb-2">{t("numberOfDays")}</h4>
 
                     <ReactSlider
                         className="w-full h-2"
@@ -215,34 +177,24 @@ export default function SearchFilter({
                         renderTrack={(props: any, state: any) => (
                             <div
                                 {...props}
-                                className={`
-                                    h-2 rounded
-                                    ${state.index === 1
-                                        ? "bg-blue-600"
-                                        : "bg-slate-200"}
-                                `}
+                                className={`h-2 rounded ${state.index === 1 ? "bg-blue-600" : "bg-slate-200"}`}
                             />
                         )}
                     />
 
                     <div className="flex justify-between text-[10px] mt-2 text-gray-500">
-                        <span>{dayRange[0]} ngày</span>
-
-                        <span>{dayRange[1]} ngày</span>
+                        <span>{dayRange[0]} {t("days")}</span>
+                        <span>{dayRange[1]} {t("days")}</span>
                     </div>
                 </div>
             )}
 
-            {/* TRANSPORT */}
             {!isHotel && (
                 <div className="mb-4">
-                    <h4 className="text-xs font-medium mb-2">
-                        Phương tiện
-                    </h4>
+                    <h4 className="text-xs font-medium mb-2">{t("transportation")}</h4>
 
                     <div className="space-y-1 max-h-30 overflow-auto">
                         {transportList.map((item) => {
-
                             const selected =
                                 currentFilter?.strListTransportOptionID
                                     ?.split(",")
@@ -257,31 +209,24 @@ export default function SearchFilter({
                                         type="checkbox"
                                         checked={selected}
                                         onChange={(e) => {
-
                                             const current =
                                                 currentFilter?.strListTransportOptionID
                                                     ?.split(",")
                                                     ?.filter(Boolean) || [];
 
-                                            const updated =
-                                                e.target.checked
-                                                    ? [...current, item.value]
-                                                    : current.filter(
-                                                        (x: string) => x !== item.value
-                                                    );
+                                            const updated = e.target.checked
+                                                ? [...current, item.value]
+                                                : current.filter((x: string) => x !== item.value);
 
                                             setCurrentFilter((prev: any) => ({
                                                 ...prev,
-                                                strListTransportOptionID:
-                                                    updated.join(","),
+                                                strListTransportOptionID: updated.join(","),
                                             }));
                                         }}
                                         className="w-3 h-3"
                                     />
 
-                                    <span className="text-xs">
-                                        {item.label}
-                                    </span>
+                                    <span className="text-xs">{item.label}</span>
                                 </label>
                             );
                         })}
@@ -289,15 +234,11 @@ export default function SearchFilter({
                 </div>
             )}
 
-            {/* STAR */}
             <div className="mb-4">
-                <h4 className="text-xs font-medium mb-2">
-                    Số sao
-                </h4>
+                <h4 className="text-xs font-medium mb-2">{t("stars")}</h4>
 
                 <div className="space-y-1">
                     {starList.map((item) => {
-
                         const selected =
                             currentFilter?.strListEasiaCateID
                                 ?.split(",")
@@ -312,32 +253,25 @@ export default function SearchFilter({
                                     type="checkbox"
                                     checked={selected}
                                     onChange={(e) => {
-
                                         const current =
                                             currentFilter?.strListEasiaCateID
                                                 ?.split(",")
                                                 ?.filter(Boolean) || [];
 
-                                        const updated =
-                                            e.target.checked
-                                                ? [...current, item.value]
-                                                : current.filter(
-                                                    (x: string) => x !== item.value
-                                                );
+                                        const updated = e.target.checked
+                                            ? [...current, item.value]
+                                            : current.filter((x: string) => x !== item.value);
 
                                         setCurrentFilter((prev: any) => ({
                                             ...prev,
-                                            strListEasiaCateID:
-                                                updated.join(","),
+                                            strListEasiaCateID: updated.join(","),
                                         }));
                                     }}
                                     className="w-3 h-3"
                                 />
 
                                 <div className="flex">
-                                    {Array.from({
-                                        length: item.label,
-                                    }).map((_, i) => (
+                                    {Array.from({ length: item.label }).map((_, i) => (
                                         <Star
                                             key={i}
                                             size={12}
@@ -351,12 +285,11 @@ export default function SearchFilter({
                 </div>
             </div>
 
-            {/* APPLY */}
             <button
                 onClick={onApply}
                 className="w-full h-9 rounded-lg bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-sm transition cursor-pointer"
             >
-                Chấp nhận
+                {t("apply")}
             </button>
         </div>
     );
