@@ -27,5 +27,11 @@
   "transportation": "Phương tiện",
   "stars": "Số sao",
   "apply": "Chấp nhận",
-  "hotel": "Khách sạn"
+  "hotel": "Khách sạn",
+  "bookRoomNow": "Đặt phòng ngay",
+"destination": "Điểm đến",
+"searchPlaceholder": "Tìm kiếm...",
+"checkInCheckOutDate": "Ngày nhận phòng - Ngày trả phòng",
+"redirectingPage": "Đang chuyển trang..."
+  
 }
