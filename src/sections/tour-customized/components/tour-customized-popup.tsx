@@ -20,6 +20,7 @@ import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
 import type { SubmitErrorHandler } from "react-hook-form";
 import { useTranslate } from "@/locales";
+import { isValidValue } from "@/utils/utilts";
 
 type Props = {
     onClose: () => void;
@@ -68,7 +69,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     type SchemaType = zod.infer<typeof Schema>;
 
     const { user } = useUser();
-    const router = useRouter();
     const { coData, coLoading } = useListCompanyOwner();
     const [nationalityCode, setNationalityCode] = useState("");
 
@@ -185,9 +185,20 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
                     const itemDetailTour = detail?.[0]?.[0];
 
-                    router.replaceParams(paths.content.detailTour, {
-                        item: itemDetailTour,
+                    const params = new URLSearchParams({
+                        strTourCode: itemDetailTour?.strTourCode ?? "",
+                        strAgentHostServiceItemGUID:
+                            isValidValue(itemDetailTour?.strAgentHostServiceItemGUID),
                     });
+
+                    // const url = `http://localhost:5173/detail-tour?${params.toString()}`;
+                    const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
+
+                    window.open(
+                        url,
+                        "_blank"
+                    );
+
                 }, 500);
             },
             onError: () => {
@@ -403,24 +414,27 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     }}
                 />
 
-                <Field.Text name="sgl" type="number" label={{ text: t("singleRoom") }} />
-                <Field.Text name="dbl" type="number" label={{ text: t("doubleRoom") }} />
-                <Field.Text name="twn" type="number" label={{ text: t("twinRoom") }} />
-                <Field.Text name="tpl" type="number" label={{ text: t("tripleRoom") }} />
+                <Field.Text min={0} name="sgl" type="number" label={{ text: t("singleRoom") }} placeholder="0" />
+                <Field.Text min={0} name="dbl" type="number" label={{ text: t("doubleRoom") }} placeholder="0" />
+                <Field.Text min={0} name="twn" type="number" label={{ text: t("twinRoom") }} placeholder="0" />
+                <Field.Text min={0} name="tpl" type="number" label={{ text: t("tripleRoom") }} placeholder="0" />
 
                 <Field.Text
+                    min={0}
                     name="adults"
                     type="number"
                     label={{
                         text: t("adults"),
                         icon: <span className="text-red-500">*</span>,
                     }}
+                    placeholder="0"
                 />
 
                 <Field.Text
                     name="children"
                     type="number"
                     label={{ text: t("children") }}
+                    placeholder="0"
                 />
 
                 <Field.MultiSelect
