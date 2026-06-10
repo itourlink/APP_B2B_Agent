@@ -927,9 +927,7 @@ const PaymentBookingHotelView: React.FC = () => {
                         </table>
                     </div>
 
-                    {/* Section Voucher & Chi tiáº¿t Ä‘á»£t thanh toÃ¡n bÃªn dÆ°á»›i table */}
                     <div className="p-5 border-t border-gray-100 space-y-4">
-                        {/* NÃºt Voucher */}
                         <div>
 
                             <button
@@ -959,7 +957,6 @@ const PaymentBookingHotelView: React.FC = () => {
                             )}
                         </div>
 
-                        {/* ThÃ´ng tin cÃ¡c Ä‘á»£t thanh toÃ¡n vÃ  Alert */}
                         <div className="text-xs space-y-2 pt-2">
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">{t("paymentFirstInstallment")}</span>
@@ -968,7 +965,6 @@ const PaymentBookingHotelView: React.FC = () => {
                                 </span>
                             </div>
 
-                            {/* Alert Äá» */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                                 {t("paymentNoticePrefix")}{" "}
                                 {new Date().toLocaleString("vi-VN", {
@@ -991,7 +987,6 @@ const PaymentBookingHotelView: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Khu vá»±c Chá»n PhÆ°Æ¡ng thá»©c & NgÃ¢n hÃ ng */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
                             <div>
                                 <label className="block font-medium text-gray-700 mb-1.5">
@@ -1008,7 +1003,8 @@ const PaymentBookingHotelView: React.FC = () => {
                                 </select>
                             </div>
 
-                            {/* Chá»‰ hiá»‡n khi Bank transfer */}
+                                       {/* Chỉ hiện khi Bank transfer */}
+
                             {paymentMethod === "Bank transfer" && (
                                 <div>
                                     <label className="block font-medium text-gray-700 mb-1.5">

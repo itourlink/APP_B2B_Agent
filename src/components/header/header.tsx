@@ -107,6 +107,7 @@ const Header = () => {
             <button onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
               {t("myRequest")}
             </button>
+            
             <TourCustomized />
             <button onClick={() => router.push(
               `${paths.shop.agentCompany.list}?company=${company}`
