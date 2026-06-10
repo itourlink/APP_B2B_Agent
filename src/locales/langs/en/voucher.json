@@ -1,0 +1,13 @@
+{
+"appliedVoucher": "Applied Voucher",
+"totalAfterVoucher": "Total After Voucher",
+"firstPaymentAfterVoucher": "First Payment After Voucher",
+"totalSaving": "Total saving",
+"voucherCode": "Voucher Code",
+"voucherName": "Voucher Name",
+"validity": "Validity",
+"issuer": "Issuer",
+"balance": "Balance",
+"loadingVoucher": "Loading vouchers...",
+"noVoucher": "No vouchers"
+}

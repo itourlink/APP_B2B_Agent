@@ -1,0 +1,13 @@
+{
+   "appliedVoucher": "Voucher đã áp dụng",
+"totalAfterVoucher": "Tổng tiền sau voucher",
+"firstPaymentAfterVoucher": "Thanh toán đợt 1 sau voucher",
+"totalSaving": "Tổng tiết kiệm",
+"voucherCode": "Mã Voucher",
+"voucherName": "Tên Voucher",
+"validity": "Hiệu lực",
+"issuer": "Đơn vị phát hành",
+"balance": "Số dư",
+"loadingVoucher": "Đang tải voucher...",
+"noVoucher": "Không có voucher"
+}
