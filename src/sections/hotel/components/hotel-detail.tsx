@@ -33,10 +33,10 @@ import { addCartForHotel } from "@/hooks/actions/useBooking";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
-import { useTranslation } from "react-i18next";
+import { useTranslate } from "@/locales";
 
 const HotelDetail = () => {
-  const { t } = useTranslation("hotel");
+  const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
   const router = useRouter();

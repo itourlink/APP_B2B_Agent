@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useListVouchers } from "@/hooks/actions/useBooking";
 import { formatCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
+import { useTranslate } from "@/locales";
 
 type Props = {
     isOpen: boolean;
@@ -26,6 +27,8 @@ export default function VoucherList({
         voucherLoading,
     } = useListVouchers(isOpen);
 
+
+    const { t } = useTranslate("voucher");
     const [selectedVouchers, setSelectedVouchers] =
         useState<any[]>([]);
 
@@ -109,7 +112,7 @@ export default function VoucherList({
             {selectedVouchers.length > 0 && (
                 <div className="mt-3 border border-gray-200 rounded-lg bg-gray-50 p-4 text-sm">
                     <div className="text-green-600 font-semibold mb-3">
-                        ✓ Voucher đã áp dụng:
+                        ✓ {t("appliedVoucher")}:
                     </div>
 
                     <div className="space-y-2">
@@ -153,7 +156,7 @@ export default function VoucherList({
                     <div className="mt-4 space-y-1">
                         <div className="flex items-center justify-between">
                             <span className="text-gray-700">
-                                Tổng tiền sau voucher:
+                                {t("totalAfterVoucher")}:
                             </span>
 
                             <span className="font-semibold text-green-600">
@@ -168,7 +171,7 @@ export default function VoucherList({
 
                         <div className="flex items-center justify-between">
                             <span className="text-gray-700">
-                                Phí thanh toán sau voucher:
+                               {t("firstPaymentAfterVoucher")}:
                             </span>
 
                             <span className="font-semibold text-green-600">
@@ -184,7 +187,7 @@ export default function VoucherList({
 
                     <div className="mt-3 flex justify-end">
                         <div className="text-xs text-gray-500">
-                            Tổng tiết kiệm:{" "}
+                            {t("totalSaving")}: {" "}
                             <span className="text-red-500 font-semibold">
                                 {formatCurrency(
                                     totalVoucherAmount
@@ -227,23 +230,23 @@ export default function VoucherList({
                                 </th>
 
                                 <th className="px-3 py-2 border-b">
-                                    Mã Voucher
+                                    {t("voucherCode")}
                                 </th>
 
                                 <th className="px-3 py-2 border-b">
-                                    Tên Voucher
+                                    {t("voucherName")}
                                 </th>
 
                                 <th className="px-3 py-2 border-b">
-                                    Hiệu lực
+                                    {t("validity")}
                                 </th>
 
                                 <th className="px-3 py-2 border-b">
-                                    Đơn vị phát hành
+                                    {t("issuer")}
                                 </th>
 
                                 <th className="px-3 py-2 border-b text-right">
-                                    Số dư
+                                    {t("balance")}
                                 </th>
                             </tr>
                         </thead>
@@ -255,7 +258,7 @@ export default function VoucherList({
                                         colSpan={7}
                                         className="text-center py-6 text-gray-400"
                                     >
-                                        Đang tải voucher...
+                                        {t("loadingVoucher")}
                                     </td>
                                 </tr>
                             ) : voucherData.length >
@@ -359,7 +362,7 @@ export default function VoucherList({
                                         colSpan={7}
                                         className="text-center py-6 text-gray-400"
                                     >
-                                        Không có voucher
+                                        {t("noVoucher")}
                                     </td>
                                 </tr>
                             )}
