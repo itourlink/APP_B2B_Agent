@@ -3,6 +3,7 @@ import { getUrlImage } from "@/utils/format-image";
 import { isValidValue } from "@/utils/utilts";
 import { FileCheck } from "lucide-react";
 import { useState } from "react";
+import imgDefault from "@/assets/images/default-image.jpg"
 
 const BADGE_MAP: Record<number, { icon: string; label: string }> = {
     1: { icon: "💎", label: "Diamond" },
@@ -343,8 +344,16 @@ const AgentCompanyView = () => {
                                 {/* Logo */}
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                                     <img
-                                        src={getLogoSrc(company?.strCompanyLogo)}
+                                        src={
+                                            typeof company?.strCompanyLogo === "string" &&
+                                                company.strCompanyLogo.trim()
+                                                ? getLogoSrc(company.strCompanyLogo)
+                                                : imgDefault
+                                        }
                                         alt="logo"
+                                        onError={(e) => {
+                                            e.currentTarget.src = imgDefault;
+                                        }}
                                         className="w-full h-full object-contain"
                                     />
                                 </div>
