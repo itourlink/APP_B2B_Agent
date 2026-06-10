@@ -114,6 +114,12 @@ export default function SearchFilter({
                                 : { strFilterServiceName: e.target.value }),
                         }))
                     }
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            onApply?.();
+                        }
+                    }}
                     placeholder={t("enterKeyword")}
                     className="w-full border border-slate-300 rounded-md h-8 px-2 text-xs"
                 />

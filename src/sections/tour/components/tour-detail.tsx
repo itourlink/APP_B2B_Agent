@@ -185,7 +185,7 @@ const TourDetail = () => {
 
                     <div className="flex items-center gap-1">
                       <Clock3 size={16} />
-                      Quy mô: {isValidValue(ListData?.intPaxMin)} - {isValidValue(ListData?.intPaxMax)} {t("guests")}
+                     { t("groupSize")}: {isValidValue(ListData?.intPaxMin)} - {isValidValue(ListData?.intPaxMax)} {t("guests")}
                     </div>
 
                     <div className="flex items-center gap-1">

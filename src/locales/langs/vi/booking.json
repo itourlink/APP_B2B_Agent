@@ -56,5 +56,14 @@
 "firstPayment": "Thanh toán đợt 1",
 "secondPayment": "Thanh toán đợt 2",
 "cancel": "Huỷ",
-"confirmBooking": "Xác nhận đặt"
+"confirmBooking": "Xác nhận đặt",
+"bookTicket": "Đặt vé",
+"departureDate": "Ngày khởi hành",
+"guestQuantity": "Số lượng khách",
+"adults": "Người lớn",
+"children": "Trẻ em",
+"from12YearsOld": "Từ 12 tuổi",
+"under12YearsOld": "Dưới 12 tuổi",
+"saveChanges": "Lưu thay đổi",
+"confirmBookTicket": "Xác nhận đặt vé"
 }
