@@ -459,9 +459,11 @@ const PaymentBookingHotelView: React.FC = () => {
                             });
                         }
 
+                        
+                        // serviceUrl =
+                        //     `http://localhost:5173/service?activeTab=${activeTab}`;
                         serviceUrl =
                             `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
-
                         // luôn đá trang
                         window.open(
                             serviceUrl,
