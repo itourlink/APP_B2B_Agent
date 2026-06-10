@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { paths } from "@/routes/paths";
 import { useSearchDesHotel } from "@/hooks/actions/useHotel";
 import { useLocation } from "react-router-dom";
+import { useTranslate } from "@/locales";
 
 const today = new Date();
 
@@ -36,6 +37,7 @@ const DEFAULT_FILTERS2 = {
 };
 
 const HotelSearch = () => {
+    const { t } = useTranslate("search")
     const location = useLocation();
 
     const company =
@@ -154,14 +156,14 @@ const HotelSearch = () => {
                     {
                         type: "toggle",
                         key: "series",
-                        label: "Đặt phòng ngay",
+                        label:t( "bookRoomNow"),
                     },
 
                     {
                         type: "search",
                         key: "strFilterDestinationName",
-                        label: "Điểm đến",
-                        placeholder: "Search...",
+                        label: t("destination"),
+                        placeholder: t("searchPlaceholder"),
 
                         renderDropdown: ({ close }) => (
                             <HotelLocationDes
@@ -228,7 +230,7 @@ const HotelSearch = () => {
                         keyStart: "start",
                         keyEnd: "end",
                         label:
-                            "Ngày nhận phòng - Ngày trả phòng",
+                           t("checkInCheckOutDate"),
                     },
 
                     {

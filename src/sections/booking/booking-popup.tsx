@@ -1,5 +1,6 @@
 import PanelPopup from "@/components/popup/panel-popup";
 import { useListCurrency } from "@/hooks/actions/useBooking";
+import { useTranslate } from "@/locales";
 import { isValidValue } from "@/utils/utilts";
 
 type Props = {
@@ -26,24 +27,24 @@ export default function BookingPopup({
 }: Props) {
 
     const { currencyData } = useListCurrency();
-    
+        const { t } = useTranslate("booking")
     return (
         <PanelPopup
             open={open}
             onClose={onClose}
-            title="Xác nhận đặt"
+            title={t("bookingConfirm")}
             className="max-w-md"
         >
             <div className="space-y-5 text-sm">
 
                 <div className="text-gray-700 leading-relaxed">
-                    Bạn có chắc chắn muốn đặt này không?
+                     {t("bookingConfirmQuestion")}
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2 text-xs">
 
                     <div className="flex justify-between">
-                        <span>Thanh toán đợt 1:</span>
+                        <span>{t("firstPayment")}:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
                             {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
@@ -51,7 +52,7 @@ export default function BookingPopup({
                     </div>
 
                     <div className="flex justify-between">
-                        <span>Thanh toán đợt 2:</span>
+                        <span>{t("secondPayment")}:</span>
 
                         <span className="font-semibold text-orange-600">
                             {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
@@ -59,7 +60,7 @@ export default function BookingPopup({
                     </div>
 
                     <div className="flex justify-between">
-                        <span>Voucher:</span>
+                        <span>{t("voucher")}:</span>
 
                         <span className="font-semibold text-red-500">
                             -{currencyData?.strCurrencySymbol} {isValidValue(totalVoucherAmount)}
@@ -67,7 +68,7 @@ export default function BookingPopup({
                     </div>
 
                     <div className="flex justify-between">
-                        <span>Phương thức:</span>
+                        <span>{t("paymentMethod")}:</span>
 
                         <span className="font-medium">
                             {paymentMethod}
@@ -81,7 +82,7 @@ export default function BookingPopup({
                         onClick={onClose}
                         className="cursor-pointer px-4 py-2 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
                     >
-                        Huỷ
+                            {t("cancel")}
                     </button>
 
                     <button
@@ -89,7 +90,7 @@ export default function BookingPopup({
                         disabled={isLoading}
                         className="cursor-pointer px-4 py-2 rounded bg-[#0f4c81] text-white hover:bg-[#0b3a63] transition disabled:opacity-50"
                     >
-                        {isLoading ? "Đang đặt..." : "Xác nhận đặt"}
+                     {isLoading ? t("bookingProcessing") : t("confirmBooking")}
                     </button>
 
                 </div>

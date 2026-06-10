@@ -14,374 +14,24 @@ import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDate } from '@/utils/format-time';
 import { addDays } from 'date-fns';
+import { useTranslate } from '@/locales';
 
 const PaymentBookingView: React.FC = () => {
-    const { setGlobalLoading } = useGlobalLoading();
-    const location = useLocation();
-    const item = location.state?.item;
-    const price = location.state?.price;
-    const payloadItem = location.state?.payload;
-    const { showToast } = useToastStore();
-    const { bankAccountData } = useListBankAccount();
-    const { user } = useUser();
-    const { coData } = useListCompanyOwner();
-    const { currencyData } = useListCurrency();
-    const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
-    const [isShowVoucher, setIsShowVoucher] = useState(false);
-    const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
-    const [isExpired, setIsExpired] = useState(false);
-    const [paidRemark, setPaidRemark] = useState("");
-    const [selectedCountry, setSelectedCountry] = useState<any>(null);
-    const [travellerForm, setTravellerForm] =
-        useState<any>({
-            intSaluteID: "2",
-            strPassengerFirstName: "",
-            strPassengerLastName: "",
-            strCountryGUID: "",
-            dtmPassengerBirthday: "",
-            strPassengerEmail: "",
-            strPassengerPhone: "",
-            strPassengerRemark: "",
-        });
-
-    // --- STATE FOR FORMS ---
-    const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
-
-    const [selectedBankAccount, setSelectedBankAccount] = useState<any>(null);
-
-    useEffect(() => {
-        if (bankAccountData?.length > 0) {
-            setSelectedBankAccount(bankAccountData[0]);
-        }
-    }, [bankAccountData]);
-
-    const { mutateAsync: addBookingForTourApi, isPending: isLoading } = useMutation({
-        mutationFn: addBookingForTour,
-    });
-
-    const { mutateAsync: markUsedVoucherApi, isPending: isVcPending } = useMutation({
-        mutationFn: markUsedVoucher,
-    });
-
-    const { mutateAsync: fetchGetEmailSendAGHByAGBApi } = useMutation({
-        mutationFn: fetchGetEmailSendAGHByAGB,
-    });
-    const { mutateAsync: fetchGetSendEmailApi } = useMutation({
-        mutationFn: fetchGetSendEmail,
-    });
-
-    const { mutateAsync: listAGTMS, isPending: isListAGTMSPending } =
-        useListAGTransTMSMutation();
-
-    const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
-        useDetailAGTransTMSMutation();
-
-    const { paytermData } = useListTourPaymentTerm({
-        strTourGUID: item?.strTourGUID
-    })
-
-    const { ctData } = useListCity({
-        strTableName: "MC02",
-        strFeildSelect: "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
-        strWhere: "WHERE (IsActive=1)  ORDER BY MC02_CountryName ASC ",
-    })
-
-    const COUNTRY_OPTIONS = ctData.map((item: any) => ({
-        label: item.strName,
-        value: item.id,
+    const { t } = useTranslate("booking")
+    const PAYMENT_METHOD_BANK_TRANSFER = "bankTransfer";
+    const PAYMENT_METHOD_ONLINE = "paymentOnline";
+    const titleOptions = TITLES_OPTIONS.map((option) => ({
+        ...option,
+        label:
+            option.value === "2"
+                ? t("mr")
+                : option.value === "3"
+                    ? t("ms")
+                    : option.value === "4"
+                        ? t("mrs")
+                        : option.label,
     }));
-
-    const [countrySearch, setCountrySearch] = useState("");
-    const [isOpenCountry, setIsOpenCountry] = useState(false);
-    const [isOpenConfirm, setIsOpenConfirm] = useState(false);
-
-    const filteredCountries = COUNTRY_OPTIONS.filter((item: any) =>
-        item.label.toLowerCase().includes(countrySearch.toLowerCase())
-    );
-
-    useEffect(() => {
-        const handleClickOutside = () => {
-            setIsOpenCountry(false);
-        };
-
-        window.addEventListener("click", handleClickOutside);
-
-        return () => {
-            window.removeEventListener("click", handleClickOutside);
-        };
-    }, []);
-
-    const totalChildren =
-        payloadItem?.strListChildAge
-            ? payloadItem.strListChildAge.split(",").filter(Boolean).length
-            : 0;
-
-    const totalGuests =
-        (payloadItem?.intAdult || 0) + totalChildren;
-
-    const totalDeposit =
-        Number(price?.dblTotalPrice || 0) *
-        ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
-
-    const totalDebt = Number(price?.dblTotalPrice || 0) - Number(totalDeposit);
-    const [finalVoucherPayment] = useState(
-        Number(price?.dblTotalPrice || 0)
-    );
-    const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
-
-    const finalDeposit =
-        Math.max(totalDeposit - totalVoucherAmount, 0);
-
-    const finalDebt =
-        Math.max(totalDebt - totalVoucherAmount, 0);
-
-    const bankInfo = {
-        accountName:
-            selectedBankAccount?.strCompanyBankAccountName || "---",
-
-        accountNumber:
-            selectedBankAccount?.strCompanyBankAccountCode || "---",
-
-        bankName:
-            selectedBankAccount?.strCompanyBankAccountInfo || "---",
-
-        bankAddress:
-            selectedBankAccount?.strBankAddress || "---",
-
-        swiftCode:
-            selectedBankAccount?.strSwiftCode || "---",
-
-        qrPlaceholder:
-            typeof selectedBankAccount?.strLinkQRCode === "string" &&
-                selectedBankAccount?.strLinkQRCode
-                ? selectedBankAccount?.strLinkQRCode
-                : "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NoQRCode",
-    };
-
-    if (isExpired) {
-        return <div className="w-full min-h-screen bg-white"></div>;
-    }
-
-    useEffect(() => {
-
-        const isPending =
-            isLoading ||
-            isVcPending ||
-            isListAGTMSPending ||
-            isDetailAGTMSPending;
-
-        setGlobalLoading(isPending);
-
-    }, [
-        isLoading,
-        isVcPending,
-        isListAGTMSPending,
-        isDetailAGTMSPending,
-    ]);
-
-    const handleBooking = async () => {
-        try {
-            // apply voucher trước
-            if (selectedVoucher?.length > 0) {
-                await Promise.all(
-                    selectedVoucher.map(
-                        (voucher: any) =>
-                            new Promise((resolve, reject) => {
-                                markUsedVoucherApi(
-                                    {
-                                        VoucherCode:
-                                            voucher?.voucherCode,
-
-                                        updatedBy:
-                                            user?.strUserGUID ||
-                                            null,
-                                    },
-                                    {
-                                        onSuccess: () =>
-                                            resolve(true),
-
-                                        onError: (err) => {
-                                            showToast(
-                                                "error",
-                                                "Áp dụng voucher thất bại"
-                                            );
-
-                                            reject(err);
-                                        },
-                                    }
-                                );
-                            })
-                    )
-                );
-
-                showToast(
-                    "success",
-                    "Áp dụng voucher thành công"
-                );
-            }
-
-            const companyGUID =
-                coData?.strCompanyGUID || null;
-
-            const payload = {
-                strUserGUID:
-                    user?.strUserGUID || null,
-
-                strCompanyAgentGUID:
-                    user?.strCompanyGUID || null,
-
-                strCompanyOwnerGUID:
-                    companyGUID,
-
-                strTourGUID:
-                    item?.strTourGUID || null,
-
-                strTourPriceItemLevelGUID:
-                    price?.strTourPriceItemLevelGUID ||
-                    null,
-
-                strDepartureTourLevelGUID:
-                    null,
-
-                intAdult:
-                    payloadItem?.intAdult || 0,
-
-                strListChildAge:
-                    payloadItem?.strListChildAge ||
-                    null,
-
-                intSGL:
-                    payloadItem?.intSGL || 0,
-
-                intDBL:
-                    payloadItem?.intDBL || 0,
-
-                intTWN:
-                    payloadItem?.intTWN || 0,
-
-                intTPL:
-                    payloadItem?.intTPL || 0,
-
-                dtmDateFrom:
-                    payloadItem?.dtmDateFrom ||
-                    null,
-
-                dtmDateTo:
-                    null,
-
-                intCurrencyID:
-                    user?.intCurrencyID || 3,
-
-                strPaidRemark:
-                    paidRemark || null,
-
-                intSaluteID:
-                    isShowTravellerForm
-                        ? travellerForm?.intSaluteID ||
-                        null
-                        : null,
-
-                intAgeID:
-                    isShowTravellerForm
-                        ? "3"
-                        : null,
-
-                intPassengerAges:
-                    null,
-
-                strPassengerFirstName:
-                    isShowTravellerForm
-                        ? travellerForm?.strPassengerFirstName ||
-                        null
-                        : null,
-
-                strPassengerLastName:
-                    isShowTravellerForm
-                        ? travellerForm?.strPassengerLastName ||
-                        null
-                        : null,
-
-                dtmPassengerBirthday:
-                    isShowTravellerForm
-                        ? travellerForm?.dtmPassengerBirthday ||
-                        null
-                        : null,
-
-                dtmPasspostExpirationDate:
-                    null,
-
-                strPassengerEmail:
-                    isShowTravellerForm
-                        ? travellerForm?.strPassengerEmail ||
-                        null
-                        : null,
-
-                strPassengerPhone:
-                    isShowTravellerForm
-                        ? travellerForm?.strPassengerPhone ||
-                        null
-                        : null,
-
-                strPassengerRemark:
-                    isShowTravellerForm
-                        ? travellerForm?.strPassengerRemark ||
-                        null
-                        : null,
-
-                strPassport:
-                    null,
-
-                strCountryGUID:
-                    isShowTravellerForm
-                        ? travellerForm?.strCountryGUID ||
-                        null
-                        : null,
-
-                IsTraveller:
-                    isShowTravellerForm,
-
-                intPaymentMethodID:
-                    paymentMethod ===
-                        "Bank transfer"
-                        ? 1
-                        : 2,
-
-                strCompanyBankAccountGUID:
-                    selectedBankAccount?.strCompanyBankAccountGUID ||
-                    null,
-
-                VoucherCode:
-                    selectedVoucher?.length > 0
-                        ? selectedVoucher
-                            .map(
-                                (item: any) =>
-                                    item?.voucherCode
-                            )
-                            .filter(Boolean)
-                            .join(",")
-                        : null,
-            };
-
-            // let serviceUrl =
-            //     "http://localhost:5173/service?activeTab=hold";
-
-
-            let serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=hold";
-
-            addBookingForTourApi(payload, {
-                onSuccess: async (res) => {
-                    showToast(
-                        "success",
-                        "Đặt thành công"
-                    );
-
-                    try {
-                        const serviceGUID =
-                            res?.[1]?.[0]
-                                ?.strListAgentHostServiceItemGUID;
-
-                        // chỉ xử lý TMS khi có serviceGUID
+    const { setGlobalLoading } = useGlobalLoading();S            // chỉ xử lý TMS khi có serviceGUID
                         if (serviceGUID) {
                             // get email template
                             const emailData =
@@ -482,7 +132,7 @@ const PaymentBookingView: React.FC = () => {
                         // lỗi TMS vẫn cho đá trang
                         window.open(
                             serviceUrl,
-                            "_blank"
+                            "_blank"SeSeSeSeaSeaSeSeSear
                         );
                     }
                 },
@@ -490,7 +140,7 @@ const PaymentBookingView: React.FC = () => {
                 onError: (_) => {
                     showToast(
                         "error",
-                        "Đặt thất bại"
+                        t("bookingFailed")
                     );
 
                 },
@@ -498,7 +148,7 @@ const PaymentBookingView: React.FC = () => {
         } catch (err) {
             showToast(
                 "error",
-                "Voucher không hợp lệ hoặc đã được sử dụng"
+                t("invalidVoucher")
             );
 
         }
@@ -516,15 +166,15 @@ const PaymentBookingView: React.FC = () => {
 
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <div className="bg-gray-50 border-b border-gray-200 px-5 py-3">
-                        <h2 className="text-base font-semibold text-gray-700">Liên Hệ Chính</h2>
+                        <h2 className="text-base font-semibold text-gray-700">{t("mainContact")}</h2>
                     </div>
                     <div className="p-5 space-y-2 text-sm">
                         <div className="flex gap-2">
-                            <span className="font-medium text-gray-600 min-w-[90px]">Họ và tên:</span>
+                            <span className="font-medium text-gray-600 min-w-[90px]">{t("fullName")}</span>
                             <span className="text-gray-800">{user?.strFullName}</span>
                         </div>
                         <div className="flex gap-2">
-                            <span className="font-medium text-gray-600 min-w-[90px]">Email:</span>
+                            <span className="font-medium text-gray-600 min-w-[90px]">{t("email")}</span>
                             <span className="text-gray-800 font-light">{user?.strEmail}</span>
                         </div>
 
@@ -544,7 +194,7 @@ const PaymentBookingView: React.FC = () => {
                             </label>
 
                             <span className="text-sm font-medium text-gray-600">
-                                Có phải khách du lịch
+                                {t("isTraveller")}
                             </span>
                         </div>
                     </div>
@@ -554,7 +204,7 @@ const PaymentBookingView: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
                                 {/* Danh xưng */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Danh xưng <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("title")} <span className="text-red-500">*</span></label>
                                     <select
                                         name="intSaluteID"
                                         value={
@@ -571,7 +221,7 @@ const PaymentBookingView: React.FC = () => {
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-white"
                                     >
-                                        {TITLES_OPTIONS.map((option) => (
+                                        {titleOptions.map((option) => (
                                             <option
                                                 key={option.value}
                                                 value={option.value}
@@ -584,7 +234,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 {/* Tên */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Tên <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("firstName")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         name="strPassengerFirstName"
@@ -601,13 +251,13 @@ const PaymentBookingView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập tên"
+                                        placeholder={t("enterFirstName")}
                                     />
                                 </div>
 
                                 {/* Họ và đệm */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Họ và đệm <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("lastName")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         name="strPassengerLastName"
@@ -624,7 +274,7 @@ const PaymentBookingView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập họ và đệm"
+                                        placeholder={t("enterLastName")}
                                     />
 
                                 </div>
@@ -638,7 +288,7 @@ const PaymentBookingView: React.FC = () => {
                                     }}
                                 >
                                     <label className="block text-gray-700 font-medium mb-1">
-                                        Quốc tịch <span className="text-red-500">*</span>
+                                        {t("nationality")} <span className="text-red-500">*</span>
                                     </label>
 
                                     {/* Select box */}
@@ -647,7 +297,7 @@ const PaymentBookingView: React.FC = () => {
                                         className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
                                     >
                                         <span className={selectedCountry ? "text-black" : "text-gray-400"}>
-                                            {selectedCountry?.label || "--- Chọn quốc gia ---"}
+                                            {selectedCountry?.label || t("selectCountry")}
                                         </span>
 
                                         <span className="text-gray-500 text-sm">⌄</span>
@@ -664,7 +314,7 @@ const PaymentBookingView: React.FC = () => {
                                                     type="text"
                                                     value={countrySearch}
                                                     onChange={(e) => setCountrySearch(e.target.value)}
-                                                    placeholder="Search..."
+                                                    placeholder={t("search")}
                                                     onClick={(e) => e.stopPropagation()}
                                                     className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-blue-500"
                                                 />
@@ -692,7 +342,7 @@ const PaymentBookingView: React.FC = () => {
                                                     ))
                                                 ) : (
                                                     <div className="px-3 py-2 text-sm text-gray-400">
-                                                        Không tìm thấy quốc gia
+                                                        {t("countryNotFound")}
                                                     </div>
                                                 )}
                                             </div>
@@ -702,19 +352,19 @@ const PaymentBookingView: React.FC = () => {
 
                                 {/* Độ tuổi */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Độ tuổi <span className="text-red-500">*</span></label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("age")} <span className="text-red-500">*</span></label>
                                     <select
                                         name="intAgeID"
                                         disabled
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-gray-100"
                                     >
-                                        <option value="3">Adults</option>
+                                        <option value="3">{t("adult")}</option>
                                     </select>
                                 </div>
 
                                 {/* Ngày sinh */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Ngày sinh</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("dateOfBirth")}</label>
                                     <input
                                         type="date"
                                         name="dtmPassengerBirthday"
@@ -736,7 +386,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 {/* Email */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Email</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("email")}</label>
                                     <input
                                         type="email"
                                         name="strPassengerEmail"
@@ -759,7 +409,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 {/* Số điện thoại */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">Số điện thoại</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("phoneNumber")}</label>
                                     <input
                                         type="text"
                                         name="strPassengerPhone"
@@ -776,7 +426,7 @@ const PaymentBookingView: React.FC = () => {
                                             )
                                         }
                                         className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                                        placeholder="Nhập số điện thoại"
+                                        placeholder={t("enterPhoneNumber")}
                                     />
                                 </div>
                             </div>
@@ -797,7 +447,7 @@ const PaymentBookingView: React.FC = () => {
                                             })
                                         )
                                     }
-                                    placeholder="Ghi chú"
+                                    placeholder={t("note")}
                                     rows={3}
                                     className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
                                 />
@@ -812,19 +462,19 @@ const PaymentBookingView: React.FC = () => {
                     {/* Header công ty */}
                     <div className="bg-gray-50 border-b border-gray-200 px-5 py-3 flex items-center gap-2">
                         <span className="text-gray-600 text-lg">💼</span>
-                        <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">CÔNG TY KẾT NỐI DU LỊCH</h2>
+                        <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">{t("travelConnectionCompany")}</h2>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs border-collapse">
                             <thead>
                                 <tr className="bg-[#1e5bb4] text-white font-medium text-center">
-                                    <th className="py-2 px-3 border border-[#1a52a3] w-12">STT</th>
-                                    <th className="py-2 px-4 border border-[#1a52a3] text-left">Tên dịch vụ</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng số khách</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng giá hoa hồng dư</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng giá</th>
-                                    <th className="py-2 px-3 border border-[#1a52a3]">Tổng Tiền Thanh Toán</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3] w-12">{t("no")}</th>
+                                    <th className="py-2 px-4 border border-[#1a52a3] text-left">{t("serviceName")}</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3]">{t("totalGuests")}</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3]">{t("totalCommissionPrice")}</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3]">{t("totalPrice")}</th>
+                                    <th className="py-2 px-3 border border-[#1a52a3]">{t("totalPaymentAmount")}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 text-center text-gray-700">
@@ -850,7 +500,7 @@ const PaymentBookingView: React.FC = () => {
                                     </tr>
                                     <tr className="bg-gray-50/50 font-semibold">
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
-                                        <td className="py-2 px-4 text-left border-r border-gray-100">Total Price</td>
+                                        <td className="py-2 px-4 text-left border-r border-gray-100">{t("totalPrice")}</td>
                                         <td className="py-2 px-3 border-r border-gray-100"></td>
                                         <td className="py-2 px-3 border-r border-gray-100">{isValidValue(price?.dblTotalPriceCom)}</td>
                                         <td className="py-2 px-3 border-r border-gray-100">{currencyData?.strCurrencySymbol} {isValidValue(price?.dblTotalPrice)}</td>
@@ -871,7 +521,7 @@ const PaymentBookingView: React.FC = () => {
                                 className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
                             >
                                 <span>🎟️</span>
-                                Voucher
+                                {t("voucher")}
                             </button>
 
                             <VoucherList
@@ -888,7 +538,7 @@ const PaymentBookingView: React.FC = () => {
 
                             {selectedVoucher && (
                                 <div className="mt-2 text-xs text-green-600 font-medium">
-                                    Đã chọn voucher: {selectedVoucher?.VoucherCode}
+                                        {t("selectedVoucher")}: {selectedVoucher?.VoucherCode}
                                 </div>
                             )}
                         </div>
@@ -896,7 +546,7 @@ const PaymentBookingView: React.FC = () => {
                         {/* Thông tin các đợt thanh toán và Alert */}
                         <div className="text-xs space-y-2 pt-2">
                             <div className="flex justify-between items-center">
-                                <span className="font-medium text-gray-700">Thanh toán đợt 1</span>
+                                <span className="font-medium text-gray-700">{t("paymentFirstInstallment")}</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
                                     {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
                                 </span>
@@ -904,7 +554,7 @@ const PaymentBookingView: React.FC = () => {
 
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                                Bạn sẽ thanh toán trước{" "}
+                                {t("paymentNotice")}{" "}
                                 {new Date().toLocaleString("vi-VN", {
                                     weekday: "short",
                                     day: "2-digit",
@@ -914,11 +564,10 @@ const PaymentBookingView: React.FC = () => {
                                     minute: "2-digit",
                                     second: "2-digit",
                                 })}{" "}
-                                để hoàn thành quá trình book đặt
                             </div>
 
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-                                <span className="font-medium text-gray-700">Thanh toán đợt 2</span>
+                                <span className="font-medium text-gray-700">{t("paymentSecondInstallment")}</span>
                                 <span className="font-semibold text-gray-800">
                                     {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
                                 </span>
@@ -929,7 +578,7 @@ const PaymentBookingView: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
                             <div>
                                 <label className="block font-medium text-gray-700 mb-1.5">
-                                    Phương Thức Thanh Toán
+                                    {t("paymentMethod")}
                                 </label>
 
                                 <select
@@ -937,16 +586,16 @@ const PaymentBookingView: React.FC = () => {
                                     onChange={(e) => setPaymentMethod(e.target.value)}
                                     className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
                                 >
-                                    <option value="Bank transfer">Bank transfer</option>
-                                    <option value="Payment online">Payment online</option>
+                                    <option value={PAYMENT_METHOD_BANK_TRANSFER}>{t("bankTransfer")}</option>
+                                    <option value={PAYMENT_METHOD_ONLINE}>{t("paymentOnline")}</option>
                                 </select>
                             </div>
 
                             {/* Chỉ hiện khi Bank transfer */}
-                            {paymentMethod === "Bank transfer" && (
+                            {paymentMethod === PAYMENT_METHOD_BANK_TRANSFER && (
                                 <div>
                                     <label className="block font-medium text-gray-700 mb-1.5">
-                                        Tài khoản ngân hàng
+                                        {t("bankAccount")}
                                     </label>
 
                                     <select
@@ -976,11 +625,11 @@ const PaymentBookingView: React.FC = () => {
                         </div>
 
                         {/* Chỉ hiện info bank khi Bank transfer */}
-                        {paymentMethod === "Bank transfer" && (
+                        {paymentMethod === PAYMENT_METHOD_BANK_TRANSFER && (
                             <div className="flex flex-col items-center text-center text-xs space-y-1.5 py-6 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 mt-4">
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Tên tài khoản:
+                                        {t("accountName")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.accountName}
@@ -989,7 +638,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Mã tài khoản:
+                                        {t("accountNumber")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.accountNumber}
@@ -998,7 +647,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Bank Name:
+                                        {t("bankName")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.bankName}
@@ -1007,7 +656,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        Bank Add:
+                                        {t("bankAddress")}
                                     </span>{" "}
                                     <span className="text-gray-700">
                                         {bankInfo.bankAddress}
@@ -1016,7 +665,7 @@ const PaymentBookingView: React.FC = () => {
 
                                 <p>
                                     <span className="font-medium text-gray-600">
-                                        SwiftCode:
+                                        {t("swiftCode")}
                                     </span>{" "}
                                     <span className="font-semibold text-gray-800">
                                         {bankInfo.swiftCode}
@@ -1027,13 +676,13 @@ const PaymentBookingView: React.FC = () => {
                                     <div className="w-32 h-32 bg-white border border-gray-200 p-2 rounded flex items-center justify-center shadow-inner">
                                         <img
                                             src={bankInfo.qrPlaceholder}
-                                            alt="QR Code Thanh Toán"
+                                            alt={t("qrCodePayment")}
                                             className="w-full h-full object-contain"
                                         />
                                     </div>
 
                                     <span className="text-[10px] text-gray-400 mt-1">
-                                        QR Code
+                                        {t("qrCode")}
                                     </span>
                                 </div>
                             </div>
@@ -1048,7 +697,7 @@ const PaymentBookingView: React.FC = () => {
                                         e.target.value
                                     )
                                 }
-                                placeholder="Ghi chú"
+                                    placeholder={t("note")}
                                 rows={3}
                                 className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
                             />
@@ -1060,7 +709,7 @@ const PaymentBookingView: React.FC = () => {
                                 disabled={isLoading}
                                 className="cursor-pointer bg-[#0f4c81] hover:bg-[#0b3a63] text-white font-medium text-xs py-2 px-6 rounded shadow transition-colors duration-150 disabled:opacity-50"
                             >
-                                {isLoading ? "Đang đặt..." : "Đặt Ngay"}
+                                {isLoading ? t("bookingProcessing") : t("bookingNow")}
                             </button>
                         </div>
 
