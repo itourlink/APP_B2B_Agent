@@ -12,17 +12,18 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
-// import BookingForm from "./booking-form";
+import BookingForm from "./booking-form";
 import {
   useDetailTour,
   useListTourDay,
-  // useListTourPublish,
+  useListTourPublish,
 } from "@/hooks/actions/useTour";
 import { useLocation, Link } from "react-router-dom";
 import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
 import { isValidValue } from "@/utils/utilts";
-// import { TourCard } from "./tour-card";
+import { TourCard } from "./tour-card";
+import imgDefault from "@/assets/images/default-image.jpg"
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -39,39 +40,33 @@ const ErrorBlock = () => (
 
 const TourDetail = () => {
   const location = useLocation();
-
   const item = location.state;
 
   const company =
     new URLSearchParams(location.search).get("company") || "";
-  const [filters] = useState({
+
+
+  const filters = {
     page: 1,
     pageSize: 1,
     strServiceNameUrl: item?.item?.strServiceNameUrl,
-  });
+  };
 
-  // const [filters2] = useState({
-  //   page: 1,
-  //   pageSize: 4,
+  const filters2 = {
+    page: 1,
+    pageSize: 4,
+    intCateID: item?.item?.intCateID ?? null,
+    intProductID: item?.item?.intProductID,
+    strLocationCode: null,
+  };
 
-  //   intCateID:
-  //     item?.item?.intCateID &&
-  //       Object.keys(item?.item?.intCateID || {}).length > 0
-  //       ? item?.item?.intCateID
-  //       : null,
-
-  //   intProductID: item?.item?.intProductID,
-
-  //   strLocationCode: null,
-  // });
-
-  const [filters3] = useState({
+  const filters3 = {
     strTourGUID: item?.item?.strTourGUID,
-  });
+  };
 
   const { tdData, tdLoading, tdError } = useDetailTour(filters);
 
-  // const { tdpData, tdpLoading, tdpError } = useListTourPublish(filters2);
+  const { tdpData, tdpLoading, tdpError } = useListTourPublish(filters2);
 
   const { tddData, tddLoading, tddError } = useListTourDay(filters3);
 
@@ -97,14 +92,6 @@ const TourDetail = () => {
 
   const ListData = tdData?.[0]?.[0] || {};
 
-  console.log("first", ListData)
-
-  console.log(
-    "strTourName",
-    ListData?.strTourName,
-    typeof ListData?.strTourName
-  );
-
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
@@ -129,17 +116,7 @@ const TourDetail = () => {
       ? ListData.strRemark
       : "";
 
-
-  Object.entries(ListData || {}).forEach(([key, value]) => {
-    if (
-      value &&
-      typeof value === "object" &&
-      !Array.isArray(value)
-    ) {
-      console.log("OBJECT FIELD", key, value);
-    }
-  });
-
+  console.log("ListData?.strTourImageUrl", ListData?.strTourImageUrl)
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
       <div className="max-w-7xl mx-auto mb-6">
@@ -156,8 +133,8 @@ const TourDetail = () => {
             className="hover:text-[#2566b0] transition-colors"
           ></Link>
           <span className="text-slate-600 font-medium line-clamp-1">
-            {isValidValue(ListData?.strTourName) ||
-              isValidValue(ListData?.strServiceName) ||
+            {(ListData?.strTourName) ||
+              (ListData?.strServiceName) ||
               "Chi tiết tour"}
           </span>
         </nav>
@@ -247,8 +224,17 @@ const TourDetail = () => {
               <ErrorBlock />
             ) : (
               <img
-                src={getUrlImage(isValidValue(ListData?.strTourImageUrl))}
+                src={
+                  typeof ListData?.strTourImageUrl === "string" &&
+                    ListData.strTourImageUrl.trim()
+                    ? getUrlImage(ListData.strTourImageUrl)
+                    : imgDefault
+                }
+                onError={(e) => {
+                  e.currentTarget.src = imgDefault;
+                }}
                 className="w-full h-full object-cover"
+                alt=""
               />
             )}
           </div>
@@ -422,7 +408,7 @@ const TourDetail = () => {
         {/* RIGHT */}
         <div className="relative">
           <div className="sticky top-32">
-            {/* <BookingForm item={ListData} /> */}
+            <BookingForm item={ListData} />
           </div>
         </div>
       </div>
@@ -433,10 +419,10 @@ const TourDetail = () => {
           Bạn có thể quan tâm
         </h2>
 
-        {/* {tdpLoading && <SkeletonBlock />}
-        {tdpError && <ErrorBlock />} */}
+        {tdpLoading && <SkeletonBlock />}
+        {tdpError && <ErrorBlock />}
 
-        {/* {!tdpLoading && !tdpError && (
+        {!tdpLoading && !tdpError && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tdpData?.map((t: any) => (
               <TourCard
@@ -445,7 +431,7 @@ const TourDetail = () => {
               />
             ))}
           </div>
-        )} */}
+        )}
       </div>
     </section>
   );
