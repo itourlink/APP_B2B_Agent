@@ -1,4 +1,4 @@
-{
+﻿{
   "mainContact": "Main Contact",
   "fullName": "Full Name:",
   "email": "Email:",
@@ -33,6 +33,8 @@
   "paymentFirstInstallment": "First Payment",
   "paymentSecondInstallment": "Second Payment",
   "paymentNotice": "You will make an advance payment before completing the booking process",
+  "paymentNoticePrefix": "You will pay before",
+  "paymentNoticeSuffix": "to complete the booking process",
   "paymentMethod": "Payment Method",
   "bankTransfer": "Bank transfer",
   "paymentOnline": "Payment online",
