@@ -228,7 +228,15 @@ const TourSearch = () => {
                                         }));
                                     }
 
-                                    close();
+                                    // close();
+
+                                    close(() => {
+    const input = document.querySelector(
+        'input[placeholder="' + t("searchPlaceholder") + '"]'
+    ) as HTMLInputElement | null;
+
+    input?.focus();
+});
                                 }}
                             />
                         ),
