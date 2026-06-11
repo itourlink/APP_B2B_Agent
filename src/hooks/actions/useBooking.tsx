@@ -2,7 +2,6 @@ import apiClient from "@/axios";
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
-import { useUser } from "./useAuth";
 import { useCurrency } from "@/zustand/useCurrency";
 
 export const fetchListPrice = async (body: any) => {

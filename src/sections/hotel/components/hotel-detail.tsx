@@ -34,7 +34,6 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
-import { useCurrency } from "@/zustand/useCurrency";
 
 const HotelDetail = () => {
   const { t } = useTranslate("hotel");
