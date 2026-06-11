@@ -8,320 +8,302 @@ import { useLocation } from "react-router-dom";
 import { useTranslate } from "@/locales";
 
 const DEFAULT_FILTERS = {
-    page: 1,
-    pageSize: 10,
-    isTourSeries: false,
-    strFilterDestinationName: "",
-    start: null,
-    end: null,
-    tourType: {
-        mainType: "all",
-        subType: "all",
+  page: 1,
+  pageSize: 10,
+  isTourSeries: false,
+  strFilterDestinationName: "",
+  start: null,
+  end: null,
+  tourType: {
+    mainType: "all",
+    subType: "all",
+  },
+  guestRoom: {
+    rooms: 1,
+    adults: 1,
+    children: 0,
+    childAges: [],
+    roomTypes: {
+      sgl: 0,
+      dbl: 1,
+      twn: 0,
+      tpl: 0,
     },
-    guestRoom: {
-        rooms: 1,
-        adults: 1,
-        children: 0,
-        childAges: [],
-        roomTypes: {
-            sgl: 0,
-            dbl: 1,
-            twn: 0,
-            tpl: 0,
-        },
-    },
+  },
 };
 
 const DEFAULT_FILTERS2: {
-    intNoOfAdult: number;
-    strListNoOfChild: string;
-    intNoOfSGLSup: number;
-    intNoOfTPLRec: number;
+  intNoOfAdult: number;
+  strListNoOfChild: string;
+  intNoOfSGLSup: number;
+  intNoOfTPLRec: number;
 
-    strLocationCode: string | null;
+  strLocationCode: string | null;
 
-    dtmFilterDateValidFrom: string | null;
-    dtmFilterDateValidTo: string | null;
+  dtmFilterDateValidFrom: string | null;
+  dtmFilterDateValidTo: string | null;
 
-    intCateID?: string | null;
-    intProductID?: string | null;
+  intCateID?: string | null;
+  intProductID?: string | null;
 } = {
-    intNoOfAdult: 1,
-    strListNoOfChild: "",
-    intNoOfSGLSup: 0,
-    intNoOfTPLRec: 0,
+  intNoOfAdult: 1,
+  strListNoOfChild: "",
+  intNoOfSGLSup: 0,
+  intNoOfTPLRec: 0,
 
-    strLocationCode: null,
+  strLocationCode: null,
 
-    dtmFilterDateValidFrom: null,
+  dtmFilterDateValidFrom: null,
 
-    dtmFilterDateValidTo: null,
+  dtmFilterDateValidTo: null,
 
-    intCateID: null,
-    intProductID: null,
+  intCateID: null,
+  intProductID: null,
 };
 
 const formatDate = (date: Date | null) => {
-    if (!date) return null;
+  if (!date) return null;
 
-    return new Date(date).toLocaleDateString("en-US");
+  return new Date(date).toLocaleDateString("en-US");
 };
 
 const TourSearch = () => {
-    const { t } = useTranslate("tour")
+  const { t } = useTranslate("tour");
 
-    const TOUR_TYPE_OPTIONS = [
-        { label: t("all"), value: "all" },
-        { label: t("dailyTour"), value: "18" },
-        { label: t("packageTour"), value: "19" },
-        { label: t("fixedTour"), value: "33" },
+  const TOUR_TYPE_OPTIONS = [
+    { label: t("all"), value: "all" },
+    { label: t("dailyTour"), value: "18" },
+    { label: t("packageTour"), value: "19" },
+    { label: t("fixedTour"), value: "33" },
+  ];
+
+  const getTourSubOptions = () => {
+    return [
+      { label: t("all"), value: "all" },
+      { label: t("fit"), value: "1" },
+      { label: t("git"), value: "2" },
+      { label: t("excursion"), value: "100" },
+      { label: t("transportPackages"), value: "101" },
     ];
+  };
 
-    const getTourSubOptions = () => {
-        return [
-            { label: t("all"), value: "all" },
-            { label: t("fit"), value: "1" },
-            { label: t("git"), value: "2" },
-            { label: t("excursion"), value: "100" },
-            { label: t("transportPackages"), value: "101" },
-        ];
-    };
+  const location = useLocation();
 
+  const company = new URLSearchParams(location.search).get("company");
 
-    const location = useLocation();
+  const router = useRouter();
 
-    const company =
-        new URLSearchParams(location.search).get("company");
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
-    const router = useRouter();
+  const [draftFilters2, setDraftFilters2] = useState(DEFAULT_FILTERS2);
 
-    const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [selectedTour, setSelectedTour] = useState<any>(null);
 
-    const [draftFilters2, setDraftFilters2] = useState(DEFAULT_FILTERS2);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const raw = params.get("tourSearchState");
 
-    const [selectedTour, setSelectedTour] = useState<any>(null);
+    if (!raw) return;
 
+    try {
+      const parsed = JSON.parse(raw);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const raw = params.get("tourSearchState");
-
-        if (!raw) return;
-
-        try {
-            const parsed = JSON.parse(raw);
-
-            setFilters((prev) => {
-                // chỉ hydrate lần đầu / hoặc khi empty
-                if (prev?.strFilterDestinationName && prev?.isTourSeries !== undefined) {
-                    return prev;
-                }
-
-                return {
-                    ...prev,
-                    ...parsed.filters,
-                };
-            });
-
-            setDraftFilters2((prev) => {
-                if (prev?.intNoOfAdult) return prev;
-
-                return {
-                    ...prev,
-                    ...parsed.draftFilters2,
-                };
-            });
-
-            setSelectedTour(parsed.selectedTour || null);
-        } catch { }
-    }, [location.search]);
-
-    const searchPayload = {
-        intCurPage: filters.page,
-        intPageSize: filters.pageSize,
-
-        isTourSeries: filters.isTourSeries,
-        strFilterDestinationName:
-            filters.strFilterDestinationName,
-
-        ...draftFilters2,
-    };
-
-    const { searchData, searchLoading } = useSearchTour(searchPayload);
-
-    const handleSearch = () => {
-        const snapshot = {
-            filters,
-            draftFilters2,
-            selectedTour,
-        };
-
-        if (selectedTour) {
-            router.replaceParams(paths.shop.tour.detail, {
-                item: selectedTour
-            });
-
-            return;
+      setFilters((prev) => {
+        // chỉ hydrate lần đầu / hoặc khi empty
+        if (
+          prev?.strFilterDestinationName &&
+          prev?.isTourSeries !== undefined
+        ) {
+          return prev;
         }
 
-        router.pushQuery(
-            paths.shop.search,
-            {
-                company,
-                type: "tour",
-                tourSearchState: JSON.stringify(snapshot),
-            },
-            {
-                isTourSeries: filters.isTourSeries,
-                isSearchTour: {
-                    ...draftFilters2,
-                    strFilterDestinationName:
-                        filters.strFilterDestinationName,
-                },
-            }
-        );
+        return {
+          ...prev,
+          ...parsed.filters,
+        };
+      });
+
+      setDraftFilters2((prev) => {
+        if (prev?.intNoOfAdult) return prev;
+
+        return {
+          ...prev,
+          ...parsed.draftFilters2,
+        };
+      });
+
+      setSelectedTour(parsed.selectedTour || null);
+    } catch {}
+  }, [location.search]);
+
+  const searchPayload = {
+    intCurPage: filters.page,
+    intPageSize: filters.pageSize,
+
+    isTourSeries: filters.isTourSeries,
+    strFilterDestinationName: filters.strFilterDestinationName,
+
+    ...draftFilters2,
+  };
+
+  const { searchData, searchLoading } = useSearchTour(searchPayload);
+
+  const handleSearch = () => {
+    const snapshot = {
+      filters,
+      draftFilters2,
+      selectedTour,
     };
 
-    return (
-        <div>
-            <GenericFilter
-                filters={[
-                    { type: "toggle", key: "isTourSeries", label: t("tourSeries") },
+    if (selectedTour) {
+      router.replaceParams(paths.shop.tour.detail, {
+        item: selectedTour,
+      });
 
-                    {
-                        type: "search",
-                        key: "strFilterDestinationName",
-                        label: t("destinationS"),
-                        placeholder: t("searchPlaceholder"),
-                        renderDropdown: ({ close }) => (
-                            <TourLocationDes
-                                data={searchData}
-                                isLoading={searchLoading}
-                                onSelectDestination={(item: any) => {
-                                    const isTour =
-                                        item?.__type === "tour" &&
-                                        typeof item?.strServiceNameUrl === "string";
+      return;
+    }
 
-                                    setFilters((p: any) => ({
-                                        ...p,
-                                        strFilterDestinationName:
-                                            item?.strDestinationName,
-                                    }));
-
-                                    if (isTour) {
-
-                                        setSelectedTour(item);
-
-                                        setDraftFilters2((prev) => ({
-                                            ...prev,
-                                            strLocationCode: null,
-                                        }));
-
-                                    } else {
-
-                                        setSelectedTour(null);
-
-                                        setDraftFilters2((prev) => ({
-                                            ...prev,
-                                            strLocationCode:
-                                                item?.strDestinationCode ?? "VN0000",
-                                        }));
-                                    }
-
-                                    // close();
-
-                                    close(() => {
-    const input = document.querySelector(
-        'input[placeholder="' + t("searchPlaceholder") + '"]'
-    ) as HTMLInputElement | null;
-
-    input?.focus();
-});
-                                }}
-                            />
-                        ),
-                    },
-
-                    { type: "dateRange", keyStart: "start", keyEnd: "end" },
-                    { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
-                    {
-                        type: "tourType",
-                        key: "tourType",
-                        mainOptions: TOUR_TYPE_OPTIONS,
-                        getSubOptions: getTourSubOptions,
-                    },
-                ]}
-                values={filters}
-                onChange={(k, v) => {
-                    setFilters((p: any) => {
-                        const next = { ...p, [k]: v };
-
-                        if (k === "isTourSeries") {
-                            setDraftFilters2(DEFAULT_FILTERS2);
-                            setSelectedTour(null);
-
-                            return {
-                                ...DEFAULT_FILTERS,
-                                isTourSeries: v,
-                            };
-                        }
-
-                        if (k === "guestRoom") {
-                            setDraftFilters2((prev) => ({
-                                ...prev,
-
-                                intNoOfAdult: v?.adults || 1,
-
-                                strListNoOfChild:
-                                    v?.childAges?.length
-                                        ? v.childAges.join(",")
-                                        : "",
-
-                                intNoOfSGLSup: v?.roomTypes?.sgl || 0,
-
-                                intNoOfTPLRec: v?.roomTypes?.tpl || 0,
-                            }));
-                        }
-
-                        if (k === "start" || k === "end") {
-                            setDraftFilters2((prev) => ({
-                                ...prev,
-
-                                dtmFilterDateValidFrom:
-                                    k === "start"
-                                        ? formatDate(v)
-                                        : prev.dtmFilterDateValidFrom,
-
-                                dtmFilterDateValidTo:
-                                    k === "end"
-                                        ? formatDate(v)
-                                        : prev.dtmFilterDateValidTo,
-                            }));
-                        }
-
-                        if (k === "tourType") {
-                            setDraftFilters2((prev) => ({
-                                ...prev,
-
-                                intCateID:
-                                    v?.mainType === "all"
-                                        ? null
-                                        : v?.mainType,
-
-                                intProductID:
-                                    v?.subType === "all"
-                                        ? null
-                                        : v?.subType,
-                            }));
-                        }
-
-                        return next;
-                    });
-                }}
-                onSearch={handleSearch}
-            />
-        </div>
+    router.pushQuery(
+      paths.shop.search,
+      {
+        company,
+        type: "tour",
+        tourSearchState: JSON.stringify(snapshot),
+      },
+      {
+        isTourSeries: filters.isTourSeries,
+        isSearchTour: {
+          ...draftFilters2,
+          strFilterDestinationName: filters.strFilterDestinationName,
+        },
+      },
     );
+  };
+
+  return (
+    <div>
+      <GenericFilter
+        filters={[
+          { type: "toggle", key: "isTourSeries", label: t("tourSeries") },
+
+          {
+            type: "search",
+            key: "strFilterDestinationName",
+            label: t("destinationS"),
+            placeholder: t("searchPlaceholder"),
+            renderDropdown: ({ close }) => (
+              <TourLocationDes
+                data={searchData}
+                isLoading={searchLoading}
+                onSelectDestination={(item: any) => {
+                  const isTour =
+                    item?.__type === "tour" &&
+                    typeof item?.strServiceNameUrl === "string";
+
+                  setFilters((p: any) => ({
+                    ...p,
+                    strFilterDestinationName: item?.strDestinationName,
+                  }));
+
+                  if (isTour) {
+                    setSelectedTour(item);
+
+                    setDraftFilters2((prev) => ({
+                      ...prev,
+                      strLocationCode: null,
+                    }));
+                  } else {
+                    setSelectedTour(null);
+
+                    setDraftFilters2((prev) => ({
+                      ...prev,
+                      strLocationCode: item?.strDestinationCode ?? "VN0000",
+                    }));
+                  }
+
+                  close();
+
+                //   close(() => {
+                //     const input = document.querySelector(
+                //       'input[placeholder="' + t("searchPlaceholder") + '"]',
+                //     ) as HTMLInputElement | null;
+
+                //     input?.focus();
+                //   });
+                }}
+              />
+            ),
+          },
+
+          { type: "dateRange", keyStart: "start", keyEnd: "end" },
+          { type: "guestRoom", key: "guestRoom", isRoomDetail: true },
+          {
+            type: "tourType",
+            key: "tourType",
+            mainOptions: TOUR_TYPE_OPTIONS,
+            getSubOptions: getTourSubOptions,
+          },
+        ]}
+        values={filters}
+        onChange={(k, v) => {
+          setFilters((p: any) => {
+            const next = { ...p, [k]: v };
+
+            if (k === "isTourSeries") {
+              setDraftFilters2(DEFAULT_FILTERS2);
+              setSelectedTour(null);
+
+              return {
+                ...DEFAULT_FILTERS,
+                isTourSeries: v,
+              };
+            }
+
+            if (k === "guestRoom") {
+              setDraftFilters2((prev) => ({
+                ...prev,
+
+                intNoOfAdult: v?.adults || 1,
+
+                strListNoOfChild: v?.childAges?.length
+                  ? v.childAges.join(",")
+                  : "",
+
+                intNoOfSGLSup: v?.roomTypes?.sgl || 0,
+
+                intNoOfTPLRec: v?.roomTypes?.tpl || 0,
+              }));
+            }
+
+            if (k === "start" || k === "end") {
+              setDraftFilters2((prev) => ({
+                ...prev,
+
+                dtmFilterDateValidFrom:
+                  k === "start" ? formatDate(v) : prev.dtmFilterDateValidFrom,
+
+                dtmFilterDateValidTo:
+                  k === "end" ? formatDate(v) : prev.dtmFilterDateValidTo,
+              }));
+            }
+
+            if (k === "tourType") {
+              setDraftFilters2((prev) => ({
+                ...prev,
+
+                intCateID: v?.mainType === "all" ? null : v?.mainType,
+
+                intProductID: v?.subType === "all" ? null : v?.subType,
+              }));
+            }
+
+            return next;
+          });
+        }}
+        onSearch={handleSearch}
+      />
+    </div>
+  );
 };
 
 export default TourSearch;
