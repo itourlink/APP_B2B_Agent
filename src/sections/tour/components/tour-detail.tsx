@@ -124,7 +124,6 @@ const TourDetail = () => {
       ? ListData.strRemark
       : "";
 
-  console.log("ListData?.strTourImageUrl", ListData?.strTourImageUrl)
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
       <div className="max-w-7xl mx-auto mb-6">
