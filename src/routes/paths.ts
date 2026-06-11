@@ -78,7 +78,6 @@ export const paths = {
   content: {
     agent: "/agent",
     agentHost: "/agent-host",
-    detailTour:"/detail-tour",
   },
 
   overlay: {

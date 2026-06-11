@@ -18,7 +18,6 @@ import BannerMediaField from "@/components/media/banner-media-field";
 import { CONFIG } from "@/config-global";
 import type { SubmitErrorHandler } from "react-hook-form";
 import { useTranslate } from "@/locales";
-import { isValidValue } from "@/utils/utilts";
 
 type Props = {
     onClose: () => void;
@@ -185,12 +184,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
                     const params = new URLSearchParams({
                         strTourCode: itemDetailTour?.strTourCode ?? "",
-                        strAgentHostServiceItemGUID:
-                            isValidValue(itemDetailTour?.strAgentHostServiceItemGUID),
                     });
 
-                    // const url = `http://localhost:5173/detail-tour?${params.toString()}`;
-                    const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
+                    const url = `http://localhost:5173/detail-tour?${params.toString()}`;
+                    // const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
 
                     window.open(
                         url,
