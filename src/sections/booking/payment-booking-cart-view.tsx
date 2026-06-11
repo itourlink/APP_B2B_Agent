@@ -16,7 +16,7 @@ import { fDate } from '@/utils/format-time';
 import { useTranslate } from '@/locales';
 
 const PaymentBookingCartView: React.FC = () => {
-    const { t } = useTranslate("book");
+    const { t } = useTranslate("booking");
     const { setGlobalLoading } = useGlobalLoading();
 
     const location = useLocation();
