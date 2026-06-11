@@ -10,9 +10,6 @@ import GuestRoomPopup from "./guess-room-popup";
 import TourTypeSelect from "./tour-type-select";
 import { useTranslate } from "@/locales";
 
-
-
-
 type FilterItem =
     | {
         type: "search"; key: string; placeholder?: string; label?: string; renderDropdown?: (args: {
@@ -50,6 +47,7 @@ export const GenericFilter = ({
     const dateRef = useRef<HTMLDivElement>(null);
     const dateOneRef = useRef<HTMLDivElement>(null);
     const locadesRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const [active, setActive] = useState<
         "guest" | "guestRoom" | "date" | "dateOne" | "locades" | "search" | null
@@ -105,19 +103,28 @@ export const GenericFilter = ({
 
             case "search":
                 return (
-                    <div className="relative flex items-center gap-2">
+                    <div  ref={locadesRef}  className="relative flex items-center gap-2">
                         <Search size={18} />
 
                         <div>
                             <div className="text-sm font-semibold">{item.label ?? t("search")}</div>
 
                             <input
+                             ref={searchInputRef}
                                 value={values[item.key] || ""}
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     onChange(item.key, val);
 
                                     setActive(val ? "search" : null);
+                                }}
+
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        setActive(null);
+                                        onSearch();
+                                    }
                                 }}
                                 placeholder={item.placeholder}
                                 className="outline-0"
@@ -128,7 +135,13 @@ export const GenericFilter = ({
                             <div className="absolute top-[81px] z-50">
                                 {item.renderDropdown?.({
                                     value: values[item.key],
-                                    close: () => setActive(null),
+                                    close: () => {
+                            setActive(null);
+
+                            setTimeout(() => {
+                                searchInputRef.current?.focus();
+                            }, 0);
+                        },
                                 })}
                             </div>
                         )}

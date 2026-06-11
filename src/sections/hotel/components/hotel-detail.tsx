@@ -234,6 +234,7 @@ const HotelDetail = () => {
     {
       field: "strItemTypeName",
       headerName: t("roomName"),
+      algin: "start",
       render: (value, row) => {
         const price = spbData?.[0]?.find(
           (p: any) => p.strItemTypeGUID === row.strItemTypeGUID,
@@ -244,7 +245,7 @@ const HotelDetail = () => {
             <div>{value}</div>
 
             {price?.strMealIncludedTypeName && (
-              <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+              <div className="text-xs text-gray-500 flex items-center justify-start gap-1 mt-1   text-left">
                 <Utensils size={14} className="text-emerald-500" />
                 {price.strMealIncludedTypeName}
               </div>

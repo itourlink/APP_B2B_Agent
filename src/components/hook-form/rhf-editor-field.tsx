@@ -1,13 +1,15 @@
 import { Controller, useFormContext, useFormState } from "react-hook-form";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useTranslate } from "@/locales";
 
 type Props = {
     name: string;
     label?: string;
 };
 
-export const RHFEditorField = ({ name, label }: Props) => {
+export const RHFEditorField = ({ name, label }: Props) => { 
+    const { t } = useTranslate("tourcustomize")
     const { control } = useFormContext();
     const { errors } = useFormState({ name });
 
@@ -34,7 +36,7 @@ export const RHFEditorField = ({ name, label }: Props) => {
                             editor={ClassicEditor as any}
                             data={field.value || ""}
                             config={{
-                                placeholder: "Nhập nội dung tại đây...",
+                                placeholder:t("enterContent"),
                                 toolbar: [
                                     "heading",
                                     "|",

@@ -267,6 +267,9 @@
   "destinationList": "Destination List",
   "addDestinationButton": "Add destination",
   "nights": "Nights",
-  "bannerImg": "Banner IMG"
+  "choice": "-- Choice --",
+  "enterContent": "Enter content here...",
+  "bannerImg": "Banner IMG",
+  "dayNoti": "No date earlier than the current date can be selected."
 
 }
