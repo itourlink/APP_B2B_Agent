@@ -1,5 +1,4 @@
 import apiClient from "@/axios";
-import { useUser } from "./useAuth";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useCurrency } from "@/zustand/useCurrency";

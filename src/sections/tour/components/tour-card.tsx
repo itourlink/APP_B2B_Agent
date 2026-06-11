@@ -1,16 +1,18 @@
 import { useTranslate } from "@/locales";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { formatPrice } from "@/utils/format-number";
+import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useNavigate } from "react-router-dom";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
     const company = new URLSearchParams(location.search).get("company") || "";
     const navigate = useNavigate()
+    const { currencyData } = useListCurrency()
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
@@ -90,18 +92,16 @@ export const TourCard = ({ tour }: any) => {
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-xl">
-                            {formatPrice(Number(isValidValue(tour?.dblPriceFrom)))}
+                            {fCurrency(
+                                tour?.dblPriceFrom,
+                                currencyData?.strCurrencyCode
+                            )}
                         </p>
                     </div>
 
                     <button
                         onClick={() => {
                             const url = `${paths.shop.tour.detail}?company=${company}`;
-
-                            console.log("Navigate URL:", url);
-                            console.log("Navigate State:", {
-                                item: tour,
-                            });
 
                             navigate(url, {
                                 state: {

@@ -14,7 +14,7 @@ import { format } from "date-fns";
 
 import DatePopup from "@/components/generic-filter/date-popup";
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
-import { useListCurrency, useListPrice } from "@/hooks/actions/useBooking";
+import { useListPrice } from "@/hooks/actions/useBooking";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addCartForTour } from "@/hooks/actions/useCart";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
@@ -24,6 +24,7 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import { useTranslate } from "@/locales";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 
 interface Props {
     item?: any;
@@ -137,7 +138,7 @@ const BookingForm = ({ item }: Props) => {
             .map((id: number) => ({
                 value: id,
                 label: id === 1
-                    ?  t("joinedTour")
+                    ? t("joinedTour")
                     : id === 2
                         ? t("privateTour")
                         : `Type ${id}`,
@@ -231,7 +232,7 @@ const BookingForm = ({ item }: Props) => {
                 });
 
                 route.push(`${paths.shop.cart.list}?company=${company}`);
-               showToast("success", t("addToCartSuccess"));
+                showToast("success", t("addToCartSuccess"));
             },
             onError: () => {
                 showToast("error", t("addToCartFailed"));
@@ -253,7 +254,7 @@ const BookingForm = ({ item }: Props) => {
                     <div>
                         <h3 className="text-lg font-bold"> {t("addTour")}</h3>
                         <p className="text-[11px] text-slate-500">
-                           {t("enterInfoToShowPrice")}
+                            {t("enterInfoToShowPrice")}
                         </p>
                     </div>
 
@@ -274,7 +275,7 @@ const BookingForm = ({ item }: Props) => {
                             {t("totalPrice")}:{currencyData?.strCurrencySymbol} {price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                           {t("pricePerGuest")}:{currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("pricePerGuest")}:{currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
                             {t("remainingSlots")}: {price.intPaxRemain ?? "0"} {t("slots")}
@@ -400,7 +401,7 @@ const BookingForm = ({ item }: Props) => {
                     disabled={!startDate || !price?.strTourPriceItemLevelGUID}
                     className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
-                   {t("bookNow")}
+                    {t("bookNow")}
                 </button>
 
                 <button

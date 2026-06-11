@@ -7,7 +7,6 @@ import {
   useDetailAGTransTMSMutation,
   useListAGTransTMSMutation,
   useListBankAccount,
-  useListCurrency,
   useListTourPaymentTerm,
 } from "@/hooks/actions/useBooking";
 import { useListCity } from "@/hooks/actions/useCity";
@@ -25,6 +24,7 @@ import { useGlobalLoading } from "@/zustand/useGlobalLoading";
 import { fDate } from "@/utils/format-time";
 import { addDays } from "date-fns";
 import { useTranslate } from "@/locales";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");

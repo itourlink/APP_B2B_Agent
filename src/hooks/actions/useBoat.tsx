@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListBoat = async (body: any) => {
   const res = await apiClient.post("supplier/GetListSupplierByAgent", body);
@@ -17,6 +18,8 @@ export const useListBoat = (filters: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
+  const { currencyId } = useCurrency();
+
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 10;
   const query = useQuery({
@@ -25,13 +28,13 @@ export const useListBoat = (filters: {
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchListBoat({
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         strSupplierGUID: filters?.strSupplierGUID || null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
@@ -119,8 +122,10 @@ export const useListMappingPrice = (filters?: {
   const pageSize = filters?.pageSize ?? 10;
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
+  const { currencyId } = useCurrency();
+
   const query = useQuery({
-    queryKey: [QUERY_KEYS.BOAT.LIST_MAPPING_PRICE, filters],
+    queryKey: [QUERY_KEYS.BOAT.LIST_MAPPING_PRICE, filters, currencyId],
     queryFn: () =>
       fetchMappingPrice({
         strSupplierMappingPriceGUID: null,
@@ -136,7 +141,7 @@ export const useListMappingPrice = (filters?: {
         strPriceRange: null,
         intCurPage: page,
         intPageSize: pageSize,
-        intCurrencyView: user?.intCurrencyID,
+        intCurrencyView: currencyId,
         strOrder: null,
         tblsReturn: filters?.tblsReturn,
       }),

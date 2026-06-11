@@ -9,7 +9,7 @@ import CartPopupTotalPrice from "./cart-popup-total-price";
 import PanelPopup from "@/components/popup/panel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
-import { useListCurrency } from "@/hooks/actions/useBooking";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 
 
 const CartList = () => {

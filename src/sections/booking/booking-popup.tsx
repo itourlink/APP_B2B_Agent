@@ -1,5 +1,5 @@
 import PanelPopup from "@/components/popup/panel-popup";
-import { useListCurrency } from "@/hooks/actions/useBooking";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 import { useTranslate } from "@/locales";
 import { isValidValue } from "@/utils/utilts";
 

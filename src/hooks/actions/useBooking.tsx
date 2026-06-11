@@ -3,6 +3,7 @@ import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { useUser } from "./useAuth";
+import { useCurrency } from "@/zustand/useCurrency";
 
 export const fetchListPrice = async (body: any) => {
     const res = await apiClient.post("tour/GetListPriceLevelTour", body);
@@ -23,10 +24,12 @@ export const useListPrice = (filters?: {
 }) => {
     const { coData } = useListCompanyOwner();
     const { user } = useUser()
+    const { currencyId } = useCurrency();
     const query = useQuery({
         queryKey: [
             QUERY_KEYS.BOOKING.LIST_PRICE,
-            filters
+            filters,
+            currencyId
         ],
         queryFn: () =>
             fetchListPrice({
@@ -39,7 +42,7 @@ export const useListPrice = (filters?: {
                 intNoOfTPLRec: filters?.intNoOfTPLRec,
                 dtmFilterDateFrom: filters?.dtmFilterDateFrom,
                 dtmFilterDateTo: null,
-                intCurrencyView: user?.intCurrencyID,
+                intCurrencyView: currencyId,
                 strCompanyOwnerGUID: coData?.strCompanyGUID,
                 IsHasPriceKid: false,
                 intEasiaCateID: filters?.intEasiaCateID,
@@ -194,34 +197,6 @@ export const addCartForHotel = async (body: any) => {
     );
     return res.data;
 };
-
-
-const fetchListCurrency = async (body: any) => {
-    const res = await apiClient.post("public/GetListCurrency", body);
-    return res.data;
-};
-
-export const useListCurrency = () => {
-    const { user } = useUser();
-    const query = useQuery({
-        queryKey: [
-            QUERY_KEYS.BOOKING.CURRENCY],
-        queryFn: () =>
-            fetchListCurrency({
-                intCurrencyID: user?.intCurrencyID,
-                tblsReturn: "[0]"
-            }),
-        enabled: !!user?.intCurrencyID,
-        placeholderData: keepPreviousData,
-    });
-
-    return {
-        currencyData: query.data?.[0]?.[0] ?? [],
-        currencyLoading: query.isLoading,
-        currencyError: query.isError,
-    };
-};
-
 
 export const fetchTourPaymentTerm = async (body: any) => {
     const res = await apiClient.post(

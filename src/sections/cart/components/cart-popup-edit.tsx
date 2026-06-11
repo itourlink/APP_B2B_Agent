@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PanelPopup from "@/components/popup/panel-popup";
-import { fetchListPrice, useListCurrency } from "@/hooks/actions/useBooking";
+import { fetchListPrice } from "@/hooks/actions/useBooking";
 import { fetchDetailTour } from "@/hooks/actions/useTour";
 import { useUserStore } from "@/zustand/useUserStore";
 import { isValidValue } from "@/utils/utilts";
+import { useListCurrency } from "@/hooks/actions/useCurrency";
 
 interface Props {
   open: boolean;
