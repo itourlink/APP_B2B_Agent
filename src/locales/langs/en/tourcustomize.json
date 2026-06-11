@@ -267,6 +267,8 @@
   "destinationList": "Destination List",
   "addDestinationButton": "Add destination",
   "nights": "Nights",
+  "choice": "-- Choice --",
+  "enterContent": "Enter content here...",
   "bannerImg": "Banner IMG"
 
 }

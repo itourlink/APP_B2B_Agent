@@ -268,6 +268,8 @@
 "addDestinationButton": "Thêm điểm đến",
 
 "nights": "Số đêm",
+  "choice": "-- Chọn -- ",
+  "enterContent": "Nhập nội dung tại đây...",
 
 "bannerImg": "Ảnh banner"
 }

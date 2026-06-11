@@ -377,12 +377,16 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         icon: <span className="text-red-500">*</span>,
                     }}
                     options={CURRENCYS_OPTIONS}
+                    placeholder={t("choice")}
+
                 />
 
                 <Field.SearchSelect
                     name="nationality"
                     label={{ text: t("nationality") }}
                     options={COUNTRY_OPTIONS}
+                    placeholder={t("choice")}
+
                 />
 
                 <Field.Text
@@ -448,7 +452,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         <Field.SearchSelect
                             name="country"
                             options={COUNTRY_OPTIONS_LIST}
+                    placeholder={t("choice")}
+
                         />
+                        
                     </div>
 
                     <div className="flex-1">
@@ -456,6 +463,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                             name="city"
                             options={CITY_OPTIONS}
                             disabled={!watchedCountry}
+                    placeholder={t("choice")}
+
                         />
                     </div>
 
@@ -526,7 +535,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                 <label>{t("remark")}</label>
 
                 <div className="rounded-2xl overflow-hidden border border-gray-200">
-                    <Field.Editor name="remark" />
+                    <Field.Editor 
+                    name="remark"
+
+                     />
                 </div>
             </div>
 
