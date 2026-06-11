@@ -3,6 +3,7 @@ import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchGetListCustomer = async (body: any) => {
   const res = await apiClient.post("tourcustomized/GetListCustomer", body);
@@ -92,6 +93,7 @@ const fetchGetListSupplierMappingPrice = async (body: any) => {
 export const useGetlistSupplierMappingPrice = (filters?: any) => {
 
   const { user } = useUser();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
 
@@ -123,7 +125,7 @@ export const useGetlistSupplierMappingPrice = (filters?: any) => {
         strFilterSupplierName: null,
         strFilterItemTypeName: null,
         strListCityCode: "VN00010001,",
-        intCurrencyView: user?.intCurrencyID,
+        intCurrencyView: currencyId,
         intPaxCount: 15,
         intCurPage: page,
         intPageSize: pageSize,
@@ -272,6 +274,7 @@ const toIsoDateString = (value?: string | Date | null) => {
 
 export const useGetListSupplierMappingPrice = (filters?: any) => {
   const { user } = useUser();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 10;
@@ -306,7 +309,7 @@ export const useGetListSupplierMappingPrice = (filters?: any) => {
 
     strListCityCode: filters?.strListCityCode ?? null,
 
-    intCurrencyView: filters?.intCurrencyView ?? user?.intCurrencyID ?? 1,
+    intCurrencyView: filters?.intCurrencyView ?? currencyId ?? 1,
 
     intPaxCount: filters?.intPaxCount ?? filters?.intTotalPax ?? null,
 

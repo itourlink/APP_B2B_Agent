@@ -25,6 +25,7 @@ import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useCurrency } from "@/zustand/useCurrency";
 
 interface Props {
     item?: any;
@@ -48,6 +49,7 @@ const BookingForm = ({ item }: Props) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
     const { currencyData } = useListCurrency();
+    const { currencyId } = useCurrency();
 
     const company =
         new URLSearchParams(location.search).get("company") || "";
@@ -218,7 +220,7 @@ const BookingForm = ({ item }: Props) => {
             dtmDateFrom: startDate?.toISOString(),
             dtmDateTo: dtmDateTo?.toISOString(),
 
-            intCurrencyID: user?.intCurrencyID,
+            intCurrencyID: currencyId,
         };
     };
 

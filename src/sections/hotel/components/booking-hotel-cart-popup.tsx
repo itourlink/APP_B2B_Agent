@@ -6,6 +6,7 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { fDateTime } from "@/utils/format-time";
+import { useCurrency } from "@/zustand/useCurrency";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -21,6 +22,8 @@ type Props = {
 
 const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
   const { t } = useTranslation("hotel");
+  
+  const { currencyId } = useCurrency();
 
   const router = useRouter();
 
@@ -50,7 +53,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
       strCompanyOwnerGUID:
         submitPayload?.strCompanyOwnerGUID || coData?.strCompanyGUID,
 
-      intCurrencyID: submitPayload?.intCurrencyID || user?.intCurrencyID,
+      intCurrencyID: submitPayload?.intCurrencyID || currencyId,
     };
 
     addCartForHotelApi(finalPayload, {
@@ -84,7 +87,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
               <div className="text-slate-500">{t("adult")} </div>
 
               <div className="font-semibold text-slate-900">
-                 {displayData?.adultCount || 0} {t("personUnit")}
+                {displayData?.adultCount || 0} {t("personUnit")}
               </div>
             </div>
 
@@ -92,7 +95,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
               <div className="text-slate-500"> {t("child")}</div>
 
               <div className="font-semibold text-slate-900">
-              {displayData?.childCount || 0} {t("childUnit")}
+                {displayData?.childCount || 0} {t("childUnit")}
               </div>
             </div>
           </div>
@@ -172,7 +175,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
                 <div className="font-medium">{item.label}</div>
 
                 <div className="text-xs text-slate-500">
-                {t("quantity")}: {item.qty}
+                  {t("quantity")}: {item.qty}
                 </div>
               </div>
 
@@ -190,7 +193,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             disabled={isPending}
             className="cursor-pointer flex-1 h-10 rounded-lg border hover:bg-gray-50 disabled:opacity-50"
           >
-             {t("cancel")}
+            {t("cancel")}
           </button>
 
           <button
@@ -198,7 +201,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             disabled={isPending}
             className="cursor-pointer flex-1 h-10 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white disabled:opacity-50"
           >
-          {isPending ? t("processing") : t("confirm")}
+            {isPending ? t("processing") : t("confirm")}
           </button>
         </div>
       </div>

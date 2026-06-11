@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 // list
 const fetchListRestaurant = async (body: any) => {
@@ -16,6 +17,7 @@ export const useListRestaurant = (filters: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
+  const { currencyId } = useCurrency();
 
   const query = useQuery({
     queryKey: [
@@ -23,13 +25,13 @@ export const useListRestaurant = (filters: {
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchListRestaurant({
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         strSupplierGUID: null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
@@ -71,6 +73,7 @@ export const useDetailRestaurant = (filters?: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 1;
@@ -81,14 +84,14 @@ export const useDetailRestaurant = (filters?: {
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchDetailRestaurant({
         strCompanyPartnerGUID: user?.strCompanyGUID ?? null,
         strCompanyOwnerGUID: coData?.strCompanyGUID ?? null,
         strSupplierGUID: filters?.strSupplierGUID ?? null,
-        intCurrencyID: user?.intCurrencyID ?? null,
+        intCurrencyID: currencyId ?? null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
         strPriceFromRange: null,
@@ -103,7 +106,7 @@ export const useDetailRestaurant = (filters?: {
     enabled:
       !!user?.strCompanyGUID &&
       !!coData?.strCompanyGUID &&
-      !!user?.intCurrencyID &&
+      !!currencyId &&
       !!filters?.strSupplierGUID,
     placeholderData: keepPreviousData,
   });

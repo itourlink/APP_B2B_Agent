@@ -18,9 +18,11 @@ import HotelSearch from "../hotel/components/hotel-search";
 import { HotelCard } from "../hotel/components/hotel-card";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useTranslate } from "@/locales";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const SearchView = () => {
   const { t } = useTranslate("search")
+  const { currencyId } = useCurrency();
   const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
@@ -175,7 +177,7 @@ const SearchView = () => {
 
         strCompanyOwnerGUID: coData?.strCompanyGUID,
         strCompanyPartnerGUID: user?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
 
         ...hotelParams,
 
@@ -201,7 +203,7 @@ const SearchView = () => {
       ? {
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
 
         ...hotelParams,
 
@@ -372,7 +374,7 @@ const SearchView = () => {
         {searchType === "tour" && (
           <TourSearch />
         )}
-            
+
         {searchType === "hotel" && (
           <HotelSearch />
         )}
@@ -495,7 +497,7 @@ const SearchView = () => {
                               <Flag size={16} />
 
                               <span>
-                               {t("by")}:
+                                {t("by")}:
                                 <span className="font-medium ml-1">
                                   {isValidValue(item?.strOwnerCompanyName)}
                                 </span>
@@ -512,14 +514,14 @@ const SearchView = () => {
                               <Clock size={16} />
 
                               <span>
-                                 {t("duration")}: {isValidValue(item?.intNoOfDay)}{" "}
-                                 {t("days")}
+                                {t("duration")}: {isValidValue(item?.intNoOfDay)}{" "}
+                                {t("days")}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-2">
                               <span className="font-bold">
-                               {t("sold")} : {isValidValue(item?.intTotalPaxUsed)}
+                                {t("sold")} : {isValidValue(item?.intTotalPaxUsed)}
                               </span>
                             </div>
 
@@ -527,7 +529,7 @@ const SearchView = () => {
                               <MapPin size={16} />
 
                               <span>
-                               {t("destinations")}:{" "}
+                                {t("destinations")}:{" "}
                                 {isValidValue(item?.strListTourDestinationName)}
                               </span>
                             </div>
@@ -564,7 +566,7 @@ const SearchView = () => {
                           onClick={() => router.push(paths.content.agent)}
                           className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors"
                         >
-                         {t("bookNow")}
+                          {t("bookNow")}
                         </button>
 
                         <button className="mt-2 text-xs font-bold text-black uppercase bg-gray-100 px-2 py-1 rounded shadow-inner">
@@ -610,7 +612,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                          {t("noHotelData")}
+                            {t("noHotelData")}
                           </div>
                         )}
                       </>
@@ -627,7 +629,7 @@ const SearchView = () => {
                           </div>
                         ) : (
                           <div className="w-full py-20 flex items-center justify-center text-gray-500">
-                          {t("noHotelData")}
+                            {t("noHotelData")}
                           </div>
                         )}
                       </>

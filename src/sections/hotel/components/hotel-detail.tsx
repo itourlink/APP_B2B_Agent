@@ -34,10 +34,12 @@ import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const HotelDetail = () => {
   const { t } = useTranslate("hotel");
   const location = useLocation();
+  const { currencyId } = useCurrency();
   const item = location?.state?.item;
   const router = useRouter();
   const { user } = useUser();
@@ -83,10 +85,10 @@ const HotelDetail = () => {
   const { spbData } = useListSupplierPriceByAgent(
     isSupplierPriceReady
       ? {
-          strSupplierGUID: item?.strSupplierGUID,
-          strPriceListGUID,
-          strPriceLevelGUID,
-        }
+        strSupplierGUID: item?.strSupplierGUID,
+        strPriceListGUID,
+        strPriceLevelGUID,
+      }
       : undefined,
   );
 
@@ -363,9 +365,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                            ...x,
-                                            qty: Math.max(1, x.qty - 1),
-                                          }
+                                          ...x,
+                                          qty: Math.max(1, x.qty - 1),
+                                        }
                                         : x,
                                     ),
                                   };
@@ -391,9 +393,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                            ...x,
-                                            qty: x.qty + 1,
-                                          }
+                                          ...x,
+                                          qty: x.qty + 1,
+                                        }
                                         : x,
                                     ),
                                   };
@@ -775,7 +777,7 @@ const HotelDetail = () => {
                 onClick={() => {
                   setPreviewImage(
                     getUrlImage(hotel?.strSupplierImage) ||
-                      "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
+                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
                   );
                 }}
                 src={

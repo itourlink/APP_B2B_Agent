@@ -112,6 +112,7 @@ export const useListTourPublish = (filters?: {
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
 
     const {
         page = filters?.page ?? null,
@@ -152,7 +153,7 @@ export const useListTourPublish = (filters?: {
 
                 dtmFilterDateStart: null,
                 strOrder: null,
-                intCurrencyView: user?.intCurrencyID,
+                intCurrencyView: currencyId,
                 intCurPage: page,
                 intPageSize: pageSize,
                 tblsReturn: "[0]",
@@ -289,6 +290,7 @@ export const useListTourSeries = (filters?: {
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
 
     const {
         page = 1,
@@ -358,7 +360,7 @@ export const useListTourSeries = (filters?: {
 
                 strPriceFromRange,
 
-                intCurrencyView: user?.intCurrencyID,
+                intCurrencyView: currencyId,
 
                 strLocationCode,
 

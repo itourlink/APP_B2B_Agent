@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useUser } from "./useAuth";
 import apiClient from "@/axios";
+import { useCurrency } from "@/zustand/useCurrency";
 
 export const fetchGetListTourPublish = async (body: any) => {
   const res = await apiClient.post("Tour/GetListTourPublish", body);
@@ -10,6 +11,7 @@ export const fetchGetListTourPublish = async (body: any) => {
 
 export const useGetlistTourPublish = (filters?: any) => {
   const { user } = useUser();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 10;
@@ -20,7 +22,7 @@ export const useGetlistTourPublish = (filters?: any) => {
   const strPriceFromRange = filters?.strPriceFromRange ?? "";
 
   const query = useQuery({
-    queryKey: [QUERY_KEYS.TOUR_CUSTOMER.LIST_TOUR_PUBLISH, page, pageSize, filters],
+    queryKey: [QUERY_KEYS.TOUR_CUSTOMER.LIST_TOUR_PUBLISH, page, pageSize, filters, currencyId],
     queryFn: () =>
       fetchGetListTourPublish({
         strTourGUID: null,
@@ -42,7 +44,7 @@ export const useGetlistTourPublish = (filters?: any) => {
         dtmFilterDateValidTo: null,
         strOrder: null,
         strPriceFromRange: strPriceFromRange,
-        intCurrencyView: user?.intCurrencyID,
+        intCurrencyView: currencyId,
         strLocationCode: strLocationCode,
         intCurPage: page,
         intPageSize: pageSize,

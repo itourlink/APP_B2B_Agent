@@ -25,9 +25,11 @@ import { fDate } from "@/utils/format-time";
 import { addDays } from "date-fns";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
+  const { currencyId } = useCurrency();
 
   const { setGlobalLoading } = useGlobalLoading();
   const location = useLocation();
@@ -157,7 +159,7 @@ const PaymentBookingView: React.FC = () => {
 
     qrPlaceholder:
       typeof selectedBankAccount?.strLinkQRCode === "string" &&
-      selectedBankAccount?.strLinkQRCode
+        selectedBankAccount?.strLinkQRCode
         ? selectedBankAccount?.strLinkQRCode
         : "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NoQRCode",
   };
@@ -235,7 +237,7 @@ const PaymentBookingView: React.FC = () => {
 
         dtmDateTo: null,
 
-        intCurrencyID: user?.intCurrencyID || 3,
+        intCurrencyID: currencyId || 3,
 
         strPaidRemark: paidRemark || null,
 
@@ -289,9 +291,9 @@ const PaymentBookingView: React.FC = () => {
         VoucherCode:
           selectedVoucher?.length > 0
             ? selectedVoucher
-                .map((item: any) => item?.voucherCode)
-                .filter(Boolean)
-                .join(",")
+              .map((item: any) => item?.voucherCode)
+              .filter(Boolean)
+              .join(",")
             : null,
       };
 
@@ -953,7 +955,7 @@ const PaymentBookingView: React.FC = () => {
               <textarea
                 value={paidRemark}
                 onChange={(e) => setPaidRemark(e.target.value)}
-                                                placeholder={t("note")}
+                placeholder={t("note")}
 
                 rows={3}
                 className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
@@ -966,7 +968,7 @@ const PaymentBookingView: React.FC = () => {
                 disabled={isLoading}
                 className="cursor-pointer bg-[#0f4c81] hover:bg-[#0b3a63] text-white font-medium text-xs py-2 px-6 rounded shadow transition-colors duration-150 disabled:opacity-50"
               >
-                                              {isLoading ? t("bookingProcessing") : t("bookingNow")}
+                {isLoading ? t("bookingProcessing") : t("bookingNow")}
 
               </button>
             </div>

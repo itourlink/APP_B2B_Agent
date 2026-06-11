@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListFlight = async (body: any) => {
   const res = await apiClient.post("supplier/GetListSupplierByAgent", body);
@@ -12,20 +13,20 @@ const fetchListFlight = async (body: any) => {
 export const useListFlight = (filters: { page: number; pageSize: number }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-
+  const { currencyId } = useCurrency();
   const query = useQuery({
     queryKey: [
       QUERY_KEYS.FLIGHT.LIST_FLIGHT,
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId
     ],
     queryFn: () =>
       fetchListFlight({
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         strSupplierGUID: null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
@@ -41,7 +42,7 @@ export const useListFlight = (filters: { page: number; pageSize: number }) => {
     enabled:
       !!user?.strCompanyGUID &&
       !!coData?.strCompanyGUID &&
-      !!user?.intCurrencyID,
+      !!currencyId,
     placeholderData: keepPreviousData,
   });
 
@@ -131,7 +132,7 @@ export const useDetailFlight = (filters: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-
+  const { currencyId } = useCurrency();
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 10;
 
@@ -141,14 +142,14 @@ export const useDetailFlight = (filters: {
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchDetailFlight({
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
         strSupplierGUID: filters?.strSupplierGUID || null,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
         strPriceFromRange: null,
@@ -168,7 +169,7 @@ export const useDetailFlight = (filters: {
   const totalRecords = listData?.[0]?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
 
-  
+
   return {
     fdData: listData,
     totalRecords,

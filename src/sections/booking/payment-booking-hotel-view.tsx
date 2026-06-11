@@ -13,9 +13,11 @@ import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDateTime } from '@/utils/format-time';
 import { useTranslate } from '@/locales';
+import { useCurrency } from '@/zustand/useCurrency';
 
 const PaymentBookingHotelView: React.FC = () => {
     const { t } = useTranslate("booking")
+    const { currencyId } = useCurrency();
     const { setGlobalLoading } = useGlobalLoading();
     const getTitleLabel = (label: string) => {
         switch (label) {
@@ -70,7 +72,7 @@ const PaymentBookingHotelView: React.FC = () => {
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
 
-// Helper định dạng tiền tệ Việt Nam (đ)
+    // Helper định dạng tiền tệ Việt Nam (đ)
     const formatCurrency = (amount?: any) => {
         const value =
             typeof amount === "number" || typeof amount === "string"
@@ -228,7 +230,7 @@ const PaymentBookingHotelView: React.FC = () => {
 
         try {
 
-             // apply voucher trước
+            // apply voucher trước
             if (selectedVoucher?.length > 0) {
                 await Promise.all(
                     selectedVoucher.map((voucher: any) =>
@@ -311,7 +313,7 @@ const PaymentBookingHotelView: React.FC = () => {
                     : null,
 
                 // CURRENCY
-                intCurrencyID: user?.intCurrencyID,
+                intCurrencyID: currencyId,
 
                 // PAYMENT
                 intPaymentMethodID:
@@ -473,7 +475,7 @@ const PaymentBookingHotelView: React.FC = () => {
                             });
                         }
 
-                        
+
                         // serviceUrl =
                         //     `http://localhost:5173/service?activeTab=${activeTab}`;
                         serviceUrl =
@@ -499,7 +501,7 @@ const PaymentBookingHotelView: React.FC = () => {
 
                     showToast(
                         "error",
-                       t("bookingFailed")
+                        t("bookingFailed")
                     );
 
                 },
@@ -709,7 +711,7 @@ const PaymentBookingHotelView: React.FC = () => {
                                         </div>
                                     )}
                                 </div>
-        {/* Độ tuổi */}
+                                {/* Độ tuổi */}
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">{t("age")} <span className="text-red-500">*</span></label>
                                     <select
@@ -766,7 +768,7 @@ const PaymentBookingHotelView: React.FC = () => {
                                     />
                                 </div>
 
-                          {/* Số điện thoại */}
+                                {/* Số điện thoại */}
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">{t("phoneNumber")}</label>
                                     <input
@@ -816,10 +818,10 @@ const PaymentBookingHotelView: React.FC = () => {
 
                 </div>
 
-                   {/* 3. Khối Nội dung thanh toán tour */}
+                {/* 3. Khối Nội dung thanh toán tour */}
 
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                                      {/* Header công ty */}
+                    {/* Header công ty */}
 
                     <div className="bg-gray-50 border-b border-gray-200 px-5 py-3 flex items-center gap-2">
                         <span className="text-gray-600 text-lg">💼</span>
@@ -882,7 +884,7 @@ const PaymentBookingHotelView: React.FC = () => {
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                                                                     đ0
+                                            đ0
 
                                         </td>
 
@@ -1003,7 +1005,7 @@ const PaymentBookingHotelView: React.FC = () => {
                                 </select>
                             </div>
 
-                                       {/* Chỉ hiện khi Bank transfer */}
+                            {/* Chỉ hiện khi Bank transfer */}
 
                             {paymentMethod === "Bank transfer" && (
                                 <div>

@@ -8,8 +8,10 @@ import { Banknote, Edit3, Trash2, Tag, Users, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 // import dayjs from "dayjs";
 import { fDateTime } from "@/utils/format-time";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const CartView = () => {
+    const { currencyId } = useCurrency();
     const [filters, setFilters] = useState({
         page: String(1),
         limit: String(50),
@@ -25,7 +27,7 @@ const CartView = () => {
 
     // const pageSize = 5;
     const { data, isLoading } = useQuery({
-        queryKey: [QUERY_KEYS.USER.LIST_CART, user?.strUserGUID, user?.intCurrencyID],
+        queryKey: [QUERY_KEYS.USER.LIST_CART, user?.strUserGUID, currencyId],
         queryFn: () =>
             useGetListCart({
                 strCompanyAgentGUID: user?.strCompanyGUID,
@@ -33,14 +35,14 @@ const CartView = () => {
                 strListCartServiceItemGUID: null,
                 strOnlineCartGUID: null,
                 strBuyFromAgentHostGUID: null,
-                intCurrencyID:  1,
+                intCurrencyID: 1,
                 intCurPage: null,
                 intPageSize: null,
                 strOrder: null,
                 tblsReturn: "[0]",
             }),
         refetchOnWindowFocus: false,
-        enabled: !!user?.strCompanyGUID && !!user?.intCurrencyID,
+        enabled: !!user?.strCompanyGUID && !!currencyId,
         placeholderData: keepPreviousData,
     });
     const listData = data?.[0] ?? [];

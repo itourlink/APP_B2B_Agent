@@ -3,6 +3,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListHotel = async (body: any) => {
     const res = await apiClient.post("supplier/GetListSupplierForHotelByAgent", body);
@@ -25,6 +26,7 @@ export const useListHotel = (filters?: {
     tblsReturn?: string;
 }) => {
     const { user } = useUser();
+    const { currencyId } = useCurrency();
 
     const {
         page = 1,
@@ -49,7 +51,7 @@ export const useListHotel = (filters?: {
                 strUserGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 strCompanyOwnerGUID: null,
-                intCurrencyID: user?.intCurrencyID,
+                intCurrencyID: currencyId,
 
                 strSupplierGUID,
                 strFilterLocationCode,
@@ -102,6 +104,7 @@ export const useListHotelGetPriceUID = (filters?: {
     tblsReturn?: string;
 }) => {
     const { user } = useUser();
+    const { currencyId } = useCurrency();
 
     const {
         page = 1,
@@ -126,7 +129,7 @@ export const useListHotelGetPriceUID = (filters?: {
                 strUserGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 strCompanyOwnerGUID: null,
-                intCurrencyID: user?.intCurrencyID,
+                intCurrencyID: currencyId,
 
                 strSupplierGUID,
                 strFilterLocationCode,
@@ -215,6 +218,7 @@ export const useListSupplierPriceByAgent = (
 ) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
 
     const {
         strSupplierGUID = null,
@@ -255,7 +259,7 @@ export const useListSupplierPriceByAgent = (
                 intPageSize: null,
                 strOrder: null,
                 tblsReturn: "[0][1]",
-                intCurrencyView: user?.intCurrencyID,
+                intCurrencyView: currencyId,
             }),
         enabled: isReady,
         placeholderData: keepPreviousData,
@@ -290,6 +294,7 @@ export const useSearchHotel = (filters?: {
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
 
     const page =
         filters?.intCurPage ?? filters?.page ?? 1;
@@ -310,7 +315,7 @@ export const useSearchHotel = (filters?: {
                 dtmFilterCheckIn: filters?.dtmFilterCheckIn,
                 dtmFilterCheckOut: filters?.dtmFilterCheckOut,
 
-                intCurrencyID: user?.intCurrencyID,
+                intCurrencyID: currencyId,
                 IsShowAll: filters?.IsShowAll,
 
                 strSupplierGUID: null,

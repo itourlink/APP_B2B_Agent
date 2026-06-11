@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListCart = async (body: any) => {
   const res = await apiClient.post("booking/GetListCartServiceItem", body);
@@ -15,13 +16,13 @@ export const useListCart = (filters: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-
+  const { currencyId } = useCurrency();
   const query = useQuery({
     queryKey: [
       QUERY_KEYS.CART.LIST_CART,
       user?.strUserGUID,
       user?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchListCart({
@@ -30,7 +31,7 @@ export const useListCart = (filters: {
         strListCartServiceItemGUID: null,
         strOnlineCartGUID: null,
         strBuyFromAgentHostGUID: null,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         intCurPage: null,
         intPageSize: null,
         strOrder: null,

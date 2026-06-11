@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListGuideFee = async (body: any) => {
   const res = await apiClient.post("supplier/GetListSupplierByAgent", body);
@@ -15,20 +16,20 @@ export const useListGuideFee = (filters: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-
+  const { currencyId } = useCurrency();
   const query = useQuery({
     queryKey: [
       QUERY_KEYS.GUIDE_FEE.LIST_GUIDE_FEE,
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchListGuideFee({
         strCompanyPartnerGUID: user?.strCompanyGUID,
         strCompanyOwnerGUID: coData?.strCompanyGUID,
-        intCurrencyID: user?.intCurrencyID,
+        intCurrencyID: currencyId,
         strSupplierGUID: null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
@@ -70,6 +71,7 @@ export const useDetailGuideFee = (filters?: {
 }) => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 1;
@@ -80,14 +82,14 @@ export const useDetailGuideFee = (filters?: {
       filters,
       user?.strCompanyGUID,
       coData?.strCompanyGUID,
-      user?.intCurrencyID,
+      currencyId,
     ],
     queryFn: () =>
       fetchDetailGuideFee({
         strCompanyPartnerGUID: user?.strCompanyGUID ?? null,
         strCompanyOwnerGUID: coData?.strCompanyGUID ?? null,
         strSupplierGUID: filters?.strSupplierGUID ?? null,
-        intCurrencyID: user?.intCurrencyID ?? null,
+        intCurrencyID: currencyId ?? null,
         strFilterSupplierName: null,
         strFilterLocationCode: null,
         strPriceFromRange: null,
@@ -107,7 +109,7 @@ export const useDetailGuideFee = (filters?: {
   const totalRecords = listData?.[0]?.[0]?.intTotalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
 
-  
+
   return {
     gfData: listData,
     totalPages,
