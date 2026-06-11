@@ -3,6 +3,8 @@ import { Router } from "./routes";
 import ToastComponent from "./components/notification/useToast";
 import { BrowserRouter } from "react-router-dom";
 import GlobalLoading from "./components/loading/global-loading";
+import { useUser } from "./hooks/actions/useAuth";
+import { useCurrency } from "./zustand/useCurrency";
 
 function App() {
 
@@ -20,6 +22,15 @@ function App() {
       }
     }
   }, []);
+
+  const { user } = useUser();
+  const { setCurrencyId } = useCurrency();
+
+  useEffect(() => {
+    if (user?.intCurrencyID) {
+      setCurrencyId(user.intCurrencyID);
+    }
+  }, [user]);
 
   return (
     <BrowserRouter>

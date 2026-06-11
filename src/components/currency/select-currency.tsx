@@ -1,7 +1,8 @@
 import { useComboboxByCode } from "@/hooks/actions/useComboBox";
+import { useCurrency } from "@/zustand/useCurrency";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface Props {
@@ -21,36 +22,38 @@ export const SelectCurrency = ({
   handleEnter,
   handleLeave,
 }: Props) => {
+  const { currencyId, setCurrencyId } = useCurrency();
+
   const { data: currencyOptions = [] } =
     useComboboxByCode("075");
 
   const currencies = useMemo<Currency[]>(
     () =>
-      currencyOptions.map((item) => {
-        const symbol =
-          item.label.match(/^([^\s]+)/)?.[1] ?? "";
-
-        const label =
+      currencyOptions.map((item) => ({
+        value: item.value,
+        label:
           item.label.match(/\(([A-Z]{3})/)?.[1] ??
-          item.label;
-
-        return {
-          value: item.value,
-          label,
-          symbol,
-        };
-      }),
+          item.label,
+        symbol:
+          item.label.match(/^([^\s]+)/)?.[1] ?? "",
+      })),
     [currencyOptions]
   );
 
-  const [selected, setSelected] =
-    useState<Currency | null>(null);
-
+  // Khởi tạo mặc định lần đầu
   useEffect(() => {
-    if (!selected && currencies.length) {
-      setSelected(currencies[0]);
+    if (!currencyId && currencies.length) {
+      setCurrencyId(Number(currencies[0].value));
     }
-  }, [currencies, selected]);
+  }, [currencyId, currencies, setCurrencyId]);
+
+  const selected = useMemo(
+    () =>
+      currencies.find(
+        (item) => Number(item.value) === currencyId
+      ) ?? currencies[0],
+    [currencies, currencyId]
+  );
 
   return (
     <div
@@ -58,7 +61,6 @@ export const SelectCurrency = ({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      {/* Trigger */}
       <div
         className="
           flex items-center gap-2
@@ -87,7 +89,6 @@ export const SelectCurrency = ({
         />
       </div>
 
-      {/* Dropdown */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -104,7 +105,8 @@ export const SelectCurrency = ({
               max-h-64
               overflow-y-auto
               rounded-xl
-           bg-white/20 backdrop-blur-md
+              bg-white/20
+              backdrop-blur-md
               shadow-xl
               border
               p-1
@@ -113,13 +115,15 @@ export const SelectCurrency = ({
             {currencies.map((item) => (
               <div
                 key={item.value}
-                onClick={() => setSelected(item)}
+                onClick={() =>
+                  setCurrencyId(Number(item.value))
+                }
                 className={twMerge(
                   "flex items-center justify-between",
                   "px-3 py-2 rounded-lg",
                   "cursor-pointer transition-colors",
                   "hover:bg-[#4a6fa5] hover:text-white",
-                  selected?.value === item.value &&
+                  Number(item.value) === currencyId &&
                   "bg-[#4a6fa5] text-white"
                 )}
               >
@@ -128,7 +132,7 @@ export const SelectCurrency = ({
                   <span>{item.label}</span>
                 </div>
 
-                {selected?.value === item.value && (
+                {Number(item.value) === currencyId && (
                   <span>✓</span>
                 )}
               </div>

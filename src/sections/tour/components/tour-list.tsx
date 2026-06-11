@@ -3,10 +3,11 @@ import { useTranslate } from '@/locales';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
-import { formatPrice } from '@/utils/format-number';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
+import { isValidValue } from '@/utils/utilts';
+import { useListCurrency } from '@/hooks/actions/useCurrency';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -165,6 +166,7 @@ type TourItemProps = {
 const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { t } = useTranslate("tour");
     const router = useRouter();
+    const { currencyData } = useListCurrency()
 
     const isGrid = viewMode === "grid";
 
@@ -296,7 +298,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                                     : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-                            {formatPrice(tour?.dblPriceFrom)}
+                            {currencyData?.strCurrencySymbol} {isValidValue(tour?.dblPriceFrom)}
                         </p>
                     </div>
 

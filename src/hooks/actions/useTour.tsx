@@ -3,6 +3,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
+import { useCurrency } from "@/zustand/useCurrency";
 
 const fetchListTour = async (body: any) => {
     const res = await apiClient.post("tour/GetListTourPublishInTopForHmPgTour", body);
@@ -12,18 +13,19 @@ const fetchListTour = async (body: any) => {
 export const useListTour = (filters?: { page?: number; pageSize?: number }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
 
     const { page = 1, pageSize = 10 } = filters || {};
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR, filters, coData?.strCompanyGUID],
+        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR, filters, coData?.strCompanyGUID, currencyId],
         queryFn: () =>
             fetchListTour({
                 strCompanyOwnerGUID: coData?.strCompanyGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
                 strPriceLevelGUID: coData?.strPriceLevelGUID,
                 intLangID: user?.intLangID,
-                intCurrencyID: user?.intCurrencyID,
+                intCurrencyID: currencyId,
                 strOrder: null,
                 intCurPage: page,
                 intPageSize: pageSize,

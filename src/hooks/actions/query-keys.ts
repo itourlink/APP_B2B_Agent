@@ -114,5 +114,8 @@ export const QUERY_KEYS = {
         PAYMENT_TERM: "PAYMENT_TERM"
     },
     COMBOBOX_BY_CODE: "COMBOBOX_BY_CODE",
-
+    
+    CURRENCY: {
+        CURRENCY: "CURRENCY"
+    }
 };
