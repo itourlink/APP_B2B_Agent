@@ -271,5 +271,6 @@
   "choice": "-- Chọn -- ",
   "enterContent": "Nhập nội dung tại đây...",
 
-"bannerImg": "Ảnh banner"
+"bannerImg": "Ảnh banner",
+"dayNoti" : " Không chọn được ngày nhỏ hơn ngày hiện tại."
 }

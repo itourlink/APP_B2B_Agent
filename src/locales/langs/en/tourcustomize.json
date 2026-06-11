@@ -269,6 +269,7 @@
   "nights": "Nights",
   "choice": "-- Choice --",
   "enterContent": "Enter content here...",
-  "bannerImg": "Banner IMG"
+  "bannerImg": "Banner IMG",
+  "dayNoti": "No date earlier than the current date can be selected."
 
 }
