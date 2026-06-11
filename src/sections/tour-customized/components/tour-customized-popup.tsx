@@ -193,8 +193,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         strTourCode: itemDetailTour?.strTourCode ?? "",
                     });
 
-                    const url = `http://localhost:5173/detail-tour?${params.toString()}`;
-                    // const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
+                    // const url = `http://localhost:5173/detail-tour?${params.toString()}`;
+                    const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
 
                     window.open(
                         url,
