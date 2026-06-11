@@ -8,6 +8,7 @@ import { useState } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
 import { isValidValue } from '@/utils/utilts';
 import { useListCurrency } from '@/hooks/actions/useCurrency';
+import { fCurrency } from '@/utils/format-number';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -168,6 +169,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const router = useRouter();
     const { currencyData } = useListCurrency()
 
+    console.log("cr", currencyData)
     const isGrid = viewMode === "grid";
 
     return (
@@ -298,7 +300,13 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                                     : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-                            {currencyData?.strCurrencySymbol} {isValidValue(tour?.dblPriceFrom)}
+
+                            {fCurrency(
+                                tour?.dblPriceFrom,
+                                currencyData?.strCurrencyCode
+                            )}
+
+                            {/* {currencyData?.strCurrencySymbol} {isValidValue(tour?.dblPriceFrom)} */}
                         </p>
                     </div>
 
