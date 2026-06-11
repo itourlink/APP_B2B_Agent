@@ -39,7 +39,6 @@ import { useCurrency } from "@/zustand/useCurrency";
 const HotelDetail = () => {
   const { t } = useTranslate("hotel");
   const location = useLocation();
-  const { currencyId } = useCurrency();
   const item = location?.state?.item;
   const router = useRouter();
   const { user } = useUser();

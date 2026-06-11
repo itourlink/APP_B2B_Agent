@@ -23,7 +23,6 @@ export const useListPrice = (filters?: {
     enabled?: boolean;
 }) => {
     const { coData } = useListCompanyOwner();
-    const { user } = useUser()
     const { currencyId } = useCurrency();
     const query = useQuery({
         queryKey: [
