@@ -1,12 +1,8 @@
-// import { useComboboxByCode } from "@/hooks/actions/useComboBox";
+import { useComboboxByCode } from "@/hooks/actions/useComboBox";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { ChevronUp } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
-
-const listCurrency = [
-  { label: "VND", value: "vnd", symbol: "₫" },
-  { label: "USD", value: "usd", symbol: "$" },
-];
 
 interface Props {
   open: boolean;
@@ -14,50 +10,127 @@ interface Props {
   handleLeave: () => void;
 }
 
+interface Currency {
+  value: string;
+  label: string;
+  symbol: string;
+}
+
 export const SelectCurrency = ({
   open,
   handleEnter,
   handleLeave,
 }: Props) => {
+  const { data: currencyOptions = [] } =
+    useComboboxByCode("075");
 
-  // const { data: currencyOptions = [], isLoading: _ } =
-  //   useComboboxByCode("075");
+  const currencies = useMemo<Currency[]>(
+    () =>
+      currencyOptions.map((item) => {
+        const symbol =
+          item.label.match(/^([^\s]+)/)?.[1] ?? "";
 
-  // console.log("currencyOptions", currencyOptions)
+        const label =
+          item.label.match(/\(([A-Z]{3})/)?.[1] ??
+          item.label;
 
-  const [selected, setSelected] = useState(listCurrency[0]);
+        return {
+          value: item.value,
+          label,
+          symbol,
+        };
+      }),
+    [currencyOptions]
+  );
+
+  const [selected, setSelected] =
+    useState<Currency | null>(null);
+
+  useEffect(() => {
+    if (!selected && currencies.length) {
+      setSelected(currencies[0]);
+    }
+  }, [currencies, selected]);
 
   return (
     <div
+      className="relative"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      className="flex w-10 h-10 relative justify-center items-center rounded-lg border border-[rgba(64,64,64,0.5)] cursor-pointer"
     >
-      <span>{selected.symbol}</span>
+      {/* Trigger */}
+      <div
+        className="
+          flex items-center gap-2
+          h-10 px-3
+          rounded-lg
+          border border-[rgba(64,64,64,0.5)]
+          bg-white/10 backdrop-blur-sm
+          cursor-pointer
+          min-w-[110px]
+        "
+      >
+        <span className="text-base">
+          {selected?.symbol}
+        </span>
 
+        <span className="text-sm font-medium">
+          {selected?.label}
+        </span>
+
+        <ChevronUp
+          size={14}
+          className={twMerge(
+            "ml-auto transition-transform duration-200",
+            open && "rotate-180"
+          )}
+        />
+      </div>
+
+      {/* Dropdown */}
       <AnimatePresence>
         {open && (
           <motion.div
-            onMouseEnter={handleEnter}
-            onMouseLeave={handleLeave}
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="absolute w-28 bg-white/20 backdrop-blur-md rounded-2xl right-0 top-[110%] p-2 space-y-1 shadow-xl border border-[rgba(64,64,64,0.5)]"
+            className="
+              absolute
+              top-[calc(100%+8px)]
+              right-0
+              z-50
+              w-40
+              max-h-64
+              overflow-y-auto
+              rounded-xl
+           bg-white/20 backdrop-blur-md
+              shadow-xl
+              border
+              p-1
+            "
           >
-            {listCurrency.map((item) => (
+            {currencies.map((item) => (
               <div
                 key={item.value}
                 onClick={() => setSelected(item)}
                 className={twMerge(
-                  "flex justify-between p-2 rounded-lg cursor-pointer",
-                  "hover:bg-[#4a6fa5] hover:text-white text-black",
-                  selected.value === item.value && "bg-[#4a6fa5] text-white"
+                  "flex items-center justify-between",
+                  "px-3 py-2 rounded-lg",
+                  "cursor-pointer transition-colors",
+                  "hover:bg-[#4a6fa5] hover:text-white",
+                  selected?.value === item.value &&
+                  "bg-[#4a6fa5] text-white"
                 )}
               >
-                <span>{item.label}</span>
-                <span>{item.symbol}</span>
+                <div className="flex items-center gap-2">
+                  <span>{item.symbol}</span>
+                  <span>{item.label}</span>
+                </div>
+
+                {selected?.value === item.value && (
+                  <span>✓</span>
+                )}
               </div>
             ))}
           </motion.div>
