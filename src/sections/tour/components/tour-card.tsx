@@ -94,7 +94,7 @@ export const TourCard = ({ tour }: any) => {
                         <p className="text-[#2563eb] font-bold text-xl">
                             {fCurrency(
                                 tour?.dblPriceFrom,
-                                selectedCurrency?.symbol
+                                selectedCurrency?.label
                             )}
                         </p>
                     </div>

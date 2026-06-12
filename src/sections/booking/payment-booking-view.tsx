@@ -13,7 +13,7 @@ import { useListCity } from "@/hooks/actions/useCity";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { statusTabMap, TITLES_OPTIONS } from "@/utils/option-data";
 import { useMutation } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PaymentCountdown from "./payment-countdown";
 import { isValidValue } from "@/utils/utilts";
@@ -145,6 +145,23 @@ const PaymentBookingView: React.FC = () => {
   const finalDeposit = Math.max(totalDeposit - totalVoucherAmount, 0);
 
   const finalDebt = Math.max(totalDebt - totalVoucherAmount, 0);
+
+  const paymentDeadline = useMemo(() => {
+    const holdHours = Number(paytermData?.intHourInHold ?? 24);
+
+    const date = new Date();
+
+    date.setHours(date.getHours() + holdHours);
+
+    return date.toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }, [paytermData?.intHourInHold]);
 
   const bankInfo = {
     accountName: selectedBankAccount?.strCompanyBankAccountName || "---",
@@ -737,11 +754,11 @@ const PaymentBookingView: React.FC = () => {
                       {isValidValue(price?.dblTotalPriceCom)}
                     </td>
                     <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
-                      {selectedCurrency?.symbol}{" "}
+                      {selectedCurrency?.symbol}
                       {isValidValue(price?.dblTotalPrice)}
                     </td>
                     <td className="py-3 px-3 align-top font-medium">
-                      {selectedCurrency?.symbol}{" "}
+                      {selectedCurrency?.symbol}
                       {isValidValue(totalDeposit)}
                     </td>
                   </tr>
@@ -813,16 +830,8 @@ const PaymentBookingView: React.FC = () => {
 
               {/* Alert Đỏ */}
               <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                {t("paymentNoticePrefix")}{" "}
-                {new Date().toLocaleString("vi-VN", {
-                  weekday: "short",
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                })}{" "}
+                {t("paymentNoticePrefix")} {paymentDeadline}
+                {" "}
                 {t("paymentNoticeSuffix")}
               </div>
 
