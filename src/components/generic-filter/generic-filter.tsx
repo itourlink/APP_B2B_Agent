@@ -4,11 +4,11 @@ import { format } from "date-fns";
 import StarIcon from "@/assets/icons/star-icon";
 import GuestPopup from "./guest-popup";
 import DateRangePopup from "./date-range-popup";
-import DatePopup from "./date-popup";
 import TypeSelect, { type Option } from "./type-select";
 import GuestRoomPopup from "./guess-room-popup";
 import TourTypeSelect from "./tour-type-select";
 import { useTranslate } from "@/locales";
+import { DatePopup } from "./date-popup";
 
 type FilterItem =
     | {
@@ -103,14 +103,14 @@ export const GenericFilter = ({
 
             case "search":
                 return (
-                    <div  ref={locadesRef}  className="relative flex items-center gap-2">
+                    <div ref={locadesRef} className="relative flex items-center gap-2">
                         <Search size={18} />
 
                         <div>
                             <div className="text-sm font-semibold">{item.label ?? t("search")}</div>
 
                             <input
-                             ref={searchInputRef}
+                                ref={searchInputRef}
                                 value={values[item.key] || ""}
                                 onChange={(e) => {
                                     const val = e.target.value;
@@ -136,12 +136,12 @@ export const GenericFilter = ({
                                 {item.renderDropdown?.({
                                     value: values[item.key],
                                     close: () => {
-                            setActive(null);
+                                        setActive(null);
 
-                            setTimeout(() => {
-                                searchInputRef.current?.focus();
-                            }, 0);
-                        },
+                                        setTimeout(() => {
+                                            searchInputRef.current?.focus();
+                                        }, 0);
+                                    },
                                 })}
                             </div>
                         )}
