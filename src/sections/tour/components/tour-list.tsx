@@ -301,7 +301,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
 
                             {fCurrency(
                                 tour?.dblPriceFrom,
-                                selectedCurrency?.strCurrencyCode
+                                selectedCurrency?.label
                             )}
 
                         </p>
