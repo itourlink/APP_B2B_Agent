@@ -13,7 +13,7 @@ import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDateTime } from '@/utils/format-time';
 import { useTranslate } from '@/locales';
-import { useCurrency } from '@/zustand/useCurrency';
+import { useCurrency } from '@/components/currency/useCurrency';
 
 const PaymentBookingHotelView: React.FC = () => {
     const { t } = useTranslate("booking")

@@ -24,8 +24,8 @@ import { useGlobalLoading } from "@/zustand/useGlobalLoading";
 import { fDate } from "@/utils/format-time";
 import { addDays } from "date-fns";
 import { useTranslate } from "@/locales";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
@@ -40,7 +40,7 @@ const PaymentBookingView: React.FC = () => {
   const { bankAccountData } = useListBankAccount();
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-  const { currencyData } = useListCurrency();
+  const { selectedCurrency } = useListCurrency();
   const [isShowTravellerForm, setIsShowTravellerForm] = useState(false);
   const [isShowVoucher, setIsShowVoucher] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
@@ -737,11 +737,11 @@ const PaymentBookingView: React.FC = () => {
                       {isValidValue(price?.dblTotalPriceCom)}
                     </td>
                     <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
-                      {currencyData?.strCurrencySymbol}{" "}
+                      {selectedCurrency?.symbol}{" "}
                       {isValidValue(price?.dblTotalPrice)}
                     </td>
                     <td className="py-3 px-3 align-top font-medium">
-                      {currencyData?.strCurrencySymbol}{" "}
+                      {selectedCurrency?.symbol}{" "}
                       {isValidValue(totalDeposit)}
                     </td>
                   </tr>
@@ -756,11 +756,11 @@ const PaymentBookingView: React.FC = () => {
                       {isValidValue(price?.dblTotalPriceCom)}
                     </td>
                     <td className="py-2 px-3 border-r border-gray-100">
-                      {currencyData?.strCurrencySymbol}{" "}
+                      {selectedCurrency?.symbol}{" "}
                       {isValidValue(price?.dblTotalPrice)}
                     </td>
                     <td className="py-2 px-3">
-                      {currencyData?.strCurrencySymbol}{" "}
+                      {selectedCurrency?.symbol}{" "}
                       {isValidValue(totalDeposit)}
                     </td>
                   </tr>
@@ -807,7 +807,7 @@ const PaymentBookingView: React.FC = () => {
                   {t("paymentFirstInstallment")}
                 </span>
                 <span className="font-semibold text-[#1e5bb4] underline">
-                  {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
+                  {selectedCurrency?.symbol} {isValidValue(finalDeposit)}
                 </span>
               </div>
 
@@ -832,7 +832,7 @@ const PaymentBookingView: React.FC = () => {
                 </span>
 
                 <span className="font-semibold text-gray-800">
-                  {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
+                  {selectedCurrency?.symbol} {isValidValue(finalDebt)}
                 </span>
               </div>
             </div>

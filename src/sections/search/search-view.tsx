@@ -18,7 +18,7 @@ import HotelSearch from "../hotel/components/hotel-search";
 import { HotelCard } from "../hotel/components/hotel-card";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useTranslate } from "@/locales";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 const SearchView = () => {
   const { t } = useTranslate("search")

@@ -6,7 +6,7 @@ import { getUrlImage } from '@/utils/format-image';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
-import { useListCurrency } from '@/hooks/actions/useCurrency';
+import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
 
 const TourList = () => {
@@ -166,7 +166,7 @@ type TourItemProps = {
 const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { t } = useTranslate("tour");
     const router = useRouter();
-    const { currencyData } = useListCurrency()
+    const { selectedCurrency } = useListCurrency()
 
     const isGrid = viewMode === "grid";
 
@@ -301,7 +301,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
 
                             {fCurrency(
                                 tour?.dblPriceFrom,
-                                currencyData?.strCurrencyCode
+                                selectedCurrency?.strCurrencyCode
                             )}
 
                         </p>

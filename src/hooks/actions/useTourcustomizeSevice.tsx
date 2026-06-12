@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useUser } from "./useAuth";
 import apiClient from "@/axios";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 export const fetchGetListTourPublish = async (body: any) => {
   const res = await apiClient.post("Tour/GetListTourPublish", body);

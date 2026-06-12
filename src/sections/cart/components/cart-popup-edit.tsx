@@ -5,7 +5,7 @@ import { fetchListPrice } from "@/hooks/actions/useBooking";
 import { fetchDetailTour } from "@/hooks/actions/useTour";
 import { useUserStore } from "@/zustand/useUserStore";
 import { isValidValue } from "@/utils/utilts";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 interface Props {
   open: boolean;
@@ -19,7 +19,7 @@ const CartPopupEdit = ({
   item,
 }: Props) => {
   const { user } = useUserStore();
-  const { currencyData } = useListCurrency();
+  const { selectedCurrency } = useListCurrency();
   // ================= SELECTED LEVEL =================
   const [selectedLevel, setSelectedLevel] = useState("");
   // ================= TOUR DETAIL =================
@@ -210,7 +210,7 @@ const CartPopupEdit = ({
           <div className="text-[28px] font-bold text-[#1f73ff]">
             Tổng giá:
             {" "}
-            {currencyData?.strCurrencySymbol} {' '}
+            {selectedCurrency?.symbol} {' '}
             {Number(
               currentPrice?.dblTotalPrice || 0
             ).toLocaleString("en-US")}
@@ -220,7 +220,7 @@ const CartPopupEdit = ({
             (Số tiền hoa hồng:
             {" "}
             <span className="font-semibold text-red-500">
-              {currencyData?.strCurrencySymbol} {' '}
+              {selectedCurrency?.symbol} {' '}
               {(isValidValue((currentPrice?.dblTotalPriceCom || 0)))}
             </span>
             )

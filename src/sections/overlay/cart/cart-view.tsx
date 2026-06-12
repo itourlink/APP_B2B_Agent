@@ -8,7 +8,7 @@ import { Banknote, Edit3, Trash2, Tag, Users, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 // import dayjs from "dayjs";
 import { fDateTime } from "@/utils/format-time";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 const CartView = () => {
     const { currencyId } = useCurrency();

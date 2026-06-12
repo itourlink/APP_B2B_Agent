@@ -6,13 +6,13 @@ import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useNavigate } from "react-router-dom";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
     const company = new URLSearchParams(location.search).get("company") || "";
     const navigate = useNavigate()
-    const { currencyData } = useListCurrency()
+    const { selectedCurrency } = useListCurrency()
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
@@ -94,7 +94,7 @@ export const TourCard = ({ tour }: any) => {
                         <p className="text-[#2563eb] font-bold text-xl">
                             {fCurrency(
                                 tour?.dblPriceFrom,
-                                currencyData?.strCurrencyCode
+                                selectedCurrency?.strCurrencyCode
                             )}
                         </p>
                     </div>

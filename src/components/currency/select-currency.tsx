@@ -1,5 +1,5 @@
 import { useComboboxByCode } from "@/hooks/actions/useComboBox";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import { useEffect, useMemo } from "react";

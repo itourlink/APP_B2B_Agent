@@ -4,7 +4,7 @@ import ToastComponent from "./components/notification/useToast";
 import { BrowserRouter } from "react-router-dom";
 import GlobalLoading from "./components/loading/global-loading";
 import { useUser } from "./hooks/actions/useAuth";
-import { useCurrency } from "./zustand/useCurrency";
+import { useCurrency } from "./components/currency/useCurrency";
 
 function App() {
 

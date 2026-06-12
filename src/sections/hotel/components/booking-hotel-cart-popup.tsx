@@ -6,7 +6,7 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { fDateTime } from "@/utils/format-time";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";

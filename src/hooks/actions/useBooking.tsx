@@ -2,7 +2,7 @@ import apiClient from "@/axios";
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 export const fetchListPrice = async (body: any) => {
     const res = await apiClient.post("tour/GetListPriceLevelTour", body);

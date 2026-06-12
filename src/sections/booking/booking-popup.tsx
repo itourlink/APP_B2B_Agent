@@ -1,5 +1,5 @@
 import PanelPopup from "@/components/popup/panel-popup";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useTranslate } from "@/locales";
 import { isValidValue } from "@/utils/utilts";
 
@@ -26,7 +26,7 @@ export default function BookingPopup({
     paymentMethod,
 }: Props) {
 
-    const { currencyData } = useListCurrency();
+    const { selectedCurrency } = useListCurrency();
         const { t } = useTranslate("booking")
     return (
         <PanelPopup
@@ -47,7 +47,7 @@ export default function BookingPopup({
                         <span>{t("firstPayment")}:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
-                            {currencyData?.strCurrencySymbol} {isValidValue(finalDeposit)}
+                            {selectedCurrency?.symbol} {isValidValue(finalDeposit)}
                         </span>
                     </div>
 
@@ -55,7 +55,7 @@ export default function BookingPopup({
                         <span>{t("secondPayment")}:</span>
 
                         <span className="font-semibold text-orange-600">
-                            {currencyData?.strCurrencySymbol} {isValidValue(finalDebt)}
+                            {selectedCurrency?.symbol} {isValidValue(finalDebt)}
                         </span>
                     </div>
 
@@ -63,7 +63,7 @@ export default function BookingPopup({
                         <span>{t("voucher")}:</span>
 
                         <span className="font-semibold text-red-500">
-                            -{currencyData?.strCurrencySymbol} {isValidValue(totalVoucherAmount)}
+                            -{selectedCurrency?.symbol} {isValidValue(totalVoucherAmount)}
                         </span>
                     </div>
 

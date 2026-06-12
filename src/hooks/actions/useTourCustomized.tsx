@@ -3,7 +3,7 @@ import type { ITourCustomizedCustomer } from "@/hooks/interfaces/user";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { QUERY_KEYS } from "./query-keys";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 const fetchGetListCustomer = async (body: any) => {
   const res = await apiClient.post("tourcustomized/GetListCustomer", body);

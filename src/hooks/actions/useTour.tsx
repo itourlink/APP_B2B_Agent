@@ -3,7 +3,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
 
 const fetchListTour = async (body: any) => {
     const res = await apiClient.post("tour/GetListTourPublishInTopForHmPgTour", body);

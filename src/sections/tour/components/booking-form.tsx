@@ -24,8 +24,8 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import { useTranslate } from "@/locales";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
-import { useCurrency } from "@/zustand/useCurrency";
+import { useCurrency } from "@/components/currency/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 interface Props {
     item?: any;
@@ -48,7 +48,7 @@ const BookingForm = ({ item }: Props) => {
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
-    const { currencyData } = useListCurrency();
+    const { selectedCurrency } = useListCurrency();
     const { currencyId } = useCurrency();
 
     const company =
@@ -274,10 +274,10 @@ const BookingForm = ({ item }: Props) => {
                 {price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
-                            {t("totalPrice")}:{currencyData?.strCurrencySymbol} {price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("totalPrice")}: {selectedCurrency?.symbol}{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
-                            {t("pricePerGuest")}:{currencyData?.strCurrencySymbol} {price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("pricePerGuest")}: {selectedCurrency?.symbol}{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
                         </div>
                         <div className="text-[12px] pt-[5px]">
                             {t("remainingSlots")}: {price.intPaxRemain ?? "0"} {t("slots")}

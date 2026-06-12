@@ -9,7 +9,7 @@ import CartPopupTotalPrice from "./cart-popup-total-price";
 import PanelPopup from "@/components/popup/panel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
-import { useListCurrency } from "@/hooks/actions/useCurrency";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 
 const CartList = () => {
@@ -17,7 +17,7 @@ const CartList = () => {
     page: 1,
     pageSize: 10,
   });
-  const { currencyData } = useListCurrency()
+  const { selectedCurrency } = useListCurrency()
   const router = useRouter();
   const [popupAccept, setPopupAccept] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
@@ -238,7 +238,7 @@ const CartList = () => {
         hover:underline
       "
         >
-          {currencyData?.strCurrencySymbol}
+          {selectedCurrency?.symbol}
           {(value || 0)}
         </button>
       ),
