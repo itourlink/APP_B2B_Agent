@@ -192,6 +192,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
         {/* ACTION */}
         <div className="flex gap-2 pt-2">
           <button
+            type="button"
             onClick={onClose}
             disabled={isPending}
             className="cursor-pointer flex-1 h-10 rounded-lg border hover:bg-gray-50 disabled:opacity-50"
@@ -200,6 +201,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
           </button>
 
           <button
+            type="button"
             onClick={handleAddtoCart}
             disabled={isPending}
             className="cursor-pointer flex-1 h-10 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white disabled:opacity-50"

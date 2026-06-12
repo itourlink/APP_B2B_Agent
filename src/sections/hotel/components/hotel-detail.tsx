@@ -466,14 +466,13 @@ const HotelDetail = () => {
         return (
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => {
                 const includedBreak = spbData?.[0]?.find(
                   (p: any) => p.strItemTypeGUID === row.strItemTypeGUID,
                 );
 
                 const selected = selectedRooms[row.strItemTypeGUID] || [];
-
-                const hasChild = selected.some((x) => x.isChild);
 
                 const adultCount = selected.reduce((sum, item) => {
                   if (item.isChild) return sum;
@@ -550,13 +549,7 @@ const HotelDetail = () => {
                   totalAmount,
                 };
 
-                if (hasChild) {
-                  setBookingData(bookingPayload);
-                } else {
-                  router.replaceParams(paths.booking.paymentBookingHotel, {
-                    bookingPayload: bookingPayload,
-                  });
-                }
+                setBookingData(bookingPayload);
               }}
               className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
             >
@@ -564,6 +557,7 @@ const HotelDetail = () => {
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 // const { =
                 const includedBreak = spbData?.[0]?.find(
@@ -580,12 +574,6 @@ const HotelDetail = () => {
                     return `${raw?.strItemTypeGUID}!${raw?.intSglDblID}!${room.qty}!${includedBreak?.intMealIncludedTypeID}!${raw?.strItemTypeDetailGUID}!0#`;
                   })
                   .join("");
-
-                const hasChild = selected.some((x) => x.isChild);
-
-                const totalRoomCount = selected
-                  .filter((x) => !x.isChild)
-                  .reduce((sum, item) => sum + item.qty, 0);
 
                 const adultCount = selected.reduce((sum, item) => {
                   if (item.isChild) return sum;
@@ -669,14 +657,10 @@ const HotelDetail = () => {
                   intCurrencyID: user?.intCurrencyID,
                 };
 
-                if (hasChild || totalRoomCount >= 5) {
-                  setBookingCartData({
-                    displayData: bookingCartPayload,
-                    submitPayload: bookingCartPayloadSubmit,
-                  });
-                } else {
-                  handleAddtoCart(bookingCartPayloadSubmit);
-                }
+                setBookingCartData({
+                  displayData: bookingCartPayload,
+                  submitPayload: bookingCartPayloadSubmit,
+                });
               }}
               className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
             >
