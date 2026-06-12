@@ -149,11 +149,16 @@ export const formatMoney = (
 
 
 export const fCurrency = (
-  value: number | string,
+  value: number | string | unknown,
   currencyCode?: string
 ) => {
+  const amount =
+    typeof value === "number" || typeof value === "string"
+      ? Number(value)
+      : 0;
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode?.trim() || "USD",
-  }).format(Number(value || 0));
+  }).format(Number.isFinite(amount) ? amount : 0);
 };

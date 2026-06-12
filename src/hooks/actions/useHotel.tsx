@@ -45,7 +45,7 @@ export const useListHotel = (filters?: {
     } = filters || {};
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters],
+        queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters, currencyId],
         queryFn: () =>
             fetchListHotel({
                 strUserGUID: user?.strUserGUID,
@@ -123,7 +123,7 @@ export const useListHotelGetPriceUID = (filters?: {
     } = filters || {};
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters],
+        queryKey: [QUERY_KEYS.HOTEL.LIST_HOTEL, filters, currencyId],
         queryFn: () =>
             fetchListHotel({
                 strUserGUID: user?.strUserGUID,
@@ -244,7 +244,8 @@ export const useListSupplierPriceByAgent = (
         queryKey: [
             QUERY_KEYS.HOTEL.LIST_SUPPLIER_PRICE_BY_AGENT,
             filters,
-            coData?.strCompanyGUID
+            coData?.strCompanyGUID,
+            currencyId
         ],
         queryFn: () =>
             fetchListSupPriceByAgent({
@@ -303,7 +304,7 @@ export const useSearchHotel = (filters?: {
         filters?.intPageSize ?? filters?.pageSize ?? 5;
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.HOTEL.LIST_SEARCH_HOTEL, filters],
+        queryKey: [QUERY_KEYS.HOTEL.LIST_SEARCH_HOTEL, filters,],
         queryFn: () =>
             fetchSearchHotel({
                 strCompanyPartnerGUID: user?.strCompanyGUID,
