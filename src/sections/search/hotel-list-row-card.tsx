@@ -5,20 +5,23 @@ import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { fCurrency } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 type Props = {
     hotel: any;
 };
 
 const HotelListRowCard = ({ hotel }: Props) => {
+    const { selectedCurrency } = useListCurrency();
     const router = useRouter();
     const { t } = useTranslate("search");
 
     const imageSrc =
         hotel?.strSupplierImage === "" ||
-        (typeof hotel?.strSupplierImage === "object" &&
-            hotel?.strSupplierImage !== null &&
-            Object.keys(hotel?.strSupplierImage).length === 0)
+            (typeof hotel?.strSupplierImage === "object" &&
+                hotel?.strSupplierImage !== null &&
+                Object.keys(hotel?.strSupplierImage).length === 0)
             ? imgDefault
             : getUrlImage(isValidValue(hotel?.strSupplierImage));
 
@@ -75,7 +78,11 @@ const HotelListRowCard = ({ hotel }: Props) => {
 
                 <div className="flex items-center justify-between mt-4">
                     <div className="text-blue-600 font-bold text-xl">
-                        d{hotel?.dblPrice || 0}
+
+                        {fCurrency(
+                            hotel?.dblPriceFrom,
+                            selectedCurrency?.label
+                        )}
                     </div>
 
                     <button

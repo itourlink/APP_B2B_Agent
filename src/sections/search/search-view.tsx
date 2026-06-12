@@ -217,8 +217,8 @@ const SearchView = () => {
         strListEasiaCateID:
           hotelFilter?.strListEasiaCateID,
 
-        intCurPage: pageHotel,
-        intPageSize: pageSize,
+        page: pageHotel,
+        pageSize: pageSize,
         tblsReturn: "[0]",
       }
       : undefined
