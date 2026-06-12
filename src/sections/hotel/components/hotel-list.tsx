@@ -2,12 +2,13 @@ import { useListHotel } from '@/hooks/actions/useHotel';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
-import { formatPrice } from '@/utils/format-number';
+import { fCurrency } from '@/utils/format-number';
 import { isValidValue } from '@/utils/utilts';
 import { Building2, MapPin, Star, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import imgDefault from "@/assets/images/default-image.jpg"
+import { useListCurrency } from '@/components/currency/useListCurrency';
 
 const HotelList = () => {
     const [filters] = useState({
@@ -17,6 +18,7 @@ const HotelList = () => {
         tblsReturn: "[0]",
     });
     const { t } = useTranslation("hotel")
+
     const { hotelData, hotelLoading, hotelError } =
         useListHotel(filters);
 
@@ -125,6 +127,7 @@ type HotelItemProps = {
 const HotelItem = ({ hotel, viewMode }: HotelItemProps) => {
     const router = useRouter();
     const { t } = useTranslation("hotel");
+    const { selectedCurrency } = useListCurrency();
 
     const isGrid = viewMode === "grid";
 
@@ -281,7 +284,11 @@ const HotelItem = ({ hotel, viewMode }: HotelItemProps) => {
                                     : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-                            {formatPrice(isValidValue(hotel?.dblPriceFrom))}
+
+                            {fCurrency(
+                                hotel?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
 

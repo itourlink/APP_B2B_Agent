@@ -2,13 +2,15 @@ import { useTranslate } from "@/locales";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { formatPrice } from "@/utils/format-number";
+import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Building2, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 export const HotelCard = ({ hotel }: any) => {
     const { t } = useTranslate("hotel")
+    const { selectedCurrency } = useListCurrency();
     const router = useRouter();
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full group">
@@ -81,7 +83,10 @@ export const HotelCard = ({ hotel }: any) => {
                         </p>
 
                         <p className="text-[#2563eb] font-bold text-xl leading-none">
-                            {formatPrice(isValidValue(hotel?.dblPriceFrom))}
+                            {fCurrency(
+                                hotel?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
 

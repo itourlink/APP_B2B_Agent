@@ -232,3 +232,52 @@ export const useListTourPaymentTerm = (filters?: {
         paytermError: query.isError,
     };
 };
+
+
+
+export const fetchSupplierPaymentTerm = async (body: any) => {
+    const res = await apiClient.post(
+        "supplier/GetListSupplierPaymentTerm",
+        body
+    );
+    return res.data;
+};
+
+
+export const useListSupplierPaymentTerm = (filters?: {
+    strSupplierGUID?: string;
+}) => {
+    const { coData } = useListCompanyOwner();
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.PAYMENT_TERM, filters],
+        queryFn: () =>
+            fetchSupplierPaymentTerm({
+                strSupplierPaymentTermGUID: null,
+                strCompanyGUID: coData?.strCompanyGUID,
+                strSupplierGUID: filters?.strSupplierGUID,
+
+                dtmCheckInDate: null,
+
+                intProductIDForBook: null,
+
+                intCurPage: null,
+                intPageSize: null,
+
+                strOrder: "IsDepositOnBook desc,intDayTo desc",
+
+                tblsReturn: "[0]"
+            }),
+        enabled: !!filters?.strSupplierGUID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        supPaytermData: query.data?.[0]?.[0] ?? [],
+        supPaytermtLoading: query.isLoading,
+        supPaytermError: query.isError,
+    };
+};
+
+

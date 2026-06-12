@@ -29,7 +29,7 @@ import { paths } from "@/routes/paths";
 import BookingHotelCartPopup from "./booking-hotel-cart-popup";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addCartForHotel } from "@/hooks/actions/useBooking";
+import { addCartForHotel, useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
@@ -61,7 +61,13 @@ const HotelDetail = () => {
     strSupplierGUID: item?.strSupplierGUID,
     tblsReturn: "[0][1]",
   });
+  const { supPaytermData } = useListSupplierPaymentTerm({
 
+    strSupplierGUID: item?.strSupplierGUID
+
+  })
+
+  console.log("supPaytermData", supPaytermData)
   const [openId, setOpenId] = useState(null);
   const [selectedRooms, setSelectedRooms] = useState<Record<string, any[]>>({});
   const [bookingData, setBookingData] = useState<any | null>(null);
@@ -566,7 +572,20 @@ const HotelDetail = () => {
 
                 const selected = selectedRooms[row.strItemTypeGUID] || [];
 
+                const strListItemTypeGUID = selected
+                  .filter((room) => !room.isChild)
+                  .map((room) => {
+                    const raw = room.raw;
+
+                    return `${raw?.strItemTypeGUID}!${raw?.intSglDblID}!${room.qty}!${includedBreak?.intMealIncludedTypeID}!${raw?.strItemTypeDetailGUID}!0#`;
+                  })
+                  .join("");
+
                 const hasChild = selected.some((x) => x.isChild);
+
+                const totalRoomCount = selected
+                  .filter((x) => !x.isChild)
+                  .reduce((sum, item) => sum + item.qty, 0);
 
                 const adultCount = selected.reduce((sum, item) => {
                   if (item.isChild) return sum;
@@ -582,9 +601,6 @@ const HotelDetail = () => {
                   return sum + item.qty;
                 }, 0);
 
-                const roomGuidList = selected
-                  .filter((x) => !x.isChild)
-                  .flatMap((x) => Array(x.qty).fill(x.raw?.strItemTypeGUID));
 
                 const childAgeList = selected
                   .filter((x) => x.isChild)
@@ -641,7 +657,7 @@ const HotelDetail = () => {
                       ? childAgeList.join(",") + ","
                       : "",
 
-                  strListItemTypeGUID: roomGuidList.join(","),
+                  strListItemTypeGUID: strListItemTypeGUID,
 
                   strListSupplierChildAgeGUID: childGuidList.join(","),
 
@@ -653,7 +669,7 @@ const HotelDetail = () => {
                   intCurrencyID: user?.intCurrencyID,
                 };
 
-                if (hasChild) {
+                if (hasChild || totalRoomCount >= 5) {
                   setBookingCartData({
                     displayData: bookingCartPayload,
                     submitPayload: bookingCartPayloadSubmit,

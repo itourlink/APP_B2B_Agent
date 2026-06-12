@@ -21,8 +21,11 @@ type Props = {
 };
 
 const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
+
+  const company = new URLSearchParams(location.search).get("company") || "";
+
   const { t } = useTranslation("hotel");
-  
+
   const { currencyId } = useCurrency();
 
   const router = useRouter();
@@ -66,7 +69,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
 
         onClose();
 
-        router.push(paths.shop.cart.list);
+        router.push(`${paths.shop.cart.list}?company=${company}`);
       },
 
       onError: () => {
