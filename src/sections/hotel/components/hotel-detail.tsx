@@ -24,13 +24,13 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
-import { useRouter } from "@/routes/hooks/use-router";
+// import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import BookingHotelCartPopup from "./booking-hotel-cart-popup";
-import { useToastStore } from "@/zustand/useToastStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addCartForHotel, useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
-import { QUERY_KEYS } from "@/hooks/actions/query-keys";
+// import { useToastStore } from "@/zustand/useToastStore";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
+// import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
@@ -39,16 +39,16 @@ const HotelDetail = () => {
   const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
-  const router = useRouter();
+  // const router = useRouter();
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-  const { showToast } = useToastStore();
-  const queryClient = useQueryClient();
+  // const { showToast } = useToastStore();
+  // const queryClient = useQueryClient();
   const company = new URLSearchParams(location.search).get("company") || "";
 
-  const { mutate: addCartForHotelApi } = useMutation({
-    mutationFn: addCartForHotel,
-  });
+  // const { mutate: addCartForHotelApi } = useMutation({
+  //   mutationFn: addCartForHotel,
+  // });
 
   const [filters] = useState({
     page: 1,

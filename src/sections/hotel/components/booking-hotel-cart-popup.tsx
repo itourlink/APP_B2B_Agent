@@ -209,7 +209,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="flex-1 h-11 rounded-lg border border-slate-300 hover:bg-slate-50"
+            className="cursor-pointer flex-1 h-11 rounded-lg border border-slate-300 hover:bg-slate-50"
           >
             {t("cancel")}
           </button>
@@ -218,7 +218,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             type="button"
             onClick={handleAddtoCart}
             disabled={isPending}
-            className="flex-1 h-11 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
+            className="cursor-pointer flex-1 h-11 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
           >
             {isPending ? t("processing") : t("confirm")}
           </button>
