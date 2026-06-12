@@ -12,7 +12,6 @@ import {
 
 import { format } from "date-fns";
 
-import DatePopup from "@/components/generic-filter/date-popup";
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
 import { useListPrice } from "@/hooks/actions/useBooking";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,6 +25,7 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { useTranslate } from "@/locales";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { DatePopup } from "@/components/generic-filter/date-popup";
 
 interface Props {
     item?: any;
@@ -307,9 +307,10 @@ const BookingForm = ({ item }: Props) => {
                     {active === "dateOne" && (
                         <div className="absolute top-0 z-50 right-72">
                             <DatePopup
+                                disableDays={Number(item?.intDayBeforeStart) || 0}
                                 isOpen
                                 value={startDate}
-                                onApply={(val) => {
+                                onApply={(val: any) => {
                                     setStartDate(val);
                                     setActive(null);
 

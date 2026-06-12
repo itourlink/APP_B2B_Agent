@@ -5,9 +5,15 @@ type Props = {
     isOpen?: boolean;
     value: Date | null;
     onApply: (date: Date | null) => void;
+    disableDays?: number;
 };
 
-const DatePopup = ({ isOpen, value, onApply }: Props) => {
+export const DatePopup = ({
+    isOpen,
+    value,
+    onApply,
+    disableDays = 0,
+}: Props) => {
     const [temp, setTemp] = useState<Date>(value || new Date());
 
     useEffect(() => {
@@ -16,20 +22,20 @@ const DatePopup = ({ isOpen, value, onApply }: Props) => {
 
     if (!isOpen) return null;
 
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + disableDays);
+
     return (
         <div className="bg-white p-4 rounded-2xl shadow-xl">
             <Calendar
                 date={temp}
                 onChange={(date: Date) => {
                     setTemp(date);
-
                     onApply(date);
                 }}
-                minDate={new Date()}
+                minDate={minDate}
                 color="#2566b0"
             />
         </div>
     );
 };
-
-export default DatePopup;
