@@ -22,6 +22,7 @@ type Props = {
 
 const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
 
+  console.log("data", data)
   const company = new URLSearchParams(location.search).get("company") || "";
 
   const { t } = useTranslation("hotel");
@@ -80,122 +81,135 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
 
   return (
     <PanelPopup open={open} onClose={onClose} title={t("confirmAddToCart")}>
-      <div className="p-5 space-y-4 text-sm">
-        {/* GUEST INFO */}
-        <div className="rounded-xl border p-4 bg-amber-50">
-          <div className="text-xs text-amber-600 mb-2">{t("guestInfo")}</div>
-
-          <div className="flex items-center justify-between text-sm">
-            <div>
-              <div className="text-slate-500">{t("adult")} </div>
-
-              <div className="font-semibold text-slate-900">
-                {displayData?.adultCount || 0} {t("personUnit")}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-slate-500"> {t("child")}</div>
-
-              <div className="font-semibold text-slate-900">
-                {displayData?.childCount || 0} {t("childUnit")}
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div className="p-5">
         {/* HOTEL */}
-        <div className="rounded-xl border p-4 bg-slate-50">
-          <div className="text-xs text-slate-500"> {t("hotel")}</div>
-
-          <div className="font-semibold text-slate-900">
+        <div className="mb-5">
+          <h3 className="font-semibold text-lg text-slate-900">
             {displayData?.hotel?.strSupplierName}
-          </div>
+          </h3>
+
+          <p className="text-sm text-slate-500">
+            {displayData?.strItemTypeName}
+            {displayData?.includedBreak &&
+              ` • ${displayData?.includedBreak}`}
+          </p>
         </div>
 
-        {/* ROOM INFO */}
-        <div className="rounded-xl border p-4 space-y-1">
-          <div className="text-xs text-slate-500"> {t("room")}</div>
+        {/* SUMMARY */}
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+          <table className="w-full text-sm">
+            <tbody>
+              <tr className="border-b border-slate-200">
+                <td className="bg-slate-50 px-4 py-3 font-medium w-40">
+                  {t("adult")}
+                </td>
 
-          <div className="font-semibold text-slate-900">
-            {displayData?.strItemTypeName}{" "}
-            {displayData?.includedBreak
-              ? `- ${displayData?.includedBreak}`
-              : ""}
-          </div>
+                <td className="px-4 py-3">
+                  {displayData?.adultCount || 0} {t("personUnit")}
+                </td>
+              </tr>
 
-          {displayData?.includedBreak && (
-            <div className="text-xs text-emerald-600 flex items-center gap-1">
-              🍽 {displayData?.includedBreak}
-            </div>
-          )}
+              <tr className="border-b border-slate-200">
+                <td className="bg-slate-50 px-4 py-3 font-medium">
+                  {t("child")}
+                </td>
+
+                <td className="px-4 py-3">
+                  {displayData?.childCount || 0} {t("childUnit")}
+                </td>
+              </tr>
+
+              <tr className="border-b border-slate-200">
+                <td className="bg-slate-50 px-4 py-3 font-medium">
+                  {t("stayTime")}
+                </td>
+
+                <td className="px-4 py-3">
+                  {fDateTime(displayData?.dtmDateFrom)}
+                  {" → "}
+                  {fDateTime(displayData?.dtmDateTo)}
+                </td>
+              </tr>
+
+              <tr>
+                <td className="bg-slate-50 px-4 py-3 font-medium">
+                  {t("room")}
+                </td>
+
+                <td className="px-4 py-3">
+                  {displayData?.strItemTypeName}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        {/* DATE */}
-        <div className="rounded-xl border p-4 bg-blue-50">
-          <div className="text-xs text-blue-500 mb-2">{t("stayTime")}</div>
+        {/* DETAIL */}
+        <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left px-4 py-3">
+                  {t("detail")}
+                </th>
 
-          <div className="flex justify-between text-sm">
-            <div>
-              <div className="font-semibold text-slate-900">
-                {fDateTime(displayData?.dtmDateFrom)}
-              </div>
-            </div>
+                <th className="text-center px-4 py-3 w-24">
+                  {t("quantity")}
+                </th>
 
-            <div className="text-slate-400">→</div>
+                <th className="text-right px-4 py-3 w-40">
+                  {t("totalPayment")}
+                </th>
+              </tr>
+            </thead>
 
-            <div>
-              <div className="font-semibold text-slate-900">
-                {fDateTime(displayData?.dtmDateTo)}
-              </div>
-            </div>
-          </div>
-        </div>
+            <tbody>
+              {displayData?.items?.map(
+                (item: any, idx: number) => (
+                  <tr
+                    key={idx}
+                    className="border-b border-slate-100 last:border-b-0"
+                  >
+                    <td className="px-4 py-3">
+                      {item.label}
+                    </td>
 
-        {/* TOTAL */}
-        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 flex justify-between">
-          <div>
-            <div className="text-xs text-blue-500"> {t("totalPayment")}</div>
+                    <td className="px-4 py-3 text-center">
+                      {item.qty}
+                    </td>
 
-            <div className="text-xs text-slate-500">  {t("includeAllServices")}</div>
-          </div>
+                    <td className="px-4 py-3 text-right font-medium">
+                      ₫{item.total?.toLocaleString()}
+                    </td>
+                  </tr>
+                ),
+              )}
+            </tbody>
 
-          <div className="text-lg font-bold text-blue-600">
-            ₫{displayData?.totalAmount?.toLocaleString()}
-          </div>
-        </div>
+            <tfoot>
+              <tr className="bg-blue-50 border-t border-blue-200">
+                <td
+                  colSpan={2}
+                  className="px-4 py-4 text-right font-semibold"
+                >
+                  {t("totalPayment")}
+                </td>
 
-        {/* ITEMS */}
-        <div className="space-y-2">
-          <div className="font-semibold text-slate-800"> {t("detail")}</div>
-
-          {displayData?.items?.map((item: any, idx: number) => (
-            <div
-              key={idx}
-              className="flex justify-between border p-3 rounded-lg"
-            >
-              <div>
-                <div className="font-medium">{item.label}</div>
-
-                <div className="text-xs text-slate-500">
-                  {t("quantity")}: {item.qty}
-                </div>
-              </div>
-
-              <div className="font-semibold">
-                ₫{item.total?.toLocaleString()}
-              </div>
-            </div>
-          ))}
+                <td className="px-4 py-4 text-right text-lg font-bold text-blue-600">
+                  ₫{displayData?.totalAmount?.toLocaleString()}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
 
         {/* ACTION */}
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-3 mt-5">
           <button
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="cursor-pointer flex-1 h-10 rounded-lg border hover:bg-gray-50 disabled:opacity-50"
+            className="flex-1 h-11 rounded-lg border border-slate-300 hover:bg-slate-50"
           >
             {t("cancel")}
           </button>
@@ -204,7 +218,7 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             type="button"
             onClick={handleAddtoCart}
             disabled={isPending}
-            className="cursor-pointer flex-1 h-10 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white disabled:opacity-50"
+            className="flex-1 h-11 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
           >
             {isPending ? t("processing") : t("confirm")}
           </button>

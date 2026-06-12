@@ -195,23 +195,23 @@ const HotelDetail = () => {
     return 0;
   };
 
-  const handleAddtoCart = (data: any) => {
-    const payload = data;
+  // const handleAddtoCart = (data: any) => {
+  //   const payload = data;
 
-    addCartForHotelApi(payload, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.CART.LIST_CART],
-        });
+  //   addCartForHotelApi(payload, {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries({
+  //         queryKey: [QUERY_KEYS.CART.LIST_CART],
+  //       });
 
-        router.push(`${paths.shop.cart.list}?company=${company}`);
-        showToast("success", t("addToCartSuccess"));
-      },
-      onError: () => {
-        showToast("error", t("addToCartFailed"));
-      },
-    });
-  };
+  //       router.push(`${paths.shop.cart.list}?company=${company}`);
+  //       showToast("success", t("addToCartSuccess"));
+  //     },
+  //     onError: () => {
+  //       showToast("error", t("addToCartFailed"));
+  //     },
+  //   });
+  // };
 
   const colDefs: ColumnDef<any>[] = [
     {
