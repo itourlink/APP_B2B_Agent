@@ -65,7 +65,10 @@ const HotelDetail = () => {
   const [openId, setOpenId] = useState(null);
   const [selectedRooms, setSelectedRooms] = useState<Record<string, any[]>>({});
   const [bookingData, setBookingData] = useState<any | null>(null);
+  const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
+  const [openBookingCart, setOpenBookingCart] = useState(false);
+
 
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
@@ -549,6 +552,7 @@ const HotelDetail = () => {
                 };
 
                 setBookingData(bookingPayload);
+                setOpenBooking(true);
               }}
               className="cursor-pointer px-3 h-8 rounded bg-[#4a6fa5] hover:bg-[#3b5b7e] text-white text-xs font-medium transition"
             >
@@ -660,6 +664,8 @@ const HotelDetail = () => {
                   displayData: bookingCartPayload,
                   submitPayload: bookingCartPayloadSubmit,
                 });
+
+                setOpenBookingCart(true);
               }}
               className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
             >
@@ -890,23 +896,19 @@ const HotelDetail = () => {
         </div>
       )}
 
-      {bookingData && (
-        <BookingHotelPopup
-          open={true}
-          data={bookingData}
-          onClose={() => setBookingData(null)}
-          focData={focData}
-        />
-      )}
+      <BookingHotelPopup
+        open={openBooking}
+        data={bookingData}
+        onClose={() => setOpenBooking(false)}
+        focData={focData}
+      />
 
-      {bookingCartData && (
-        <BookingHotelCartPopup
-          open={true}
-          data={bookingCartData}
-          onClose={() => setBookingCartData(null)}
-          focData={focData}
-        />
-      )}
+      <BookingHotelCartPopup
+        open={openBookingCart}
+        data={bookingCartData}
+        onClose={() => setOpenBookingCart(false)}
+        focData={focData}
+      />
     </div>
   );
 };
