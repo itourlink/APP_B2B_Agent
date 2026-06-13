@@ -355,7 +355,7 @@ export const useListFOC = (filters?: {
         queryFn: () =>
             fetchFOC({
                 strSupplierGUID: filters?.strSupplierGUID,
-                strCompanyOwnerGUID: coData?.strCompanyGUID,
+                strCompanyGUID: coData?.strCompanyGUID,
                 strFocGUID: null,
                 strPriceListGUID: filters?.strPriceListGUID,
                 intFOCTypeID: null,
@@ -366,7 +366,7 @@ export const useListFOC = (filters?: {
                 strOrder: null,
                 tblsReturn: "[0]"
             }),
-        enabled: !!filters?.strSupplierGUID,
+        enabled: !!filters?.strSupplierGUID || !!coData,
         placeholderData: keepPreviousData,
     });
 

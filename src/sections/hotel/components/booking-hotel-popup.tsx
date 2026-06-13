@@ -18,11 +18,11 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
     const router = useRouter()
 
     const { supPaytermData } = useListSupplierPaymentTerm({
-        strSupplierGUID: data?.submitPayload?.strSupplierGUID
+        strSupplierGUID: data?.strSupplierGUID
     })
 
     const { surDateData } = useListSurchargeDateForAgent({
-        strSupplierGUID: data?.submitPayload?.strSupplierGUID
+        strSupplierGUID: data?.strSupplierGUID
     })
 
     console.log("supPaytermData", supPaytermData)
@@ -159,7 +159,7 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
                     </table>
                 </div>
 
-                <SurFoc focData={focData} />
+                <SurFoc items={data?.items} focData={focData} />
 
                 {/* ACTION */}
                 <div className="flex gap-3 mt-5">

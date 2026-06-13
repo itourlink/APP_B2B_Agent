@@ -1,10 +1,10 @@
 import { useTranslate } from "@/locales";
 interface Props {
+    items: any,
     focData: any
 }
-const SurFoc = ({ focData }: Props) => {
+const SurFoc = ({ items, focData }: Props) => {
     const { t } = useTranslate("hotel");
-
     return (
         <div>
             {/* SURCHARGE */}
@@ -155,19 +155,25 @@ const SurFoc = ({ focData }: Props) => {
                                     </td>
 
                                     <td className="px-4 py-3">
-                                        {item.strUomName}
+                                        {/* {item.strUomName} */}
+                                        Đặt 5 phòng được 1 FOC(tối đa được 1 FOC)
                                     </td>
 
                                     <td className="px-4 py-3 text-center">
-                                        {item.intFOCPax}
+                                        {/* {item.intFOCPax} */}
+                                        -1
                                     </td>
 
                                     <td className="px-4 py-3 text-center">
-                                        {item.dblFOCGet}
+                                        {/* {item.dblFOCGet} */}
+
+                                        ${items?.[0]?.price}
                                     </td>
 
                                     <td className="px-4 py-3 text-center font-medium">
-                                        {item.dblFOCMax}
+                                        {/* {item.dblFOCMax} */}
+
+                                         $-{items?.[0]?.price}
                                     </td>
                                 </tr>
                             ))

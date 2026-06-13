@@ -95,7 +95,6 @@ const HotelDetail = () => {
     strPriceListGUID,
   })
 
-  console.log("focData", focData)
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const ibgDataMain = ibgData?.[0] ?? [];
