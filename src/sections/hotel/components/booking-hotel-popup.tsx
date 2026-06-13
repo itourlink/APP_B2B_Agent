@@ -3,145 +3,169 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { fDateTime } from "@/utils/format-time";
 import { useTranslation } from "react-i18next";
+import SurFoc from "./sur-foc";
+import { useListSupplierPaymentTerm, useListSurchargeDateForAgent } from "@/hooks/actions/useBooking";
 
 type Props = {
     open: boolean;
     onClose: () => void;
     data: any;
+    focData: any
 };
 
-const BookingHotelPopup = ({ open, onClose, data }: Props) => {
+const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
     const { t } = useTranslation("hotel")
     const router = useRouter()
+
+    const { supPaytermData } = useListSupplierPaymentTerm({
+        strSupplierGUID: data?.submitPayload?.strSupplierGUID
+    })
+
+    const { surDateData } = useListSurchargeDateForAgent({
+        strSupplierGUID: data?.submitPayload?.strSupplierGUID
+    })
+
+    console.log("supPaytermData", supPaytermData)
+    console.log("surDateData", surDateData)
+
     if (!data) return null;
 
     return (
-        <PanelPopup open={open} onClose={onClose} title={t("confirmBookingRoom")}>
-            <div className="p-5 space-y-4 text-sm">
-
-                {/* GUEST INFO */}
-                <div className="rounded-xl border p-4 bg-amber-50">
-                    <div className="text-xs text-amber-600 mb-2">
-                     {t("guestInfo")}
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                        <div>
-                            <div className="text-slate-500">
-                             {t("adult")}
-                            </div>
-
-                            <div className="font-semibold text-slate-900">
-                                {data.adultCount || 0} {t("personUnit")}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="text-slate-500">
-                               {t("child")}
-                            </div>
-
-                            <div className="font-semibold text-slate-900">
-                               {data.childCount || 0} {t("childUnit")}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+        <PanelPopup
+            open={open}
+            onClose={onClose}
+            title={t("confirmBookingRoom")}
+            className="w-[1000px]"
+        >
+            <div>
                 {/* HOTEL */}
-                <div className="rounded-xl border p-4 bg-slate-50">
-                    <div className="text-xs text-slate-500"> {t("hotel")}</div>
-                    <div className="font-semibold text-slate-900">
+                <div className="mb-5">
+                    <h3 className="font-semibold text-lg text-slate-900">
                         {data.hotel?.strSupplierName}
-                    </div>
+                    </h3>
+
+                    <p className="text-sm text-slate-500">
+                        {data.strItemTypeName}
+                        {data?.includedBreak &&
+                            ` • ${data?.includedBreak}`}
+                    </p>
                 </div>
 
-                {/* ROOM INFO */}
-                <div className="rounded-xl border p-4 space-y-1">
-                    <div className="text-xs text-slate-500"> {t("room")}</div>
-                    <div className="font-semibold text-slate-900">
-                        {data.strItemTypeName} - {data?.includedBreak}
-                    </div>
+                {/* SUMMARY */}
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                    <table className="w-full text-sm">
+                        <tbody>
+                            <tr className="border-b border-slate-200">
+                                <td className="bg-slate-50 px-4 py-3 font-medium w-40">
+                                    {t("adult")}
+                                </td>
 
-                    {data.meal && (
-                        <div className="text-xs text-emerald-600 flex items-center gap-1">
-                            🍽 {data.meal}
-                        </div>
-                    )}
+                                <td className="px-4 py-3">
+                                    {data.adultCount || 0} {t("personUnit")}
+                                </td>
+                            </tr>
+
+                            <tr className="border-b border-slate-200">
+                                <td className="bg-slate-50 px-4 py-3 font-medium">
+                                    {t("child")}
+                                </td>
+
+                                <td className="px-4 py-3">
+                                    {data.childCount || 0} {t("childUnit")}
+                                </td>
+                            </tr>
+
+                            <tr className="border-b border-slate-200">
+                                <td className="bg-slate-50 px-4 py-3 font-medium">
+                                    {t("stayTime")}
+                                </td>
+
+                                <td className="px-4 py-3">
+                                    {fDateTime(data.dtmDateFrom)}
+                                    {" → "}
+                                    {fDateTime(data.dtmDateTo)}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td className="bg-slate-50 px-4 py-3 font-medium">
+                                    {t("room")}
+                                </td>
+
+                                <td className="px-4 py-3">
+                                    {data.strItemTypeName}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                {/* DATE */}
-                <div className="rounded-xl border p-4 bg-blue-50">
-                    <div className="text-xs text-blue-500 mb-2">
-                        {t("stayTime")}
-                    </div>
+                {/* DETAIL */}
+                <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="bg-slate-50 border-b border-slate-200">
+                                <th className="text-left px-4 py-3">
+                                    {t("detail")}
+                                </th>
 
-                    <div className="flex justify-between text-sm">
-                        <div>
-                            <div className="font-semibold text-slate-900">
-                                {fDateTime(data.dtmDateFrom)}
-                            </div>
-                        </div>
+                                <th className="text-center px-4 py-3 w-24">
+                                    {t("quantity")}
+                                </th>
 
-                        <div className="text-slate-400">→</div>
+                                <th className="text-right px-4 py-3 w-40">
+                                    {t("totalPayment")}
+                                </th>
+                            </tr>
+                        </thead>
 
-                        <div>
-                            <div className="font-semibold text-slate-900">
-                                {fDateTime(data.dtmDateTo)}
-                            </div>
-                        </div>
-                    </div>
+                        <tbody>
+                            {data.items?.map(
+                                (item: any, idx: number) => (
+                                    <tr
+                                        key={idx}
+                                        className="border-b border-slate-100 last:border-b-0"
+                                    >
+                                        <td className="px-4 py-3">
+                                            {item.label}
+                                        </td>
+
+                                        <td className="px-4 py-3 text-center">
+                                            {item.qty}
+                                        </td>
+
+                                        <td className="px-4 py-3 text-right font-medium">
+                                            ₫{item.total?.toLocaleString()}
+                                        </td>
+                                    </tr>
+                                ),
+                            )}
+                        </tbody>
+
+                        <tfoot>
+                            <tr className="bg-blue-50 border-t border-blue-200">
+                                <td
+                                    colSpan={2}
+                                    className="px-4 py-4 text-right font-semibold"
+                                >
+                                    {t("totalPayment")}
+                                </td>
+
+                                <td className="px-4 py-4 text-right text-lg font-bold text-blue-600">
+                                    ₫{data.totalAmount?.toLocaleString()}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
 
-                {/* TOTAL */}
-                <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 flex justify-between">
-                    <div>
-                        <div className="text-xs text-blue-500">
-                            {t("totalPayment")}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                             {t("includeAllServices")}
-
-                        </div>
-                    </div>
-
-                    <div className="text-lg font-bold text-blue-600">
-                        ₫{data.totalAmount?.toLocaleString()}
-                    </div>
-                </div>
-
-                {/* ITEMS */}
-                <div className="space-y-2">
-                    <div className="font-semibold text-slate-800">
-                       {t("detail")}
-                    </div>
-
-                    {data.items?.map((item: any, idx: number) => (
-                        <div
-                            key={idx}
-                            className="flex justify-between border p-3 rounded-lg"
-                        >
-                            <div>
-                                <div className="font-medium">
-                                    {item.label}
-                                </div>
-                                <div className="text-xs text-slate-500">
-                                    {t("quantity")}: {item.qty}
-                                </div>
-                            </div>
-
-                            <div className="font-semibold">
-                                ₫{item.total.toLocaleString()}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <SurFoc focData={focData} />
 
                 {/* ACTION */}
-                <div className="flex gap-2 pt-2">
+                <div className="flex gap-3 mt-5">
                     <button
                         onClick={onClose}
-                        className="cursor-pointer flex-1 h-10 rounded-lg border hover:bg-gray-50 "
+                        className="cursor-pointer flex-1 h-11 rounded-lg border border-slate-300 hover:bg-slate-50"
                     >
                         {t("cancel")}
                     </button>
@@ -152,12 +176,12 @@ const BookingHotelPopup = ({ open, onClose, data }: Props) => {
                                 paths.booking.paymentBookingHotel,
                                 {
                                     bookingPayload: data,
-                                }
+                                },
                             );
                         }}
-                        className="cursor-pointer flex-1 h-10 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
+                        className="cursor-pointer flex-1 h-11 rounded-lg bg-[#004b91] hover:bg-[#003d76] text-white"
                     >
-                         {t("confirm")}
+                        {t("confirm")}
                     </button>
                 </div>
             </div>

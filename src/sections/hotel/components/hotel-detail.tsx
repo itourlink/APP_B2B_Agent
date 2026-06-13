@@ -29,7 +29,7 @@ import { paths } from "@/routes/paths";
 import BookingHotelCartPopup from "./booking-hotel-cart-popup";
 // import { useToastStore } from "@/zustand/useToastStore";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
+import { useListFOC, useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
 // import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
@@ -61,13 +61,7 @@ const HotelDetail = () => {
     strSupplierGUID: item?.strSupplierGUID,
     tblsReturn: "[0][1]",
   });
-  const { supPaytermData } = useListSupplierPaymentTerm({
 
-    strSupplierGUID: item?.strSupplierGUID
-
-  })
-
-  console.log("supPaytermData", supPaytermData)
   const [openId, setOpenId] = useState(null);
   const [selectedRooms, setSelectedRooms] = useState<Record<string, any[]>>({});
   const [bookingData, setBookingData] = useState<any | null>(null);
@@ -96,6 +90,12 @@ const HotelDetail = () => {
       : undefined,
   );
 
+  const { focData, focLoading, focError } = useListFOC({
+    strSupplierGUID: item?.strSupplierGUID,
+    strPriceListGUID,
+  })
+
+  console.log("focData", focData)
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const ibgDataMain = ibgData?.[0] ?? [];
@@ -896,6 +896,7 @@ const HotelDetail = () => {
           open={true}
           data={bookingData}
           onClose={() => setBookingData(null)}
+          focData={focData}
         />
       )}
 
@@ -904,6 +905,7 @@ const HotelDetail = () => {
           open={true}
           data={bookingCartData}
           onClose={() => setBookingCartData(null)}
+          focData={focData}
         />
       )}
     </div>

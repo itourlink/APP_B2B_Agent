@@ -235,14 +235,13 @@ export const useListTourPaymentTerm = (filters?: {
 
 
 
-export const fetchSupplierPaymentTerm = async (body: any) => {
+const fetchSupplierPaymentTerm = async (body: any) => {
     const res = await apiClient.post(
         "supplier/GetListSupplierPaymentTerm",
         body
     );
     return res.data;
 };
-
 
 export const useListSupplierPaymentTerm = (filters?: {
     strSupplierGUID?: string;
@@ -281,3 +280,99 @@ export const useListSupplierPaymentTerm = (filters?: {
 };
 
 
+const fetchSurchargeDateForAgent = async (body: any) => {
+    const res = await apiClient.post(
+        "supplier/GetListSurchargeDateForAgent",
+        body
+    );
+    return res.data;
+};
+
+export const useListSurchargeDateForAgent = (filters?: {
+    strSupplierGUID?: string;
+}) => {
+    const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.SURCHARGE_DATE,
+            filters,
+            currencyId
+        ],
+        queryFn: () =>
+            fetchSurchargeDateForAgent({
+                strSupplierGUID: filters?.strSupplierGUID,
+                strCompanyOwnerGUID: coData?.strCompanyGUID,
+                dtmFilterDateFrom: today.toISOString(),
+                dtmFilterDateTo: tomorrow.toISOString(),
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: null,
+                tblsReturn: "[0][1]",
+                intCurrencyView: currencyId
+            }),
+        enabled: !!filters?.strSupplierGUID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        surDateData: query.data?.[0]?.[0] ?? [],
+        surDateLoading: query.isLoading,
+        surDateError: query.isError,
+    };
+};
+
+const fetchFOC = async (body: any) => {
+    const res = await apiClient.post(
+        "supplier/GetListFoc",
+        body
+    );
+    return res.data;
+};
+
+export const useListFOC = (filters?: {
+    strSupplierGUID?: string;
+    strPriceListGUID?: string;
+}) => {
+    const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.LIST_FOC,
+            filters,
+            currencyId
+        ],
+        queryFn: () =>
+            fetchFOC({
+                strSupplierGUID: filters?.strSupplierGUID,
+                strCompanyOwnerGUID: coData?.strCompanyGUID,
+                strFocGUID: null,
+                strPriceListGUID: filters?.strPriceListGUID,
+                intFOCTypeID: null,
+                dtmFilterDateFrom: today.toISOString(),
+                dtmFilterDateTo: tomorrow.toISOString(),
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: null,
+                tblsReturn: "[0]"
+            }),
+        enabled: !!filters?.strSupplierGUID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        focData: query.data?.[0] ?? [],
+        focLoading: query.isLoading,
+        focError: query.isError,
+    };
+};

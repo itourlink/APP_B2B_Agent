@@ -1,7 +1,7 @@
 import PanelPopup from "@/components/popup/panel-popup";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
-import { addCartForHotel } from "@/hooks/actions/useBooking";
+import { addCartForHotel, useListSupplierPaymentTerm, useListSurchargeDateForAgent } from "@/hooks/actions/useBooking";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
@@ -9,7 +9,8 @@ import { fDateTime } from "@/utils/format-time";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
+import { useTranslate } from "@/locales";
+import SurFoc from "./sur-foc";
 
 type Props = {
   open: boolean;
@@ -18,14 +19,14 @@ type Props = {
     displayData: any;
     submitPayload: any;
   };
+  focData: any
 };
 
-const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
+const BookingHotelCartPopup = ({ open, onClose, data, focData }: Props) => {
 
-  console.log("data", data)
   const company = new URLSearchParams(location.search).get("company") || "";
 
-  const { t } = useTranslation("hotel");
+  const { t } = useTranslate("hotel");
 
   const { currencyId } = useCurrency();
 
@@ -42,6 +43,17 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
   const { mutate: addCartForHotelApi, isPending } = useMutation({
     mutationFn: addCartForHotel,
   });
+
+  const { supPaytermData } = useListSupplierPaymentTerm({
+    strSupplierGUID: data?.submitPayload?.strSupplierGUID
+  })
+
+  const { surDateData } = useListSurchargeDateForAgent({
+    strSupplierGUID: data?.submitPayload?.strSupplierGUID
+  })
+
+  console.log("supPaytermData", supPaytermData)
+  console.log("surDateData", surDateData)
 
   if (!data) return null;
 
@@ -80,8 +92,8 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
   };
 
   return (
-    <PanelPopup open={open} onClose={onClose} title={t("confirmAddToCart")}>
-      <div className="p-5">
+    <PanelPopup open={open} onClose={onClose} title={t("confirmAddToCart")} className="w-[1000px]">
+      <div className="">
         {/* HOTEL */}
         <div className="mb-5">
           <h3 className="font-semibold text-lg text-slate-900">
@@ -202,6 +214,8 @@ const BookingHotelCartPopup = ({ open, onClose, data }: Props) => {
             </tfoot>
           </table>
         </div>
+
+        <SurFoc focData={focData} />
 
         {/* ACTION */}
         <div className="flex gap-3 mt-5">

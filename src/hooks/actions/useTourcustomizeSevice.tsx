@@ -124,6 +124,7 @@ const toIsoDateString = (value?: string | Date | null) => {
 
 export const useGetListSupplierMappingPrice = (filters?: any) => {
   const { user } = useUser();
+  const { currencyId } = useCurrency();
 
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 10;
@@ -158,7 +159,7 @@ export const useGetListSupplierMappingPrice = (filters?: any) => {
 
     strListCityCode: filters?.strListCityCode ?? null,
 
-    intCurrencyView: 1,
+    intCurrencyView: currencyId,
 
     intPaxCount: filters?.intPaxCount ?? filters?.intTotalPax ?? null,
 
