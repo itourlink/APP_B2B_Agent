@@ -363,19 +363,19 @@ const HotelDetail = () => {
                               className="cursor-pointer w-7 flex items-center justify-center text-blue-600"
                               onClick={() => {
                                 setSelectedRooms((prev) => {
-                                  const current =
-                                    prev[row.strItemTypeGUID] || [];
+                                  const current = prev[row.strItemTypeGUID] || [];
+
+                                  const updated = current.flatMap((x) => {
+                                    if (x.label !== room.label) return [x];
+
+                                    const newQty = x.qty - 1;
+
+                                    return newQty > 0 ? [{ ...x, qty: newQty }] : [];
+                                  });
 
                                   return {
                                     ...prev,
-                                    [row.strItemTypeGUID]: current.map((x) =>
-                                      x.label === room.label
-                                        ? {
-                                          ...x,
-                                          qty: Math.max(1, x.qty - 1),
-                                        }
-                                        : x,
-                                    ),
+                                    [row.strItemTypeGUID]: updated,
                                   };
                                 });
                               }}
