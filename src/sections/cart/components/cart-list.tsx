@@ -10,9 +10,11 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useTranslate } from "@/locales";
 
 
 const CartList = () => {
+  const { t } = useTranslate("cart")
   const [filters] = useState({
     page: 1,
     pageSize: 10,
@@ -131,14 +133,14 @@ const CartList = () => {
     },
     {
       field: "No",
-      headerName: "STT",
+      headerName: t("no"),
       render: (value: any) => (
         <span className="text-[13px] text-gray-700">{value || "--"}</span>
       ),
     },
     {
       field: "strServiceName",
-      headerName: "Tên dịch vụ",
+      headerName: t("serviceName"),
       render: (value: any, row: any) => (
         <div className="py-0.5 leading-5 flex flex-col items-start justify-start gap-1 w-full">
           <div className="text-[#1f5fa9] text-[13px] font-medium">
@@ -160,7 +162,7 @@ const CartList = () => {
     },
     {
       field: "strType",
-      headerName: "Type",
+      headerName: t("type"),
 
       render: (_: any, row: any) => {
 
@@ -207,7 +209,7 @@ const CartList = () => {
     },
     {
       field: "intQuantity",
-      headerName: "Số lượng",
+      headerName: t("quantity"),
       render: (_: any, row: any) => (
         <div className="text-[#1f5fa9] text-[13px] leading-5">
           {extractNumberFromHTML(row?.intQuantity)}
@@ -216,7 +218,7 @@ const CartList = () => {
     },
     {
       field: "dblPriceTotal",
-      headerName: "Tổng giá",
+      headerName: t("totalPrice"),
 
       render: (
         value: any,
@@ -245,12 +247,12 @@ const CartList = () => {
     },
     {
       field: "dblPriceTotalAgentCom",
-      headerName: "Tổng hoa hồng",
+      headerName: t("totalCommission"),
       render: (value: any) => <span className="text-[13px] text-gray-700">{value}</span>,
     },
     {
       field: "No",
-      headerName: "Thao tác",
+      headerName: t("action"),
       render: (_: any, row: any) => (
         <button
           onClick={() => handleOpenDelete(row)}
@@ -264,7 +266,7 @@ const CartList = () => {
   if (cartError) {
     return (
       <div className="px-6 py-10 text-red-500">
-        Lỗi tải dữ liệu giỏ hàng
+        {t("cartDataLoadError")}
       </div>
     );
   }
@@ -274,7 +276,8 @@ const CartList = () => {
       <div className="max-w-[1320px] mx-auto px-6 py-10">
         <div className="mb-8 flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-800">
-            Giỏ hàng
+            {t("cart")}
+
           </h1>
 
           <div className="flex items-center gap-1 border border-gray-300 rounded-md bg-white px-1 py-1 ">

@@ -1,12 +1,13 @@
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useGetListCart } from "@/hooks/actions/useUser";
+import { useTranslate } from "@/locales";
 import { useQuery } from "@tanstack/react-query";
 
 interface CartItem {
   strServiceName?: string;
-    strSupplierName?: string;
-    strItemTypeName?: string;
+  strSupplierName?: string;
+  strItemTypeName?: string;
   dtmDateFrom?: string;
   dtmDateTo?: string;
 
@@ -58,52 +59,53 @@ const CartPopupTotalPrice = ({
   open,
   strCartServiceItemGUID,
 }: Props) => {
+  const {t} = useTranslate("cart")
   const { user } = useUser();
 
-const {
-  data: listCart = [],
-  isLoading,
+  const {
+    data: listCart = [],
+    isLoading,
     isError,
-} = useQuery({
-  queryKey: [
-    QUERY_KEYS.CART.LIST_CART,
-    strCartServiceItemGUID,
-  ],
-
-  queryFn: async () => {
-    const res = await useGetListCart({
-      strUserGUID: user?.strUserGUID,
-
-      strCompanyAgentGUID:
-        user?.strCompanyGUID,
-
+  } = useQuery({
+    queryKey: [
+      QUERY_KEYS.CART.LIST_CART,
       strCartServiceItemGUID,
+    ],
 
-      strListCartServiceItemGUID: null,
+    queryFn: async () => {
+      const res = await useGetListCart({
+        strUserGUID: user?.strUserGUID,
 
-      strOnlineCartGUID: null,
+        strCompanyAgentGUID:
+          user?.strCompanyGUID,
 
-      strBuyFromAgentHostGUID: null,
+        strCartServiceItemGUID,
 
-      intCurrencyID: 1,
+        strListCartServiceItemGUID: null,
 
-      intCurPage: null,
+        strOnlineCartGUID: null,
 
-      intPageSize: null,
+        strBuyFromAgentHostGUID: null,
 
-      strOrder: null,
+        intCurrencyID: 1,
 
-      tblsReturn: "[2]",
-    });
+        intCurPage: null,
+
+        intPageSize: null,
+
+        strOrder: null,
+
+        tblsReturn: "[2]",
+      });
 
 
-    return res?.data?.[1] || [];
-  },
+      return res?.data?.[1] || [];
+    },
 
-  enabled:
-    open &&
-    !!strCartServiceItemGUID,
-});
+    enabled:
+      open &&
+      !!strCartServiceItemGUID,
+  });
 
   const totalPrice = listCart.reduce(
     (
@@ -118,7 +120,7 @@ const {
   if (isLoading) {
     return (
       <div className="flex h-[150px] items-center justify-center text-sm text-gray-500">
-        Loading...
+        {t("loading")}
       </div>
     );
   }
@@ -126,7 +128,7 @@ const {
   if (isError) {
     return (
       <div className="flex h-[120px] items-center justify-center text-sm text-red-500">
-        Error loading price detail
+        {t("errorLoadingPriceDetail")}
       </div>
     );
   }
@@ -134,7 +136,7 @@ const {
   if (!listCart.length) {
     return (
       <div className="flex h-[120px] items-center justify-center text-sm text-gray-500">
-        No price detail
+        {t("noPriceDetail")}
       </div>
     );
   }
@@ -144,7 +146,7 @@ const {
       {/* HEADER */}
       <div className="border-b bg-gray-50 px-4 py-3">
         <h2 className="text-[15px] font-semibold text-gray-800">
-          Price Detail
+          {t("priceDetail")}
         </h2>
       </div>
 
@@ -154,27 +156,27 @@ const {
           <thead className="sticky top-0 z-10 bg-white">
             <tr className="border-b text-left text-[#1d4ed8]">
               <th className="px-3 py-3 font-semibold">
-                STT
+                {t("no")}
               </th>
 
               <th className="px-3 py-3 font-semibold">
-                Tên dịch vụ
+                {t("serviceName")}
               </th>
 
               <th className="px-3 py-3 font-semibold">
-                Ngày bắt đầu - Ngày kết thúc
+                {t("dateRange")}
               </th>
 
               <th className="px-3 py-3 text-center font-semibold">
-                Số lượng
+                {t("quantity")}
               </th>
 
               <th className="px-3 py-3 text-right font-semibold">
-                Đơn giá
+                {t("unitPrice")}
               </th>
 
               <th className="px-3 py-3 text-right font-semibold">
-                Tổng giá
+                {t("totalPrice")}
               </th>
             </tr>
           </thead>
@@ -186,13 +188,13 @@ const {
                 index: number
               ) => {
                 const serviceName =
-                    item?.strServiceName || "";
+                  item?.strServiceName || "";
 
-                    const category =
-                    item?.strSupplierName || "";
+                const category =
+                  item?.strSupplierName || "";
 
-                    const joinType =
-                    item?.strItemTypeName || "";
+                const joinType =
+                  item?.strItemTypeName || "";
 
                 return (
                   <tr
@@ -216,7 +218,7 @@ const {
 
                         <div className="text-[12px] text-gray-600">
                           <span className="font-semibold">
-                            Category:
+                            {t("category")}
                           </span>{" "}
                           <span className="text-[#004b91]">
                             {category}
@@ -225,7 +227,7 @@ const {
 
                         <div className="text-[12px] text-gray-600">
                           <span className="font-semibold">
-                            Join Type:
+                            {t("joinType")}
                           </span>{" "}
                           <span className="text-[#004b91]">
                             {joinType}
@@ -273,7 +275,7 @@ const {
                 colSpan={5}
                 className="px-3 py-4 text-right text-sm font-semibold text-gray-700"
               >
-                Total
+                {t("total")}
               </td>
 
               <td className="px-3 py-4 text-right text-sm font-bold text-[#004b91]">

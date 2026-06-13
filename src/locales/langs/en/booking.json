@@ -67,5 +67,7 @@
   "from12YearsOld": "From 12 years old",
   "under12YearsOld": "Under 12 years old",
   "saveChanges": "Save changes",
-  "confirmBookTicket": "Confirm Booking"
+  "confirmBookTicket": "Confirm Booking",
+  "bookingSessionNotFoundOrExpired": "Booking session does not exist or has expired",
+  "orderWillBeCancelledAfter": "If payment is not completed, the order will be automatically cancelled after"
 }

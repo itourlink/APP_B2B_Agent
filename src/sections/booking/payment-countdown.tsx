@@ -1,3 +1,4 @@
+import { useTranslate } from "@/locales";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -11,6 +12,7 @@ const PaymentCountdown = ({
     isExpired = false,
     initialSeconds = 240,
 }: Props) => {
+    const { t } = useTranslate("booking")
     const [timeLeft, setTimeLeft] = useState(initialSeconds);
 
     useEffect(() => {
@@ -40,7 +42,7 @@ const PaymentCountdown = ({
     if (isExpired) {
         return (
             <div className="w-full bg-red-600 text-white text-center text-sm py-2 px-4 font-medium">
-                ⚠️ Phiên đặt không tồn tại hoặc đã hết hạn
+                ⚠️ {t("bookingSessionNotFoundOrExpired")}
             </div>
         );
     }
@@ -51,7 +53,7 @@ const PaymentCountdown = ({
                 !
             </span>
 
-            Nếu quý khách không thực hiện thanh toán, đơn hàng sẽ tự động hủy sau{" "}
+            {t("orderWillBeCancelledAfter")}{" "}
             {formatTime(timeLeft)}
         </div>
     );

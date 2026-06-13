@@ -4,6 +4,7 @@ import { DelCartServiceItem } from "@/hooks/actions/useUser";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUserStore } from "@/zustand/useUserStore";
 import { useToastStore } from "@/zustand/useToastStore";
+import { useTranslate } from "@/locales";
 
 interface Props {
   open: boolean;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const CartPopupAccept = ({ open, onClose, item, }: Props) => {
+  const { t } = useTranslate("cart")
   const queryClient = useQueryClient();
   const { user } = useUserStore();
   const { showToast } = useToastStore();
@@ -24,7 +26,7 @@ const CartPopupAccept = ({ open, onClose, item, }: Props) => {
 
       showToast(
         "success",
-        "Xóa dịch vụ khỏi giỏ hàng thành công"
+        t("removeServiceFromCartSuccess")
       );
 
       queryClient.invalidateQueries({
@@ -38,7 +40,7 @@ const CartPopupAccept = ({ open, onClose, item, }: Props) => {
 
       showToast(
         "error",
-        "Xóa dịch vụ khỏi giỏ hàng thất bại"
+        t("removeServiceFromCartFailed")
       );
     },
 
@@ -58,7 +60,7 @@ const CartPopupAccept = ({ open, onClose, item, }: Props) => {
     <PanelPopup
       open={open}
       onClose={onClose}
-      title="Bạn chắc chứ?"
+      title={t("areYouSure")}
       className="max-w-[320px] overflow-hidden rounded-md p-0 text-sm font-semibold text-white"
     >
 
@@ -68,7 +70,7 @@ const CartPopupAccept = ({ open, onClose, item, }: Props) => {
           onClick={onClose}
           className="rounded bg-gray-200 px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-300"
         >
-          Thoát
+          {t("exit")}
         </button>
 
         <button
@@ -78,7 +80,7 @@ const CartPopupAccept = ({ open, onClose, item, }: Props) => {
           className="rounded bg-[#4a6fa5] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#003d75] disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {
-            delCartItem.isPending ? "Đang xóa..." : "Xác nhận"
+            delCartItem.isPending ? t("deleting") : t("confirm")
           }
         </button>
       </div>

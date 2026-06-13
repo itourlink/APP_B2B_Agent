@@ -6,6 +6,7 @@ import { fetchDetailTour } from "@/hooks/actions/useTour";
 import { useUserStore } from "@/zustand/useUserStore";
 import { isValidValue } from "@/utils/utilts";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useTranslate } from "@/locales";
 
 interface Props {
   open: boolean;
@@ -18,6 +19,7 @@ const CartPopupEdit = ({
   onClose,
   item,
 }: Props) => {
+  const { t } = useTranslate("cart")
   const { user } = useUserStore();
   const { selectedCurrency } = useListCurrency();
   // ================= SELECTED LEVEL =================
@@ -147,7 +149,7 @@ const CartPopupEdit = ({
           {/* TOUR LEVEL */}
           <div>
             <label className="mb-1 block text-[13px] font-medium text-gray-700">
-              Hạng Tour
+              {t("tourClass")}
             </label>
 
             <select
@@ -176,7 +178,7 @@ const CartPopupEdit = ({
           {/* JOIN TYPE */}
           <div>
             <label className="mb-1 block text-[13px] font-medium text-gray-700">
-              Join Type
+              {t("joinType")}
             </label>
 
             <select
@@ -208,7 +210,7 @@ const CartPopupEdit = ({
         {/* ================= PRICE INFO ================= */}
         <div className="space-y-1">
           <div className="text-[28px] font-bold text-[#1f73ff]">
-            Tổng giá:
+            {t("totalPrice")}
             {" "}
             {selectedCurrency?.symbol} {' '}
             {Number(
@@ -217,7 +219,7 @@ const CartPopupEdit = ({
           </div>
 
           <div className="text-sm text-gray-500">
-            (Số tiền hoa hồng:
+            ({t("commissionAmount")}
             {" "}
             <span className="font-semibold text-red-500">
               {selectedCurrency?.symbol} {' '}
@@ -227,7 +229,7 @@ const CartPopupEdit = ({
           </div>
 
           <div className="text-sm font-medium text-orange-500">
-            Còn lại {isValidValue((currentPrice?.intPaxRemain || 0))} Pax
+            {t("remaining")}{isValidValue((currentPrice?.intPaxRemain || 0))} {t("pax")}
           </div>
         </div>
 
@@ -243,7 +245,7 @@ const CartPopupEdit = ({
           hover:bg-[#00386d]
         "
           >
-            Save
+            {t("save")}
           </button>
         </div>
       </div>

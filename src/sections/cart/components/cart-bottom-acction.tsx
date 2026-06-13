@@ -1,3 +1,4 @@
+import { useTranslate } from "@/locales";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 interface Props {
@@ -19,6 +20,7 @@ const CartBottomAcction = ({
   onQuote,
   onBooking,
 }: Props) => {
+  const { t } = useTranslate("cart");
   if (selectedCount <= 0) return null;
 
   return (
@@ -40,13 +42,13 @@ const CartBottomAcction = ({
         {/* ================= LEFT ================= */}
         <div className="flex items-center gap-3 text-sm text-gray-600">
           <span>
-            Chọn tất cả:
+            {t("selectAll")}
             {" "}
             <span className="font-semibold text-[#004b91]">
               {selectedCount}
             </span>
             {" "}
-            dịch vụ
+            {t("services")}
           </span>
         </div>
 
@@ -56,7 +58,7 @@ const CartBottomAcction = ({
           {/* TOTAL */}
           <div className="text-right">
             <div className="text-sm text-gray-500">
-              Tổng giá:
+              {t("totalPrice")}
               {" "}
               <span className="font-bold text-[#ff4d4f]">
                 $
@@ -67,7 +69,7 @@ const CartBottomAcction = ({
             </div>
 
             <div className="text-sm text-gray-500">
-              Hoa hồng:
+              {t("commission")}
               {" "}
               <span className="font-semibold text-[#1677ff]">
                 $
@@ -108,7 +110,7 @@ const CartBottomAcction = ({
                 hover:bg-blue-50 cursor-pointer
               "
             >
-              Send Quote
+              {t("sendQuote")}
             </button>
 
             <button
@@ -121,7 +123,7 @@ const CartBottomAcction = ({
                 hover:bg-[#0958d9] cursor-pointer
               "
             >
-              Đặt
+              {t("book")}
             </button>
           </div>
         </div>
