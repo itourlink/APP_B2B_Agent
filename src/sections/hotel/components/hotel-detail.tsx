@@ -29,7 +29,7 @@ import { paths } from "@/routes/paths";
 import BookingHotelCartPopup from "./booking-hotel-cart-popup";
 // import { useToastStore } from "@/zustand/useToastStore";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useListFOC, useListSupplierPaymentTerm } from "@/hooks/actions/useBooking";
+import { useListFOC } from "@/hooks/actions/useBooking";
 // import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
@@ -90,7 +90,7 @@ const HotelDetail = () => {
       : undefined,
   );
 
-  const { focData, focLoading, focError } = useListFOC({
+  const { focData } = useListFOC({
     strSupplierGUID: item?.strSupplierGUID,
     strPriceListGUID,
   })
