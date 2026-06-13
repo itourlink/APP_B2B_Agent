@@ -1,0 +1,13 @@
+{
+    "yourNotifications": "Your Notifications",
+    "notificationsDescription": "Manage and stay updated with the latest activities from the iTourlink system.",
+    "allNotifications": "All Notifications",
+    "unread": "Unread",
+    "noNotifications": "No Notifications",
+    "allNotificationsRead": "You have read all notifications",
+    "noNotificationsAvailable": "There are currently no notifications",
+    "notifications": "Notifications",
+    "failedToLoadNotifications": "Failed to load notifications",
+    "retry": "Retry",
+    "viewAllNotifications": "View All Notifications"
+}

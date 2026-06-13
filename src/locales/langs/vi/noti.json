@@ -1,0 +1,13 @@
+{
+    "yourNotifications": "Thông báo của bạn",
+    "notificationsDescription": "Quản lý và cập nhật các hoạt động mới nhất từ hệ thống iTourlink.",
+    "allNotifications": "Tất cả thông báo",
+    "unread": "Chưa đọc",
+    "noNotifications": "Không có thông báo",
+    "allNotificationsRead": "Bạn đã đọc hết tất cả thông báo",
+    "noNotificationsAvailable": "Hiện tại chưa có thông báo nào",
+    "notifications": "Thông báo",
+    "failedToLoadNotifications": "Không tải được thông báo",
+    "retry": "Thử lại",
+    "viewAllNotifications": "Xem tất cả thông báo"
+}

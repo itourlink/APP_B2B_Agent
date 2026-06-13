@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/hooks/actions/query-keys';
 import apiClient from '@/axios';
 import { useListAgentNotify } from '@/hooks/actions/useNoti';
+import { useTranslate } from '@/locales';
 
 
 const useUpdNotifyIsRead = async (body: any) => {
@@ -17,6 +18,7 @@ const useUpdNotifyIsRead = async (body: any) => {
 
 
 const NotificationView = () => {
+    const { t } = useTranslate("noti")
     const [filter, setFilter] = useState('all');
     const queryClient = useQueryClient();
     const user = useUserStore((state) => state.user);
@@ -72,16 +74,16 @@ const NotificationView = () => {
         <div className="max-w-5xl mx-auto mt-20">
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Thông báo của bạn</h1>
-                    <p className="text-gray-500 text-sm mt-1 font-normal">Quản lý và cập nhật các hoạt động mới nhất từ hệ thống iTourlink.</p>
+                    <h1 className="text-2xl font-bold text-gray-800">{t("yourNotifications")}</h1>
+                    <p className="text-gray-500 text-sm mt-1 font-normal">{t("notificationsDescription")}</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12 md:col-span-3 space-y-2">
                     {[
-                        { id: 'all', label: 'Tất cả thông báo', count: total },
-                        { id: 'unread', label: 'Chưa đọc', count: unread },
+                        { id: 'all', label: t("allNotifications"), count: total },
+                        { id: 'unread', label: t("unread"), count: unread },
                     ].map((item) => (
                         <button
                             key={item.id}
@@ -112,13 +114,13 @@ const NotificationView = () => {
 
                                 {/* text */}
                                 <p className="text-sm text-gray-500 font-medium">
-                                    Không có thông báo
+                                    {t("noNotifications")}
                                 </p>
 
                                 <span className="text-xs text-gray-400 mt-1">
                                     {filter === "unread"
-                                        ? "Bạn đã đọc hết tất cả thông báo"
-                                        : "Hiện tại chưa có thông báo nào"}
+                                        ? t("allNotificationsRead")
+                                        : t("noNotificationsAvailable")}
                                 </span>
 
                                 {/* back button khi ở tab unread */}
@@ -127,7 +129,7 @@ const NotificationView = () => {
                                         onClick={() => setFilter("all")}
                                         className="mt-3 text-xs text-[#004b91] hover:underline cursor-pointer"
                                     >
-                                        Xem tất cả thông báo
+                                        {t("viewAllNotifications")}
                                     </button>
                                 )}
                             </div>

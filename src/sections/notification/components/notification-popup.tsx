@@ -3,6 +3,7 @@ import {
   useListAgentNotify,
   useUpdNotifyIsRead,
 } from "@/hooks/actions/useNoti";
+import { useTranslate } from "@/locales";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useUserStore } from "@/zustand/useUserStore";
@@ -16,6 +17,7 @@ import { Calendar } from "lucide-react";
 import { useState } from "react";
 
 const NotificationPopup = () => {
+  const { t } = useTranslate("noti")
   const queryClient = useQueryClient();
   const router = useRouter();
   const user = useUserStore((state) => state.user);
@@ -67,7 +69,7 @@ const NotificationPopup = () => {
         <div className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden z-50 p-1.5 shadow-2xl border border-gray-100">
           <div className="px-3 py-2 mb-1 flex justify-between items-center">
             <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-              Thông báo
+              {t("notifications")}
             </span>
           </div>
 
@@ -95,14 +97,14 @@ const NotificationPopup = () => {
             {isError && (
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <span className="text-xs text-gray-500">
-                  Không tải được thông báo
+                  {t("failedToLoadNotifications")}
                 </span>
 
                 <button
                   onClick={() => window.location.reload()}
                   className="mt-4 px-2 py-1.5 text-[10px] bg-[#004b91] text-white rounded-md hover:bg-[#003d75] transition cursor-pointer"
                 >
-                  Thử lại
+                  {t("retry")}
                 </button>
               </div>
             )}
@@ -141,7 +143,7 @@ const NotificationPopup = () => {
             onClick={() => router.push(`${paths.shop.notification.list}?company=${company}`)}
             className="cursor-pointer p-2 border-t border-gray-50 mt-1 w-full py-2 text-[12px] text-gray-500 hover:text-[#004b91] hover:bg-gray-50 rounded-lg transition-colors font-medium"
           >
-            Xem tất cả thông báo
+            {t("viewAllNotifications")}
           </button>
         </div>
       </div>
