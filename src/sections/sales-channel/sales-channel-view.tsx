@@ -1,3 +1,4 @@
+import { useTranslate } from '@/locales';
 import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { ChevronLeft, MessageCircle, Mail, Facebook, Send } from 'lucide-react';
@@ -6,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 const SalesChannelView = () => {
     const router = useRouter();
     const location = useLocation();
+    const { t } = useTranslate("sales-channel")
 
     const company =
         new URLSearchParams(location.search).get("company") || "";
@@ -15,11 +17,15 @@ const SalesChannelView = () => {
             <div className="max-w-[640px] w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-10">
 
                 <h1 className="text-[22px] md:text-[26px] font-bold text-[#1a202c] text-center mb-4 leading-tight">
-                    Bạn chưa đủ điều kiện để thiết lập kênh người bán
+                    {t("sellerChannelNotEligible")}
                 </h1>
 
                 <p className="text-gray-500 text-center text-[15px] mb-8 leading-relaxed px-4">
-                    Nếu bạn muốn thiết lập kênh người bán, hãy liên hệ với <span className="font-semibold text-[#2566b0]">Itourlink</span> theo những thông tin dưới đây để được hỗ trợ nhanh nhất.
+                    {t("sellerChannelContactSupportPrefix")}
+                    <span className="font-semibold text-[#2566b0]">
+                        ITourlink
+                    </span>
+                    {t("sellerChannelContactSupportSuffix")}
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
@@ -62,7 +68,7 @@ const SalesChannelView = () => {
                         className="flex items-center gap-2 px-6 py-2.5 bg-[#2566b0] hover:bg-[#1d4f8a] cursor-pointer text-white text-sm font-medium rounded-full transition-all duration-200"
                     >
                         <ChevronLeft size={18} />
-                        Quay lại
+                        {t("back")}
                     </button>
                 </div>
 
