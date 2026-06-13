@@ -28,6 +28,12 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
     console.log("supPaytermData", supPaytermData)
     console.log("surDateData", surDateData)
 
+    const totalQty =
+        data?.items?.reduce(
+            (sum: number, item: any) => sum + (item.qty || 0),
+            0,
+        ) || 0;
+
     if (!data) return null;
 
     return (
@@ -159,7 +165,12 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
                     </table>
                 </div>
 
-                <SurFoc items={data?.items} focData={focData} />
+                {totalQty >= 5 && (
+                    <SurFoc
+                        items={data?.items}
+                        focData={focData}
+                    />
+                )}
 
                 {/* ACTION */}
                 <div className="flex gap-3 mt-5">

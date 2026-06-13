@@ -55,6 +55,12 @@ const BookingHotelCartPopup = ({ open, onClose, data, focData }: Props) => {
   console.log("supPaytermData", supPaytermData)
   console.log("surDateData", surDateData)
 
+  const totalQty =
+    data?.displayData?.items?.reduce(
+      (sum: number, item: any) => sum + (item.qty || 0),
+      0,
+    ) || 0;
+
   if (!data) return null;
 
   const { displayData, submitPayload } = data;
@@ -215,7 +221,12 @@ const BookingHotelCartPopup = ({ open, onClose, data, focData }: Props) => {
           </table>
         </div>
 
-        <SurFoc focData={focData} />
+        {totalQty >= 5 && (
+          <SurFoc
+            items={data?.displayData?.items}
+            focData={focData}
+          />
+        )}
 
         {/* ACTION */}
         <div className="flex gap-3 mt-5">
