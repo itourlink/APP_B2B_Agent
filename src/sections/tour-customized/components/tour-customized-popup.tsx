@@ -62,8 +62,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             city: z.string().optional(),
         })
         .refine(
-            (data) =>
-                data.sgl > 0 || data.dbl > 0 || data.twn > 0 || data.tpl > 0,
+            ({ sgl, dbl, twn, tpl }) =>
+                [sgl, dbl, twn, tpl].some((value) => Number(value) > 0),
             {
                 message: t("minimumOneRoom"),
                 path: ["sgl"],
@@ -91,10 +91,29 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         resolver: zodResolver(Schema) as any,
     });
 
+
+    const { watch, setValue } = methods;
+
+    const [sgl, dbl, twn, tpl] = watch([
+        "sgl",
+        "dbl",
+        "twn",
+        "tpl",
+    ]);
+
+    useEffect(() => {
+        const total =
+            Number(sgl || 0) +
+            Number(dbl || 0) * 2 +
+            Number(twn || 0) * 2 +
+            Number(tpl || 0) * 3;
+
+        setValue("adults", total);
+    }, [sgl, dbl, twn, tpl, setValue]);
+
     const {
         handleSubmit,
         formState: { isSubmitting },
-        setValue,
     } = methods;
 
     const { mutate: addNewTourCustomizedApi, isPending: isLoading } = useMutation({
@@ -469,10 +488,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         <Field.SearchSelect
                             name="country"
                             options={COUNTRY_OPTIONS_LIST}
-                    placeholder={t("choice")}
+                            placeholder={t("choice")}
 
                         />
-                        
+
                     </div>
 
                     <div className="flex-1">
@@ -480,7 +499,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                             name="city"
                             options={CITY_OPTIONS}
                             disabled={!watchedCountry}
-                    placeholder={t("choice")}
+                            placeholder={t("choice")}
 
                         />
                     </div>
@@ -552,10 +571,10 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                 <label>{t("remark")}</label>
 
                 <div className="rounded-2xl overflow-hidden border border-gray-200">
-                    <Field.Editor 
-                    name="remark"
+                    <Field.Editor
+                        name="remark"
 
-                     />
+                    />
                 </div>
             </div>
 

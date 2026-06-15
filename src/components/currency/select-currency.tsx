@@ -29,17 +29,19 @@ export const SelectCurrency = ({
 
   const currencies = useMemo<Currency[]>(
     () =>
-      currencyOptions.map((item) => ({
-        value: item.value,
-        label:
-          item.label.match(/\(([A-Z]{3})/)?.[1] ??
-          item.label,
-        symbol:
-          item.label.match(/^([^\s]+)/)?.[1] ?? "",
-      })),
+      currencyOptions
+        .filter((item) => ["1", "3"].includes(item.value))
+        .map((item) => ({
+          value: item.value,
+          label:
+            item.label.match(/\(([A-Z]{3})/)?.[1] ?? item.label,
+          symbol:
+            item.label.match(/^([^\s]+)/)?.[1] ?? "",
+        })),
     [currencyOptions]
   );
 
+  console.log("currencies", currencies)
   // Khởi tạo mặc định lần đầu
   useEffect(() => {
     if (!currencyId && currencies.length) {

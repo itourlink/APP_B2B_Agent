@@ -19,12 +19,12 @@ export const CURRENCYS_OPTIONS = [
     { label: "--- Chọn ---", value: "" },
     { label: "Vietnamese Dong", value: "1" },
     { label: "U.S Dollar", value: "2" },
-    { label: "Euro", value: "3" },
-    { label: "Japanese Yen", value: "4" },
-    { label: "Russian Ruble", value: "5" },
-    { label: "Australian Dollar", value: "6" },
-    { label: "Hong Kong Dollar", value: "7" },
-    { label: "Pound Sterling", value: "8" },
+    // { label: "Euro", value: "3" },
+    // { label: "Japanese Yen", value: "4" },
+    // { label: "Russian Ruble", value: "5" },
+    // { label: "Australian Dollar", value: "6" },
+    // { label: "Hong Kong Dollar", value: "7" },
+    // { label: "Pound Sterling", value: "8" },
 ];
 
 export const MEALS_OPTIONS = [
