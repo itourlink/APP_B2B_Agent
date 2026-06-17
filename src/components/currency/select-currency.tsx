@@ -41,7 +41,6 @@ export const SelectCurrency = ({
     [currencyOptions]
   );
 
-  console.log("currencies", currencies)
   // Khởi tạo mặc định lần đầu
   useEffect(() => {
     if (!currencyId && currencies.length) {

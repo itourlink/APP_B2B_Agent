@@ -21,7 +21,6 @@ export const useListMenu = () => {
 
             return fetchListMenu({
                 strCompanyGUID: companyGUID,
-                // strCompanyPartnerGUID: user?.strCompanyGUID,
                 intMenuType: 2
             });
         },
