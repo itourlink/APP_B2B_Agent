@@ -110,7 +110,7 @@ export const SelectCurrency = ({
               bg-white/20
               backdrop-blur-md
               shadow-xl
-              border
+              border border-[rgba(64,64,64,0.5)]
               p-1
             "
           >

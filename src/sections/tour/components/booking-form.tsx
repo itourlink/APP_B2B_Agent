@@ -388,7 +388,7 @@ const BookingForm = ({ item }: Props) => {
                     <select
                         value={joinType || ""}
                         onChange={(e) => setJoinType(Number(e.target.value))}
-                        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                        className="cursor-pointer w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
                     >
                         {joinTypeList.map((t: any) => (
                             <option key={t.value} value={t.value}>

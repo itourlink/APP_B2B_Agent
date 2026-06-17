@@ -314,11 +314,9 @@ const PaymentBookingView: React.FC = () => {
             : null,
       };
 
-      // let serviceUrl =
-      //     "http://localhost:5173/service?activeTab=booked";
+      // let serviceUrl = "http://localhost:5173/service?activeTab=booked";
 
-      let serviceUrl =
-        "https://myagentmember.itourlink.com/service?activeTab=booked";
+      let serviceUrl = "https://myagentmember.itourlink.com/service?activeTab=booked";
 
       addBookingForTourApi(payload, {
         onSuccess: async (res) => {
@@ -384,12 +382,11 @@ const PaymentBookingView: React.FC = () => {
             const activeTab = statusTabMap[intBK] ?? "booked";
 
             serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
+            // serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
 
             // luôn đá trang
             window.open(serviceUrl, "_blank");
           } catch (err) {
-            console.log("TMS ERROR", err);
-
             // lỗi TMS vẫn cho đá trang
             window.open(serviceUrl, "_blank");
           }
