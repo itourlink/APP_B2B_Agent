@@ -17,8 +17,8 @@ export const LANGUES_OPTIONS = [
 
 export const CURRENCYS_OPTIONS = [
     { label: "--- Chọn ---", value: "" },
-    { label: "Vietnamese Dong", value: "1" },
-    { label: "U.S Dollar", value: "2" },
+    { label: "Vietnamese Dong", value: "3" },
+    { label: "U.S Dollar", value: "1" },
     // { label: "Euro", value: "3" },
     // { label: "Japanese Yen", value: "4" },
     // { label: "Russian Ruble", value: "5" },
