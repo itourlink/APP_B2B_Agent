@@ -34,8 +34,11 @@ import { useListFOC } from "@/hooks/actions/useBooking";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
+import { fCurrency } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const HotelDetail = () => {
+  const { selectedCurrency } = useListCurrency();
   const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
@@ -417,13 +420,19 @@ const HotelDetail = () => {
                             <span>x</span>
 
                             <span className="text-[#2563eb] font-medium">
-                              ₫{price.toLocaleString()}
+                              {fCurrency(
+                                price,
+                                selectedCurrency?.label
+                              )}
                             </span>
 
                             <span>=</span>
 
                             <span className="text-[#1d3557] font-semibold">
-                              ₫{total.toLocaleString()}
+                              {fCurrency(
+                                total,
+                                selectedCurrency?.label
+                              )}
                             </span>
                           </div>
                         </div>
@@ -456,7 +465,10 @@ const HotelDetail = () => {
 
         return (
           <span className="font-semibold text-[#2563eb]">
-            ₫{total.toLocaleString()}
+            {fCurrency(
+              total,
+              selectedCurrency?.label
+            )}
           </span>
         );
       },
