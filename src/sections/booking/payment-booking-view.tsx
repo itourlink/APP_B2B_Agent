@@ -315,10 +315,10 @@ const PaymentBookingView: React.FC = () => {
       };
 
       // let serviceUrl =
-      //     "http://localhost:5173/service?activeTab=hold";
+      //     "http://localhost:5173/service?activeTab=booked";
 
       let serviceUrl =
-        "https://myagentmember.itourlink.com/service?activeTab=hold";
+        "https://myagentmember.itourlink.com/service?activeTab=booked";
 
       addBookingForTourApi(payload, {
         onSuccess: async (res) => {
@@ -381,7 +381,7 @@ const PaymentBookingView: React.FC = () => {
 
             const intBK = res?.[1]?.[0]?.intStatusBk;
 
-            const activeTab = statusTabMap[intBK] ?? "hold";
+            const activeTab = statusTabMap[intBK] ?? "booked";
 
             serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
 

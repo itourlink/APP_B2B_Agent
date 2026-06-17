@@ -396,7 +396,7 @@ const PaymentBookingHotelView: React.FC = () => {
             };
 
             let serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=hold";
+                "https://myagentmember.itourlink.com/service?activeTab=booked";
 
             addBookingForHotelApi(payload, {
 
