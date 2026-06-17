@@ -10,11 +10,11 @@
     "profile": "Hồ Sơ Cá Nhân",
     "logout": "Đăng xuất",
     "tour": "Tour",
-    "hotel": "Hotel",
-    "boat": "Boat",
-    "vehicle": "Transport",
+    "hotel": "Khách sạn",
+    "boat": "Du thuyền",
+    "vehicle": "Phương tiện",
     "voucher": "Voucher",
-    "restaurant": "Restaurant",
-    "guide": "Guide",
-    "flight": "Flight"
+    "restaurant": "Nhà hàng",
+    "guide": "Hướng dẫn viên",
+    "flight": "Vé máy bay"
 }
