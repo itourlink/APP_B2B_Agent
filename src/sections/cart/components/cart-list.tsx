@@ -11,6 +11,7 @@ import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useTranslate } from "@/locales";
+import { fCurrency } from "@/utils/format-number";
 
 
 const CartList = () => {
@@ -240,15 +241,22 @@ const CartList = () => {
         hover:underline
       "
         >
-          {selectedCurrency?.symbol}
-          {(value || 0)}
+          {fCurrency(
+            value,
+            selectedCurrency?.label
+          )}
         </button>
       ),
     },
     {
       field: "dblPriceTotalAgentCom",
       headerName: t("totalCommission"),
-      render: (value: any) => <span className="text-[13px] text-gray-700">{value}</span>,
+      render: (value: any) => <span className="text-[13px] text-gray-700">
+        {fCurrency(
+          value,
+          selectedCurrency?.label
+        )}
+      </span>,
     },
     {
       field: "No",

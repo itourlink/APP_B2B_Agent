@@ -1,8 +1,10 @@
 import { useCompanyDes } from '@/hooks/actions/useCompanyOwner';
 import { getUrlImage } from '@/utils/format-image';
+import { isValidValue } from '@/utils/utilts';
 import { ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import imgDefault from "@/assets/images/default-image.jpg"
 
 const TopDestinationCard = ({ dest }: any) => {
     if (!dest?.strCityImage) {
@@ -20,6 +22,15 @@ const TopDestinationCard = ({ dest }: any) => {
             </div>
         );
     }
+
+    const imageSrc =
+        dest?.strCityImage === "" ||
+            (typeof dest?.strCityImage === "object" &&
+                dest?.strCityImage !== null &&
+                Object.keys(dest?.strCityImage).length === 0)
+            ? imgDefault
+            : getUrlImage(isValidValue(dest?.strCityImage));
+
 
     return (
         <div className="flex-none flex flex-col items-center gap-4 group cursor-pointer">
@@ -92,7 +103,7 @@ const DestinationCarousel = () => {
 
                     {!tcdLoading && tcdError && (
                         <div className="text-red-500 text-center w-full">
-                             {t("loadPartnerFailed")}
+                            {t("loadPartnerFailed")}
                         </div>
                     )}
 

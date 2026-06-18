@@ -25,7 +25,6 @@ export default function BookingPopup({
     totalVoucherAmount,
     paymentMethod,
 }: Props) {
-
     const { selectedCurrency } = useListCurrency();
     const { t } = useTranslate("booking")
     return (

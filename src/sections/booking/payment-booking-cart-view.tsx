@@ -14,8 +14,11 @@ import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDate } from '@/utils/format-time';
 import { useTranslate } from '@/locales';
+import { fCurrency } from '@/utils/format-number';
+import { useListCurrency } from '@/components/currency/useListCurrency';
 
 const PaymentBookingCartView: React.FC = () => {
+    const { selectedCurrency } = useListCurrency();
     const { t } = useTranslate("booking");
     const { setGlobalLoading } = useGlobalLoading();
 
@@ -854,20 +857,23 @@ const PaymentBookingCartView: React.FC = () => {
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {formatCurrency(
-                                                item?.dblPriceTotalAgentCom
+                                            {fCurrency(
+                                                item?.dblPriceTotalAgentCom,
+                                                selectedCurrency?.label
                                             )}
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
-                                            {formatCurrency(
-                                                item?.dblPriceTotal
+                                            {fCurrency(
+                                                item?.dblPriceTotal,
+                                                selectedCurrency?.label
                                             )}
                                         </td>
 
                                         <td className="py-3 px-3 align-top font-medium">
-                                            {formatCurrency(
-                                                Number(item?.dblPriceTotal || 0) * 0.3
+                                            {fCurrency(
+                                                Number(item?.dblPriceTotal || 0) * 0.3,
+                                                selectedCurrency?.label
                                             )}
                                         </td>
                                     </tr>
@@ -885,15 +891,24 @@ const PaymentBookingCartView: React.FC = () => {
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">
-                                        {formatCurrency(totalCommission)}
+                                        {fCurrency(
+                                            totalCommission,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">
-                                        {formatCurrency(totalPrice)}
+                                        {fCurrency(
+                                            totalPrice,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
                                     <td className="py-2 px-3">
-                                        {formatCurrency(totalDeposit)}
+                                        {fCurrency(
+                                            totalDeposit,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
                                 </tr>
                             </tbody>
@@ -937,7 +952,10 @@ const PaymentBookingCartView: React.FC = () => {
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">{t("paymentFirstInstallment")}</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
-                                    {formatCurrency(finalDeposit)}
+                                    {fCurrency(
+                                        finalDeposit,
+                                        selectedCurrency?.label
+                                    )}
                                 </span>
                             </div>
 
@@ -959,7 +977,10 @@ const PaymentBookingCartView: React.FC = () => {
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">{t("paymentSecondInstallment")}</span>
                                 <span className="font-semibold text-gray-800">
-                                    {formatCurrency(finalDebt)}
+                                    {fCurrency(
+                                        finalDebt,
+                                        selectedCurrency?.label
+                                    )}
                                 </span>
                             </div>
                         </div>
