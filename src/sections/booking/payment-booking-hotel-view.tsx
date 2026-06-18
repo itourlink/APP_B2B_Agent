@@ -231,7 +231,8 @@ const PaymentBookingHotelView: React.FC = () => {
 
     const handleBooking = async () => {
 
-        const bookingTab = window.open("http://localhost:5173/service?activeTab=loading", "_blank");
+        // const bookingTab = window.open("http://localhost:5173/service?activeTab=loading", "_blank");
+        const bookingTab = window.open("https://myagentmember.itourlink.com/service?activeTab=loading", "_blank");
 
         try {
 
@@ -477,8 +478,11 @@ const PaymentBookingHotelView: React.FC = () => {
                     console.error("after booking error", e);
                 }
 
+                // bookingTab?.location.replace(
+                //     `http://localhost:5173/service?activeTab=${activeTab}`
+                // );
                 bookingTab?.location.replace(
-                    `http://localhost:5173/service?activeTab=${activeTab}`
+                    `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`
                 );
 
             } catch (err) {
