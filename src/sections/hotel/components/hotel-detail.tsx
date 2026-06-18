@@ -502,19 +502,20 @@ const HotelDetail = () => {
                   return sum + item.qty;
                 }, 0);
 
-                const roomGuidList = selected
-                  .filter((x) => !x.isChild)
-                  .flatMap((x) => Array(x.qty).fill(x.raw?.strItemTypeGUID));
+                const strListItemTypeGUID = selected
+                  .filter((room) => !room.isChild)
+                  .map((room) => {
+                    const raw = room.raw;
+
+                    return `${raw?.strItemTypeGUID}!${raw?.intSglDblID}!${room.qty}!${includedBreak?.intMealIncludedTypeID}!${raw?.strItemTypeDetailGUID}!0#`;
+                  })
+                  .join("");
 
                 const childAgeList = selected
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const childGuidList = selected
-                  .filter((x) => x.isChild)
-                  .flatMap((x) =>
-                    Array(x.qty).fill(x.raw?.strSupplierChildAgeGUID),
-                  );
+                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -549,9 +550,9 @@ const HotelDetail = () => {
 
                   strListChildAge: childAgeList.join(",") + ",",
 
-                  strListItemTypeGUID: roomGuidList.join(","),
+                  strListItemTypeGUID: strListItemTypeGUID,
 
-                  strListSupplierChildAgeGUID: childGuidList.join(","),
+                  strListSupplierChildAgeGUID: strListSupplierChildAgeGUID,
 
                   // UI
                   adultCount,
@@ -609,11 +610,7 @@ const HotelDetail = () => {
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const childGuidList = selected
-                  .filter((x) => x.isChild)
-                  .flatMap((x) =>
-                    Array(x.qty).fill(x.raw?.strSupplierChildAgeGUID),
-                  );
+                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -662,7 +659,7 @@ const HotelDetail = () => {
 
                   strListItemTypeGUID: strListItemTypeGUID,
 
-                  strListSupplierChildAgeGUID: childGuidList.join(","),
+                  strListSupplierChildAgeGUID: strListSupplierChildAgeGUID,
 
                   strListSurchargeDateGUID: "",
 

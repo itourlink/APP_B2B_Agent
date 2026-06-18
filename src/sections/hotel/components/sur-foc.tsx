@@ -167,13 +167,13 @@ const SurFoc = ({ items, focData }: Props) => {
                                     <td className="px-4 py-3 text-center">
                                         {/* {item.dblFOCGet} */}
 
-                                        ${items?.[0]?.price}
+                                        ${items?.[0]?.price.toLocaleString()}
                                     </td>
 
                                     <td className="px-4 py-3 text-center font-medium">
                                         {/* {item.dblFOCMax} */}
 
-                                         $-{items?.[0]?.price}
+                                         $-{items?.[0]?.price.toLocaleString()}
                                     </td>
                                 </tr>
                             ))

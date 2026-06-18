@@ -395,8 +395,9 @@ const PaymentBookingHotelView: React.FC = () => {
                         : null,
             };
 
-            let serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=booked";
+            // let serviceUrl = "https://myagentmember.itourlink.com/service?activeTab=booked";
+
+            let serviceUrl = "http://localhost:5173/service?activeTab=booked";
 
             addBookingForHotelApi(payload, {
 
@@ -476,24 +477,13 @@ const PaymentBookingHotelView: React.FC = () => {
                         }
 
 
-                        // serviceUrl =
-                        //     `http://localhost:5173/service?activeTab=${activeTab}`;
-                        serviceUrl =
-                            `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
-                        // // luôn đá trang
-                        window.open(
-                            serviceUrl,
-                            "_blank"
-                        );
+                        serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
+                        // serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
 
-                        // window.open(
-                        //     "http://localhost:5173/service?activeTab=booked",
-                        //     "_blank"
-                        // );
+                        window.open(serviceUrl, "_blank");
 
-                    } catch (err) {
-
-                        console.log("TMS ERROR", err);
+                    } catch (_) {
+                        window.open(serviceUrl, "_blank");
                     }
                 },
 
