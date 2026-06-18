@@ -11,7 +11,7 @@ import { useListBoat } from "@/hooks/actions/useBoat";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { fCurrency, formatPrice } from "@/utils/format-number";
+import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const BoatCardSkeleton = () => {

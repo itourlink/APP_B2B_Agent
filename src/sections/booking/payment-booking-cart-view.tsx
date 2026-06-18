@@ -61,21 +61,6 @@ const PaymentBookingCartView: React.FC = () => {
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
 
-    // Helper định dạng tiền tệ Việt Nam (đ)
-    const formatCurrency = (amount?: any) => {
-        const value =
-            typeof amount === "number" || typeof amount === "string"
-                ? Number(amount)
-                : 0;
-
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        })
-            .format(isNaN(value) ? 0 : value)
-            .replace("₫", "đ");
-    };
-
     const [selectedBankAccount, setSelectedBankAccount] = useState<any>(null);
 
     useEffect(() => {

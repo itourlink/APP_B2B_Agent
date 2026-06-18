@@ -39,7 +39,7 @@ const TopDestinationCard = ({ dest }: any) => {
                             hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] hover:-translate-y-1 hover:scale-102">
 
                 <img
-                    src={getUrlImage(dest?.strCityImage)}
+                    src={imageSrc}
                     alt={dest?.strDestinationName}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                 />
