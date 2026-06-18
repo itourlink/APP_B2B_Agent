@@ -228,6 +228,8 @@ const PaymentBookingHotelView: React.FC = () => {
 
     const handleBooking = async () => {
 
+        const bookingTab = window.open("http://localhost:5173/service?activeTab=loading", "_blank");
+
         try {
 
             // apply voucher trước
@@ -399,103 +401,98 @@ const PaymentBookingHotelView: React.FC = () => {
 
             let serviceUrl = "http://localhost:5173/service?activeTab=booked";
 
-            addBookingForHotelApi(payload, {
+            try {
+                const res = await addBookingForHotelApi(payload);
 
-                onSuccess: async (res) => {
+                showToast(
+                    "success",
+                    t("bookingSuccess")
+                );
 
-                    showToast(
-                        "success",
-                        t("bookingSuccess")
-                    );
+                const serviceGUID =
+                    res?.[0]?.[0]?.strListAgentHostServiceItemGUID;
 
-                    try {
-                        const serviceGUID = res?.[0]?.[0]?.strListAgentHostServiceItemGUID;
-                        const intBK = res?.[0]?.[0]?.intStatusBk
-                        const activeTab =
-                            statusTabMap[intBK] ?? "hold";
+                const intBK =
+                    res?.[0]?.[0]?.intStatusBk;
 
-                        // call email template
-                        if (serviceGUID) {
+                const activeTab =
+                    statusTabMap[intBK] ?? "hold";
 
-                            const emailTemplateRes =
-                                await fetchGetEmailSendAGHByAGBApi({
-                                    strBookingGUID: null,
-                                    strCompanyGUID: coData?.strCompanyGUID,
-                                    strListAgentHostServiceItemGUID: serviceGUID,
-                                    intLangID: user?.intLangID,
-                                    strEmailTemplateCode: "BKK",
-                                });
+                try {
 
-                            const emailData = emailTemplateRes;
+                    if (serviceGUID) {
 
-                            // send email
-                            if (emailData) {
-
-                                await fetchGetSendEmailApi({
-
-                                    strEmailsSendTo:
-                                        emailData?.strEmailsSendTo || null,
-
-                                    strEmailsCC:
-                                        emailData?.strEmailsCC || null,
-
-                                    strEmailsBCC:
-                                        emailData?.strEmailsBCC || null,
-
-                                    strAttachments:
-                                        null,
-
-                                    strSubject:
-                                        emailData?.strEmailTemplateSubject || null,
-
-                                    IsBodyHtml:
-                                        true,
-
-                                    strBody:
-                                        emailData?.strEmailTemplateContent || null,
-
-                                    intEmailConfigID:
-                                        null,
-                                });
-                            }
-
-                            await listAGTMS({
-                                strCompanyGUID:
-                                    coData?.strCompanyGUID,
-
-                                strListAgentHostServiceItemGUID:
-                                    serviceGUID,
+                        const emailTemplateRes =
+                            await fetchGetEmailSendAGHByAGBApi({
+                                strBookingGUID: null,
+                                strCompanyGUID: coData?.strCompanyGUID,
+                                strListAgentHostServiceItemGUID: serviceGUID,
+                                intLangID: user?.intLangID,
+                                strEmailTemplateCode: "BKK",
                             });
 
-                            await detailAGTMS({
-                                strAgentHostCompanyGUID:
-                                    coData?.strCompanyGUID,
+                        if (emailTemplateRes) {
 
-                                strListAgentHostServiceItemGUID:
-                                    serviceGUID,
+                            await fetchGetSendEmailApi({
+                                strEmailsSendTo:
+                                    emailTemplateRes?.strEmailsSendTo || null,
+
+                                strEmailsCC:
+                                    emailTemplateRes?.strEmailsCC || null,
+
+                                strEmailsBCC:
+                                    emailTemplateRes?.strEmailsBCC || null,
+
+                                strAttachments: null,
+
+                                strSubject:
+                                    emailTemplateRes?.strEmailTemplateSubject || null,
+
+                                IsBodyHtml: true,
+
+                                strBody:
+                                    emailTemplateRes?.strEmailTemplateContent || null,
+
+                                intEmailConfigID: null,
                             });
                         }
 
+                        await listAGTMS({
+                            strCompanyGUID:
+                                coData?.strCompanyGUID,
 
-                        serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
-                        // serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
+                            strListAgentHostServiceItemGUID:
+                                serviceGUID,
+                        });
 
-                        window.open(serviceUrl, "_blank");
+                        await detailAGTMS({
+                            strAgentHostCompanyGUID:
+                                coData?.strCompanyGUID,
 
-                    } catch (_) {
-                        window.open(serviceUrl, "_blank");
+                            strListAgentHostServiceItemGUID:
+                                serviceGUID,
+                        });
                     }
-                },
 
-                onError: () => {
+                } catch (e) {
+                    console.error("after booking error", e);
+                }
 
-                    showToast(
-                        "error",
-                        t("bookingFailed")
-                    );
+                bookingTab?.location.replace(
+                    `http://localhost:5173/service?activeTab=${activeTab}`
+                );
 
-                },
-            });
+            } catch (err) {
+
+                console.error(err);
+
+                showToast(
+                    "error",
+                    t("bookingFailed")
+                );
+
+                bookingTab?.close();
+            }
 
         } catch (err) {
 
