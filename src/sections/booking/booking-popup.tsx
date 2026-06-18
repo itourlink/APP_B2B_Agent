@@ -2,6 +2,7 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useTranslate } from "@/locales";
 import { isValidValue } from "@/utils/utilts";
+import { fCurrency } from "@/utils/format-number";
 
 type Props = {
     open: boolean;
@@ -27,7 +28,7 @@ export default function BookingPopup({
 }: Props) {
 
     const { selectedCurrency } = useListCurrency();
-        const { t } = useTranslate("booking")
+    const { t } = useTranslate("booking")
     return (
         <PanelPopup
             open={open}
@@ -38,7 +39,7 @@ export default function BookingPopup({
             <div className="space-y-5 text-sm">
 
                 <div className="text-gray-700 leading-relaxed">
-                     {t("bookingConfirmQuestion")}
+                    {t("bookingConfirmQuestion")}
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2 text-xs">
@@ -47,7 +48,11 @@ export default function BookingPopup({
                         <span>{t("firstPayment")}:</span>
 
                         <span className="font-semibold text-[#0f4c81]">
-                            {selectedCurrency?.symbol} {isValidValue(finalDeposit)}
+
+                            {fCurrency(
+                                finalDeposit,
+                                selectedCurrency?.label
+                            )}
                         </span>
                     </div>
 
@@ -55,7 +60,10 @@ export default function BookingPopup({
                         <span>{t("secondPayment")}:</span>
 
                         <span className="font-semibold text-orange-600">
-                            {selectedCurrency?.symbol} {isValidValue(finalDebt)}
+                            {fCurrency(
+                                finalDebt,
+                                selectedCurrency?.label
+                            )}
                         </span>
                     </div>
 
@@ -63,7 +71,10 @@ export default function BookingPopup({
                         <span>{t("voucher")}:</span>
 
                         <span className="font-semibold text-red-500">
-                            -{selectedCurrency?.symbol} {isValidValue(totalVoucherAmount)}
+                            -{fCurrency(
+                                totalVoucherAmount,
+                                selectedCurrency?.label
+                            )}
                         </span>
                     </div>
 
@@ -82,7 +93,7 @@ export default function BookingPopup({
                         onClick={onClose}
                         className="cursor-pointer px-4 py-2 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
                     >
-                            {t("cancel")}
+                        {t("cancel")}
                     </button>
 
                     <button
@@ -90,7 +101,7 @@ export default function BookingPopup({
                         disabled={isLoading}
                         className="cursor-pointer px-4 py-2 rounded bg-[#0f4c81] text-white hover:bg-[#0b3a63] transition disabled:opacity-50"
                     >
-                     {isLoading ? t("bookingProcessing") : t("confirmBooking")}
+                        {isLoading ? t("bookingProcessing") : t("confirmBooking")}
                     </button>
 
                 </div>

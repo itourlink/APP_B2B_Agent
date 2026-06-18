@@ -26,6 +26,7 @@ import { addDays } from "date-fns";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useCurrency } from "@/components/currency/useCurrency";
+import { fCurrency } from "@/utils/format-number";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
@@ -493,7 +494,7 @@ const PaymentBookingView: React.FC = () => {
                       }))
                     }
                     className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                    placeholder="Nhập tên"
+                    placeholder={t("enterFirstName")}
                   />
                 </div>
 
@@ -513,7 +514,7 @@ const PaymentBookingView: React.FC = () => {
                       }))
                     }
                     className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                    placeholder="Nhập họ và tên"
+                    placeholder={t("enterLastName")}
                   />
                 </div>
 
@@ -660,7 +661,7 @@ const PaymentBookingView: React.FC = () => {
                       }))
                     }
                     className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                    placeholder="Nhập số điện thoại"
+                    placeholder={t("enterPhoneNumber")}
                   />
                 </div>
               </div>
@@ -676,7 +677,7 @@ const PaymentBookingView: React.FC = () => {
                       strPassengerRemark: e.target.value,
                     }))
                   }
-                  placeholder="Ghi chú"
+                  placeholder={t("note")}
                   rows={3}
                   className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
                 />
@@ -748,15 +749,23 @@ const PaymentBookingView: React.FC = () => {
                       {totalGuests}
                     </td>
                     <td className="py-3 px-3 align-top border-r border-gray-100">
-                      {isValidValue(price?.dblTotalPriceCom)}
+                      {fCurrency(
+                        price?.dblTotalPriceCom,
+                        selectedCurrency?.label
+                      )}
                     </td>
                     <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
-                      {selectedCurrency?.symbol}
-                      {isValidValue(price?.dblTotalPrice)}
+
+                      {fCurrency(
+                        price?.dblTotalPrice,
+                        selectedCurrency?.label
+                      )}
                     </td>
                     <td className="py-3 px-3 align-top font-medium">
-                      {selectedCurrency?.symbol}
-                      {isValidValue(totalDeposit)}
+                      {fCurrency(
+                        totalDeposit,
+                        selectedCurrency?.label
+                      )}
                     </td>
                   </tr>
                   <tr className="bg-gray-50/50 font-semibold">
@@ -767,15 +776,24 @@ const PaymentBookingView: React.FC = () => {
                     </td>
                     <td className="py-2 px-3 border-r border-gray-100"></td>
                     <td className="py-2 px-3 border-r border-gray-100">
-                      {isValidValue(price?.dblTotalPriceCom)}
+                      {fCurrency(
+                        price?.dblTotalPriceCom,
+                        selectedCurrency?.label
+                      )}
                     </td>
                     <td className="py-2 px-3 border-r border-gray-100">
-                      {selectedCurrency?.symbol}{" "}
-                      {isValidValue(price?.dblTotalPrice)}
+                      {fCurrency(
+                        price?.dblTotalPrice,
+                        selectedCurrency?.label
+                      )}
                     </td>
                     <td className="py-2 px-3">
-                      {selectedCurrency?.symbol}{" "}
-                      {isValidValue(totalDeposit)}
+
+                      {fCurrency(
+                        totalDeposit,
+                        selectedCurrency?.label
+                      )}
+
                     </td>
                   </tr>
                 </React.Fragment>
@@ -821,7 +839,11 @@ const PaymentBookingView: React.FC = () => {
                   {t("paymentFirstInstallment")}
                 </span>
                 <span className="font-semibold text-[#1e5bb4] underline">
-                  {selectedCurrency?.symbol} {isValidValue(finalDeposit)}
+
+                  {fCurrency(
+                    finalDeposit,
+                    selectedCurrency?.label
+                  )}
                 </span>
               </div>
 
@@ -838,7 +860,11 @@ const PaymentBookingView: React.FC = () => {
                 </span>
 
                 <span className="font-semibold text-gray-800">
-                  {selectedCurrency?.symbol} {isValidValue(finalDebt)}
+
+                  {fCurrency(
+                    finalDebt,
+                    selectedCurrency?.label
+                  )}
                 </span>
               </div>
             </div>
