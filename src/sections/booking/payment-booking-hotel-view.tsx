@@ -14,8 +14,11 @@ import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDateTime } from '@/utils/format-time';
 import { useTranslate } from '@/locales';
 import { useCurrency } from '@/components/currency/useCurrency';
+import { fCurrency } from '@/utils/format-number';
+import { useListCurrency } from '@/components/currency/useListCurrency';
 
 const PaymentBookingHotelView: React.FC = () => {
+    const { selectedCurrency } = useListCurrency();
     const { t } = useTranslate("booking")
     const { currencyId } = useCurrency();
     const { setGlobalLoading } = useGlobalLoading();
@@ -396,10 +399,6 @@ const PaymentBookingHotelView: React.FC = () => {
                             .join(",")
                         : null,
             };
-
-            // let serviceUrl = "https://myagentmember.itourlink.com/service?activeTab=booked";
-
-            let serviceUrl = "http://localhost:5173/service?activeTab=booked";
 
             try {
                 const res = await addBookingForHotelApi(payload);
@@ -871,19 +870,26 @@ const PaymentBookingHotelView: React.FC = () => {
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            đ0
+                                            {fCurrency(
+                                                0,
+                                                selectedCurrency?.label
+                                            )}
 
                                         </td>
 
                                         <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
-                                            {formatCurrency(
-                                                item?.total
+
+                                            {fCurrency(
+                                                item?.total,
+                                                selectedCurrency?.label
                                             )}
+
                                         </td>
 
                                         <td className="py-3 px-3 align-top font-medium">
-                                            {formatCurrency(
-                                                Number(item?.total || 0) * 0.3
+                                            {fCurrency(
+                                                Number(item?.total || 0) * 0.3,
+                                                selectedCurrency?.label
                                             )}
                                         </td>
                                     </tr>
@@ -901,15 +907,24 @@ const PaymentBookingHotelView: React.FC = () => {
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">
-                                        {formatCurrency(totalCommission)}
+                                        {fCurrency(
+                                            totalCommission,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">
-                                        {formatCurrency(totalPrice)}
+                                        {fCurrency(
+                                            totalPrice,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
                                     <td className="py-2 px-3">
-                                        {formatCurrency(totalDeposit)}
+                                        {fCurrency(
+                                            totalDeposit,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
                                 </tr>
                             </tbody>
@@ -950,7 +965,10 @@ const PaymentBookingHotelView: React.FC = () => {
                             <div className="flex justify-between items-center">
                                 <span className="font-medium text-gray-700">{t("paymentFirstInstallment")}</span>
                                 <span className="font-semibold text-[#1e5bb4] underline">
-                                    {formatCurrency(finalDeposit)}
+                                    {fCurrency(
+                                        finalDeposit,
+                                        selectedCurrency?.label
+                                    )}
                                 </span>
                             </div>
 
@@ -971,7 +989,10 @@ const PaymentBookingHotelView: React.FC = () => {
                             <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                                 <span className="font-medium text-gray-700">{t("paymentSecondInstallment")}</span>
                                 <span className="font-semibold text-gray-800">
-                                    {formatCurrency(finalDebt)}
+                                    {fCurrency(
+                                        finalDebt,
+                                        selectedCurrency?.label
+                                    )}
                                 </span>
                             </div>
                         </div>
