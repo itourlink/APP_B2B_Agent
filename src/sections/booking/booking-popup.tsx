@@ -1,7 +1,6 @@
 import PanelPopup from "@/components/popup/panel-popup";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useTranslate } from "@/locales";
-import { isValidValue } from "@/utils/utilts";
 import { fCurrency } from "@/utils/format-number";
 
 type Props = {
