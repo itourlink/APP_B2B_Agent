@@ -11,7 +11,8 @@ import { useListBoat } from "@/hooks/actions/useBoat";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { formatPrice } from "@/utils/format-number";
+import { fCurrency, formatPrice } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const BoatCardSkeleton = () => {
     return (
@@ -36,6 +37,7 @@ const BoatError = () => (
 
 const BoatCard = ({ boat }: any) => {
     const router = useRouter();
+    const { selectedCurrency } = useListCurrency()
 
     return (
         <div className="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
@@ -115,7 +117,10 @@ const BoatCard = ({ boat }: any) => {
                         </p>
 
                         <p className="text-xl font-bold leading-none text-[#2563eb]">
-                            {formatPrice(boat?.dblPriceFrom || 0)}
+                            {fCurrency(
+                                boat?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
 
@@ -137,6 +142,7 @@ const BoatCard = ({ boat }: any) => {
 
 const BoatCardList = ({ boat }: any) => {
     const router = useRouter();
+    const { selectedCurrency } = useListCurrency()
 
     return (
         <div className="group flex overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
@@ -191,7 +197,11 @@ const BoatCardList = ({ boat }: any) => {
                         </p>
 
                         <p className="text-[38px] font-bold leading-none text-[#2563eb]">
-                            {formatPrice(boat?.dblPriceFrom || 0)}
+
+                            {fCurrency(
+                                boat?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
                 </div>
@@ -270,22 +280,20 @@ const BoatList = () => {
                     <div className="flex gap-1">
                         <button
                             onClick={() => setViewMode("grid")}
-                            className={`cursor-pointer rounded-md p-1.5 transition-all ${
-                                viewMode === "grid"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
-                            }`}
+                            className={`cursor-pointer rounded-md p-1.5 transition-all ${viewMode === "grid"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <LayoutGrid size={16} />
                         </button>
 
                         <button
                             onClick={() => setViewMode("list")}
-                            className={`cursor-pointer rounded-md p-1.5 transition-all ${
-                                viewMode === "list"
-                                    ? "bg-[#2566b0] text-white shadow-sm"
-                                    : "text-gray-400 hover:bg-gray-200"
-                            }`}
+                            className={`cursor-pointer rounded-md p-1.5 transition-all ${viewMode === "list"
+                                ? "bg-[#2566b0] text-white shadow-sm"
+                                : "text-gray-400 hover:bg-gray-200"
+                                }`}
                         >
                             <List size={16} />
                         </button>

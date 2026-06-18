@@ -10,8 +10,11 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { paths } from "@/routes/paths";
+import { fCurrency } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const BoatDetail = () => {
+  const { selectedCurrency } = useListCurrency()
   const location = useLocation();
   const item = location?.state?.item;
   const companyUrl =
@@ -121,23 +124,24 @@ const BoatDetail = () => {
     {
       field: "dblPrice",
       headerName: "Đơn giá",
-      render: (value) => <span className="font-normal">${value}</span>,
-    },
-    {
-      field: "dblPrice",
-      headerName: "Đơn giá",
-      render: (value) => (
-        <span className="text-slate-700 font-normal">
-          ${value?.toLocaleString()}
-        </span>
-      ),
+      render: (value) => <span className="font-normal">
+        {fCurrency(
+          value,
+          selectedCurrency?.label
+        )}
+      </span>,
     },
     {
       field: "dblTotalPrice",
       headerName: "Tổng giá",
       render: (_, row) => {
         return (
-          <span className="text-slate-700 font-normal">{row?.dblPrice}</span>
+          <span className="text-slate-700 font-normal">
+            {fCurrency(
+              row?.dblPrice,
+              selectedCurrency?.label
+            )}
+          </span>
         );
       },
     },
@@ -197,8 +201,8 @@ const BoatDetail = () => {
                     key={index}
                     onClick={() => setActiveImg(imgUrl)}
                     className={`cursor-pointer aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all ${activeImg === imgUrl
-                        ? "border-[#2566b0]"
-                        : "border-transparent opacity-70 hover:opacity-100"
+                      ? "border-[#2566b0]"
+                      : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                   >
                     <img src={imgUrl} className="w-full h-full object-cover" />
