@@ -17,14 +17,8 @@ export const LANGUES_OPTIONS = [
 
 export const CURRENCYS_OPTIONS = [
     { label: "--- Chọn ---", value: "" },
-    { label: "Vietnamese Dong", value: "3" },
-    { label: "U.S Dollar", value: "1" },
-    // { label: "Euro", value: "3" },
-    // { label: "Japanese Yen", value: "4" },
-    // { label: "Russian Ruble", value: "5" },
-    // { label: "Australian Dollar", value: "6" },
-    // { label: "Hong Kong Dollar", value: "7" },
-    // { label: "Pound Sterling", value: "8" },
+    { label: "(đ) Vietnamese Dong", value: "3" },
+    { label: "($) U.S Dollar", value: "1" },
 ];
 
 export const MEALS_OPTIONS = [

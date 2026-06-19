@@ -253,11 +253,13 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     const COUNTRY_OPTIONS = ctData.map((item: any) => ({
         label: item.strName,
         value: item.id,
+        flag: item.strCountryFlagIcon,
     }));
 
     const COUNTRY_OPTIONS_LIST = ctData.map((item: any) => ({
         label: item.strName,
         value: item.code,
+        flag: item.strCountryFlagIcon,
     }));
 
     const { ctData: ntData } = useListCity({
@@ -274,6 +276,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         value: item.strCityCode,
     }));
 
+
+    console.log("CITY_OPTIONS", ntData)
     const [locations, setLocations] = useState<
         { countryCode: string; cityCode: string; nights: number }[]
     >([]);

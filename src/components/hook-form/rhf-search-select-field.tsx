@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 type Option = {
     label: string;
     value: string | number;
+    flag?: string;
 };
 
 type Props = {
@@ -23,6 +24,12 @@ type Props = {
     };
     placeholder?: string;
     disabled?: boolean;
+};
+
+const getFlagClass = (flag?: string) => {
+    if (!flag) return "";
+
+    return flag.replaceAll("flag-icon", "fi");
 };
 
 export function RHFSearchSelect({
@@ -116,11 +123,22 @@ export function RHFSearchSelect({
                                         <div>{InputProps.startAdornment}</div>
                                     )}
 
-                                    <span className="text-base">
-                                        {selectedOption?.label || (
-                                            <span className="text-[#b7b9c0]">{placeholder}</span>
-                                        )}
-                                    </span>
+                                    {selectedOption ? (
+                                        <div className="flex items-center gap-2">
+                                            {selectedOption.flag && (
+                                                <span
+                                                    className={twMerge(
+                                                        getFlagClass(selectedOption.flag),
+                                                        "rounded-sm"
+                                                    )}
+                                                />
+                                            )}
+
+                                            <span>{selectedOption.label}</span>
+                                        </div>
+                                    ) : (
+                                        <span className="text-[#b7b9c0]">{placeholder}</span>
+                                    )}
                                 </div>
 
                                 <ChevronDown
@@ -159,7 +177,18 @@ export function RHFSearchSelect({
                                                         setSearch("");
                                                     }}
                                                 >
-                                                    <p className="text-black">{opt.label}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        {opt.flag && (
+                                                            <span
+                                                                className={twMerge(
+                                                                    getFlagClass(opt.flag),
+                                                                    "rounded-sm"
+                                                                )}
+                                                            />
+                                                        )}
+
+                                                        <span>{opt.label}</span>
+                                                    </div>
                                                 </div>
                                             ))
                                         ) : (

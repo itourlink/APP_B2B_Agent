@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import "flag-icons/css/flag-icons.min.css";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from './locales/i18n-provider.tsx';
 // main.tsx hoặc index.tsx
