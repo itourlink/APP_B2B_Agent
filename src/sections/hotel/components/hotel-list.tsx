@@ -5,21 +5,34 @@ import { getUrlImage } from '@/utils/format-image';
 import { fCurrency } from '@/utils/format-number';
 import { isValidValue } from '@/utils/utilts';
 import { Building2, MapPin, Star, LayoutGrid, List } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from '@/components/currency/useListCurrency';
+import Pagination from '@/components/pagination/pagination';
 
 const HotelList = () => {
-    const [filters] = useState({
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(12);
+
+    const [filters, setFilters] = useState({
         page: 1,
-        pageSize: 15,
+        pageSize: 12,
         strSupplierGUID: null,
         tblsReturn: "[0]",
     });
+
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            page,
+            pageSize,
+        }));
+    }, [page, pageSize]);
+
     const { t } = useTranslation("hotel")
 
-    const { hotelData, hotelLoading, hotelError } =
+    const { hotelData, totalRecords, totalPages, hotelLoading, hotelError } =
         useListHotel(filters);
 
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -85,6 +98,19 @@ const HotelList = () => {
                             viewMode={viewMode}
                         />
                     ))}
+                </div>
+            )}
+
+            {!hotelLoading && !hotelError && hotelData?.length > 0 && (
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages || 1}
+                        totalRecords={totalRecords}
+                        recordsPerPage={pageSize}
+                        onPageChange={setPage}
+                        onRecordsPerPageChange={setPageSize}
+                    />
                 </div>
             )}
         </div>

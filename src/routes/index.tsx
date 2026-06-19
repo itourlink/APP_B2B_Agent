@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Navigate, Outlet, useRoutes } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Navigate, Outlet, useRoutes, useLocation } from "react-router-dom";
 import { paths } from "./paths";
 import InitLayout, { LAYOUT } from "../layouts/init-layout";
 import { SplashScreen } from "@/components/loading";
@@ -38,6 +38,11 @@ export function Router() {
   // const isLoading = true;
   // if (isLoading) return <SplashScreen />
 
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [location.pathname]);
 
   const router = useRoutes([
     {

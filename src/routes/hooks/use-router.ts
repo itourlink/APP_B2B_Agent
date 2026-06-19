@@ -1,14 +1,10 @@
 import { buildQuery } from "@/utils/utilts";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export function useRouter() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [location]);
 
   const router = useMemo(
     () => ({
