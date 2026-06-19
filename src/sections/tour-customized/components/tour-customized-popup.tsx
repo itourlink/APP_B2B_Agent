@@ -276,8 +276,6 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         value: item.strCityCode,
     }));
 
-
-    console.log("CITY_OPTIONS", ntData)
     const [locations, setLocations] = useState<
         { countryCode: string; cityCode: string; nights: number }[]
     >([]);
