@@ -16,6 +16,8 @@ import { useTranslate } from '@/locales';
 import { useCurrency } from '@/components/currency/useCurrency';
 import { fCurrency } from '@/utils/format-number';
 import { useListCurrency } from '@/components/currency/useListCurrency';
+import { twMerge } from "tailwind-merge";
+import { getFlagClass } from '@/utils/utilts';
 
 const PaymentBookingHotelView: React.FC = () => {
     const { selectedCurrency } = useListCurrency();
@@ -59,7 +61,6 @@ const PaymentBookingHotelView: React.FC = () => {
     const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
     const [isExpired, setIsExpired] = useState(false);
     const [paidRemark, setPaidRemark] = useState("");
-    const [selectedCountry, setSelectedCountry] = useState<any>(null);
     const [travellerForm, setTravellerForm] =
         useState<any>({
             intSaluteID: "2",
@@ -115,11 +116,16 @@ const PaymentBookingHotelView: React.FC = () => {
     const COUNTRY_OPTIONS = ctData.map((item: any) => ({
         label: item.strName,
         value: item.id,
+        flag: item.strCountryFlagIcon
     }));
 
     const [countrySearch, setCountrySearch] = useState("");
     const [isOpenCountry, setIsOpenCountry] = useState(false);
     const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+
+    const selectedCountry = COUNTRY_OPTIONS.find(
+        (item: any) => item.value === travellerForm.strCountryGUID
+    );
 
     const filteredCountries = COUNTRY_OPTIONS.filter((item: any) =>
         item.label.toLowerCase().includes(countrySearch.toLowerCase())
@@ -621,7 +627,6 @@ const PaymentBookingHotelView: React.FC = () => {
                                     className="relative"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        // setIsOpenCountry(true);
                                     }}
                                 >
                                     <label className="block text-gray-700 font-medium mb-1">
@@ -633,9 +638,22 @@ const PaymentBookingHotelView: React.FC = () => {
                                         onClick={() => setIsOpenCountry(!isOpenCountry)}
                                         className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
                                     >
-                                        <span className={selectedCountry ? "text-black" : "text-gray-400"}>
-                                            {selectedCountry?.label || t("selectCountry")}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            {selectedCountry?.flag && (
+                                                <span
+                                                    className={twMerge(
+                                                        getFlagClass(selectedCountry.flag),
+                                                        "rounded-sm shrink-0"
+                                                    )}
+                                                />
+                                            )}
+
+                                            <span
+                                                className={selectedCountry ? "text-black" : "text-gray-400"}
+                                            >
+                                                {selectedCountry?.label || t("selectCountry")}
+                                            </span>
+                                        </div>
 
                                         <span className="text-gray-500 text-sm">⌄</span>
                                     </div>
@@ -660,21 +678,29 @@ const PaymentBookingHotelView: React.FC = () => {
                                             {/* List */}
                                             <div className="max-h-60 overflow-y-auto">
                                                 {filteredCountries.length > 0 ? (
-                                                    filteredCountries.map((option: any) => (
+                                                    filteredCountries.map((item: any) => (
                                                         <div
-                                                            key={option.value}
+                                                            key={item.value}
+                                                            className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
                                                             onClick={() => {
-                                                                setCountrySearch(option.label);
-                                                                setSelectedCountry(option);
                                                                 setTravellerForm((prev: any) => ({
                                                                     ...prev,
-                                                                    strCountryGUID: option.value,
+                                                                    strCountryGUID: item.value,
                                                                 }));
+
                                                                 setIsOpenCountry(false);
                                                             }}
-                                                            className="px-3 py-2 text-sm hover:bg-blue-500 hover:text-white cursor-pointer"
                                                         >
-                                                            {option.label}
+                                                            {item.flag && (
+                                                                <span
+                                                                    className={twMerge(
+                                                                        getFlagClass(item.flag),
+                                                                        "rounded-sm shrink-0"
+                                                                    )}
+                                                                />
+                                                            )}
+
+                                                            <span>{item.label}</span>
                                                         </div>
                                                     ))
                                                 ) : (

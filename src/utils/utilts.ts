@@ -37,3 +37,5 @@ export const pushWithCompany = (router: any, link: string) => {
     });
 };
 
+export const getFlagClass = (flag?: string) =>
+    flag?.replaceAll("flag-icon", "fi") ?? "";

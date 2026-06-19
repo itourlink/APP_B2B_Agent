@@ -9,6 +9,7 @@ import {
   useListBankAccount,
   useListTourPaymentTerm,
 } from "@/hooks/actions/useBooking";
+import { twMerge } from "tailwind-merge";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { statusTabMap, TITLES_OPTIONS } from "@/utils/option-data";
@@ -16,7 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PaymentCountdown from "./payment-countdown";
-import { isValidValue } from "@/utils/utilts";
+import { getFlagClass, isValidValue } from "@/utils/utilts";
 import VoucherList from "./voucher-list";
 import BookingPopup from "./booking-popup";
 import { useToastStore } from "@/zustand/useToastStore";
@@ -47,7 +48,6 @@ const PaymentBookingView: React.FC = () => {
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [paidRemark, setPaidRemark] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [travellerForm, setTravellerForm] = useState<any>({
     intSaluteID: "2",
     strPassengerFirstName: "",
@@ -107,12 +107,15 @@ const PaymentBookingView: React.FC = () => {
   const COUNTRY_OPTIONS = ctData.map((item: any) => ({
     label: item.strName,
     value: item.id,
+    flag: item.strCountryFlagIcon
   }));
 
   const [countrySearch, setCountrySearch] = useState("");
   const [isOpenCountry, setIsOpenCountry] = useState(false);
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
-
+  const selectedCountry = COUNTRY_OPTIONS.find(
+    (item: any) => item.value === travellerForm.strCountryGUID
+  );
   const filteredCountries = COUNTRY_OPTIONS.filter((item: any) =>
     item.label.toLowerCase().includes(countrySearch.toLowerCase()),
   );
@@ -535,13 +538,24 @@ const PaymentBookingView: React.FC = () => {
                     onClick={() => setIsOpenCountry(!isOpenCountry)}
                     className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
                   >
-                    <span
-                      className={
-                        selectedCountry ? "text-black" : "text-gray-400"
-                      }
-                    >
-                      {selectedCountry?.label || t("selectCountry")}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {selectedCountry?.flag && (
+                        <span
+                          className={twMerge(
+                            getFlagClass(selectedCountry.flag),
+                            "rounded-sm shrink-0"
+                          )}
+                        />
+                      )}
+
+                      <span
+                        className={
+                          selectedCountry ? "text-black" : "text-gray-400"
+                        }
+                      >
+                        {selectedCountry?.label || t("selectCountry")}
+                      </span>
+                    </div>
 
                     <span className="text-gray-500 text-sm">⌄</span>
                   </div>
@@ -556,7 +570,7 @@ const PaymentBookingView: React.FC = () => {
                           type="text"
                           value={countrySearch}
                           onChange={(e) => setCountrySearch(e.target.value)}
-                          placeholder="Search..."
+                          placeholder={t("search")}
                           onClick={(e) => e.stopPropagation()}
                           className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-blue-500"
                         />
@@ -565,21 +579,29 @@ const PaymentBookingView: React.FC = () => {
                       {/* List */}
                       <div className="max-h-60 overflow-y-auto">
                         {filteredCountries.length > 0 ? (
-                          filteredCountries.map((option: any) => (
+                          filteredCountries.map((item: any) => (
                             <div
-                              key={option.value}
+                              key={item.value}
+                              className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
                               onClick={() => {
-                                setCountrySearch(option.label);
-                                setSelectedCountry(option);
                                 setTravellerForm((prev: any) => ({
                                   ...prev,
-                                  strCountryGUID: option.value,
+                                  strCountryGUID: item.value,
                                 }));
+
                                 setIsOpenCountry(false);
                               }}
-                              className="px-3 py-2 text-sm hover:bg-blue-500 hover:text-white cursor-pointer"
                             >
-                              {option.label}
+                              {item.flag && (
+                                <span
+                                  className={twMerge(
+                                    getFlagClass(item.flag),
+                                    "rounded-sm shrink-0"
+                                  )}
+                                />
+                              )}
+
+                              <span>{item.label}</span>
                             </div>
                           ))
                         ) : (
