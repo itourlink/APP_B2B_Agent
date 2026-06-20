@@ -32,5 +32,6 @@
     "totalPrice": "Total Price",
     "category": "Category:",
     "joinType": "Join Type:",
-    "total": "Total"
+    "total": "Total",
+    "payment": "Payment"
 }

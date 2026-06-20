@@ -894,7 +894,7 @@ const PaymentBookingCartView: React.FC = () => {
                                     <td className="py-2 px-3 border-r border-gray-100"></td>
 
                                     <td className="py-2 px-4 text-left border-r border-gray-100">
-                                        Total Price
+                                        {t("totalPrice")}   
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">

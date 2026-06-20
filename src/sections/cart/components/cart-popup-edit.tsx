@@ -138,7 +138,7 @@ const CartPopupEdit = ({
     <PanelPopup
       open={open}
       onClose={onClose}
-      title="Payment"
+      title={t("payment")}
       className="max-w-[420px]"
     >
       <div className="space-y-4">

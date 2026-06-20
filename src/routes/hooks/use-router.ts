@@ -5,7 +5,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 export function useRouter() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  
+  // useEffect(() => {
+  //   window.scrollTo({ top: 0 });
+  // }, [location]);
   const router = useMemo(
     () => ({
       back: () => navigate(-1),

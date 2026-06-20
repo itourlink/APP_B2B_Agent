@@ -32,5 +32,6 @@
     "totalPrice": "Tổng giá",
     "category": "Danh mục:",
     "joinType": "Loại tham gia:",
-    "total": "Tổng cộng"
+    "total": "Tổng cộng",
+    "payment": "Thanh toán"
 }
