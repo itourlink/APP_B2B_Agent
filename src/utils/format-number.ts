@@ -160,5 +160,7 @@ export const fCurrency = (
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode?.trim() || "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(Number.isFinite(amount) ? amount : 0);
 };

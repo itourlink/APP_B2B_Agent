@@ -5,6 +5,8 @@ import { fDateTime } from "@/utils/format-time";
 import { useTranslation } from "react-i18next";
 import SurFoc from "./sur-foc";
 import { useListSupplierPaymentTerm, useListSurchargeDateForAgent } from "@/hooks/actions/useBooking";
+import { fCurrency } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 type Props = {
     open: boolean;
@@ -16,6 +18,7 @@ type Props = {
 const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
     const { t } = useTranslation("hotel")
     const router = useRouter()
+    const { selectedCurrency } = useListCurrency();
 
     const { supPaytermData } = useListSupplierPaymentTerm({
         strSupplierGUID: data?.strSupplierGUID
@@ -141,7 +144,10 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
                                         </td>
 
                                         <td className="px-4 py-3 text-right font-medium">
-                                            ₫{item.total?.toLocaleString()}
+                                            {fCurrency(
+                                                item.total,
+                                                selectedCurrency?.label
+                                            )}
                                         </td>
                                     </tr>
                                 ),
@@ -158,7 +164,10 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
                                 </td>
 
                                 <td className="px-4 py-4 text-right text-lg font-bold text-blue-600">
-                                    ₫{data.totalAmount?.toLocaleString()}
+                                    {fCurrency(
+                                        data.totalAmount,
+                                        selectedCurrency?.label
+                                    )}
                                 </td>
                             </tr>
                         </tfoot>

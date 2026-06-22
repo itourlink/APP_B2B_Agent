@@ -1,5 +1,5 @@
 ﻿import { useUser } from '@/hooks/actions/useAuth';
-import { addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount } from '@/hooks/actions/useBooking';
+import { addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListSupplierPaymentTerm } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
 import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
@@ -105,7 +105,10 @@ const PaymentBookingHotelView: React.FC = () => {
     const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
         useDetailAGTransTMSMutation();
 
-
+    const { supPaytermData } = useListSupplierPaymentTerm({
+        strSupplierGUID: bookingPayload?.strSupplierGUID
+    })
+    console.log("supPaytermDataasadasdadada", supPaytermData?.dblPaymentPercentage)
 
     const { ctData } = useListCity({
         strTableName: "MC02",
@@ -160,7 +163,9 @@ const PaymentBookingHotelView: React.FC = () => {
         0
     );
 
-    const totalDeposit = totalPrice * 0.3;
+    const totalDeposit =
+        Number(totalPrice || 0) *
+        ((Number(supPaytermData?.dblPaymentPercentage) || 0) / 100);
 
     const totalDebt =
         totalPrice - totalDeposit;
@@ -903,7 +908,7 @@ const PaymentBookingHotelView: React.FC = () => {
 
                                         <td className="py-3 px-3 align-top font-medium">
                                             {fCurrency(
-                                                Number(item?.total || 0) * 0.3,
+                                                totalDeposit,
                                                 selectedCurrency?.label
                                             )}
                                         </td>
