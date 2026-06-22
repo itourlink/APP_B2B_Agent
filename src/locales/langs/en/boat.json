@@ -1,10 +1,46 @@
 {
-    "featuredCruises": "Featured Cruises",
+        "slidesBoat1": {
+        "title": "Luxury Cruise",
+        "desc": "Experience a premium journey across the ocean"
+    },
+    "slidesBoat2": {
+        "title": "Sunset at Sea",
+        "desc": "Enjoy breathtaking moments on the deck"
+    },
+    "slidesBoat3": {
+        "title": "Adventure Voyage",
+        "desc": "Discover the world's most beautiful waters"
+    },
+"featuredCruises": "Featured Cruises",
 "displayMode": "Display mode:",
 "cruise": "Cruise",
 "priceFrom": "From",
 "viewDetails": "View Details",
 "markupMarkdown": "Markup / Markdown",
 "cannotLoadCruiseList": "Unable to load cruise list",
-"noData": "No data available"
+"noData": "No data available",
+"boatDetail": "Boat Details",
+"description": "Description",
+"selectItinerary": "Select Itinerary",
+"selectSupplier": "Select Supplier",
+"boatName": "Boat Name",
+"filter": "Filter",
+"reset": "Reset",
+"serialNumber": "No.",
+"boat": "Boat",
+"shipName": "Ship Name",
+"boatType": "Boat Type",
+"quantity": "Quantity",
+"unitPrice": "Unit Price",
+"totalPrice": "Total Price",
+"action": "Action",
+"sendRequest": "Send Request",
+"availableQuantity": "Available: {{count}}",
+"unableToLoadData": "Unable to load data",
+"mainBoatImage": "Main Boat",
+"bookBoat": "Book Boat",
+"departureDate": "Departure Date",
+"adultChildOption1": "1 Adult - 0 Child",
+"adultChildOption2": "2 Adults - 1 Child",
+"checkPrice": "CHECK PRICE"
 }

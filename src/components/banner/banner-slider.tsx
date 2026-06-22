@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const BannerSlider = ({ slides = [] }: { slides: any[] }) => {
-    const { t } = useTranslate("tour");
+    const { t } = useTranslate("banner-slide");
 
     const [index, setIndex] = useState(0);
 
