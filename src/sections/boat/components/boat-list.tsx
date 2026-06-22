@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import {
     Anchor,
     LayoutGrid,
@@ -13,6 +13,7 @@ import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
 import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useTranslate } from "@/locales";
 
 const BoatCardSkeleton = () => {
     return (
@@ -29,16 +30,23 @@ const BoatCardSkeleton = () => {
     );
 };
 
-const BoatError = () => (
+ export const BoatError = () => {
+  const { t } = useTranslate("boat");
+
+  return (
     <div className="py-20 text-center text-red-500">
-        Không tải được danh sách du thuyền
+      {t("cannotLoadCruiseList")}
     </div>
-);
+  );
+};
+
+
 
 const BoatCard = ({ boat }: any) => {
     const router = useRouter();
     const { selectedCurrency } = useListCurrency()
-
+  const { t } = useTranslate("boat");
+    
     return (
         <div className="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md">
             {/* IMAGE */}
@@ -67,7 +75,7 @@ const BoatCard = ({ boat }: any) => {
                             className="shrink-0 text-gray-400"
                         />
 
-                        <span>Du thuyền</span>
+                        <span>{t("cruise")}</span>
 
                         <div className="ml-1 flex items-center">
                             {[...Array(5)].map((_, i) => (
@@ -104,7 +112,7 @@ const BoatCard = ({ boat }: any) => {
 
                     <div className="relative flex justify-center">
                         <span className="bg-white px-3 text-[11px] font-bold italic tracking-wider text-gray-900">
-                            Tăng giá/Giảm giá
+                         {t("markupMarkdown")}
                         </span>
                     </div>
                 </div>
@@ -113,7 +121,7 @@ const BoatCard = ({ boat }: any) => {
                 <div className="mt-auto flex items-end justify-between">
                     <div>
                         <p className="mb-0.5 text-[11px] text-gray-500">
-                            Giá từ
+                            {t("priceFrom")}
                         </p>
 
                         <p className="text-xl font-bold leading-none text-[#2563eb]">
@@ -132,7 +140,7 @@ const BoatCard = ({ boat }: any) => {
                         }
                         className="cursor-pointer rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-medium text-[#2566b0] transition-all hover:border-blue-600 hover:bg-blue-50"
                     >
-                        Xem chi tiết
+                        {t("viewDetails")}
                     </button>
                 </div>
             </div>
@@ -141,6 +149,7 @@ const BoatCard = ({ boat }: any) => {
 };
 
 const BoatCardList = ({ boat }: any) => {
+    const { t } = useTranslate("boat")
     const router = useRouter();
     const { selectedCurrency } = useListCurrency()
 
@@ -175,7 +184,7 @@ const BoatCardList = ({ boat }: any) => {
                             className="shrink-0 text-gray-400"
                         />
 
-                        <span>Du thuyền</span>
+                        <span>{t("cruise")}</span>
                     </div>
 
                     {/* ADDRESS */}
@@ -193,7 +202,7 @@ const BoatCardList = ({ boat }: any) => {
                     {/* PRICE */}
                     <div className="mt-auto pt-5">
                         <p className="mb-1 text-[13px] text-gray-500">
-                            Giá từ
+                            {t("priceFrom")}
                         </p>
 
                         <p className="text-[38px] font-bold leading-none text-[#2563eb]">
@@ -242,7 +251,7 @@ const BoatCardList = ({ boat }: any) => {
                             hover:bg-[#1d4ed8]
                         "
                     >
-                        Xem chi tiết
+                     {t("viewDetails")}
                     </button>
                 </div>
             </div>
@@ -251,6 +260,7 @@ const BoatCardList = ({ boat }: any) => {
 };
 
 const BoatList = () => {
+    const { t } = useTranslate("boat")
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     const [filters] = useState({
@@ -261,7 +271,7 @@ const BoatList = () => {
 
     const { boatData, boatLoading, boatError } = useListBoat(filters);
 
-    // DATA THẬT
+
     const boatDT = boatData?.[0] ?? [];
 
     return (
@@ -269,12 +279,12 @@ const BoatList = () => {
             {/* HEADER */}
             <div className="mb-8 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-800">
-                    Du Thuyền Nổi Bật
+                   {t("featuredCruises")}
                 </h2>
 
                 <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-1">
                     <span className="ml-2 text-[12px] text-gray-500">
-                        Hiển thị dạng:
+                      {t("displayMode")}
                     </span>
 
                     <div className="flex gap-1">
@@ -338,7 +348,7 @@ const BoatList = () => {
                         )
                     ) : (
                         <div className="col-span-full py-10 text-center text-gray-500">
-                            Không có dữ liệu
+                           {t("noData")}
                         </div>
                     )}
                 </div>

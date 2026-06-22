@@ -1,4 +1,16 @@
 {
+    "slidesBoat1": {
+    "title": "Du Thuyền Sang Trọng",
+    "desc": "Trải nghiệm hành trình đẳng cấp trên biển"
+},
+"slidesBoat2": {
+    "title": "Hoàng Hôn Trên Biển",
+    "desc": "Tận hưởng những khoảnh khắc tuyệt đẹp trên boong tàu"
+},
+"slidesBoat3": {
+    "title": "Hành Trình Phiêu Lưu",
+    "desc": "Khám phá những vùng biển đẹp nhất thế giới"
+},
 "featuredCruises": "Du Thuyền Nổi Bật",
 "displayMode": "Hiển thị dạng:",
 "cruise": "Du thuyền",
@@ -6,5 +18,29 @@
 "viewDetails": "Xem chi tiết",
 "markupMarkdown": "Tăng giá/Giảm giá",
 "cannotLoadCruiseList": "Không tải được danh sách du thuyền",
-"noData": "Không có dữ liệu"
+"noData": "Không có dữ liệu",
+"boatDetail": "Chi tiết du thuyền",
+"description": "Mô tả",
+"selectItinerary": "Chọn hành trình",
+"selectSupplier": "Lựa chọn nhà cung cấp",
+"boatName": "Tên thuyền",
+"filter": "Lọc",
+"reset": "Đặt lại",
+"serialNumber": "STT",
+"boat": "Tàu",
+"shipName": "Tên tàu",
+"boatType": "Loại thuyền",
+"quantity": "Số lượng",
+"unitPrice": "Đơn giá",
+"totalPrice": "Tổng giá",
+"action": "Thao tác",
+"sendRequest": "Gửi yêu cầu",
+"availableQuantity": "Có sẵn: {{count}}",
+"unableToLoadData": "Không tải được danh sách dữ liệu",
+"mainBoatImage": "Ảnh du thuyền",
+"bookBoat": "Đặt tàu",
+"departureDate": "Ngày khởi hành",
+"adultChildOption1": "1 Người lớn - 0 Trẻ em",
+"adultChildOption2": "2 Người lớn - 1 Trẻ em",
+"checkPrice": "KIỂM TRA GIÁ"
 }

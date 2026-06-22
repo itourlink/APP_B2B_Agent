@@ -12,8 +12,10 @@ import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import { paths } from "@/routes/paths";
 import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useTranslate } from "@/locales";
 
 const BoatDetail = () => {
+  const { t } = useTranslate("boat")
   const { selectedCurrency } = useListCurrency()
   const location = useLocation();
   const item = location?.state?.item;
@@ -75,29 +77,29 @@ const BoatDetail = () => {
   const colDefs: ColumnDef<any>[] = [
     {
       field: "No",
-      headerName: "STT",
+      headerName: t("serialNumber"),
       render: (value) => (
         <span className="text-gray-400 font-medium">{value}</span>
       ),
     },
     {
       field: "strBoatName",
-      headerName: "Tên tàu",
+     headerName: t("shipName"),
       render: (value) => <span className="">{value}</span>,
     },
     {
       field: "strItineraryName",
-      headerName: "Tên thuyền",
+     headerName: t("boatName"),
       render: (value) => <span className="">{value}</span>,
     },
     {
       field: "strBoatPriceTypeName",
-      headerName: "Loại Thuyền",
+      headerName: t("boatType"),
       render: (value) => <span className="">{value}</span>,
     },
     {
       field: "intQuantity",
-      headerName: "Số lượng",
+    headerName: t("quantity"),
       render: () => {
         return (
           <div className="flex flex-col items-center gap-1">
@@ -115,7 +117,7 @@ const BoatDetail = () => {
               </button>
             </div>
             <span className="text-[10px] text-slate-500 italic">
-              (Có sẵn: 0)
+             ({t("availableQuantity", { count: 0 })})
             </span>
           </div>
         );
@@ -123,7 +125,7 @@ const BoatDetail = () => {
     },
     {
       field: "dblPrice",
-      headerName: "Đơn giá",
+     headerName: t("unitPrice"),
       render: (value) => <span className="font-normal">
         {fCurrency(
           value,
@@ -133,7 +135,7 @@ const BoatDetail = () => {
     },
     {
       field: "dblTotalPrice",
-      headerName: "Tổng giá",
+    headerName: t("totalPrice"),
       render: (_, row) => {
         return (
           <span className="text-slate-700 font-normal">
@@ -147,11 +149,11 @@ const BoatDetail = () => {
     },
     {
       field: "No",
-      headerName: "Action",
+     headerName: t("action"),
       render: (_) => (
         <div className="flex justify-center min-w-[100px]">
           <button className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] text-[12px] px-3 py-2 font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
-            Gửi yêu cầu
+            {t("sendRequest")}
           </button>
         </div>
       ),
@@ -175,7 +177,7 @@ const BoatDetail = () => {
               className="hover:text-[#2566b0] transition-colors"
             ></Link>
             <span className="text-slate-600 font-medium line-clamp-1">
-              {boat?.strSupplierName || "Chi tiết boat"}
+              {boat?.strSupplierName || t("boatDetail")}
             </span>
           </nav>
         </div>
@@ -186,7 +188,7 @@ const BoatDetail = () => {
             <div className="relative aspect-[16/9] rounded-2xl overflow-hidden border border-slate-200 shadow-md">
               <img
                 src={activeImg}
-                alt="Main Boat"
+                alt={t("mainBoatImage")}
                 className="w-full h-full object-cover transition-all duration-500"
               />
             </div>
@@ -236,26 +238,26 @@ const BoatDetail = () => {
 
             {/* 2. DESCRIPTION */}
             <div className="mt-6 border-t border-slate-100 pt-6">
-              <h3 className="font-bold text-lg mb-2 text-slate-800">Mô tả:</h3>
-              <p className="text-slate-400 italic text-sm">Không có dữ liệu</p>
+              <h3 className="font-bold text-lg mb-2 text-slate-800"> {t("description")}:</h3>
+              <p className="text-slate-400 italic text-sm"> {t("noData")}</p>
             </div>
 
             {/* 3. SELECT ITINERARY (CHỌN HÀNH TRÌNH) */}
             <div className="mt-10 space-y-6">
               <h2 className="text-2xl font-bold text-slate-800">
-                Chọn hành trình
+                {t("selectItinerary")}
               </h2>
 
               {/* Filter Row 2: Search & Buttons */}
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">
-                  Lựa chọn nhà cung cấp
+                  {t("selectSupplier")}
                 </label>
 
                 <select className="w-full border border-slate-200 rounded-md p-2 text-sm outline-none focus:ring-1 focus:ring-[#2566b0]">
                   {company.map((c: any, index: number) => (
                     <option key={index} value={c.strCompanyGUID}>
-                      {c.strCompanyName} (Giá từ: ${c.dblPriceFrom})
+                      {c.strCompanyName} (${t("priceFrom")}: ${c.dblPriceFrom})
                     </option>
                   ))}
                 </select>
@@ -265,7 +267,7 @@ const BoatDetail = () => {
               <div className="flex flex-wrap items-end gap-3">
                 <div className="flex-1 min-w-[200px] space-y-2">
                   <label className="text-sm font-bold text-slate-700">
-                    Tên thuyền
+                     {t("boatName")}
                   </label>
                   <input
                     type="text"
@@ -273,7 +275,7 @@ const BoatDetail = () => {
                   />
                 </div>
                 <button className="bg-[#0056b3] text-white px-4 py-2 rounded flex items-center gap-2 text-sm hover:bg-blue-700 transition-all font-medium">
-                  <Filter size={16} /> Lọc
+                  <Filter size={16} />   {t("filter")}
                 </button>
                 <button className="border border-slate-200 p-2 rounded hover:bg-slate-50 text-slate-600 transition-all">
                   <RotateCcw size={18} />
@@ -339,9 +341,10 @@ const BoatDetailSkeleton = () => {
 };
 
 const BoatDetailError = () => {
+  const { t  } = useTranslate("boat")
   return (
     <div className="text-center py-20 text-red-500">
-      Không tải được danh sách dữ liệu
+     {t("unableToLoadData")}
     </div>
   );
 };
