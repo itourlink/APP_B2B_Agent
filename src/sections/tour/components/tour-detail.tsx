@@ -63,7 +63,12 @@ const TourDetail = () => {
   const filters2 = {
     page: 1,
     pageSize: 4,
-    intCateID: item?.item?.intCateID ?? null,
+    intCateID:
+      item?.item?.intCateID &&
+        typeof item.item.intCateID === "object" &&
+        Object.keys(item.item.intCateID).length === 0
+        ? null
+        : item?.item?.intCateID ?? null,
     intProductID: item?.item?.intProductID,
     strLocationCode: null,
   };
@@ -184,7 +189,7 @@ const TourDetail = () => {
 
                     <div className="flex items-center gap-1">
                       <Clock3 size={16} />
-                     { t("groupSize")}: {isValidValue(ListData?.intPaxMin)} - {isValidValue(ListData?.intPaxMax)} {t("guests")}
+                      {t("groupSize")}: {isValidValue(ListData?.intPaxMin)} - {isValidValue(ListData?.intPaxMax)} {t("guests")}
                     </div>
 
                     <div className="flex items-center gap-1">

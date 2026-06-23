@@ -133,7 +133,7 @@ const PaymentBookingView: React.FC = () => {
   }, []);
 
   const totalChildren = payloadItem?.strListChildAge
-    ? payloadItem.strListChildAge.split(",").filter(Boolean).length
+    ? payloadItem.strListChildAge.split(",").filter(Boolean).lengths
     : 0;
 
   const totalGuests = (payloadItem?.intAdult || 0) + totalChildren;

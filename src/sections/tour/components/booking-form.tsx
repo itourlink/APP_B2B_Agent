@@ -13,7 +13,7 @@ import {
 import { format } from "date-fns";
 
 import GuestRoomPopup from "@/components/generic-filter/guess-room-popup";
-import { useListPrice } from "@/hooks/actions/useBooking";
+import { useListPrice, useListTourChildAge } from "@/hooks/actions/useBooking";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addCartForTour } from "@/hooks/actions/useCart";
 import { QUERY_KEYS } from "@/hooks/actions/query-keys";
@@ -26,6 +26,7 @@ import { useTranslate } from "@/locales";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { DatePopup } from "@/components/generic-filter/date-popup";
+import { fCurrency } from "@/utils/format-number";
 
 interface Props {
     item?: any;
@@ -55,6 +56,12 @@ const BookingForm = ({ item }: Props) => {
         new URLSearchParams(location.search).get("company") || "";
 
     const { showToast } = useToastStore();
+
+    const { tourChildAgeData } = useListTourChildAge({
+        strTourGUID: item?.strTourGUID
+    })
+
+    console.log("tourChildAgeData", tourChildAgeData)
 
     const route = useRouter();
 
@@ -172,6 +179,9 @@ const BookingForm = ({ item }: Props) => {
 
     // ================= PRICE API =================
     const { priceData } = useListPrice({
+
+        IsHasPriceKid: item?.IsHasPriceKid,
+
         enabled: canFetchPrice && !!startDate,
 
         strTourGUID: item?.strTourGUID,
@@ -197,6 +207,7 @@ const BookingForm = ({ item }: Props) => {
 
     const price = priceData?.[0] ?? [];
 
+    console.log("price", price)
     const dtmDateTo = startDate
         ? new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000)
         : null;
@@ -274,11 +285,18 @@ const BookingForm = ({ item }: Props) => {
                 {price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
-                            {t("totalPrice")}: {selectedCurrency?.symbol}{price.dblTotalPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("totalPrice")}: {fCurrency(price.dblTotalPrice, selectedCurrency?.label)}
                         </div>
+
                         <div className="text-[12px] pt-[5px]">
-                            {t("pricePerGuest")}: {selectedCurrency?.symbol}{price.dblUnitPrice?.toLocaleString("vi-VN") ?? "0"}
+                            {t("pricePerGuest")}: {fCurrency(price.dblUnitPrice, selectedCurrency?.label)}
                         </div>
+
+                        <div className="text-[12px] pt-[5px]">
+                            {/* {strTourChildAgeName} Price ({intTourChildAgeFrom} - {intTourChildAgeTo}):  */}
+                            Infants Price (0 - 4): $0
+                        </div>
+
                         <div className="text-[12px] pt-[5px]">
                             {t("remainingSlots")}: {price.intPaxRemain ?? "0"} {t("slots")}
                         </div>

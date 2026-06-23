@@ -20,6 +20,7 @@ export const useListPrice = (filters?: {
     intEasiaCateID?: number | null;
     intJoinTypeID?: number | null;
     enabled?: boolean;
+    IsHasPriceKid?: boolean | false;
 }) => {
     const { coData } = useListCompanyOwner();
     const { currencyId } = useCurrency();
@@ -42,7 +43,7 @@ export const useListPrice = (filters?: {
                 dtmFilterDateTo: null,
                 intCurrencyView: currencyId,
                 strCompanyOwnerGUID: coData?.strCompanyGUID,
-                IsHasPriceKid: false,
+                IsHasPriceKid: filters?.IsHasPriceKid,
                 intEasiaCateID: filters?.intEasiaCateID,
                 intCateID: 18,
                 intJoinTypeID: filters?.intJoinTypeID,
@@ -374,5 +375,42 @@ export const useListFOC = (filters?: {
         focData: query.data?.[0] ?? [],
         focLoading: query.isLoading,
         focError: query.isError,
+    };
+};
+
+const fetchTourChildAge = async (body: any) => {
+    const res = await apiClient.post(
+        "Tour/GetListTourChildAge",
+        body
+    );
+    return res.data;
+};
+
+export const useListTourChildAge = (filters?: {
+    strTourGUID?: string;
+}) => {
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.LIST_CHILD_AGE, filters
+        ],
+        queryFn: () =>
+            fetchTourChildAge({
+                strTourGUID: filters?.strTourGUID,
+                strTourChildAgeGUID: null,
+                strListMakupTypeID: "0,2",
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: null,
+                tblsReturn: "[0]"
+            }),
+        enabled: !!filters?.strTourGUID,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        tourChildAgeData: query.data?.[0] ?? [],
+        tourChildAgeLoading: query.isLoading,
+        tourChildAgeError: query.isError,
     };
 };
