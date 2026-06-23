@@ -3,16 +3,16 @@ import Logo from "../../../public/favicon.png";
 
 const Ripple = ({ delay }: { delay: number }) => (
   <motion.div
-    className="absolute rounded-full border border-sky-400/40 w-16 h-16"
+    className="absolute w-16 h-16 rounded-full border border-sky-400/40"
     initial={{ scale: 1, opacity: 0 }}
     animate={{
       scale: 4,
-      opacity: [0, 0.6, 0]
+      opacity: [0, 0.5, 0],
     }}
     transition={{
       duration: 1.5,
       repeat: Infinity,
-      delay: delay,
+      delay,
       ease: "easeOut",
     }}
   />
@@ -20,31 +20,29 @@ const Ripple = ({ delay }: { delay: number }) => (
 
 export function SplashScreen() {
   return (
-    <div className="min-h-screen flex justify-center items-center 
-      bg-[radial-gradient(circle_at_center,#075985_0%,#020617_80%)] overflow-hidden">
-
-      <div className="relative flex justify-center items-center">
-        {/* Các vòng tỏa ra liên tục với nhịp nhanh */}
+    <div
+      className="
+        fixed inset-0 z-[999999]
+        flex items-center justify-center
+        bg-white/20
+        backdrop-blur-md
+      "
+    >
+      <div className="relative flex flex-col items-center">
         <Ripple delay={0} />
         <Ripple delay={0.4} />
         <Ripple delay={0.8} />
-        <Ripple delay={1.2} />
 
-        {/* Logo chính */}
-        <motion.img
-          alt="Logo"
-          src={Logo}
-          className="w-16 h-16 z-10 drop-shadow-[0_0_15px_rgba(14,165,233,0.6)]"
-          animate={{
-            y: [0, -10, 0],
-            scale: [1, 1.05, 1]
-          }}
+        <motion.div
+          className="text-gray-700"
+          animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{
-            duration: 1,
+            duration: 1.2,
             repeat: Infinity,
-            ease: "easeInOut",
           }}
-        />
+        >
+          Loading...
+        </motion.div>
       </div>
     </div>
   );

@@ -1,26 +1,24 @@
-import { SplashScreen } from "@/components/loading";
 import { paths } from "@/routes/paths";
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function CompanyGuard({ children }: Props) {
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const hasCompany = new URLSearchParams(location.search).has("company");
-
-  useEffect(() => {
-    if (!hasCompany) {
-      navigate(paths.content.agent, { replace: true });
-    }
-  }, [hasCompany, navigate]);
+  const hasCompany = new URLSearchParams(
+    location.search
+  ).has("company");
 
   if (!hasCompany) {
-    return <SplashScreen />;
+    return (
+      <Navigate
+        to={paths.content.agent}
+        replace
+      />
+    );
   }
 
   return <>{children}</>;
