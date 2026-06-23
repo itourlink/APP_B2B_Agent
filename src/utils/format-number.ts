@@ -161,6 +161,6 @@ export const fCurrency = (
     style: "currency",
     currency: currencyCode?.trim() || "USD",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(Number.isFinite(amount) ? amount : 0);
 };

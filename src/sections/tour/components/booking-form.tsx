@@ -208,6 +208,34 @@ const BookingForm = ({ item }: Props) => {
     const price = priceData?.[0] ?? [];
 
     console.log("price", price)
+
+    const selectedChildPrices = useMemo(() => {
+        if (!guestValue.childAges?.length || !tourChildAgeData?.length) {
+            return [];
+        }
+
+        return tourChildAgeData.filter((childType:any) =>
+            guestValue.childAges.some(
+                (age) =>
+                    age >= childType.intTourChildAgeFrom &&
+                    age <= childType.intTourChildAgeTo
+            )
+        );
+    }, [guestValue.childAges, tourChildAgeData]);
+
+    const getChildPrice = (order: number) => {
+        switch (order) {
+            case 1:
+                return price?.dblPriceChild1;
+            case 2:
+                return price?.dblPriceChild2;
+            case 3:
+                return price?.dblPriceChild3;
+            default:
+                return 0;
+        }
+    };
+
     const dtmDateTo = startDate
         ? new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000)
         : null;
@@ -293,8 +321,19 @@ const BookingForm = ({ item }: Props) => {
                         </div>
 
                         <div className="text-[12px] pt-[5px]">
-                            {/* {strTourChildAgeName} Price ({intTourChildAgeFrom} - {intTourChildAgeTo}):  */}
-                            Infants Price (0 - 4): $0
+                            {selectedChildPrices.map((item:any) => (
+                                <div
+                                    key={item.strTourChildAgeGUID}
+                                    className="text-[12px] pt-[5px]"
+                                >
+                                    {item.strTourChildAgeName} (
+                                    {item.intTourChildAgeFrom} - {item.intTourChildAgeTo}
+                                    ): {fCurrency(
+                                        getChildPrice(item.intChildPriceOrderID),
+                                        selectedCurrency?.label
+                                    )}
+                                </div>
+                            ))}
                         </div>
 
                         <div className="text-[12px] pt-[5px]">
