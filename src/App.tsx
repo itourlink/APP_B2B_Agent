@@ -34,9 +34,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <GlobalLoading />
       <Router />
       <ToastComponent />
+      <GlobalLoading />
     </BrowserRouter>
   );
 }

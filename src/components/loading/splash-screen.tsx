@@ -10,7 +10,7 @@ const Ripple = ({ delay }: { delay: number }) => (
       opacity: [0, 0.5, 0],
     }}
     transition={{
-      duration: 1.5,
+      duration: 1.8,
       repeat: Infinity,
       delay,
       ease: "easeOut",
@@ -28,21 +28,25 @@ export function SplashScreen() {
         backdrop-blur-md
       "
     >
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex items-center justify-center">
         <Ripple delay={0} />
-        <Ripple delay={0.4} />
-        <Ripple delay={0.8} />
+        <Ripple delay={0.6} />
+        <Ripple delay={1.2} />
 
-        <motion.div
-          className="text-gray-700"
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{
-            duration: 1.2,
-            repeat: Infinity,
+        <motion.img
+          src={Logo}
+          alt="Logo"
+          className="w-14 h-14 z-10 drop-shadow-lg"
+          animate={{
+            y: [0, -5, 0],
+            scale: [1, 1.08, 1],
           }}
-        >
-          Loading...
-        </motion.div>
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     </div>
   );

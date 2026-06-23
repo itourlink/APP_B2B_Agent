@@ -35,8 +35,6 @@ const AgentPage = lazy(() => import("@/pages/content/agent"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
 
 export function Router() {
-  // const isLoading = true;
-  // if (isLoading) return <SplashScreen />
 
   const location = useLocation();
 
