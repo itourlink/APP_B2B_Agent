@@ -108,7 +108,6 @@ const PaymentBookingHotelView: React.FC = () => {
     const { supPaytermData } = useListSupplierPaymentTerm({
         strSupplierGUID: bookingPayload?.strSupplierGUID
     })
-    console.log("supPaytermDataasadasdadada", supPaytermData?.dblPaymentPercentage)
 
     const { ctData } = useListCity({
         strTableName: "MC02",

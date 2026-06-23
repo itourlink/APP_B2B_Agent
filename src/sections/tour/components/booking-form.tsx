@@ -46,6 +46,7 @@ type GuestValue = {
 };
 const BookingForm = ({ item }: Props) => {
     const { t } = useTranslate("tour")
+    useTranslate("genericFilter");
     const queryClient = useQueryClient();
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -60,8 +61,6 @@ const BookingForm = ({ item }: Props) => {
     const { tourChildAgeData } = useListTourChildAge({
         strTourGUID: item?.strTourGUID
     })
-
-    console.log("tourChildAgeData", tourChildAgeData)
 
     const route = useRouter();
 
@@ -207,14 +206,12 @@ const BookingForm = ({ item }: Props) => {
 
     const price = priceData?.[0] ?? [];
 
-    console.log("price", price)
-
     const selectedChildPrices = useMemo(() => {
         if (!guestValue.childAges?.length || !tourChildAgeData?.length) {
             return [];
         }
 
-        return tourChildAgeData.filter((childType:any) =>
+        return tourChildAgeData.filter((childType: any) =>
             guestValue.childAges.some(
                 (age) =>
                     age >= childType.intTourChildAgeFrom &&
@@ -285,6 +282,15 @@ const BookingForm = ({ item }: Props) => {
     const handleBooking = () => {
         route.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), });
     };
+
+    useEffect(() => {
+        console.log("BookingForm mounted");
+
+        return () => {
+            console.log("BookingForm unmounted");
+        };
+    }, []);
+
     // ================= UI =================
     return (
         <div className="w-[280px] sticky top-24">
@@ -310,7 +316,7 @@ const BookingForm = ({ item }: Props) => {
                     </div> */}
                 </div>
 
-                {price.dblTotalPrice && (
+                {!!price.dblTotalPrice && (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
                             {t("totalPrice")}: {fCurrency(price.dblTotalPrice, selectedCurrency?.label)}
@@ -321,7 +327,7 @@ const BookingForm = ({ item }: Props) => {
                         </div>
 
                         <div className="text-[12px] pt-[5px]">
-                            {selectedChildPrices.map((item:any) => (
+                            {selectedChildPrices.map((item: any) => (
                                 <div
                                     key={item.strTourChildAgeGUID}
                                     className="text-[12px] pt-[5px]"
@@ -347,6 +353,7 @@ const BookingForm = ({ item }: Props) => {
                     <label className="text-[11px] font-semibold">  {t("startDate")}</label>
 
                     <button
+                        type="button"
                         onClick={() =>
                             setActive(active === "dateOne" ? null : "dateOne")
                         }
@@ -385,6 +392,7 @@ const BookingForm = ({ item }: Props) => {
                     <label className="text-[11px] font-semibold"> {t("numberOfGuests")}</label>
 
                     <button
+                        type="button"
                         onClick={() =>
                             setActive(active === "guestRoom" ? null : "guestRoom")
                         }

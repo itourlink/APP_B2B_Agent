@@ -11,7 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookingForm from "./booking-form";
 import {
   useDetailTour,
@@ -128,6 +128,13 @@ const TourDetail = () => {
     typeof ListData?.strRemark === "string"
       ? ListData.strRemark
       : "";
+
+  useEffect(() => {
+    console.log("ListData changed", ListData);
+  }, [ListData]);
+
+  console.log("parent render");
+  console.log("ListData", ListData);
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
