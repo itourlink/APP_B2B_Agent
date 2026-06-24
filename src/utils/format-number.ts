@@ -157,10 +157,23 @@ export const fCurrency = (
       ? Number(value)
       : 0;
 
+  const currency = currencyCode?.trim() || "USD";
+
+  const number = Number.isFinite(amount) ? amount : 0;
+
+  if (currency === "VND") {
+    return (
+      new Intl.NumberFormat("vi-VN", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(number) + "đ"
+    );
+  }
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currencyCode?.trim() || "USD",
+    currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(Number.isFinite(amount) ? amount : 0);
+  }).format(number);
 };

@@ -1,5 +1,4 @@
 {
-  
     "exploreNow": "Explore now",
     "all": "All",
     "packageTour": "Package Tour",
@@ -126,5 +125,8 @@
     "qrCode": "QR Code",
     "paymentQRCode": "Payment QR Code",
     "booking": "Booking...",
-    "tourSeries": "Tour Series"
+    "tourSeries": "Tour Series",
+    "infants": "Infants",
+    "smallKids": "Small Kids",
+    "kids": "Kids"
 }

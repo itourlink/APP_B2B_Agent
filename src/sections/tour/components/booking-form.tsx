@@ -206,6 +206,33 @@ const BookingForm = ({ item }: Props) => {
 
     const price = priceData?.[0] ?? [];
 
+    const getChildAgeLabel = (item: any) => {
+        const name = item?.strTourChildAgeName?.toLowerCase();
+
+        if (name?.includes("infant")) {
+            return t("infants");
+        }
+
+        if (name?.includes("small")) {
+            return t("smallKids");
+        }
+
+        if (name?.includes("kid")) {
+            return t("kids");
+        }
+
+        switch (item?.intChildPriceOrderID) {
+            case 1:
+                return t("infants");
+            case 2:
+                return t("smallKids");
+            case 3:
+                return t("kids");
+            default:
+                return item?.strTourChildAgeName;
+        }
+    };
+
     const selectedChildPrices = useMemo(() => {
         if (!guestValue.childAges?.length || !tourChildAgeData?.length) {
             return [];
@@ -332,9 +359,10 @@ const BookingForm = ({ item }: Props) => {
                                     key={item.strTourChildAgeGUID}
                                     className="text-[12px] pt-[5px]"
                                 >
-                                    {item.strTourChildAgeName} (
+                                    {getChildAgeLabel(item)} (
                                     {item.intTourChildAgeFrom} - {item.intTourChildAgeTo}
-                                    ): {fCurrency(
+                                    ):{" "}
+                                    {fCurrency(
                                         getChildPrice(item.intChildPriceOrderID),
                                         selectedCurrency?.label
                                     )}
