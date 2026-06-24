@@ -55,5 +55,6 @@
     "unitPrice": "Unit Price",
     "totalPrice": "Total Price",
     "noData": "No Data",
-    "description": "Description"
+    "description": "Description",
+    "redirectingPage": "Redirecting..."
 }

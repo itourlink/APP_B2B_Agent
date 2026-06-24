@@ -246,6 +246,7 @@ const fetchSupplierPaymentTerm = async (body: any) => {
 
 export const useListSupplierPaymentTerm = (filters?: {
     strSupplierGUID?: string;
+    dtmCheckInDate?: string;
 }) => {
     const { coData } = useListCompanyOwner();
 
@@ -258,7 +259,7 @@ export const useListSupplierPaymentTerm = (filters?: {
                 strCompanyGUID: coData?.strCompanyGUID,
                 strSupplierGUID: filters?.strSupplierGUID,
 
-                dtmCheckInDate: null,
+                dtmCheckInDate: filters?.dtmCheckInDate || null,
 
                 intProductIDForBook: null,
 
@@ -274,7 +275,7 @@ export const useListSupplierPaymentTerm = (filters?: {
     });
 
     return {
-        supPaytermData: query.data?.[0]?.[0] ?? [],
+        supPaytermData: query.data?.[0] ?? [],
         supPaytermtLoading: query.isLoading,
         supPaytermError: query.isError,
     };

@@ -102,5 +102,6 @@
     "unitPrice": "Đơn giá",
     "totalPrice": "Thành tiền",
     "noData": "Không có dữ liệu",
-    "description": "Mô tả"
+    "description": "Mô tả",
+    "redirectingPage": "Đang chuyển trang..."
 }

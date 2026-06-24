@@ -12,10 +12,13 @@ type Props = {
     open: boolean;
     onClose: () => void;
     data: any;
-    focData: any
+    focData: any;
+    dateBooking: any
 };
 
-const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
+const BookingHotelPopup = ({ open, onClose, data, focData, dateBooking }: Props) => {
+
+    console.log("dateBooking", dateBooking)
     const { t } = useTranslation("hotel")
     const router = useRouter()
     const { selectedCurrency } = useListCurrency();
@@ -196,6 +199,7 @@ const BookingHotelPopup = ({ open, onClose, data, focData }: Props) => {
                                 paths.booking.paymentBookingHotel,
                                 {
                                     bookingPayload: data,
+                                    dateBooking: dateBooking
                                 },
                             );
                         }}

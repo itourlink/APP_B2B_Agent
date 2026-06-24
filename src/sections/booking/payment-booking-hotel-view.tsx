@@ -38,11 +38,13 @@ const PaymentBookingHotelView: React.FC = () => {
     };
 
     const location = useLocation();
-    const bookingPayload =
-        location.state?.bookingPayload;
 
-    const items =
-        bookingPayload?.items || [];
+    const bookingPayload = location.state?.bookingPayload;
+
+    const dateBooking = location.state?.dateBooking
+
+    const items = bookingPayload?.items || [];
+
     const room = bookingPayload?.room || {}
     const totalPrice =
         Number(
@@ -106,8 +108,11 @@ const PaymentBookingHotelView: React.FC = () => {
         useDetailAGTransTMSMutation();
 
     const { supPaytermData } = useListSupplierPaymentTerm({
-        strSupplierGUID: bookingPayload?.strSupplierGUID
-    })
+        dtmCheckInDate: dateBooking?.start?.toISOString(),
+        strSupplierGUID: bookingPayload?.strSupplierGUID,
+    });
+
+    console.log("supPaytermData", supPaytermData)
 
     const { ctData } = useListCity({
         strTableName: "MC02",
@@ -162,10 +167,17 @@ const PaymentBookingHotelView: React.FC = () => {
         0
     );
 
-    const totalDeposit =
-        Number(totalPrice || 0) *
-        ((Number(supPaytermData?.dblPaymentPercentage) || 0) / 100);
+    const rawPercentage = (supPaytermData || []).reduce(
+        (sum: number, item: any) =>
+            sum + (Number(item?.dblPaymentPercentage) || 0),
+        0
+    );
 
+    const totalPercentage =
+        rawPercentage > 100 ? 0 : rawPercentage;
+
+    const totalDeposit =
+        Number(totalPrice || 0) * (totalPercentage / 100);
     const totalDebt =
         totalPrice - totalDeposit;
 

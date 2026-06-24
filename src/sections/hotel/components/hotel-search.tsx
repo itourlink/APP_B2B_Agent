@@ -36,7 +36,14 @@ const DEFAULT_FILTERS2 = {
     IsShowAll: false,
 };
 
-const HotelSearch = () => {
+interface Props {
+    onDateBookingChange?: (date: {
+        start: Date | null;
+        end: Date | null;
+    }) => void;
+}
+
+const HotelSearch = ({ onDateBookingChange }: Props) => {
     const { t } = useTranslate("search")
     const location = useLocation();
 
@@ -156,7 +163,7 @@ const HotelSearch = () => {
                     {
                         type: "toggle",
                         key: "series",
-                        label:t( "bookRoomNow"),
+                        label: t("bookRoomNow"),
                     },
 
                     {
@@ -230,7 +237,7 @@ const HotelSearch = () => {
                         keyStart: "start",
                         keyEnd: "end",
                         label:
-                           t("checkInCheckOutDate"),
+                            t("checkInCheckOutDate"),
                     },
 
                     {
@@ -265,10 +272,17 @@ const HotelSearch = () => {
                         }
 
                         // 👉 DATE
-                        if (
-                            k === "start" ||
-                            k === "end"
-                        ) {
+                        if (k === "start" || k === "end") {
+                            const start =
+                                k === "start" ? v : prev.start;
+
+                            const end =
+                                k === "end" ? v : prev.end;
+
+                            onDateBookingChange?.({
+                                start,
+                                end,
+                            });
 
                             setDraftFilters((p) => ({
                                 ...p,
@@ -310,7 +324,7 @@ const HotelSearch = () => {
                         <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
 
                         <span>
-                            Đang chuyển trang...
+                            {t("redirectingPage")}
                         </span>
                     </div>
                 </div>

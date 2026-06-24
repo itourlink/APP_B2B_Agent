@@ -36,6 +36,7 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
 import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import HotelSearch from "./hotel-search";
 
 const HotelDetail = () => {
   const { selectedCurrency } = useListCurrency();
@@ -110,6 +111,16 @@ const HotelDetail = () => {
   const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
+
+  type DateRange = {
+    start: Date | null;
+    end: Date | null;
+  };
+
+  const [dateBooking, setDateBooking] = useState<DateRange>({
+    start: null,
+    end: null,
+  });
 
   const getPrice = (row: any, option: any) => {
     const flatSpbData = spbData?.flat?.() || [];
@@ -199,24 +210,6 @@ const HotelDetail = () => {
 
     return 0;
   };
-
-  // const handleAddtoCart = (data: any) => {
-  //   const payload = data;
-
-  //   addCartForHotelApi(payload, {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({
-  //         queryKey: [QUERY_KEYS.CART.LIST_CART],
-  //       });
-
-  //       router.push(`${paths.shop.cart.list}?company=${company}`);
-  //       showToast("success", t("addToCartSuccess"));
-  //     },
-  //     onError: () => {
-  //       showToast("error", t("addToCartFailed"));
-  //     },
-  //   });
-  // };
 
   const colDefs: ColumnDef<any>[] = [
     {
@@ -730,8 +723,14 @@ const HotelDetail = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-6">
+      <div className="sticky top-30 mt-[-50px] z-[49]">
+
+
+        <HotelSearch onDateBookingChange={setDateBooking} />
+      </div>
+
       {/* BREADCRUMB */}
-      <div className="max-w-7xl mx-auto mb-6">
+      <div className="max-w-7xl mx-auto mt-10 mb-6">
         <nav className="flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
           <Link
             to={paths.shop.hotel.list + `?company=${company}`}
@@ -910,6 +909,7 @@ const HotelDetail = () => {
         data={bookingData}
         onClose={() => setOpenBooking(false)}
         focData={focData}
+        dateBooking={dateBooking}
       />
 
       <BookingHotelCartPopup
