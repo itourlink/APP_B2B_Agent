@@ -9,17 +9,28 @@ import { useTranslate } from "@/locales";
 
 const today = new Date();
 
-const DEFAULT_FILTERS = {
+interface FilterState {
+    page: number;
+    pageSize: number;
+    series: boolean;
+    strFilterDestinationName: string;
+    start: Date | null;
+    end: Date | null;
+    guestRoom: {
+        rooms: number;
+        adults: number;
+        children: number;
+        childAges: number[];
+    };
+}
+
+const DEFAULT_FILTERS: FilterState = {
     page: 1,
     pageSize: 10,
-
     series: false,
-
     strFilterDestinationName: "",
-
     start: today,
     end: null,
-
     guestRoom: {
         rooms: 1,
         adults: 1,
@@ -46,7 +57,6 @@ interface Props {
 const HotelSearch = ({ onDateBookingChange }: Props) => {
     const { t } = useTranslate("search")
     const location = useLocation();
-
     const company =
         new URLSearchParams(location.search).get("company");
 
@@ -60,6 +70,7 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
     const [selectedHotel, setSelectedHotel] =
         useState<any | null>(null);
 
+    console.log("selectedHotel", selectedHotel)
     const [draftFilters, setDraftFilters] =
         useState(DEFAULT_FILTERS2);
 
@@ -114,19 +125,29 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
 
         // ✅ CLICK HOTEL => đi detail
         if (selectedHotel) {
-
             setIsNavigating(true);
 
-            router.replaceParams(
+            const params = {
+                company,
+                hotelId: selectedHotel.strSupplierGUID,
+                checkIn: filters.start?.toISOString(),
+                checkOut: filters.end?.toISOString(),
+                rooms: filters.guestRoom.rooms,
+            };
+
+            router.pushQuery(
                 paths.shop.hotel.detail,
+                params,
                 {
                     item: selectedHotel,
                 }
             );
 
+
+            setIsNavigating(false);
+
             return;
         }
-
         // ✅ SEARCH DESTINATION
         const payload = {
             ...draftFilters,

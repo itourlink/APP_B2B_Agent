@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 export function useRouter() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // useEffect(() => {
   //   window.scrollTo({ top: 0 });
   // }, [location]);
@@ -95,12 +95,13 @@ export function useRouter() {
           ? `?${buildQuery(params)}`
           : "";
 
-        navigate(
-          `${href}${query}`,
-          {
-            state,
-          }
-        );
+        const url = `${href}${query}`;
+
+        console.log("navigate:", url);
+
+        navigate(url, {
+          state,
+        });
       },
     }),
     [navigate, location.search]
