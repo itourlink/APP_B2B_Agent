@@ -24,13 +24,9 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
-// import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import BookingHotelCartPopup from "./booking-hotel-cart-popup";
-// import { useToastStore } from "@/zustand/useToastStore";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useListFOC } from "@/hooks/actions/useBooking";
-// import { QUERY_KEYS } from "@/hooks/actions/query-keys";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
@@ -38,21 +34,20 @@ import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import HotelSearch from "./hotel-search";
 
+type DateRange = {
+  start: Date | null;
+  end: Date | null;
+};
+
+
 const HotelDetail = () => {
   const { selectedCurrency } = useListCurrency();
   const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
-  // const router = useRouter();
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
-  // const { showToast } = useToastStore();
-  // const queryClient = useQueryClient();
   const company = new URLSearchParams(location.search).get("company") || "";
-
-  // const { mutate: addCartForHotelApi } = useMutation({
-  //   mutationFn: addCartForHotel,
-  // });
 
   const [filters] = useState({
     page: 1,
@@ -74,6 +69,11 @@ const HotelDetail = () => {
   const [openBookingCart, setOpenBookingCart] = useState(false);
 
 
+  const [dateBooking, setDateBooking] = useState<DateRange>({
+    start: null,
+    end: null,
+  });
+
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
@@ -93,6 +93,8 @@ const HotelDetail = () => {
         strSupplierGUID: item?.strSupplierGUID,
         strPriceListGUID,
         strPriceLevelGUID,
+        dtmFilterCheckIn: dateBooking?.start?.toISOString(),
+        dtmFilterCheckOut: dateBooking?.end?.toISOString(),
       }
       : undefined,
   );
@@ -112,15 +114,6 @@ const HotelDetail = () => {
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
 
-  type DateRange = {
-    start: Date | null;
-    end: Date | null;
-  };
-
-  const [dateBooking, setDateBooking] = useState<DateRange>({
-    start: null,
-    end: null,
-  });
 
   const getPrice = (row: any, option: any) => {
     const flatSpbData = spbData?.flat?.() || [];
@@ -726,7 +719,9 @@ const HotelDetail = () => {
       <div className="sticky top-30 mt-[-50px] z-[49]">
 
 
-        <HotelSearch onDateBookingChange={setDateBooking} />
+        <HotelSearch
+          onDateBookingChange={setDateBooking}
+        />
       </div>
 
       {/* BREADCRUMB */}

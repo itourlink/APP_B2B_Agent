@@ -214,6 +214,8 @@ export const useListSupplierPriceByAgent = (
         strSupplierGUID?: string | null;
         strPriceListGUID?: string | null;
         strPriceLevelGUID?: string | null;
+        dtmFilterCheckIn?: string | null;
+        dtmFilterCheckOut?: string | null;
     }
 ) => {
     const { user } = useUser();
@@ -223,7 +225,9 @@ export const useListSupplierPriceByAgent = (
     const {
         strSupplierGUID = null,
         strPriceListGUID = null,
-        strPriceLevelGUID = null
+        strPriceLevelGUID = null,
+        dtmFilterCheckIn = null,
+        dtmFilterCheckOut = null,
     } = filters || {};
 
     // YYYY-MM-DD
@@ -235,7 +239,7 @@ export const useListSupplierPriceByAgent = (
 
     const isReady =
         !!user &&
-        !!coData &&
+        !!coData?.strCompanyGUID &&
         !!strSupplierGUID &&
         !!strPriceListGUID &&
         !!strPriceLevelGUID;
@@ -243,9 +247,13 @@ export const useListSupplierPriceByAgent = (
     const query = useQuery({
         queryKey: [
             QUERY_KEYS.HOTEL.LIST_SUPPLIER_PRICE_BY_AGENT,
-            filters,
+            strSupplierGUID,
+            strPriceListGUID,
+            strPriceLevelGUID,
+            dtmFilterCheckIn,
+            dtmFilterCheckOut,
             coData?.strCompanyGUID,
-            currencyId
+            currencyId,
         ],
         queryFn: () =>
             fetchListSupPriceByAgent({
@@ -254,8 +262,8 @@ export const useListSupplierPriceByAgent = (
                 strPriceListGUID,
                 strPriceLevelGUID,
                 strCompanyOwnerGUID: coData?.strCompanyGUID,
-                dtmFilterCheckIn: today,
-                dtmFilterCheckOut: tomorrow,
+                dtmFilterCheckIn: dtmFilterCheckIn || today,
+                dtmFilterCheckOut: dtmFilterCheckOut || tomorrow,
                 intCurPage: null,
                 intPageSize: null,
                 strOrder: null,
@@ -270,6 +278,8 @@ export const useListSupplierPriceByAgent = (
         spbData: query.data ?? [],
         spbLoading: query.isLoading,
         spbError: query.isError,
+        spbFetching: query.isFetching,
+        spbRefetch: query.refetch,
     };
 };
 

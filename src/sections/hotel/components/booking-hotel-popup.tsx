@@ -17,8 +17,6 @@ type Props = {
 };
 
 const BookingHotelPopup = ({ open, onClose, data, focData, dateBooking }: Props) => {
-
-    console.log("dateBooking", dateBooking)
     const { t } = useTranslation("hotel")
     const router = useRouter()
     const { selectedCurrency } = useListCurrency();
