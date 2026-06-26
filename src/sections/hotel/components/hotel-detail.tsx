@@ -88,7 +88,17 @@ const HotelDetail = () => {
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
+  const defaultDates = useMemo(() => {
+    const today = new Date();
 
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    return {
+      start: today,
+      end: tomorrow,
+    };
+  }, []);
 
   const hotel = hotelData?.[0] ?? {};
 
@@ -97,37 +107,27 @@ const HotelDetail = () => {
 
   const [isSearchPrice, setIsSearchPrice] = useState(false);
 
-  const { spbData } = useListSupplierPriceByAgent(
-    {
-      strSupplierGUID: item?.strSupplierGUID,
-      strPriceListGUID,
-      strPriceLevelGUID,
-      dtmFilterCheckIn: dateBooking?.start?.toISOString(),
-      dtmFilterCheckOut: dateBooking?.end?.toISOString(),
-    },
-    isSearchPrice
-  );
+  const { spbData } = useListSupplierPriceByAgent({
+    strSupplierGUID: item?.strSupplierGUID,
+    strPriceListGUID,
+    strPriceLevelGUID,
+    dtmFilterCheckIn:
+      searchDate.start?.toISOString() ??
+      defaultDates.start.toISOString(),
 
+    dtmFilterCheckOut:
+      searchDate.end?.toISOString() ??
+      defaultDates.end.toISOString(),
+  });
 
-  const defaultDates = useMemo(() => {
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-
-    return {
-      from: today.toISOString(),
-      to: tomorrow.toISOString(),
-    };
-  }, []);
 
   useListPolicyNotes({
     strSupplierGUID: item?.strSupplierGUID,
     dtmFilterDateTravelFrom:
-      dateBooking?.start?.toISOString() ?? defaultDates.from,
+      dateBooking?.start?.toISOString() ?? defaultDates?.start?.toISOString(),
     dtmFilterDateTravelTo:
-      dateBooking?.end?.toISOString() ?? defaultDates.to,
+      dateBooking?.end?.toISOString() ?? defaultDates?.end?.toISOString(),
   });
-
 
   const { focData } = useListFOC({
     strSupplierGUID: item?.strSupplierGUID,
@@ -747,7 +747,6 @@ const HotelDetail = () => {
           onDateBookingChange={setDateBooking}
           onSearch={(date) => {
             setSearchDate(date);
-            setIsSearchPrice(true);
           }}
         />
       </div>
