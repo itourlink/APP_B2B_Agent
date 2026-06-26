@@ -11,7 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import BookingForm from "./booking-form";
 import {
   useDetailTour,
