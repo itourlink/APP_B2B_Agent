@@ -28,6 +28,7 @@ import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { fCurrency } from "@/utils/format-number";
+import i18next from "i18next";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
@@ -157,14 +158,18 @@ const PaymentBookingView: React.FC = () => {
 
     date.setHours(date.getHours() + holdHours);
 
-    return date.toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    return date.toLocaleString(i18next.language === "vi" ? "vi-VN" : "en-US",
+      {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      
+    { ' ' }
   }, [paytermData?.intHourInHold]);
 
   const bankInfo = {

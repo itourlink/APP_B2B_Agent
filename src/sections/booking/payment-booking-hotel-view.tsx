@@ -18,6 +18,7 @@ import { fCurrency } from '@/utils/format-number';
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { twMerge } from "tailwind-merge";
 import { getFlagClass } from '@/utils/utilts';
+import i18next from 'i18next';
 
 const PaymentBookingHotelView: React.FC = () => {
     const { selectedCurrency } = useListCurrency();
@@ -1003,15 +1004,18 @@ const PaymentBookingHotelView: React.FC = () => {
 
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                                 {t("paymentNoticePrefix")}{" "}
-                                {new Date().toLocaleString("vi-VN", {
-                                    weekday: "short",
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit",
-                                })}{" "}
+                                {new Date().toLocaleString(
+                                    i18next.language === "vi" ? "vi-VN" : "en-US",
+                                    {
+                                        weekday: "short",
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                    }
+                                )}{' '}
                                 {t("paymentNoticeSuffix")}
                             </div>
 

@@ -17,6 +17,7 @@ import { useTranslate } from '@/locales';
 import { fCurrency } from '@/utils/format-number';
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { twMerge } from "tailwind-merge";
+import i18next from 'i18next';
 
 const PaymentBookingCartView: React.FC = () => {
     const { selectedCurrency } = useListCurrency();
@@ -894,7 +895,7 @@ const PaymentBookingCartView: React.FC = () => {
                                     <td className="py-2 px-3 border-r border-gray-100"></td>
 
                                     <td className="py-2 px-4 text-left border-r border-gray-100">
-                                        {t("totalPrice")}   
+                                        {t("totalPrice")}
                                     </td>
 
                                     <td className="py-2 px-3 border-r border-gray-100">
@@ -973,15 +974,18 @@ const PaymentBookingCartView: React.FC = () => {
                             {/* Alert Đỏ */}
                             <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                                 {t("paymentNoticePrefix")}{" "}
-                                {new Date().toLocaleString("vi-VN", {
-                                    weekday: "short",
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit",
-                                })}{" "}
+                                {new Date().toLocaleString(
+                                    i18next.language === "vi" ? "vi-VN" : "en-US",
+                                    {
+                                        weekday: "short",
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                    }
+                                )}{' '}
                                 {t("paymentNoticeSuffix")}
                             </div>
 
