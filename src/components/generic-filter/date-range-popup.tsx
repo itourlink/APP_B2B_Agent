@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { vi, enUS } from "date-fns/locale";
 import { DateRange } from "react-date-range";
 import { useTranslate } from "@/locales";
+import i18next from "i18next";
 
 type Props = {
   isOpen?: boolean;
@@ -11,8 +13,19 @@ type Props = {
   };
   onApply: (range: Props["value"]) => void;
 };
-const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
-  const { t } = useTranslate("genericFilter")
+
+const DateRangePopup = ({
+  isOpen,
+  value,
+  onApply,
+}: Props) => {
+  const { t } = useTranslate("genericFilter");
+
+  const locale =
+    i18next.language === "vi"
+      ? vi
+      : enUS;
+
   const [temp, setTemp] = useState([
     {
       startDate: value.startDate || new Date(),
@@ -21,15 +34,15 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
     },
   ]);
 
-
   const [isCleared, setIsCleared] = useState(
     !value.startDate && !value.endDate
   );
 
-
-
   useEffect(() => {
-    setIsCleared(!value.startDate && !value.endDate);
+    setIsCleared(
+      !value.startDate && !value.endDate
+    );
+
     setTemp([
       {
         startDate: value.startDate || new Date(),
@@ -53,12 +66,13 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
     onApply({
       startDate: null,
       endDate: null,
-    })
+    });
   };
 
   return (
     <div className="bg-white p-4 rounded-2xl shadow-xl w-90">
       <DateRange
+        locale={locale}
         ranges={temp}
         onChange={(item: any) => {
           setIsCleared(false);
@@ -72,23 +86,42 @@ const DateRangePopup = ({ isOpen, value, onApply }: Props) => {
 
       <div className="flex justify-between mt-4 text-sm bg-gray-100 p-3 rounded-lg">
         <div>
-          <div className="text-gray-500">{t("startDate")}</div>
+          <div className="text-gray-500">
+            {t("startDate")}
+          </div>
+
           <div className="font-medium">
-            {isCleared ? t("selectDate") : format(temp[0].startDate, "dd MMM yyyy")}
+            {isCleared
+              ? t("selectDate")
+              : format(
+                temp[0].startDate!,
+                "dd MMM yyyy",
+                { locale }
+              )}
           </div>
         </div>
 
-        <div className="flex items-center">→</div>
+        <div className="flex items-center">
+          →
+        </div>
 
         <div>
-          <div className="text-gray-500">{t("endDate")}</div>
+          <div className="text-gray-500">
+            {t("endDate")}
+          </div>
+
           <div className="font-medium">
-            {isCleared ? t("selectDate") : format(temp[0].endDate, "dd MMM yyyy")}
+            {isCleared
+              ? t("selectDate")
+              : format(
+                temp[0].endDate!,
+                "dd MMM yyyy",
+                { locale }
+              )}
           </div>
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-2 mt-4">
         <button
           onClick={handleClear}

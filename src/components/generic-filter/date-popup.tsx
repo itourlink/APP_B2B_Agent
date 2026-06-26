@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calendar } from "react-date-range";
+import { vi, enUS } from "date-fns/locale";
+import i18next from "i18next";
 
 type Props = {
     isOpen?: boolean;
@@ -14,20 +16,32 @@ export const DatePopup = ({
     onApply,
     disableDays = 0,
 }: Props) => {
-    const [temp, setTemp] = useState<Date>(value || new Date());
+    const locale =
+        i18next.language === "vi"
+            ? vi
+            : enUS;
+
+    const [temp, setTemp] = useState<Date>(
+        value || new Date()
+    );
 
     useEffect(() => {
-        if (value) setTemp(value);
+        if (value) {
+            setTemp(value);
+        }
     }, [value]);
 
     if (!isOpen) return null;
 
     const minDate = new Date();
-    minDate.setDate(minDate.getDate() + disableDays);
+    minDate.setDate(
+        minDate.getDate() + disableDays
+    );
 
     return (
         <div className="bg-white p-4 rounded-2xl shadow-xl">
             <Calendar
+                locale={locale}
                 date={temp}
                 onChange={(date: Date) => {
                     setTemp(date);

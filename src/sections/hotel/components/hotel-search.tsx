@@ -220,7 +220,6 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         key: "series",
                         label: t("bookRoomNow"),
                     },
-
                     {
                         type: "search",
                         key: "strFilterDestinationName",
@@ -293,7 +292,6 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         label:
                             t("checkInCheckOutDate"),
                     },
-
                     {
                         type: "guestRoom",
                         key: "guestRoom",
