@@ -105,8 +105,6 @@ const HotelDetail = () => {
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
-  const [isSearchPrice, setIsSearchPrice] = useState(false);
-
   const { spbData } = useListSupplierPriceByAgent({
     strSupplierGUID: item?.strSupplierGUID,
     strPriceListGUID,
