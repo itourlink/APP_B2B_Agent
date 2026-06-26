@@ -49,6 +49,8 @@ const HotelDetail = () => {
   const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
+
+  console.log("item", item)
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
   const company = new URLSearchParams(location.search).get("company") || "";
@@ -124,6 +126,7 @@ const HotelDetail = () => {
 
   const hotel = hotelData?.[0] ?? {};
 
+  console.log("hotelaaaaa", hotel)
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
@@ -284,6 +287,9 @@ const HotelDetail = () => {
         : null,
     });
   }, []);
+
+
+
 
   const getAdultByRoomName = (label: string) => {
     const name = label.toLowerCase();
@@ -814,6 +820,7 @@ const HotelDetail = () => {
     <div className="bg-slate-50 min-h-screen py-10 px-6">
       <div className="sticky top-30 mt-[-50px] z-[49]">
         <HotelSearch
+          initialHotel={item}
           onDateBookingChange={setDateBooking}
           onSearch={(date) => {
             setSearchDate(date);

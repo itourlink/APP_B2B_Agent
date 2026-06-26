@@ -48,6 +48,7 @@ const DEFAULT_FILTERS2 = {
 };
 
 interface Props {
+    initialHotel?: any;
     onDateBookingChange?: (date: {
         start: Date | null;
         end: Date | null;
@@ -59,7 +60,7 @@ interface Props {
     }) => void;
 }
 
-const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
+const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => {
     const { t } = useTranslate("search")
     const location = useLocation();
     const company =
@@ -128,6 +129,21 @@ const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
             setSelectedHotel(parsed.selectedHotel || null);
         } catch { }
     }, [location.search]);
+
+    useEffect(() => {
+        if (
+            initialHotel &&
+            !filters.strFilterDestinationName
+        ) {
+            setFilters((prev) => ({
+                ...prev,
+                strFilterDestinationName:
+                    initialHotel.strSupplierName,
+            }));
+
+            setSelectedHotel(initialHotel);
+        }
+    }, [initialHotel]);
 
     const handleSearch = () => {
 
@@ -250,7 +266,6 @@ const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
 
                                     } else {
 
-                                        // ✅ clear selected hotel
                                         setSelectedHotel(
                                             null
                                         );
