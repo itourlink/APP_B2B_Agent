@@ -33,6 +33,8 @@
   "paymentFirstInstallment": "Thanh toán đợt 1",
   "paymentSecondInstallment": "Thanh toán đợt 2",
   "paymentNotice": "Bạn sẽ thanh toán trước để hoàn thành quá trình book đặt",
+  "paymentNoticePrefix": "Bạn sẽ thanh toán trước",
+  "paymentNoticeSuffix": "để hoàn tất quá trình đặt chỗ",
   "paymentMethod": "Phương Thức Thanh Toán",
   "bankTransfer": "Chuyển khoản ngân hàng",
   "paymentOnline": "Thanh toán trực tuyến",
