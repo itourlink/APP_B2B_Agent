@@ -100,6 +100,20 @@ const HotelDetail = () => {
     };
   }, []);
 
+  const totalNights = useMemo(() => {
+    const start = searchDate.start || defaultDates.start;
+    const end = searchDate.end || defaultDates.end;
+
+    const diff =
+      end.getTime() - start.getTime();
+
+    return Math.max(
+      Math.ceil(diff / (1000 * 60 * 60 * 24)),
+      1
+    );
+  }, [searchDate, defaultDates]);
+
+
   const hotel = hotelData?.[0] ?? {};
 
   const strPriceListGUID = pplfcData?.strPriceListGUID;
@@ -159,24 +173,41 @@ const HotelDetail = () => {
         option.raw.IsExb ||
         option.raw.strAgeName?.toLowerCase().includes("extra")
       ) {
-        return getNum(priceRow.dblPriceChild2);
+        return getNum(priceRow.dblPriceChild2) * totalNights;
       }
 
       if (from === 6 && to === 11) {
-        return getNum(priceRow.dblPriceChild1);
+        return getNum(priceRow.dblPriceChild1) * totalNights;
       }
 
-      return getNum(priceRow.dblPriceChild1) || getNum(priceRow.dblPrice);
+      return (
+        (getNum(priceRow.dblPriceChild1) ||
+          getNum(priceRow.dblPrice)) *
+        totalNights
+      );
     }
 
     // ROOM
     switch (option.raw?.intSglDblID) {
       case 1:
-        return getNum(priceRow.dblPriceSGL) || getNum(priceRow.dblPrice);
+        return (
+          (getNum(priceRow.dblPriceSGL) ||
+            getNum(priceRow.dblPrice)) *
+          totalNights
+        );
+
       case 2:
-        return getNum(priceRow.dblPriceTPL) || getNum(priceRow.dblPrice);
+        return (
+          (getNum(priceRow.dblPriceTPL) ||
+            getNum(priceRow.dblPrice)) *
+          totalNights
+        );
+
       default:
-        return getNum(priceRow.dblPrice);
+        return (
+          getNum(priceRow.dblPrice) *
+          totalNights
+        );
     }
   };
 
@@ -552,8 +583,10 @@ const HotelDetail = () => {
                   strPriceListGUID,
 
                   // DATE
-                  dtmDateFrom: today,
-                  dtmDateTo: tomorrow,
+                  dtmDateFrom:
+                    searchDate.start ?? defaultDates.start,
+                  dtmDateTo:
+                    searchDate.end ?? defaultDates.end,
 
                   // ROOM INFO
                   intAdult: adultCount,
