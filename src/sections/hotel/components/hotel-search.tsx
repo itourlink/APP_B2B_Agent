@@ -1,7 +1,7 @@
 import { GenericFilter } from "@/components/generic-filter/generic-filter";
 import HotelLocationDes from "./hotel-location-des";
 import { useRouter } from "@/routes/hooks/use-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { paths } from "@/routes/paths";
 import { useSearchDesHotel } from "@/hooks/actions/useHotel";
 import { useLocation } from "react-router-dom";
@@ -130,20 +130,51 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
         } catch { }
     }, [location.search]);
 
+    const hydratedRef = useRef(false);
+
     useEffect(() => {
-        if (
-            initialHotel &&
-            !filters.strFilterDestinationName
-        ) {
+        if (hydratedRef.current) return;
+
+        if (initialHotel) {
             setFilters((prev) => ({
                 ...prev,
-                strFilterDestinationName:
-                    initialHotel.strSupplierName,
+                strFilterDestinationName: initialHotel.strSupplierName,
             }));
 
             setSelectedHotel(initialHotel);
+            hydratedRef.current = true;
         }
     }, [initialHotel]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const raw = params.get("hotelSearchState");
+        if (!raw) return;
+
+        try {
+            const parsed = JSON.parse(raw);
+
+            const restoredFilters = {
+                ...parsed.filters,
+                start: parsed.filters?.start ? new Date(parsed.filters.start) : null,
+                end: parsed.filters?.end ? new Date(parsed.filters.end) : null,
+            };
+
+            setFilters((prev) => ({
+                ...prev,
+                ...restoredFilters,
+            }));
+
+            setDraftFilters((prev) => ({
+                ...prev,
+                ...parsed.draftFilters,
+            }));
+
+            setSelectedHotel(parsed.selectedHotel || null);
+
+            hydratedRef.current = true; // 👈 chặn initialHotel override
+        } catch { }
+    }, [location.search]);
 
     const handleSearch = () => {
 
