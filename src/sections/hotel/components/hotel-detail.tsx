@@ -67,7 +67,9 @@ const HotelDetail = () => {
       pageSize: 1,
       strSupplierGUID: item?.strSupplierGUID,
       dtmFilterCheckIn:
-        searchDate.start?.toISOString() || null,
+        searchDate.start
+          ? new Date(searchDate.start).toISOString()
+          : null,
       tblsReturn: "[0][1]",
     }),
     [item?.strSupplierGUID, searchDate],
@@ -104,8 +106,14 @@ const HotelDetail = () => {
     const start = searchDate.start || defaultDates.start;
     const end = searchDate.end || defaultDates.end;
 
+    const startDate =
+      start instanceof Date ? start : new Date(start);
+
+    const endDate =
+      end instanceof Date ? end : new Date(end);
+
     const diff =
-      end.getTime() - start.getTime();
+      endDate.getTime() - startDate.getTime();
 
     return Math.max(
       Math.ceil(diff / (1000 * 60 * 60 * 24)),

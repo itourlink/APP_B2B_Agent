@@ -97,14 +97,26 @@ const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
         try {
             const parsed = JSON.parse(raw);
 
+            const restoredFilters = {
+                ...parsed.filters,
+
+                start: parsed.filters?.start
+                    ? new Date(parsed.filters.start)
+                    : null,
+
+                end: parsed.filters?.end
+                    ? new Date(parsed.filters.end)
+                    : null,
+            };
+
             setFilters((prev) => {
-                if (prev?.strFilterDestinationName) {
+                if (prev.strFilterDestinationName) {
                     return prev;
                 }
 
                 return {
                     ...prev,
-                    ...parsed.filters,
+                    ...restoredFilters,
                 };
             });
 
@@ -113,9 +125,7 @@ const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
                 ...parsed.draftFilters,
             }));
 
-            setSelectedHotel(
-                parsed.selectedHotel || null
-            );
+            setSelectedHotel(parsed.selectedHotel || null);
         } catch { }
     }, [location.search]);
 
