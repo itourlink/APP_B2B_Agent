@@ -136,9 +136,13 @@ const HotelDetail = () => {
   useListPolicyNotes({
     strSupplierGUID: item?.strSupplierGUID,
     dtmFilterDateTravelFrom:
-      dateBooking?.start?.toISOString() ?? defaultDates?.start?.toISOString(),
+      dateBooking?.start
+        ? new Date(dateBooking.start).toISOString()
+        : defaultDates.start.toISOString(),
     dtmFilterDateTravelTo:
-      dateBooking?.end?.toISOString() ?? defaultDates?.end?.toISOString(),
+      dateBooking?.end
+        ? new Date(dateBooking.end).toISOString()
+        : defaultDates.end.toISOString(),
   });
 
   const { focData } = useListFOC({
@@ -245,6 +249,33 @@ const HotelDetail = () => {
 
     setSelectedRooms(newSelected);
   }, [ibgDataMain, ibgDataDetail, ibgDataDetailChild]);
+
+  useEffect(() => {
+    const raw = new URLSearchParams(location.search)
+      .get("hotelSearchState");
+
+    if (!raw) return;
+
+    const parsed = JSON.parse(raw);
+
+    setDateBooking({
+      start: parsed.filters.start
+        ? new Date(parsed.filters.start)
+        : null,
+      end: parsed.filters.end
+        ? new Date(parsed.filters.end)
+        : null,
+    });
+
+    setSearchDate({
+      start: parsed.filters.start
+        ? new Date(parsed.filters.start)
+        : null,
+      end: parsed.filters.end
+        ? new Date(parsed.filters.end)
+        : null,
+    });
+  }, []);
 
   const getAdultByRoomName = (label: string) => {
     const name = label.toLowerCase();

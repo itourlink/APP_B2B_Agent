@@ -141,6 +141,7 @@ const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
                 checkIn: filters.start?.toISOString(),
                 checkOut: filters.end?.toISOString(),
                 rooms: filters.guestRoom.rooms,
+                hotelSearchState: JSON.stringify(snapshot),
             };
 
             router.pushQuery(
