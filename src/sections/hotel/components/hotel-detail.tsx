@@ -3,6 +3,7 @@ import {
   useListHotel,
   useListHotelGetPriceUID,
   useListItemByAgent,
+  useListPolicyNotes,
   useListPriceListForCompany,
   useListSupplierPriceByAgent,
 } from "@/hooks/actions/useHotel";
@@ -20,7 +21,7 @@ import {
   ShoppingCart,
   Home,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import RoomDropdown from "./room-dropdown";
 import BookingHotelPopup from "./booking-hotel-popup";
@@ -41,6 +42,9 @@ type DateRange = {
 
 
 const HotelDetail = () => {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
   const { selectedCurrency } = useListCurrency();
   const { t } = useTranslate("hotel");
   const location = useLocation();
@@ -48,13 +52,26 @@ const HotelDetail = () => {
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
   const company = new URLSearchParams(location.search).get("company") || "";
-
-  const [filters] = useState({
-    page: 1,
-    pageSize: 1,
-    strSupplierGUID: item?.strSupplierGUID,
-    tblsReturn: "[0][1]",
+  const [dateBooking, setDateBooking] = useState<DateRange>({
+    start: null,
+    end: null,
   });
+  const [searchDate, setSearchDate] = useState<DateRange>({
+    start: null,
+    end: null,
+  });
+
+  const filters = useMemo(
+    () => ({
+      page: 1,
+      pageSize: 1,
+      strSupplierGUID: item?.strSupplierGUID,
+      dtmFilterCheckIn:
+        searchDate.start?.toISOString() || null,
+      tblsReturn: "[0][1]",
+    }),
+    [item?.strSupplierGUID, searchDate],
+  );
 
   const [filters2] = useState({
     strSupplierGUID: item?.strSupplierGUID,
@@ -67,37 +84,50 @@ const HotelDetail = () => {
   const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
-
-
-  const [dateBooking, setDateBooking] = useState<DateRange>({
-    start: null,
-    end: null,
-  });
-
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
+
 
   const hotel = hotelData?.[0] ?? {};
 
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
-  const isSupplierPriceReady =
-    !!item?.strSupplierGUID && !!strPriceListGUID && !!strPriceLevelGUID;
+  const [isSearchPrice, setIsSearchPrice] = useState(false);
 
   const { spbData } = useListSupplierPriceByAgent(
-    isSupplierPriceReady
-      ? {
-        strSupplierGUID: item?.strSupplierGUID,
-        strPriceListGUID,
-        strPriceLevelGUID,
-        dtmFilterCheckIn: dateBooking?.start?.toISOString(),
-        dtmFilterCheckOut: dateBooking?.end?.toISOString(),
-      }
-      : undefined,
+    {
+      strSupplierGUID: item?.strSupplierGUID,
+      strPriceListGUID,
+      strPriceLevelGUID,
+      dtmFilterCheckIn: dateBooking?.start?.toISOString(),
+      dtmFilterCheckOut: dateBooking?.end?.toISOString(),
+    },
+    isSearchPrice
   );
+
+
+  const defaultDates = useMemo(() => {
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    return {
+      from: today.toISOString(),
+      to: tomorrow.toISOString(),
+    };
+  }, []);
+
+  useListPolicyNotes({
+    strSupplierGUID: item?.strSupplierGUID,
+    dtmFilterDateTravelFrom:
+      dateBooking?.start?.toISOString() ?? defaultDates.from,
+    dtmFilterDateTravelTo:
+      dateBooking?.end?.toISOString() ?? defaultDates.to,
+  });
+
 
   const { focData } = useListFOC({
     strSupplierGUID: item?.strSupplierGUID,
@@ -109,10 +139,6 @@ const HotelDetail = () => {
   const ibgDataMain = ibgData?.[0] ?? [];
   const ibgDataDetail = ibgData?.[1] ?? [];
   const ibgDataDetailChild = ibgData?.[3] ?? [];
-
-  const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1);
 
 
   const getPrice = (row: any, option: any) => {
@@ -717,10 +743,12 @@ const HotelDetail = () => {
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-6">
       <div className="sticky top-30 mt-[-50px] z-[49]">
-
-
         <HotelSearch
           onDateBookingChange={setDateBooking}
+          onSearch={(date) => {
+            setSearchDate(date);
+            setIsSearchPrice(true);
+          }}
         />
       </div>
 

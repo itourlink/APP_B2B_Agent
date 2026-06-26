@@ -44,16 +44,13 @@ const BookingHotelCartPopup = ({ open, onClose, data, focData }: Props) => {
     mutationFn: addCartForHotel,
   });
 
-  const { supPaytermData } = useListSupplierPaymentTerm({
-    strSupplierGUID: data?.submitPayload?.strSupplierGUID
-  })
+  useListSupplierPaymentTerm({
+    strSupplierGUID: data?.submitPayload?.strSupplierGUID,
+  });
 
-  const { surDateData } = useListSurchargeDateForAgent({
-    strSupplierGUID: data?.submitPayload?.strSupplierGUID
-  })
-
-  console.log("supPaytermData", supPaytermData)
-  console.log("surDateData", surDateData)
+  useListSurchargeDateForAgent({
+    strSupplierGUID: data?.submitPayload?.strSupplierGUID,
+  });
 
   const totalQty =
     data?.displayData?.items?.reduce(

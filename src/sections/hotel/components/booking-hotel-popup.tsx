@@ -21,16 +21,13 @@ const BookingHotelPopup = ({ open, onClose, data, focData, dateBooking }: Props)
     const router = useRouter()
     const { selectedCurrency } = useListCurrency();
 
-    const { supPaytermData } = useListSupplierPaymentTerm({
-        strSupplierGUID: data?.strSupplierGUID
-    })
+    useListSupplierPaymentTerm({
+        strSupplierGUID: data?.submitPayload?.strSupplierGUID,
+    });
 
-    const { surDateData } = useListSurchargeDateForAgent({
-        strSupplierGUID: data?.strSupplierGUID
-    })
-
-    console.log("supPaytermData", supPaytermData)
-    console.log("surDateData", surDateData)
+    useListSurchargeDateForAgent({
+        strSupplierGUID: data?.submitPayload?.strSupplierGUID,
+    });
 
     const totalQty =
         data?.items?.reduce(

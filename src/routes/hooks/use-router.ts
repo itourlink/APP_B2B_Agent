@@ -97,8 +97,6 @@ export function useRouter() {
 
         const url = `${href}${query}`;
 
-        console.log("navigate:", url);
-
         navigate(url, {
           state,
         });

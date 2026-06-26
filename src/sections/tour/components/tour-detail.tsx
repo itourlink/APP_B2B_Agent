@@ -129,13 +129,6 @@ const TourDetail = () => {
       ? ListData.strRemark
       : "";
 
-  useEffect(() => {
-    console.log("ListData changed", ListData);
-  }, [ListData]);
-
-  console.log("parent render");
-  console.log("ListData", ListData);
-
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
       <div className="max-w-7xl mx-auto mb-6">

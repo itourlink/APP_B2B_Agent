@@ -216,7 +216,8 @@ export const useListSupplierPriceByAgent = (
         strPriceLevelGUID?: string | null;
         dtmFilterCheckIn?: string | null;
         dtmFilterCheckOut?: string | null;
-    }
+    },
+    enabled = true
 ) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -238,6 +239,7 @@ export const useListSupplierPriceByAgent = (
     const tomorrow = tomorrowDate.toISOString().split("T")[0];
 
     const isReady =
+        enabled &&
         !!user &&
         !!coData?.strCompanyGUID &&
         !!strSupplierGUID &&
@@ -487,5 +489,46 @@ export const useSearchDesHotel = (filters?: {
         totalPages,
         searchDesLoading: query.isFetching,
         searchDesError: query.isError,
+    };
+};
+
+
+const fetchPolicyNotes = async (body: any) => {
+    const res = await apiClient.post("supplier/GetListPolicyNotes", body);
+    return res.data;
+};
+
+export const useListPolicyNotes = (filters?: {
+    strSupplierGUID?: string,
+    dtmFilterDateTravelFrom?: string,
+    dtmFilterDateTravelTo?: string
+}) => {
+    const { coData } = useListCompanyOwner();
+
+    const query = useQuery({
+        queryKey: [QUERY_KEYS.HOTEL.LIST_POLICY_NOTES, filters],
+        queryFn: () =>
+            fetchPolicyNotes({
+                strSupplierGUID: filters?.strSupplierGUID,
+                strCompanyGUID: coData?.strCompanyGUID,
+                strPolicyNotesGUID: null,
+                strFilterPolicyName: null,
+                intPolicyTypeID: null,
+                dtmFilterDateTravelFrom: filters?.dtmFilterDateTravelFrom,
+                dtmFilterDateTravelTo: filters?.dtmFilterDateTravelTo,
+                intCurPage: null,
+                intPageSize: null,
+                strOrder: null,
+                tblsReturn: "[0]"
+            }),
+        enabled: !!coData,
+        placeholderData: keepPreviousData,
+    });
+
+    const listData = query.data?.[0] ?? [];
+    return {
+        policyNotesData: listData,
+        policyNotesLoading: query.isFetching,
+        policyNotesError: query.isError,
     };
 };

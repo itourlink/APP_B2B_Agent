@@ -112,8 +112,6 @@ const PaymentBookingHotelView: React.FC = () => {
         strSupplierGUID: bookingPayload?.strSupplierGUID,
     });
 
-    console.log("supPaytermData", supPaytermData)
-
     const { ctData } = useListCity({
         strTableName: "MC02",
         strFeildSelect: "MC02_CountryCode AS code, MC02_CountryGUID AS intID,MC02_CountryName AS strName,MC02_CountryGUID AS id,MC02_CountryName AS text,MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",

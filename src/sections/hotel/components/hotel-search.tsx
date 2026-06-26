@@ -52,9 +52,14 @@ interface Props {
         start: Date | null;
         end: Date | null;
     }) => void;
+
+    onSearch?: (date: {
+        start: Date | null;
+        end: Date | null;
+    }) => void;
 }
 
-const HotelSearch = ({ onDateBookingChange }: Props) => {
+const HotelSearch = ({ onDateBookingChange, onSearch }: Props) => {
     const { t } = useTranslate("search")
     const location = useLocation();
     const company =
@@ -70,7 +75,6 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
     const [selectedHotel, setSelectedHotel] =
         useState<any | null>(null);
 
-    console.log("selectedHotel", selectedHotel)
     const [draftFilters, setDraftFilters] =
         useState(DEFAULT_FILTERS2);
 
@@ -116,6 +120,7 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
     }, [location.search]);
 
     const handleSearch = () => {
+
         const snapshot = {
             filters,
             draftFilters,
@@ -123,9 +128,12 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
         };
 
 
-        // ✅ CLICK HOTEL => đi detail
         if (selectedHotel) {
             setIsNavigating(true);
+            onSearch?.({
+                start: filters.start,
+                end: filters.end,
+            });
 
             const params = {
                 company,
@@ -142,7 +150,6 @@ const HotelSearch = ({ onDateBookingChange }: Props) => {
                     item: selectedHotel,
                 }
             );
-
 
             setIsNavigating(false);
 

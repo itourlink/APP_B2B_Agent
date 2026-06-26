@@ -310,14 +310,6 @@ const BookingForm = ({ item }: Props) => {
         route.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), });
     };
 
-    useEffect(() => {
-        console.log("BookingForm mounted");
-
-        return () => {
-            console.log("BookingForm unmounted");
-        };
-    }, []);
-
     // ================= UI =================
     return (
         <div className="w-[280px] sticky top-24">
