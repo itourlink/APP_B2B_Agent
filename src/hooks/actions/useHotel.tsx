@@ -106,6 +106,7 @@ export const useListHotelGetPriceUID = (filters?: {
 }) => {
     const { user } = useUser();
     const { currencyId } = useCurrency();
+    const { coData } = useListCompanyOwner();
 
     const {
         page = 1,
@@ -129,7 +130,7 @@ export const useListHotelGetPriceUID = (filters?: {
             fetchListHotel({
                 strUserGUID: user?.strUserGUID,
                 strCompanyPartnerGUID: user?.strCompanyGUID,
-                strCompanyOwnerGUID: null,
+                strCompanyOwnerGUID: coData?.strCompanyGUID,
                 intCurrencyID: currencyId,
 
                 strSupplierGUID,
