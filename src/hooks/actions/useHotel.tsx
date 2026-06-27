@@ -27,6 +27,7 @@ export const useListHotel = (filters?: {
 }) => {
     const { user } = useUser();
     const { currencyId } = useCurrency();
+    const { coData } = useListCompanyOwner();
 
     const {
         page = 1,

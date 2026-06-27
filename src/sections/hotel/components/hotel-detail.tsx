@@ -49,6 +49,8 @@ const HotelDetail = () => {
   const { t } = useTranslate("hotel");
   const location = useLocation();
   const item = location?.state?.item;
+
+  console.log("item", item)
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
   const company = new URLSearchParams(location.search).get("company") || "";
@@ -124,6 +126,7 @@ const HotelDetail = () => {
 
   const hotel = hotelData?.[0] ?? {};
 
+  const companyInfoHotel = hotelGetPriceData?.[1]?.[0]
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
 
@@ -157,6 +160,8 @@ const HotelDetail = () => {
     strSupplierGUID: item?.strSupplierGUID,
     strPriceListGUID,
   })
+
+  const TotalFOCPax = focData?.[0]?.intFOCPax
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -917,14 +922,49 @@ const HotelDetail = () => {
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          {/* Hotel info */}
+          <div className="p-5 border-b border-slate-200 bg-slate-50">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-slate-900">
+                  {companyInfoHotel?.strCompanyName}
+                </h3>
+
+                <p className="text-sm text-blue-600 font-medium mt-1">
+                  Giá từ{" "}
+                  {fCurrency(
+                    companyInfoHotel?.dblPriceFrom,
+                    selectedCurrency?.label
+                  )}
+                  /Phòng/Đêm
+                </p>
+
+                <div className="mt-3 text-sm text-slate-500 space-y-1">
+                  <div>{companyInfoHotel?.strCompanyEmail}</div>
+                  <div>{companyInfoHotel?.strCompanyPhone}</div>
+                </div>
+
+                {TotalFOCPax === 15 && (
+                  <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    <span>⚠️</span>
+                    <span>
+                      Bạn hãy chọn <b>{TotalFOCPax}</b> phòng trở lên để được giá GIT.
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <button className="shrink-0 bg-[#2566b0] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                {t("message")}
+              </button>
+            </div>
+          </div>
+
+          {/* Room header */}
           <div className="p-5 border-b border-slate-200 flex items-center gap-3">
             <h2 className="text-xl font-bold text-slate-900">
               {t("chooseRoom")}
             </h2>
-
-            <button className="bg-[#2566b0] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-              {t("message")}
-            </button>
           </div>
 
           <TableCore
