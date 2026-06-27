@@ -175,8 +175,11 @@ const PaymentBookingHotelView: React.FC = () => {
     const totalPercentage =
         rawPercentage > 100 ? 0 : rawPercentage;
 
+    // giá trị deposit chung
+
     const totalDeposit =
         Number(totalPrice || 0) * (totalPercentage / 100);
+
     const totalDebt =
         totalPrice - totalDeposit;
 
@@ -875,55 +878,60 @@ const PaymentBookingHotelView: React.FC = () => {
                             </thead>
 
                             <tbody className="divide-y divide-gray-100 text-center text-gray-700">
-                                {items?.map((item: any, index: number) => (
-                                    <tr
-                                        key={index}
-                                        className="hover:bg-gray-50"
-                                    >
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {index + 1}
-                                        </td>
+                                {items?.map((item: any, index: number) => {
 
-                                        <td className="py-3 px-4 text-left align-top border-r border-gray-100">
-                                            <div className="font-semibold text-gray-800">
-                                                {room?.strSupplierName} - {room?.strItemTypeName} - {bookingPayload?.includedBreak}
-                                            </div>
+                                    return (
 
-                                            <div className="text-gray-500 text-[11px] mt-0.5">
-                                                {fDateTime(bookingPayload?.dtmDateFrom)} -
-                                                {fDateTime(bookingPayload?.dtmDateTo)}
-                                            </div>
-                                        </td>
+                                        <tr
+                                            key={index}
+                                            className="hover:bg-gray-50"
+                                        >
+                                            <td className="py-3 px-3 align-top border-r border-gray-100">
+                                                {index + 1}
+                                            </td>
 
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {(item?.qty)}
-                                        </td>
+                                            <td className="py-3 px-4 text-left align-top border-r border-gray-100">
+                                                <div className="font-semibold text-gray-800">
+                                                    {room?.strSupplierName} - {room?.strItemTypeName} - {bookingPayload?.includedBreak}
+                                                </div>
 
-                                        <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            {fCurrency(
-                                                0,
-                                                selectedCurrency?.label
-                                            )}
+                                                <div className="text-gray-500 text-[11px] mt-0.5">
+                                                    {fDateTime(bookingPayload?.dtmDateFrom)} -
+                                                    {fDateTime(bookingPayload?.dtmDateTo)}
+                                                </div>
+                                            </td>
 
-                                        </td>
+                                            <td className="py-3 px-3 align-top border-r border-gray-100">
+                                                {(item?.qty)}
+                                            </td>
 
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
+                                            <td className="py-3 px-3 align-top border-r border-gray-100">
+                                                {fCurrency(
+                                                    0,
+                                                    selectedCurrency?.label
+                                                )}
 
-                                            {fCurrency(
-                                                item?.total,
-                                                selectedCurrency?.label
-                                            )}
+                                            </td>
 
-                                        </td>
+                                            <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
+                                                {fCurrency(
+                                                    item?.total,
+                                                    selectedCurrency?.label
+                                                )}
+                                            </td>
 
-                                        <td className="py-3 px-3 align-top font-medium">
-                                            {fCurrency(
-                                                totalDeposit,
-                                                selectedCurrency?.label
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
+                                            <td className="py-3 px-3 align-top font-medium">
+
+                                                    {/* giá trị deposit tính toán từng hàng trong table */}
+
+                                                {fCurrency(
+                                                    Number(item?.total || 0) * (totalPercentage / 100),
+                                                    selectedCurrency?.label
+                                                )}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
 
                                 <tr className="bg-gray-50/50 font-semibold">
                                     <td className="py-2 px-3 border-r border-gray-100"></td>
