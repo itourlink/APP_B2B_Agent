@@ -76,11 +76,14 @@ export const useListHotel = (filters?: {
     });
 
     const listData = query.data?.[0] ?? [];
+   const listDataCompany = query.data?.[1]?.[0] ?? null;
+    
     const totalRecords = listData?.[0]?.intTotalRecords || 0;
     const totalPages = Math.ceil(totalRecords / pageSize);
-
+ 
     return {
         hotelData: listData,
+        companyData: listDataCompany,
         totalRecords,
         totalPages,
         hotelLoading: query.isLoading,
@@ -89,7 +92,7 @@ export const useListHotel = (filters?: {
 };
 
 export const useListHotelGetPriceUID = (filters?: {
-    page?: number;
+    page?: number;  
     pageSize?: number;
     strSupplierGUID?: string | null;
     strFilterLocationCode?: string | null;

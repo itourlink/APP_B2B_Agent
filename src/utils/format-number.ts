@@ -123,27 +123,28 @@ export const formatPrice = (price: any) => {
 
 export const formatMoney = (
   num: number | string,
-  locale: string = "vi-VN",
-  currency: string = "VND"
+  locale: string = "en-US",
+  currency: string = "USD"
 ): string => {
   if (
     num === null ||
     num === undefined ||
     num === ""
   ) {
-    return "0 ₫";
+    return "$0.00";
   }
 
   const value = Number(num);
 
   if (Number.isNaN(value)) {
-    return "0 ₫";
+    return "$0.00";
   }
 
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 };
 

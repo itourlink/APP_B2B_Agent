@@ -1,4 +1,6 @@
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
+import { isValidValue } from "@/utils/utilts";
+
 import {
   useListHotel,
   useListHotelGetPriceUID,
@@ -34,7 +36,7 @@ import { useListFOC } from "@/hooks/actions/useBooking";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
-import { fCurrency } from "@/utils/format-number";
+import { fCurrency, formatMoney } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const HotelDetail = () => {
@@ -72,13 +74,16 @@ const HotelDetail = () => {
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
 
-
-  const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
+  const { hotelData, hotelLoading, hotelError, companyData } =
+    useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
 
   const hotel = hotelData?.[0] ?? {};
+  const hotelDetail = companyData ?? {};
+
+  console.log("hoteilDetail11111", hotelDetail?.dblPriceFrom);
 
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
@@ -89,17 +94,17 @@ const HotelDetail = () => {
   const { spbData } = useListSupplierPriceByAgent(
     isSupplierPriceReady
       ? {
-        strSupplierGUID: item?.strSupplierGUID,
-        strPriceListGUID,
-        strPriceLevelGUID,
-      }
+          strSupplierGUID: item?.strSupplierGUID,
+          strPriceListGUID,
+          strPriceLevelGUID,
+        }
       : undefined,
   );
 
   const { focData } = useListFOC({
     strSupplierGUID: item?.strSupplierGUID,
     strPriceListGUID,
-  })
+  });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -366,14 +371,17 @@ const HotelDetail = () => {
                               className="cursor-pointer w-7 flex items-center justify-center text-blue-600"
                               onClick={() => {
                                 setSelectedRooms((prev) => {
-                                  const current = prev[row.strItemTypeGUID] || [];
+                                  const current =
+                                    prev[row.strItemTypeGUID] || [];
 
                                   const updated = current.flatMap((x) => {
                                     if (x.label !== room.label) return [x];
 
                                     const newQty = x.qty - 1;
 
-                                    return newQty > 0 ? [{ ...x, qty: newQty }] : [];
+                                    return newQty > 0
+                                      ? [{ ...x, qty: newQty }]
+                                      : [];
                                   });
 
                                   return {
@@ -402,9 +410,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                          ...x,
-                                          qty: x.qty + 1,
-                                        }
+                                            ...x,
+                                            qty: x.qty + 1,
+                                          }
                                         : x,
                                     ),
                                   };
@@ -420,19 +428,13 @@ const HotelDetail = () => {
                             <span>x</span>
 
                             <span className="text-[#2563eb] font-medium">
-                              {fCurrency(
-                                price,
-                                selectedCurrency?.label
-                              )}
+                              {fCurrency(price, selectedCurrency?.label)}
                             </span>
 
                             <span>=</span>
 
                             <span className="text-[#1d3557] font-semibold">
-                              {fCurrency(
-                                total,
-                                selectedCurrency?.label
-                              )}
+                              {fCurrency(total, selectedCurrency?.label)}
                             </span>
                           </div>
                         </div>
@@ -465,10 +467,7 @@ const HotelDetail = () => {
 
         return (
           <span className="font-semibold text-[#2563eb]">
-            {fCurrency(
-              total,
-              selectedCurrency?.label
-            )}
+            {fCurrency(total, selectedCurrency?.label)}
           </span>
         );
       },
@@ -515,7 +514,12 @@ const HotelDetail = () => {
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
+                const strListSupplierChildAgeGUID = selected
+                  .filter((x) => x.isChild)
+                  .map((x) => {
+                    return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`;
+                  })
+                  .join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -605,12 +609,16 @@ const HotelDetail = () => {
                   return sum + item.qty;
                 }, 0);
 
-
                 const childAgeList = selected
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
+                const strListSupplierChildAgeGUID = selected
+                  .filter((x) => x.isChild)
+                  .map((x) => {
+                    return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`;
+                  })
+                  .join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -653,9 +661,7 @@ const HotelDetail = () => {
                   intAdult: adultCount,
 
                   strListChildAge:
-                    childAgeList.length > 0
-                      ? childAgeList.join(",") + ","
-                      : "",
+                    childAgeList.length > 0 ? childAgeList.join(",") + "," : "",
 
                   strListItemTypeGUID: strListItemTypeGUID,
 
@@ -789,7 +795,7 @@ const HotelDetail = () => {
                 onClick={() => {
                   setPreviewImage(
                     getUrlImage(hotel?.strSupplierImage) ||
-                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
+                      "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
                   );
                 }}
                 src={
@@ -822,6 +828,31 @@ const HotelDetail = () => {
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="flex justify-between items-start px-4 py-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                {hotelDetail?.strCompanyName}
+              </h2>
+
+              <p className="mt-2 text-blue-600 font-medium">
+                {t("priceFrom")}{" "}
+                {hotelDetail?.dblPriceFrom
+                  ? formatMoney(
+                      hotelDetail.dblPriceFrom,
+                      "en-US",
+                      selectedCurrency?.label || "USD",
+                    )
+                  : "---"}
+                / {t("room")} /{t("night")}
+              </p>
+              <p className="mt-2 text-slate-600">
+                {isValidValue(hotelDetail?.strCompanyEmail)}
+              </p>
+              <p className="text-slate-600">
+                {isValidValue(hotelDetail?.strCompanyPhone)}
+              </p>
+            </div>
+          </div>
           <div className="p-5 border-b border-slate-200 flex items-center gap-3">
             <h2 className="text-xl font-bold text-slate-900">
               {t("chooseRoom")}
@@ -858,7 +889,14 @@ const HotelDetail = () => {
             <p className="text-sm text-slate-600">{t("noData")}</p>
           </div>
         </div>
+        {/*  FOC */}
+         <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
+           FOC
+          </h3>
 
+         
+        </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
             <Info size={18} className="text-[#2566b0]" />

@@ -3,12 +3,16 @@ import { useTranslate } from '@/locales';
 import { getUrlImage } from '@/utils/format-image';
 import { useState } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
+import { useRouter } from "@/routes/hooks/use-router"
+import { useLocation } from "react-router-dom";
+import { paths } from "@/routes/paths"
 
-const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }: any) => {
+const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave, onClick }: any) => {
     const { t } = useTranslate("tour")
 
     return (
         <div
+            onClick={onClick}
             className={`relative rounded-xl overflow-hidden transition-all duration-700 ease-in-out cursor-pointer group 
         ${isHovered ? 'flex-grow-[4] sm:flex-grow-[3]' : 'flex-grow-[1]'}`}
             style={{
@@ -50,6 +54,10 @@ const DestinationCard = ({ destination, isHovered, onMouseEnter, onMouseLeave }:
 
 const DestinationAccordion = () => {
     const { t } = useTranslate("tour")
+    const router = useRouter();
+    const location = useLocation();
+    const company = new URLSearchParams(location.search).get("company") || "";
+
 
     const [filters] = useState({
         page: 1,
@@ -59,6 +67,54 @@ const DestinationAccordion = () => {
 
     const { tcdData, tcdLoading, tcdError } = useCompanyDes(filters);
     const [hoveredIndex, setHoveredIndex] = useState(0);
+
+
+    const handleSelectDestination = (dest: any) => {
+        const snapshot = {
+            filters: {
+                page: 1,
+                pageSize: 10,
+                isTourSeries: false,
+                strFilterDestinationName: dest?.strDestinationName || ""
+            },
+
+            draftFilters2: {
+                intNoOfAdult: 1,
+                strListNoOfChild: "",
+                intNoOfSGLSup: 0,
+                intNoOfTPLRec: 0,
+                strLocationCode: dest?.strLocationCode || dest?.strDestinationCode || dest?.strDestinationGUID || null,
+                dtmFilterDateValidFrom: null,
+                dtmFilterDateValidTo: null,
+                intCateID: null,
+                intProductID: null,
+            },
+            selectedTour: null,
+        };
+        router.pushQuery(
+            paths.shop.search,
+            {
+                company,
+                type: "tour",
+                tourSearchState: JSON.stringify(snapshot),
+            },
+            {
+                isTourSeries: false,
+                isSearchTour: {
+                    intNoOfAdult: 1,
+                    strListNoOfChild: "",
+                    intNoOfSGLSup: 0,
+                    intNoOfTPLRec: 0,
+                    strLocationCode: dest?.strLocationCode || dest?.strDestinationCode || dest?.strDestinationGUID || null,
+                    dtmFilterDateValidFrom: null,
+                    dtmFilterDateValidTo: null,
+                    intCateID: null,
+                    intProductID: null,
+                    strFilterDestinationName: dest?.strDestinationName || "",
+                },
+            }
+        );
+    }
 
     if (tcdLoading) return <DestinationSkeleton />;
     if (tcdError) return <DestinationError />;
@@ -80,6 +136,7 @@ const DestinationAccordion = () => {
                         destination={dest}
                         isHovered={index === hoveredIndex}
                         onMouseEnter={() => setHoveredIndex(index)}
+                        onClick={() => handleSelectDestination(dest)}
                     />
                 ))}
             </div>
