@@ -5,6 +5,7 @@ import { FileCheck } from "lucide-react";
 import { useState } from "react";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { useListCity } from "@/hooks/actions/useCity";
 
 const getLogoSrc = (logo: any) => {
   if (!logo || typeof logo !== "string") return "";
@@ -32,6 +33,14 @@ type TempFiltersType = {
 
 const AgentCompanyView = () => {
   const { t } = useTranslate("agent");
+
+  const { ctData: cityData = [] } = useListCity({
+    strTableName: "MC04",
+    strFeildSelect: "MC04_CityCode AS strCityCode, MC04_CityName AS strCityName",
+    strWhere: "WHERE IsActive=1 AND MC04_CityCode LIKE '%VN%' ORDER BY MC04_CityName ASC",
+  });
+
+
   const BADGE_MAP: Record<number, { icon: string; label: string }> = {
     1: { icon: "💎", label: t("diamond") },
     2: { icon: "🥇", label: t("gold") },
@@ -167,9 +176,22 @@ const AgentCompanyView = () => {
             </div>
 
             <div className="col-span-6 md:col-span-3">
-              <select className="cursor-pointer w-full h-10 px-3 border border-slate-200 rounded-md text-sm outline-none">
-                <option>{t("location")}</option>
-                {/* // chưa có nhưng truyền api đi là strFilterLocationCode */}
+              <select
+                value={tempFilters.strFilterLocationCode}
+                onChange={(e) =>
+                  setTempFilters((prev) => ({
+                    ...prev,
+                    strFilterLocationCode: e.target.value,
+                  }))
+                }
+                className="cursor-pointer w-full h-10 px-3 border border-slate-200 rounded-md text-sm outline-none bg-white"
+              >
+                <option value="">{t("location")}</option>
+                {cityData?.map((city: any) => (
+                  <option key={city.strCityCode} value={city.strCityCode}>
+                    {city.strCityName}
+                  </option>
+                ))}
               </select>
             </div>
 
