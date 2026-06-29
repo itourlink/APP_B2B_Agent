@@ -21,6 +21,7 @@ import {
   Baby,
   ShoppingCart,
   Home,
+  MessageSquare,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -94,10 +95,10 @@ const HotelDetail = () => {
   const { spbData } = useListSupplierPriceByAgent(
     isSupplierPriceReady
       ? {
-          strSupplierGUID: item?.strSupplierGUID,
-          strPriceListGUID,
-          strPriceLevelGUID,
-        }
+        strSupplierGUID: item?.strSupplierGUID,
+        strPriceListGUID,
+        strPriceLevelGUID,
+      }
       : undefined,
   );
 
@@ -410,9 +411,9 @@ const HotelDetail = () => {
                                     [row.strItemTypeGUID]: current.map((x) =>
                                       x.label === room.label
                                         ? {
-                                            ...x,
-                                            qty: x.qty + 1,
-                                          }
+                                          ...x,
+                                          qty: x.qty + 1,
+                                        }
                                         : x,
                                     ),
                                   };
@@ -686,6 +687,17 @@ const HotelDetail = () => {
             >
               <ShoppingCart size={16} className="text-slate-700" />
             </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                // message action
+              }}
+              className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
+              title={t("message")}
+            >
+              <MessageSquare size={16} className="text-slate-700" />
+            </button>
           </div>
         );
       },
@@ -795,7 +807,7 @@ const HotelDetail = () => {
                 onClick={() => {
                   setPreviewImage(
                     getUrlImage(hotel?.strSupplierImage) ||
-                      "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
+                    "https://dummyimage.com/600x400/e5e7eb/9ca3af&text=No+Image",
                   );
                 }}
                 src={
@@ -838,10 +850,10 @@ const HotelDetail = () => {
                 {t("priceFrom")}{" "}
                 {hotelDetail?.dblPriceFrom
                   ? formatMoney(
-                      hotelDetail.dblPriceFrom,
-                      "en-US",
-                      selectedCurrency?.label || "USD",
-                    )
+                    hotelDetail.dblPriceFrom,
+                    "en-US",
+                    selectedCurrency?.label || "USD",
+                  )
                   : "---"}
                 / {t("room")} /{t("night")}
               </p>
@@ -890,12 +902,12 @@ const HotelDetail = () => {
           </div>
         </div>
         {/*  FOC */}
-         <div className="bg-white border border-slate-200 rounded-2xl p-6">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-           FOC
+            FOC
           </h3>
 
-         
+
         </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
