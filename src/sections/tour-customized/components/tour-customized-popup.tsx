@@ -60,15 +60,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
             country: z.string().optional(),
             city: z.string().optional(),
-        })
-        .refine(
-            ({ sgl, dbl, twn, tpl }) =>
-                [sgl, dbl, twn, tpl].some((value) => Number(value) > 0),
-            {
-                message: t("minimumOneRoom"),
-                path: ["sgl"],
-            }
-        );
+        });
 
     type SchemaType = zod.infer<typeof Schema>;
 
