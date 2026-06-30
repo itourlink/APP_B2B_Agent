@@ -5,11 +5,14 @@ import { ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import imgDefault from "@/assets/images/default-image.jpg"
+import { useRouter } from '@/routes/hooks/use-router';
+import { useLocation } from 'react-router-dom';
+import { paths } from '@/routes/paths';
 
-const TopDestinationCard = ({ dest }: any) => {
+const TopDestinationCard = ({ dest, onClick }: any) => {
     if (!dest?.strCityImage) {
         return (
-            <div className="flex-none flex flex-col items-center gap-4 group cursor-pointer">
+            <div onClick={onClick} className="flex-none flex flex-col items-center gap-4 group cursor-pointer">
                 <div className="w-28 h-40 md:w-32 md:h-48 rounded-[24px] bg-gray-50 border border-gray-100 flex items-center justify-center 
                                 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_12px_24px_-8px_rgba(37,99,235,0.1)] hover:-translate-y-1">
                     <div className="p-4 bg-white/60 rounded-full border border-gray-100 backdrop-blur-sm">
@@ -33,7 +36,7 @@ const TopDestinationCard = ({ dest }: any) => {
 
 
     return (
-        <div className="flex-none flex flex-col items-center gap-4 group cursor-pointer">
+        <div onClick={onClick} className="flex-none flex flex-col items-center gap-4 group cursor-pointer">
             <div className="relative w-28 h-40 md:w-32 md:h-48 rounded-[24px] overflow-hidden 
                             shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] transition-all duration-300 
                             hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] hover:-translate-y-1 hover:scale-102">
@@ -59,6 +62,9 @@ const TopDestinationCard = ({ dest }: any) => {
 
 const DestinationCarousel = () => {
     const { t } = useTranslation("hotel")
+    const router = useRouter();
+    const location = useLocation();
+    const company = new URLSearchParams(location.search).get("company") || "";
 
     const [filters] = useState({
         page: 1,
@@ -67,6 +73,56 @@ const DestinationCarousel = () => {
     });
 
     const { tcdData, tcdLoading, tcdError } = useCompanyDes(filters);
+
+    const handleSelectDestination = (dest: any) => {
+        const today = new Date();
+        const snapshot = {
+            filters: {
+                page: 1,
+                pageSize: 10,
+                series: false,
+                strFilterDestinationName: dest?.strDestinationName || "",
+                start: today,
+                end: null,
+                guestRoom: {
+                    rooms: 1,
+                    adults: 1,
+                    children: 0,
+                    childAges: [],
+                },
+            },
+            draftFilters: {
+                intNoOfRooms: 1,
+                dtmFilterCheckIn: today,
+                dtmFilterCheckOut: null,
+                strFilterLocationCode: dest?.strLocationCode || dest?.strDestinationCode || dest?.strDestinationGUID || null,
+                IsShowAll: false,
+            },
+            selectedHotel: null,
+        };
+
+        const payload = {
+            intNoOfRooms: 1,
+            dtmFilterCheckIn: today,
+            dtmFilterCheckOut: null,
+            strFilterLocationCode: dest?.strLocationCode || dest?.strDestinationCode || dest?.strDestinationGUID || null,
+            IsShowAll: false,
+            strFilterDestinationName: dest?.strDestinationName || null,
+        };
+
+        router.pushQuery(
+            paths.shop.search,
+            {
+                company,
+                type: "hotel",
+                hotelSearchState: JSON.stringify(snapshot),
+            },
+            {
+                isSearchHotel: payload,
+                mode: "list",
+            }
+        );
+    };
 
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const scroll = (direction: 'left' | 'right') => {
@@ -108,7 +164,11 @@ const DestinationCarousel = () => {
                     )}
 
                     {!tcdLoading && !tcdError && tcdData.map((dest: any) => (
-                        <TopDestinationCard key={dest?.No} dest={dest} />
+                        <TopDestinationCard
+                            key={dest?.No}
+                            dest={dest}
+                            onClick={() => handleSelectDestination(dest)}
+                        />
                     ))}
                 </div>
 

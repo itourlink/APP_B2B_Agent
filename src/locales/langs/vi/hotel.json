@@ -23,7 +23,7 @@
     "processing": "Đang xử lý...",
     "confirm": "Xác nhận",
     "confirmBookingRoom": "Xác nhận đặt phòng",
-    "yourPartners": "Các Đối Tác Của Bạn",
+    "yourPartners": "Các đối tác của bạn",
     "loadPartnerFailed": "Có lỗi xảy ra, vui lòng thử lại.",
     "updateSuccess": "Cập nhật thành công",
     "updateError": "Cập nhật thất bại",
@@ -103,5 +103,6 @@
     "totalPrice": "Thành tiền",
     "noData": "Không có dữ liệu",
     "description": "Mô tả",
-    "redirectingPage": "Đang chuyển trang..."
+    "redirectingPage": "Đang chuyển trang...",
+    "night": "Đêm"
 }

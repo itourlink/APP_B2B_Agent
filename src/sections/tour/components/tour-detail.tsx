@@ -23,7 +23,7 @@ import { getUrlImage } from "@/utils/format-image";
 import { paths } from "@/routes/paths";
 import { isValidValue } from "@/utils/utilts";
 import { TourCard } from "./tour-card";
-import imgDefault from "@/assets/images/default-image.jpg"
+import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
 
 /* --- Skeleton + Error --- */
@@ -38,21 +38,15 @@ const SkeletonBlock = () => (
 const ErrorBlock = () => {
   const { t } = useTranslate("tour");
 
-  return (
-    <div className="text-red-500 text-sm">
-      {t("errorOccurred")}
-    </div>
-  );
+  return <div className="text-red-500 text-sm">{t("errorOccurred")}</div>;
 };
 
 const TourDetail = () => {
-  const { t } = useTranslate("tour")
+  const { t } = useTranslate("tour");
   const location = useLocation();
   const item = location.state;
 
-  const company =
-    new URLSearchParams(location.search).get("company") || "";
-
+  const company = new URLSearchParams(location.search).get("company") || "";
 
   const filters = {
     page: 1,
@@ -87,6 +81,8 @@ const TourDetail = () => {
 
   const [openDay, setOpenDay] = useState<number | null>(1);
 
+  const [showInclude, setShowInclude] = useState(true);
+  const [showExclude, setShowExclude] = useState(true);
   const toggleDay = (day: number) => {
     if (openAll) return;
 
@@ -108,26 +104,23 @@ const TourDetail = () => {
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
-        .replace(/<\/p>/g, "")
-        .split("<p>")
-        .filter(Boolean)
-        .map((item: any) => item.replace(/^\s*-\s*/, ""))
+          .replace(/<\/p>/g, "")
+          .split("<p>")
+          .filter(Boolean)
+          .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
     typeof ListData?.strExcluded === "string"
       ? ListData.strExcluded
-        .replace(/<\/p>/g, "")
-        .split("<p>")
-        .filter(Boolean)
-        .map((item: any) => item.replace(/^\s*-\s*/, ""))
+          .replace(/<\/p>/g, "")
+          .split("<p>")
+          .filter(Boolean)
+          .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
-
   const remark =
-    typeof ListData?.strRemark === "string"
-      ? ListData.strRemark
-      : "";
+    typeof ListData?.strRemark === "string" ? ListData.strRemark : "";
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
@@ -173,15 +166,13 @@ const TourDetail = () => {
                   </p>
 
                   <div className="flex items-center gap-3">
-                    <p>{isValidValue(ListData?.strCompanyEmail)}</p>
-                    -
+                    <p>{isValidValue(ListData?.strCompanyEmail)}</p>-
                     <p>{isValidValue(ListData?.strCompanyPhone)}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-200">
                   <div className="flex items-center gap-5 text-sm text-slate-600 flex-wrap">
-
                     <div className="flex items-center gap-1">
                       <MapPin size={16} className="text-[#2566b0]" />
                       {isValidValue(ListData?.strListTourDestinationName)}
@@ -238,7 +229,7 @@ const TourDetail = () => {
               <img
                 src={
                   typeof ListData?.strTourImageUrl === "string" &&
-                    ListData.strTourImageUrl.trim()
+                  ListData.strTourImageUrl.trim()
                     ? getUrlImage(ListData.strTourImageUrl)
                     : imgDefault
                 }
@@ -261,25 +252,23 @@ const TourDetail = () => {
               <SkeletonBlock />
             ) : tdError ? (
               <ErrorBlock />
-            ) :
-              remark.trim() ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: remark,
-                  }}
-                />
-              ) : (
-                <span className="text-slate-500 text-sm">
-                  {t("noData")}
-                </span>
-              )
-            }
+            ) : remark.trim() ? (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: remark,
+                }}
+              />
+            ) : (
+              <span className="text-slate-500 text-sm">{t("noData")}</span>
+            )}
           </div>
 
           {/* ITINERARY */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">{t("itinerary")}</h2>
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("itinerary")}
+              </h2>
 
               <button
                 type="button"
@@ -358,28 +347,54 @@ const TourDetail = () => {
           {/* INCLUDED / EXCLUDED */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-bold mb-3">{t("included")}</h3>
+              <button
+                onClick={() => setShowInclude(!showInclude)}
+                className="mb-3 flex w-full  items-center justify-between font-bold"
+              >
+                <span>{t("included")}</span>
 
-              <div className="space-y-2">
-                {includedList.map((item: any, i: any) => (
-                  <div key={i} className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
+                {showInclude ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
 
-                    <span
-                      className="leading-6"
-                      dangerouslySetInnerHTML={{
-                        __html: item,
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
+              {showInclude && (
+                <div className="space-y-2">
+                  {includedList.map((item: any, i: any) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
+
+                      <span
+                        className="leading-6"
+                        dangerouslySetInnerHTML={{
+                          __html: item,
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>
-              <h3 className="font-bold mb-3">{t("excluded")}</h3>
 
-              <div className="space-y-2">
+              <button
+              onClick={() => setShowExclude(!showExclude)}
+              className="mb-3 flex w-full items-center  justify-between font-bold"
+              >
+
+              <span>{t("excluded")}</span>
+              {showExclude ? (
+                <ChevronUp  className=" h-5 w-5"/>
+              ): (
+                <ChevronDown className="h-5 w-5 "/>
+              )}
+              </button>
+
+              {showExclude && (
+                   <div className="space-y-2">
                 {exclusionsList.map((item: any, i: any) => (
                   <div key={i} className="flex items-start gap-2 text-sm">
                     <XCircle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-red-500" />
@@ -393,12 +408,18 @@ const TourDetail = () => {
                   </div>
                 ))}
               </div>
+              )
+                
+              }
+             
             </div>
           </div>
 
           {/* TERMS */}
           <div>
-            <h2 className="text-xl font-bold mb-4">{t("termsAndConditions")}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              {t("termsAndConditions")}
+            </h2>
 
             {tdLoading ? (
               <SkeletonBlock />
@@ -437,10 +458,7 @@ const TourDetail = () => {
         {!tdpLoading && !tdpError && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tdpData?.map((t: any) => (
-              <TourCard
-                key={t.strTourGUID}
-                tour={t}
-              />
+              <TourCard key={t.strTourGUID} tour={t} />
             ))}
           </div>
         )}

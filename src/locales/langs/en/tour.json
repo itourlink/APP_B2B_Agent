@@ -125,8 +125,9 @@
     "qrCode": "QR Code",
     "paymentQRCode": "Payment QR Code",
     "booking": "Booking...",
-    "tourSeries": "Tour Series",
     "infants": "Infants",
     "smallKids": "Small Kids",
-    "kids": "Kids"
+    "kids": "Kids",
+    "tourSeries": "Tour Series"
+
 }

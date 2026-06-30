@@ -1,4 +1,6 @@
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
+import { isValidValue } from "@/utils/utilts";
+
 import {
   useListHotel,
   useListHotelGetPriceUID,
@@ -20,6 +22,7 @@ import {
   Baby,
   ShoppingCart,
   Home,
+  MessageSquare,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -31,7 +34,7 @@ import { useListFOC } from "@/hooks/actions/useBooking";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
-import { fCurrency } from "@/utils/format-number";
+import { fCurrency, formatMoney } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import HotelSearch from "./hotel-search";
 
@@ -88,7 +91,13 @@ const HotelDetail = () => {
   const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
+<<<<<<< HEAD
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
+=======
+
+  const { hotelData, hotelLoading, hotelError, companyData } =
+    useListHotel(filters);
+>>>>>>> cf3de144ad6357a36599c5e48dec13a07c2cd5d2
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
@@ -125,6 +134,9 @@ const HotelDetail = () => {
 
 
   const hotel = hotelData?.[0] ?? {};
+  const hotelDetail = companyData ?? {};
+
+  console.log("hoteilDetail11111", hotelDetail?.dblPriceFrom);
 
   const companyInfoHotel = hotelGetPriceData?.[1]?.[0]
   const strPriceListGUID = pplfcData?.strPriceListGUID;
@@ -159,7 +171,7 @@ const HotelDetail = () => {
   const { focData } = useListFOC({
     strSupplierGUID: item?.strSupplierGUID,
     strPriceListGUID,
-  })
+  });
 
   const TotalFOCPax = focData?.[0]?.intFOCPax
 
@@ -454,14 +466,17 @@ const HotelDetail = () => {
                               className="cursor-pointer w-7 flex items-center justify-center text-blue-600"
                               onClick={() => {
                                 setSelectedRooms((prev) => {
-                                  const current = prev[row.strItemTypeGUID] || [];
+                                  const current =
+                                    prev[row.strItemTypeGUID] || [];
 
                                   const updated = current.flatMap((x) => {
                                     if (x.label !== room.label) return [x];
 
                                     const newQty = x.qty - 1;
 
-                                    return newQty > 0 ? [{ ...x, qty: newQty }] : [];
+                                    return newQty > 0
+                                      ? [{ ...x, qty: newQty }]
+                                      : [];
                                   });
 
                                   return {
@@ -508,19 +523,13 @@ const HotelDetail = () => {
                             <span>x</span>
 
                             <span className="text-[#2563eb] font-medium">
-                              {fCurrency(
-                                price,
-                                selectedCurrency?.label
-                              )}
+                              {fCurrency(price, selectedCurrency?.label)}
                             </span>
 
                             <span>=</span>
 
                             <span className="text-[#1d3557] font-semibold">
-                              {fCurrency(
-                                total,
-                                selectedCurrency?.label
-                              )}
+                              {fCurrency(total, selectedCurrency?.label)}
                             </span>
                           </div>
                         </div>
@@ -553,10 +562,7 @@ const HotelDetail = () => {
 
         return (
           <span className="font-semibold text-[#2563eb]">
-            {fCurrency(
-              total,
-              selectedCurrency?.label
-            )}
+            {fCurrency(total, selectedCurrency?.label)}
           </span>
         );
       },
@@ -603,7 +609,12 @@ const HotelDetail = () => {
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
+                const strListSupplierChildAgeGUID = selected
+                  .filter((x) => x.isChild)
+                  .map((x) => {
+                    return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`;
+                  })
+                  .join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -695,12 +706,16 @@ const HotelDetail = () => {
                   return sum + item.qty;
                 }, 0);
 
-
                 const childAgeList = selected
                   .filter((x) => x.isChild)
                   .flatMap((x) => Array(x.qty).fill(x.ageFrom));
 
-                const strListSupplierChildAgeGUID = selected.filter((x) => x.isChild).map((x) => { return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`; }).join("");
+                const strListSupplierChildAgeGUID = selected
+                  .filter((x) => x.isChild)
+                  .map((x) => {
+                    return `${x.raw?.strItemTypeGUID}!${x.raw?.strSupplierChildAgeGUID}!${x.qty}#`;
+                  })
+                  .join("");
 
                 const items = selected.map((room) => {
                   const price = getPrice(row, room);
@@ -743,9 +758,7 @@ const HotelDetail = () => {
                   intAdult: adultCount,
 
                   strListChildAge:
-                    childAgeList.length > 0
-                      ? childAgeList.join(",") + ","
-                      : "",
+                    childAgeList.length > 0 ? childAgeList.join(",") + "," : "",
 
                   strListItemTypeGUID: strListItemTypeGUID,
 
@@ -769,6 +782,17 @@ const HotelDetail = () => {
               className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
             >
               <ShoppingCart size={16} className="text-slate-700" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                // message action
+              }}
+              className="cursor-pointer w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 transition"
+              title={t("message")}
+            >
+              <MessageSquare size={16} className="text-slate-700" />
             </button>
           </div>
         );
@@ -993,7 +1017,14 @@ const HotelDetail = () => {
             <p className="text-sm text-slate-600">{t("noData")}</p>
           </div>
         </div>
+        {/*  FOC */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
+            FOC
+          </h3>
 
+
+        </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
             <Info size={18} className="text-[#2566b0]" />
