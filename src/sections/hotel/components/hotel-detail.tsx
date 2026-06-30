@@ -91,13 +91,9 @@ const HotelDetail = () => {
   const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
-<<<<<<< HEAD
-  const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
-=======
 
   const { hotelData, hotelLoading, hotelError, companyData } =
     useListHotel(filters);
->>>>>>> cf3de144ad6357a36599c5e48dec13a07c2cd5d2
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
@@ -134,10 +130,6 @@ const HotelDetail = () => {
 
 
   const hotel = hotelData?.[0] ?? {};
-  const hotelDetail = companyData ?? {};
-
-  console.log("hoteilDetail11111", hotelDetail?.dblPriceFrom);
-
   const companyInfoHotel = hotelGetPriceData?.[1]?.[0]
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
