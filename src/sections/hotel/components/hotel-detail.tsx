@@ -440,7 +440,9 @@ const HotelDetail = () => {
                       <div key={room.label} className="flex items-center gap-6">
                         {/* LEFT */}
                         <div className="flex items-center gap-2 w-[100px] shrink-0">
-                          {room.icon}
+                          <div className="">
+                            {room.icon}
+                          </div>
 
                           <span className="text-[#1d3557] font-medium text-sm">
                             {room.label}
