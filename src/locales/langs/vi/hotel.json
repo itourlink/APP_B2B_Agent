@@ -104,5 +104,7 @@
     "noData": "Không có dữ liệu",
     "description": "Mô tả",
     "redirectingPage": "Đang chuyển trang...",
-    "night": "Đêm"
+    "night": "Đêm",
+    "selectGitRoomNoticePrefix": "Bạn hãy chọn ",
+    "selectGitRoomNoticeSuffix": " phòng trở lên để được giá GIT."
 }

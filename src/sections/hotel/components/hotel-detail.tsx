@@ -1,6 +1,4 @@
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
-import { isValidValue } from "@/utils/utilts";
-
 import {
   useListHotel,
   useListHotelGetPriceUID,
@@ -34,7 +32,7 @@ import { useListFOC } from "@/hooks/actions/useBooking";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useTranslate } from "@/locales";
-import { fCurrency, formatMoney } from "@/utils/format-number";
+import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import HotelSearch from "./hotel-search";
 
@@ -91,9 +89,7 @@ const HotelDetail = () => {
   const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
-
-  const { hotelData, hotelLoading, hotelError, companyData } =
-    useListHotel(filters);
+  const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
@@ -130,6 +126,7 @@ const HotelDetail = () => {
 
 
   const hotel = hotelData?.[0] ?? {};
+
   const companyInfoHotel = hotelGetPriceData?.[1]?.[0]
   const strPriceListGUID = pplfcData?.strPriceListGUID;
   const strPriceLevelGUID = hotelGetPriceData?.[1]?.[0]?.strPriceLevelGUID;
@@ -947,12 +944,12 @@ const HotelDetail = () => {
                 </h3>
 
                 <p className="text-sm text-blue-600 font-medium mt-1">
-                  Giá từ{" "}
+                  {t("priceFrom")}{" "}
                   {fCurrency(
                     companyInfoHotel?.dblPriceFrom,
                     selectedCurrency?.label
                   )}
-                  /Phòng/Đêm
+                  /{t("room")}/{t("night")}
                 </p>
 
                 <div className="mt-3 text-sm text-slate-500 space-y-1">
@@ -960,20 +957,22 @@ const HotelDetail = () => {
                   <div>{companyInfoHotel?.strCompanyPhone}</div>
                 </div>
 
-                {TotalFOCPax === 15 && (
-                  <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    <span>⚠️</span>
-                    <span>
-                      Bạn hãy chọn <b>{TotalFOCPax}</b> phòng trở lên để được giá GIT.
-                    </span>
-                  </div>
-                )}
+
               </div>
 
               <button className="shrink-0 bg-[#2566b0] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
                 {t("message")}
               </button>
+
             </div>
+            {TotalFOCPax === 15 && (
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <span>⚠️</span>
+                <span>
+                  {t("selectGitRoomNoticePrefix")} <b>{TotalFOCPax}</b> {t("selectGitRoomNoticeSuffix")}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Room header */}

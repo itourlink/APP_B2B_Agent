@@ -56,5 +56,7 @@
     "totalPrice": "Total Price",
     "noData": "No Data",
     "description": "Description",
-    "redirectingPage": "Redirecting..."
+    "redirectingPage": "Redirecting...",
+    "selectGitRoomNoticePrefix": "Please select ",
+    "selectGitRoomNoticeSuffix": " or more rooms to receive the GIT rate."
 }
