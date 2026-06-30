@@ -43,16 +43,16 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             nationality: z.string().min(1, t("selectNationality")),
 
             adults: z.coerce.number().min(1, t("minimumOneAdult")),
-            children: z.coerce.number(),
+            // children: z.coerce.number(),
 
             category: z.array(z.string()).min(1, t("selectCategory")),
 
             remark: z.string().optional(),
 
-            sgl: z.coerce.number().min(0),
-            dbl: z.coerce.number().min(0),
-            twn: z.coerce.number().min(0),
-            tpl: z.coerce.number().min(0),
+            // sgl: z.coerce.number().min(0),
+            // dbl: z.coerce.number().min(0),
+            // twn: z.coerce.number().min(0),
+            // tpl: z.coerce.number().min(0),
 
             listLocation: z.string().min(1, t("selectDestination")),
 
@@ -476,7 +476,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             </div>
 
             <div className="space-y-2 border border-slate-200 rounded-2xl p-4">
-                <label>{t("destinationList")}</label>
+                <label>{t("destinationList")} <span className="text-red-500">*</span></label>
 
                 {methods.formState.errors.listLocation && (
                     <div className="flex items-center gap-2 text-red-500 text-xs mt-2 px-4">

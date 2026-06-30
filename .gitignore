@@ -27,3 +27,4 @@ dist-ssr
 *.env
 /ai-procedure/
 .ai-rules/
+quy_trinh/

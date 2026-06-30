@@ -103,7 +103,8 @@ export function RHFTextField({
               className={twMerge(
                 clsx(
                   `w-full relative z-0 bg-transparent will-change-transform isolation-auto transform-gpu rounded-[10px] flex pr-4 py-4 items-center gap-[10px] self-stretch placeholder:text-gray-400 focus:outline-none
-                  ${align === "right" ? "text-right" : "text-left"} text-gray-900`
+                  ${align === "right" ? "text-right" : "text-left"} text-gray-900`,
+                  other.type === "date" && !field.value && "date-empty"
                 ),
                 className
               )}
