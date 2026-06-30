@@ -144,35 +144,35 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
         }
     }, [initialHotel]);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const raw = params.get("hotelSearchState");
-        if (!raw) return;
+    // useEffect(() => {
+    //     const params = new URLSearchParams(location.search);
+    //     const raw = params.get("hotelSearchState");
+    //     if (!raw) return;
 
-        try {
-            const parsed = JSON.parse(raw);
+    //     try {
+    //         const parsed = JSON.parse(raw);
 
-            const restoredFilters = {
-                ...parsed.filters,
-                start: parsed.filters?.start ? new Date(parsed.filters.start) : null,
-                end: parsed.filters?.end ? new Date(parsed.filters.end) : null,
-            };
+    //         const restoredFilters = {
+    //             ...parsed.filters,
+    //             start: parsed.filters?.start ? new Date(parsed.filters.start) : null,
+    //             end: parsed.filters?.end ? new Date(parsed.filters.end) : null,
+    //         };
 
-            setFilters((prev) => ({
-                ...prev,
-                ...restoredFilters,
-            }));
+    //         setFilters((prev) => ({
+    //             ...prev,
+    //             ...restoredFilters,
+    //         }));
 
-            setDraftFilters((prev) => ({
-                ...prev,
-                ...parsed.draftFilters,
-            }));
+    //         setDraftFilters((prev) => ({
+    //             ...prev,
+    //             ...parsed.draftFilters,
+    //         }));
 
-            setSelectedHotel(parsed.selectedHotel || null);
+    //         setSelectedHotel(parsed.selectedHotel || null);
 
-            hydratedRef.current = true; // 👈 chặn initialHotel override
-        } catch { }
-    }, [location.search]);
+    //         hydratedRef.current = true; // 👈 chặn initialHotel override
+    //     } catch { }
+    // }, [location.search]);
 
     const handleSearch = () => {
 
