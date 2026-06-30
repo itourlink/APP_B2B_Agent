@@ -17,6 +17,12 @@ const HotelListRowCard = ({ hotel }: Props) => {
     const router = useRouter();
     const { t } = useTranslate("search");
 
+    const company =
+        new URLSearchParams(location.search).get("company");
+
+    const hotelSearchState =
+        new URLSearchParams(location.search).get("hotelSearchState");
+
     const imageSrc =
         hotel?.strSupplierImage === "" ||
             (typeof hotel?.strSupplierImage === "object" &&
@@ -24,6 +30,21 @@ const HotelListRowCard = ({ hotel }: Props) => {
                 Object.keys(hotel?.strSupplierImage).length === 0)
             ? imgDefault
             : getUrlImage(isValidValue(hotel?.strSupplierImage));
+
+
+    const handleSearch = () => {
+        router.pushQuery(
+            paths.shop.hotel.detail,
+            {
+                company,
+                hotelId: hotel.strSupplierGUID,
+                ...(hotelSearchState && { hotelSearchState }),
+            },
+            {
+                item: hotel,
+            }
+        );
+    };
 
     return (
         <div className="flex border border-slate-300 rounded-xl p-4 bg-white shadow-sm gap-4">
@@ -35,11 +56,7 @@ const HotelListRowCard = ({ hotel }: Props) => {
 
             <div className="flex-1">
                 <button
-                    onClick={() =>
-                        router.replaceParams(paths.shop.hotel.detail, {
-                            item: hotel,
-                        })
-                    }
+                    onClick={() => handleSearch()}
                     className="font-bold text-lg uppercase cursor-pointer hover:text-blue-500 transition-colors"
                 >
                     {hotel?.strSupplierName}
@@ -86,11 +103,7 @@ const HotelListRowCard = ({ hotel }: Props) => {
                     </div>
 
                     <button
-                        onClick={() =>
-                            router.replaceParams(paths.shop.hotel.detail, {
-                                item: hotel,
-                            })
-                        }
+                        onClick={() => handleSearch()}
                         className="border rounded text-blue-600 px-3 py-1 cursor-pointer hover:bg-blue-50 transition-colors text-sm font-medium"
                     >
                         {t("viewDetails")}

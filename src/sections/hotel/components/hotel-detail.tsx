@@ -51,7 +51,6 @@ const HotelDetail = () => {
   const location = useLocation();
   const item = location?.state?.item;
 
-  console.log("item", item)
   const { user } = useUser();
   const { coData } = useListCompanyOwner();
   const company = new URLSearchParams(location.search).get("company") || "";
@@ -290,9 +289,6 @@ const HotelDetail = () => {
         : null,
     });
   }, []);
-
-
-
 
   const getAdultByRoomName = (label: string) => {
     const name = label.toLowerCase();

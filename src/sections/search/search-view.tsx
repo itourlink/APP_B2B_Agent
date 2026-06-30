@@ -376,7 +376,7 @@ const SearchView = () => {
         )}
 
         {searchType === "hotel" && (
-          <HotelSearch />
+          <HotelSearch initialHotel={hotelFilter}/>
         )}
       </div>
 

@@ -72,14 +72,12 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
-    // ✅ lưu full hotel object
     const [selectedHotel, setSelectedHotel] =
         useState<any | null>(null);
 
     const [draftFilters, setDraftFilters] =
         useState(DEFAULT_FILTERS2);
 
-    // 👉 dropdown search
     const { searchDesData, searchDesLoading } =
         useSearchDesHotel({
             page: filters.page,
