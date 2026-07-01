@@ -84,24 +84,24 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     });
 
 
-    const { watch, setValue } = methods;
+    const { setValue } = methods;
 
-    const [sgl, dbl, twn, tpl] = watch([
-        "sgl",
-        "dbl",
-        "twn",
-        "tpl",
-    ]);
+    // const [sgl, dbl, twn, tpl] = watch([
+    //     "sgl",
+    //     "dbl",
+    //     "twn",
+    //     "tpl",
+    // ]);
 
-    useEffect(() => {
-        const total =
-            Number(sgl || 0) +
-            Number(dbl || 0) * 2 +
-            Number(twn || 0) * 2 +
-            Number(tpl || 0) * 3;
+    // useEffect(() => {
+    //     const total =
+    //         Number(sgl || 0) +
+    //         Number(dbl || 0) * 2 +
+    //         Number(twn || 0) * 2 +
+    //         Number(tpl || 0) * 3;
 
-        setValue("adults", total);
-    }, [sgl, dbl, twn, tpl, setValue]);
+    //     setValue("adults", total);
+    // }, [sgl, dbl, twn, tpl, setValue]);
 
     const {
         handleSubmit,
@@ -152,12 +152,12 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             strCountryGUID: data.nationality,
 
             intAdult: data.adults,
-            intNoOfChild: data.children,
+            // intNoOfChild: data.children,
 
-            intSGL: data.sgl,
-            intDBL: data.dbl,
-            intTWN: data.twn,
-            intTPL: data.tpl,
+            // intSGL: data.sgl,
+            // intDBL: data.dbl,
+            // intTWN: data.twn,
+            // intTPL: data.tpl,
 
             dtmDateFrom: new Date(data.dateStart).toISOString(),
 
