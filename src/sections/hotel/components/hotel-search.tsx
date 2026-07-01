@@ -61,6 +61,7 @@ interface Props {
 }
 
 const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => {
+
     const { t } = useTranslate("search")
     const location = useLocation();
     const company =
@@ -124,24 +125,51 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                 ...parsed.draftFilters,
             }));
 
-            setSelectedHotel(parsed.selectedHotel || null);
+            const restoredSelectedHotel =
+                parsed.selectedHotel ||
+                (parsed.filters?.strFilterDestinationName
+                    ? {
+                        strSupplierGUID:
+                            parsed?.params?.hotelId || null,
+                        strSupplierName:
+                            parsed.filters.strFilterDestinationName,
+                    }
+                    : null);
+
+            setSelectedHotel(
+                restoredSelectedHotel ??
+                (initialHotel
+                    ? {
+                        ...initialHotel,
+                        strSupplierGUID: initialHotel.strSupplierGUID,
+                        strSupplierName: initialHotel.strSupplierName,
+                    }
+                    : null)
+            );
+
+
         } catch { }
-    }, [location.search]);
+    }, [location.search, initialHotel]);
 
     const hydratedRef = useRef(false);
 
     useEffect(() => {
-        if (hydratedRef.current) return;
+        if (hydratedRef.current || !initialHotel) return;
 
-        if (initialHotel) {
-            setFilters((prev) => ({
-                ...prev,
-                strFilterDestinationName: initialHotel.strSupplierName,
-            }));
+        const normalizedHotel = {
+            ...initialHotel,
+            strSupplierGUID: initialHotel.strSupplierGUID ?? initialHotel.strSupplierGUID,
+            strSupplierName: initialHotel.strSupplierName,
+        };
 
-            setSelectedHotel(initialHotel);
-            hydratedRef.current = true;
-        }
+        setSelectedHotel(normalizedHotel);
+
+        setFilters((prev) => ({
+            ...prev,
+            strFilterDestinationName: normalizedHotel.strSupplierName,
+        }));
+
+        hydratedRef.current = true;
     }, [initialHotel]);
 
     // useEffect(() => {
@@ -181,7 +209,6 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
             draftFilters,
             selectedHotel,
         };
-
 
         if (selectedHotel) {
             setIsNavigating(true);

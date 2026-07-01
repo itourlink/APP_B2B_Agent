@@ -103,7 +103,12 @@ const HotelListRowCard = ({ hotel }: Props) => {
                     </div>
 
                     <button
-                        onClick={() => handleSearch()}
+                        // onClick={() => handleSearch()}
+                        onClick={() =>
+                            router.replaceParams(paths.shop.hotel.detail, {
+                                item: hotel,
+                            })
+                        }
                         className="border rounded text-blue-600 px-3 py-1 cursor-pointer hover:bg-blue-50 transition-colors text-sm font-medium"
                     >
                         {t("viewDetails")}
