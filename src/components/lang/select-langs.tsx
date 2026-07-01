@@ -11,12 +11,12 @@ const fagsMock: Record<string, string> = {
 
 const listLangs = [
   {
-    label: "English",
+    label: "EN",
     value: "en",
     icon: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1ec-1f1e7.svg",
   },
   {
-    label: "Tiếng Việt",
+    label: "VI",
     value: "vi",
     icon: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fb-1f1f3.svg",
   },
@@ -101,7 +101,7 @@ export const SelectLangs = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute w-40 bg-white/20 backdrop-blur-md rounded-2xl right-0 top-[110%] overflow-hidden z-50 p-2 space-y-1 shadow-xl border border-[rgba(64,64,64,0.5)]"
+            className="absolute w-23 bg-white/20 backdrop-blur-md rounded-2xl right-0 top-[125%] overflow-hidden z-50 p-2 space-y-1 shadow-lg border border-[rgba(64,64,64,0.5)]"
           >
             {listLangs.map((lang) => (
               <div
