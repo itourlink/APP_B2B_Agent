@@ -94,13 +94,9 @@ const HotelDetail = () => {
   const { hotelData: hotelGetPriceData } = useListHotelGetPriceUID(filters);
   const defaultDates = useMemo(() => {
     const today = new Date();
-
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-
     return {
       start: today,
-      end: tomorrow,
+      end: today,
     };
   }, []);
 
