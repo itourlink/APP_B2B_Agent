@@ -11,25 +11,7 @@ import { useListCurrency } from "@/components/currency/useListCurrency";
 export const HotelCard = ({ hotel }: any) => {
     const { t } = useTranslate("hotel")
     const { selectedCurrency } = useListCurrency();
-    const company = new URLSearchParams(location.search).get("company");
-    const hotelSearchState =
-        new URLSearchParams(location.search).get("hotelSearchState");
-        
     const router = useRouter();
-
-    const handleSearch = () => {
-        router.pushQuery(
-            paths.shop.hotel.detail,
-            {
-                company,
-                hotelId: hotel.strSupplierGUID,
-                ...(hotelSearchState && { hotelSearchState }),
-            },
-            {
-                item: hotel,
-            }
-        );
-    };
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full group">
             <div className="relative h-44 overflow-hidden">
@@ -109,7 +91,11 @@ export const HotelCard = ({ hotel }: any) => {
                     </div>
 
                     <button
-                        onClick={() => handleSearch()}
+                        onClick={() =>
+                            router.replaceParams(paths.shop.hotel.detail, {
+                                item: hotel,
+                            })
+                        }
                         className="cursor-pointer text-[#2563eb] border border-blue-200 hover:border-[#2563eb] hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                     >
                         {t("viewDetail")}
