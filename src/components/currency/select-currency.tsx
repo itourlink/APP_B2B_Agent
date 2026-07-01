@@ -73,13 +73,16 @@ export const SelectCurrency = ({
           min-w-[110px]
         "
       >
-        <span className="text-base">
-          {selected?.symbol}
-        </span>
+        <div className="">
 
-        <span className="text-sm font-medium">
-          {selected?.label}
-        </span>
+          <span className="text-base">
+            {selected?.symbol}
+          </span>
+
+          <span className="text-sm font-medium">
+            {selected?.label}
+          </span>
+        </div>
 
         <ChevronUp
           size={14}
@@ -102,7 +105,7 @@ export const SelectCurrency = ({
               top-[calc(100%+8px)]
               right-0
               z-50
-              w-40
+              w-28
               max-h-64
               overflow-y-auto
               rounded-xl
@@ -128,7 +131,7 @@ export const SelectCurrency = ({
                   "bg-[#4a6fa5] text-white"
                 )}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <span>{item.symbol}</span>
                   <span>{item.label}</span>
                 </div>
