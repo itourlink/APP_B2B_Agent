@@ -955,7 +955,7 @@ const HotelDetail = () => {
 
               </div>
 
-              <button className="shrink-0 bg-[#2566b0] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+              <button className="cursor-pointer shrink-0 bg-[#2566b0] hover:bg-[#003566] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
                 {t("message")}
               </button>
 
