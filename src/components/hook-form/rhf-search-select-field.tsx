@@ -1,3 +1,4 @@
+import { useTranslate } from "@/locales";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, CircleX } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
@@ -40,6 +41,7 @@ export function RHFSearchSelect({
     placeholder = "-- Chọn --",
     disabled = false,
 }: Props) {
+    const { t } = useTranslate("hook-form")
     const { control, clearErrors } = useFormContext();
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -156,7 +158,7 @@ export function RHFSearchSelect({
                                             autoFocus
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
-                                            placeholder="Tìm kiếm..."
+                                            placeholder={t("searchPlaceholder")}
                                             className="w-full px-3 py-2 text-sm border rounded-md outline-none"
                                         />
                                     </div>
