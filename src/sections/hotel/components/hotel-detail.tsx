@@ -35,6 +35,7 @@ import { useTranslate } from "@/locales";
 import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import HotelSearch from "./hotel-search";
+import { isValidValue } from "@/utils/utilts";
 
 type DateRange = {
   start: Date | null;
@@ -339,7 +340,7 @@ const HotelDetail = () => {
             {price?.strMealIncludedTypeName && (
               <div className="text-xs text-gray-500 flex items-center justify-start gap-1 mt-1   text-left">
                 <Utensils size={14} className="text-emerald-500" />
-                {price.strMealIncludedTypeName}
+                {isValidValue(price.strMealIncludedTypeName)}
               </div>
             )}
           </div>
