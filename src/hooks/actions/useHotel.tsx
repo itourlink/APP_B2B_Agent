@@ -10,7 +10,7 @@ const fetchListHotel = async (body: any) => {
     return res.data;
 };
 
-export const e = (filters?: {
+export const useListHotel = (filters?: {
     page?: number;
     pageSize?: number;
     strSupplierGUID?: string | null;
