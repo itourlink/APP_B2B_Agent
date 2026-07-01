@@ -209,11 +209,6 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
             selectedHotel,
         };
 
-        console.log("🧠 RAW FILTERS:", filters);
-        console.log("📅 START:", filters.start);
-        console.log("📅 END:", filters.end);
-
-
         const hotel =
             selectedHotel &&
                 filters.strFilterDestinationName.trim()
