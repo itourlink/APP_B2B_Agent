@@ -50,7 +50,6 @@ const SearchView = () => {
 
   const handlePageSizeChange = (value: number) => {
     setPageSize(value);
-
     setPageSeries(1);
     setPageTour(1);
     setPageHotel(1);

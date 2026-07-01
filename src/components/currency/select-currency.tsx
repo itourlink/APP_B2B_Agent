@@ -73,7 +73,7 @@ export const SelectCurrency = ({
           min-w-[110px]
         "
       >
-        <div className="">
+        <div className="flex items-center gap-1">
 
           <span className="text-base">
             {selected?.symbol}
