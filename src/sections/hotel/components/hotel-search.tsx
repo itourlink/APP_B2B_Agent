@@ -202,70 +202,77 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
     //     } catch { }
     // }, [location.search]);
 
-    const handleSearch = () => {
+ const handleSearch = () => {
+    const snapshot = {
+        filters,
+        draftFilters,
+        selectedHotel,
+    };
 
-        const snapshot = {
-            filters,
-            draftFilters,
-            selectedHotel,
-        };
+    const hotel =
+        selectedHotel &&
+        filters.strFilterDestinationName.trim()
+            ? selectedHotel
+            : null;
 
-        if (selectedHotel) {
-            setIsNavigating(true);
-            onSearch?.({
-                start: filters.start,
-                end: filters.end,
-            });
+    if (hotel) {
+        setIsNavigating(true);
 
-            const params = {
-                company,
-                hotelId: selectedHotel.strSupplierGUID,
-                checkIn: filters.start?.toISOString(),
-                checkOut: filters.end?.toISOString(),
-                rooms: filters.guestRoom.rooms,
-                hotelSearchState: JSON.stringify(snapshot),
-            };
+        onSearch?.({
+            start: filters.start,
+            end: filters.end,
+        });
 
-            router.pushQuery(
-                paths.shop.hotel.detail,
-                params,
-                {
-                    item: selectedHotel,
-                }
-            );
-
-            setIsNavigating(false);
-
-            return;
-        }
-        // ✅ SEARCH DESTINATION
-        const payload = {
-            ...draftFilters,
-
-            intNoOfRooms:
-                filters.guestRoom?.rooms || 1,
-
-            dtmFilterCheckIn: filters.start,
-
-            dtmFilterCheckOut: filters.end,
-
-            strFilterDestinationName:
-                filters.strFilterDestinationName || null,
+        const params = {
+            company,
+            hotelId: hotel.strSupplierGUID,
+            checkIn: filters.start?.toISOString(),
+            checkOut: filters.end?.toISOString(),
+            rooms: filters.guestRoom.rooms,
+            hotelSearchState: JSON.stringify(snapshot),
         };
 
         router.pushQuery(
-            paths.shop.search,
+            paths.shop.hotel.detail,
+            params,
             {
-                company,
-                type: "hotel",
-                hotelSearchState: JSON.stringify(snapshot),
-            },
-            {
-                isSearchHotel: payload,
-                mode: filters.series ? "quick" : "list",
+                item: hotel,
             }
         );
+
+        setIsNavigating(false);
+
+        return;
+    }
+
+    // ✅ SEARCH DESTINATION
+    const payload = {
+        ...draftFilters,
+
+        intNoOfRooms:
+            filters.guestRoom?.rooms || 1,
+
+        dtmFilterCheckIn: filters.start,
+
+        dtmFilterCheckOut: filters.end,
+
+        strFilterDestinationName:
+            filters.strFilterDestinationName || null,
     };
+
+    router.pushQuery(
+        paths.shop.search,
+        {
+            company,
+            type: "hotel",
+            hotelSearchState: JSON.stringify(snapshot),
+        },
+        {
+            isSearchHotel: payload,
+            mode: filters.series ? "quick" : "list",
+        }
+    );
+};
 
     return (
         <>
