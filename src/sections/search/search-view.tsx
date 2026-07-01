@@ -375,7 +375,7 @@ const SearchView = () => {
         )}
 
         {searchType === "hotel" && (
-          <HotelSearch initialHotel={hotelFilter}/>
+          <HotelSearch initialHotel={hotelFilter} />
         )}
       </div>
 
@@ -606,6 +606,7 @@ const SearchView = () => {
                               <HotelCard
                                 key={item?.strSupplierGUID}
                                 hotel={item}
+                                hotelLoading={hotelLoadingState}
                               />
                             ))}
                           </div>
@@ -623,6 +624,7 @@ const SearchView = () => {
                               <HotelListRowCard
                                 key={item?.strSupplierGUID}
                                 hotel={item}
+                                hotelLoading={hotelLoadingState}
                               />
                             ))}
                           </div>

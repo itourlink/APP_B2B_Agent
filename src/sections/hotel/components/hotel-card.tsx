@@ -8,7 +8,7 @@ import { Building2, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from "@/components/currency/useListCurrency";
 
-export const HotelCard = ({ hotel }: any) => {
+export const HotelCard = ({ hotel, hotelLoading }: any) => {
     const { t } = useTranslate("hotel")
     const { selectedCurrency } = useListCurrency();
     const router = useRouter();
@@ -81,11 +81,15 @@ export const HotelCard = ({ hotel }: any) => {
                         <p className="text-[11px] text-gray-500 mb-0.5">
                             {t("priceFrom")}
                         </p>
-
+                        
                         <p className="text-[#2563eb] font-bold text-xl leading-none">
-                            {fCurrency(
-                                hotel?.dblPriceFrom,
-                                selectedCurrency?.label
+                            {hotelLoading ? (
+                                <span className="inline-block h-6 w-24 rounded bg-gray-200 animate-pulse" />
+                            ) : (
+                                fCurrency(
+                                    hotel?.dblPriceFrom,
+                                    selectedCurrency?.label
+                                )
                             )}
                         </p>
                     </div>

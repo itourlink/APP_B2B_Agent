@@ -87,7 +87,7 @@ export const useListHotel = (filters?: {
         companyData: listDataCompany,
         totalRecords,
         totalPages,
-        hotelLoading: query.isLoading,
+        hotelLoading: query.isFetching,
         hotelError: query.isError,
     };
 };
@@ -354,7 +354,7 @@ export const useSearchHotel = (filters?: {
     const totalPages = pageSize ? Math.ceil(totalRecords / pageSize) : 0;
     return {
         searchData: listData,
-        searchLoading: query.isLoading,
+        searchLoading: query.isFetching,
         searchError: query.isError,
         totalRecords,
         totalPages,

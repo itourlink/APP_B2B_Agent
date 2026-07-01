@@ -9,10 +9,11 @@ import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 
 type Props = {
-    hotel: any;
+    hotel?: any;
+    hotelLoading?: boolean;
 };
 
-const HotelListRowCard = ({ hotel }: Props) => {
+const HotelListRowCard = ({ hotel, hotelLoading }: Props) => {
     const { selectedCurrency } = useListCurrency();
     const router = useRouter();
     const { t } = useTranslate("search");
@@ -78,10 +79,13 @@ const HotelListRowCard = ({ hotel }: Props) => {
 
                 <div className="flex items-center justify-between mt-4">
                     <div className="text-blue-600 font-bold text-xl">
-
-                        {fCurrency(
-                            hotel?.dblPriceFrom,
-                            selectedCurrency?.label
+                        {hotelLoading ? (
+                            <div className="h-7 w-24 rounded bg-gray-200 animate-pulse" />
+                        ) : (
+                            fCurrency(
+                                hotel?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )
                         )}
                     </div>
 

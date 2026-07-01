@@ -96,6 +96,7 @@ const HotelList = () => {
                             key={isValidValue(hotel?.strSupplierGUID)}
                             hotel={hotel}
                             viewMode={viewMode}
+                            hotelLoading={hotelLoading}
                         />
                     ))}
                 </div>
@@ -148,9 +149,10 @@ const HotelError = () => {
 type HotelItemProps = {
     hotel: any;
     viewMode: "grid" | "list";
+    hotelLoading: boolean
 };
 
-const HotelItem = ({ hotel, viewMode }: HotelItemProps) => {
+const HotelItem = ({ hotel, viewMode, hotelLoading }: HotelItemProps) => {
     const router = useRouter();
     const { t } = useTranslation("hotel");
     const { selectedCurrency } = useListCurrency();
@@ -310,10 +312,13 @@ const HotelItem = ({ hotel, viewMode }: HotelItemProps) => {
                                     : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-
-                            {fCurrency(
-                                hotel?.dblPriceFrom,
-                                selectedCurrency?.label
+                            {hotelLoading ? (
+                                <div className="h-6 w-24 rounded bg-gray-200 animate-pulse" />
+                            ) : (
+                                fCurrency(
+                                    hotel?.dblPriceFrom,
+                                    selectedCurrency?.label
+                                )
                             )}
                         </p>
                     </div>
