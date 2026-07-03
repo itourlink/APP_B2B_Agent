@@ -106,5 +106,6 @@
     "redirectingPage": "Đang chuyển trang...",
     "night": "Đêm",
     "selectGitRoomNoticePrefix": "Bạn hãy chọn ",
-    "selectGitRoomNoticeSuffix": " phòng trở lên để được giá GIT."
+    "selectGitRoomNoticeSuffix": " phòng trở lên để được giá GIT.",
+    "includedExclusions": "Bao gồm / Không bao gồm"
 }

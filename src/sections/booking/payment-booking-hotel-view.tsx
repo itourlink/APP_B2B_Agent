@@ -1,4 +1,4 @@
-﻿import { useUser } from '@/hooks/actions/useAuth';
+import { useUser } from '@/hooks/actions/useAuth';
 import { addBookingForHotel, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListSupplierPaymentTerm } from '@/hooks/actions/useBooking';
 import { useListCity } from '@/hooks/actions/useCity';
 import { useListCompanyOwner } from '@/hooks/actions/useCompanyOwner';
@@ -19,6 +19,7 @@ import { useListCurrency } from '@/components/currency/useListCurrency';
 import { twMerge } from "tailwind-merge";
 import { getFlagClass } from '@/utils/utilts';
 import i18next from 'i18next';
+import { z } from "zod";
 
 const PaymentBookingHotelView: React.FC = () => {
     const { selectedCurrency } = useListCurrency();
@@ -75,6 +76,7 @@ const PaymentBookingHotelView: React.FC = () => {
             strPassengerPhone: "",
             strPassengerRemark: "",
         });
+    const [travellerErrors, setTravellerErrors] = useState<any>({});
 
     // --- STATE FOR FORMS ---
     const [paymentMethod, setPaymentMethod] = useState('Bank transfer');
@@ -239,6 +241,35 @@ const PaymentBookingHotelView: React.FC = () => {
     ]);
 
     const handleBooking = async () => {
+        if (isShowTravellerForm) {
+            const travellerSchema = z.object({
+                intSaluteID: z.string().min(1, t("pleaseSelectTitle") || "Vui lòng chọn danh xưng"),
+                strPassengerFirstName: z.string().trim().min(1, t("pleaseEnterFirstName") || "Vui lòng nhập tên"),
+                strPassengerLastName: z.string().trim().min(1, t("pleaseEnterLastName") || "Vui lòng nhập họ và tên đệm"),
+                strCountryGUID: z.string().min(1, t("pleaseSelectCountry") || "Vui lòng chọn quốc tịch"),
+                dtmPassengerBirthday: z.string().min(1, t("pleaseEnterDateOfBirth") || "Vui lòng chọn ngày sinh"),
+                strPassengerEmail: z.string()
+                    .trim()
+                    .min(1, t("pleaseEnterEmail") || "Vui lòng nhập email")
+                    .email(t("pleaseEnterValidEmail") || "Email không hợp lệ"),
+                strPassengerPhone: z.string().trim().min(1, t("pleaseEnterPhoneNumber") || "Vui lòng nhập số điện thoại"),
+            });
+
+            const validation = travellerSchema.safeParse(travellerForm);
+
+            if (!validation.success) {
+                const newErrors: any = {};
+                validation.error.issues.forEach((issue) => {
+                    newErrors[issue.path[0]] = issue.message;
+                });
+                setTravellerErrors(newErrors);
+
+                const firstError = validation.error.issues[0]?.message;
+                showToast("error", firstError);
+                return;
+            }
+            setTravellerErrors({});
+        }
 
         // const bookingTab = window.open("http://localhost:5173/service?activeTab=loading", "_blank");
         const bookingTab = window.open("https://myagentmember.itourlink.com/service?activeTab=loading", "_blank");
@@ -563,7 +594,7 @@ const PaymentBookingHotelView: React.FC = () => {
                     {isShowTravellerForm && (
                         <div className="mt-4 p-4 border-t border-gray-200">
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                                {/* Danh xÆ°ng */}
+                                {/* Danh xưng */}
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">{t("title")} <span className="text-red-500">*</span></label>
                                     <select
@@ -571,16 +602,22 @@ const PaymentBookingHotelView: React.FC = () => {
                                         value={
                                             travellerForm.intSaluteID
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     intSaluteID:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-white"
+                                            );
+                                            if (travellerErrors.intSaluteID) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, intSaluteID: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 outline-none focus:border-blue-500 bg-white",
+                                            travellerErrors.intSaluteID ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                     >
                                         {TITLES_OPTIONS.map((option) => (
                                             <option
@@ -591,9 +628,19 @@ const PaymentBookingHotelView: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
+                                    {travellerErrors.intSaluteID && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.intSaluteID}</span>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* TÃªn */}
+                                {/* Tên */}
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">{t("firstName")} <span className="text-red-500">*</span></label>
                                     <input
@@ -602,18 +649,34 @@ const PaymentBookingHotelView: React.FC = () => {
                                         value={
                                             travellerForm.strPassengerFirstName
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     strPassengerFirstName:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
+                                            );
+                                            if (travellerErrors.strPassengerFirstName) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, strPassengerFirstName: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
+                                            travellerErrors.strPassengerFirstName ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                         placeholder={t("enterFirstName")}
                                     />
+                                    {travellerErrors.strPassengerFirstName && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.strPassengerFirstName}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Họ và đệm */}
@@ -625,18 +688,34 @@ const PaymentBookingHotelView: React.FC = () => {
                                         value={
                                             travellerForm.strPassengerLastName
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     strPassengerLastName:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
+                                            );
+                                            if (travellerErrors.strPassengerLastName) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, strPassengerLastName: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
+                                            travellerErrors.strPassengerLastName ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                         placeholder={t("enterLastName")}
                                     />
+                                    {travellerErrors.strPassengerLastName && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.strPassengerLastName}</span>
+                                        </div>
+                                    )}
 
                                 </div>
 
@@ -654,7 +733,10 @@ const PaymentBookingHotelView: React.FC = () => {
                                     {/* Select box */}
                                     <div
                                         onClick={() => setIsOpenCountry(!isOpenCountry)}
-                                        className="w-full border border-gray-300 rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between"
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between",
+                                            travellerErrors.strCountryGUID ? "border-red-500" : "border-gray-300"
+                                        )}
                                     >
                                         <div className="flex items-center gap-2">
                                             {selectedCountry?.flag && (
@@ -729,6 +811,16 @@ const PaymentBookingHotelView: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
+                                    {travellerErrors.strCountryGUID && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.strCountryGUID}</span>
+                                        </div>
+                                    )}
                                 </div>
                                 {/* Độ tuổi */}
                                 <div>
@@ -744,70 +836,118 @@ const PaymentBookingHotelView: React.FC = () => {
 
                                 {/* Ngày sinh */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">{t("dateOfBirth")}</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("dateOfBirth")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="date"
                                         name="dtmPassengerBirthday"
                                         value={
                                             travellerForm.dtmPassengerBirthday
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     dtmPassengerBirthday:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="cursor-pointer w-full border border-gray-300 rounded px-3 py-1.5 outline-none focus:border-blue-500"
+                                            );
+                                            if (travellerErrors.dtmPassengerBirthday) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, dtmPassengerBirthday: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "cursor-pointer w-full border rounded px-3 py-1.5 outline-none focus:border-blue-500",
+                                            travellerErrors.dtmPassengerBirthday ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                     />
+                                    {travellerErrors.dtmPassengerBirthday && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.dtmPassengerBirthday}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Email */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">{t("email")}</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("email")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="email"
                                         name="strPassengerEmail"
                                         value={
                                             travellerForm.strPassengerEmail
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     strPassengerEmail:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
+                                            );
+                                            if (travellerErrors.strPassengerEmail) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, strPassengerEmail: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
+                                            travellerErrors.strPassengerEmail ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                         placeholder="example@gmail.com"
                                     />
+                                    {travellerErrors.strPassengerEmail && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.strPassengerEmail}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Số điện thoại */}
                                 <div>
-                                    <label className="block text-gray-700 font-medium mb-1">{t("phoneNumber")}</label>
+                                    <label className="block text-gray-700 font-medium mb-1">{t("phoneNumber")} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         name="strPassengerPhone"
                                         value={
                                             travellerForm.strPassengerPhone
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setTravellerForm(
                                                 (prev: any) => ({
                                                     ...prev,
                                                     strPassengerPhone:
                                                         e.target.value,
                                                 })
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
+                                            );
+                                            if (travellerErrors.strPassengerPhone) {
+                                                setTravellerErrors((prev: any) => ({ ...prev, strPassengerPhone: "" }));
+                                            }
+                                        }}
+                                        className={twMerge(
+                                            "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
+                                            travellerErrors.strPassengerPhone ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
+                                        )}
                                         placeholder={t("enterPhoneNumber")}
                                     />
+                                    {travellerErrors.strPassengerPhone && (
+                                        <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            <span>{travellerErrors.strPassengerPhone}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -922,7 +1062,7 @@ const PaymentBookingHotelView: React.FC = () => {
 
                                             <td className="py-3 px-3 align-top font-medium">
 
-                                                    {/* giá trị deposit tính toán từng hàng trong table */}
+                                                {/* Giá trị deposit tính toán từng hàng trong table */}
 
                                                 {fCurrency(
                                                     Number(item?.total || 0) * (totalPercentage / 100),
@@ -1088,71 +1228,116 @@ const PaymentBookingHotelView: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Chá»‰ hiá»‡n info bank khi Bank transfer */}
+                        {/* Chỉ hiện thông tin ngân hàng khi thanh toán chuyển khoản */}
                         {paymentMethod === "Bank transfer" && (
-                            <div className="flex flex-col items-center text-center text-xs space-y-1.5 py-6 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 mt-4">
-                                <p>
-                                    <span className="font-medium text-gray-600">
-                                        {t("accountName")}
-                                    </span>{" "}
-                                    <span className="font-semibold text-gray-800">
-                                        {bankInfo.accountName}
-                                    </span>
-                                </p>
-
-                                <p>
-                                    <span className="font-medium text-gray-600">
-                                        {t("accountNumber")}
-                                    </span>{" "}
-                                    <span className="font-semibold text-gray-800">
-                                        {bankInfo.accountNumber}
-                                    </span>
-                                </p>
-
-                                <p>
-                                    <span className="font-medium text-gray-600">
-                                        {t("bankName")}
-                                    </span>{" "}
-                                    <span className="font-semibold text-gray-800">
-                                        {bankInfo.bankName}
-                                    </span>
-                                </p>
-
-                                <p>
-                                    <span className="font-medium text-gray-600">
-                                        {t("bankAddress")}
-                                    </span>{" "}
-                                    <span className="text-gray-700">
-                                        {bankInfo.bankAddress}
-                                    </span>
-                                </p>
-
-                                <p>
-                                    <span className="font-medium text-gray-600">
-                                        {t("swiftCode")}
-                                    </span>{" "}
-                                    <span className="font-semibold text-gray-800">
-                                        {bankInfo.swiftCode}
-                                    </span>
-                                </p>
-
-                                <div className="pt-4 flex flex-col items-center">
-                                    <div className="w-32 h-32 bg-white border border-gray-200 p-2 rounded flex items-center justify-center shadow-inner">
-                                        <img
-                                            src={bankInfo.qrPlaceholder}
-                                            alt={t("qrCodePayment")}
-                                            className="w-full h-full object-contain"
-                                        />
+                            <div className="grid grid-cols-1 md:grid-cols-12 border border-gray-200 rounded-xl overflow-hidden mt-4 bg-white shadow-sm">
+                                {/* Cột bên trái: Thông tin tài khoản */}
+                                <div className="md:col-span-6 p-6 space-y-4 text-xs bg-white">
+                                    <div className="mb-4">
+                                        <h3 className="text-lg font-semibold text-gray-900">{t("bankTransferInfo") || "Thông tin chuyển khoản"}</h3>
+                                        <p className="text-xs text-gray-500 mt-0.5">{t("bankTransferDesc") || "Vui lòng sử dụng thông tin bên dưới để thực hiện giao dịch."}</p>
                                     </div>
 
-                                    <span className="text-[10px] text-gray-400 mt-1">
-                                        {t("qrCode")}
-                                    </span>
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{t("accountName") || "Tên tài khoản"}</span>
+                                            <span className="text-base font-bold text-gray-900 uppercase leading-snug">{bankInfo.accountName}</span>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{t("accountNumber") || "Số tài khoản"}</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-lg font-bold text-blue-600 tracking-wider">{bankInfo.accountNumber}</span>
+                                                <button
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(bankInfo.accountNumber);
+                                                        showToast("success", t("copied") || "Đã sao chép vào bộ nhớ tạm");
+                                                    }}
+                                                    className="p-1 hover:bg-gray-100 rounded text-blue-600 transition-colors"
+                                                    title={t("copy") || "Sao chép"}
+                                                >
+                                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{t("bankName") || "Ngân hàng"}</span>
+                                            <span className="text-sm font-semibold text-gray-900 leading-snug">{bankInfo.bankName}</span>
+                                        </div>
+
+                                        {bankInfo.bankAddress && (
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{t("bankAddress") || "Địa chỉ ngân hàng"}</span>
+                                                <span className="text-sm text-gray-700 leading-relaxed">{bankInfo.bankAddress}</span>
+                                            </div>
+                                        )}
+
+                                        {bankInfo.swiftCode && (
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{t("swiftCode") || "Mã SWIFT"}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-gray-900 uppercase">{bankInfo.swiftCode}</span>
+                                                    <button
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(bankInfo.swiftCode);
+                                                            showToast("success", t("copied") || "Đã sao chép vào bộ nhớ tạm");
+                                                        }}
+                                                        className="p-1 hover:bg-gray-100 rounded text-blue-600 transition-colors"
+                                                        title={t("copy") || "Sao chép"}
+                                                    >
+                                                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Cột bên phải: Quét mã QR */}
+                                <div className="md:col-span-6 bg-gray-50 p-6 flex flex-col items-center justify-center text-center border-t md:border-t-0 md:border-l border-gray-200">
+                                    <div className="mb-4">
+                                        <h3 className="text-sm font-semibold text-gray-900">{t("quickPayment") || "Thanh toán nhanh"}</h3>
+                                        <p className="text-xs text-gray-500 mt-0.5">{t("scanQrDesc") || "Quét mã QR để thanh toán."}</p>
+                                    </div>
+
+                                    <div className="relative group mb-4">
+                                        <div className="p-3 bg-white rounded-xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md">
+                                            <div className="w-48 h-48 bg-slate-50 flex items-center justify-center overflow-hidden rounded-lg">
+                                                <img
+                                                    className="w-full h-full object-contain mix-blend-multiply"
+                                                    src={bankInfo.qrPlaceholder}
+                                                    alt={t("qrCodePayment")}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a
+                                        href={bankInfo.qrPlaceholder}
+                                        download="qr-code-payment.png"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="w-full max-w-[200px] py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                                    >
+                                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        {t("downloadQR") || "Tải mã QR về máy"}
+                                    </a>
                                 </div>
                             </div>
                         )}
 
-                        {/* Ã” nháº­p ghi chÃº */}
+                        {/* Ô nhập ghi chú */}
                         <div className="pt-2 text-xs">
                             <textarea
                                 value={paidRemark}

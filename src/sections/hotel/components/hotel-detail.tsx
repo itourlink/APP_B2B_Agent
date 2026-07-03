@@ -11,8 +11,6 @@ import { getUrlImage } from "@/utils/format-image";
 import {
   Star,
   MapPin,
-  CheckCircle2,
-  XCircle,
   Info,
   X,
   Utensils,
@@ -21,6 +19,8 @@ import {
   ShoppingCart,
   Home,
   MessageSquare,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -89,6 +89,7 @@ const HotelDetail = () => {
   const [openBooking, setOpenBooking] = useState(false);
   const [bookingCartData, setBookingCartData] = useState<any | null>(null);
   const [openBookingCart, setOpenBookingCart] = useState(false);
+  const [isPolicyOpen, setIsPolicyOpen] = useState(true);
   const { hotelData, hotelLoading, hotelError } = useListHotel(filters);
   const { ibgData, ibgLoading, ibgError } = useListItemByAgent(filters);
   const { pplfcData } = useListPriceListForCompany(filters2);
@@ -122,6 +123,26 @@ const HotelDetail = () => {
 
 
   const hotel = hotelData?.[0] ?? {};
+
+  const includedList = useMemo(() => {
+    return typeof hotel?.strIncluded === "string"
+      ? hotel.strIncluded
+          .replace(/<\/p>/g, "")
+          .split("<p>")
+          .filter(Boolean)
+          .map((i: any) => i.replace(/^\s*-\s*/, ""))
+      : [];
+  }, [hotel?.strIncluded]);
+
+  const exclusionsList = useMemo(() => {
+    return typeof hotel?.strExcluded === "string"
+      ? hotel.strExcluded
+          .replace(/<\/p>/g, "")
+          .split("<p>")
+          .filter(Boolean)
+          .map((i: any) => i.replace(/^\s*-\s*/, ""))
+      : [];
+  }, [hotel?.strExcluded]);
 
   const companyInfoHotel = hotelGetPriceData?.[1]?.[0]
   const strPriceListGUID = pplfcData?.strPriceListGUID;
@@ -984,24 +1005,49 @@ const HotelDetail = () => {
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6">
-            <h3 className="flex items-center gap-2 font-bold text-emerald-600 mb-3">
-              <CheckCircle2 size={18} />
-              {t("included")}
-            </h3>
+        {/* Bao gồm / Không bao gồm */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <button
+            onClick={() => setIsPolicyOpen(!isPolicyOpen)}
+            className="w-full flex items-center justify-between font-bold text-slate-900 text-lg mb-3 focus:outline-none"
+          >
+            <span className="flex items-center gap-2">
+              {t("includedExclusions") || "Bao gồm / Không bao gồm"}
+            </span>
+            {isPolicyOpen ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
+          </button>
 
-            <p className="text-sm text-slate-600">{t("noData")}</p>
-          </div>
+          {isPolicyOpen && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-slate-100">
+              {/* Cột Bao gồm */}
+              <div>
+                <h4 className="font-bold text-slate-900 mb-3">{t("included") || "Bao gồm"}:</h4>
+                {includedList.length > 0 ? (
+                  <ul className="list-disc pl-5 space-y-2 text-sm text-slate-600">
+                    {includedList.map((itemStr: string, idx: number) => (
+                      <li key={idx} className="leading-relaxed">{itemStr}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-slate-400 italic">{t("noData") || "Chưa có thông tin"}</p>
+                )}
+              </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-6">
-            <h3 className="flex items-center gap-2 font-bold text-red-600 mb-3">
-              <XCircle size={18} />
-              {t("notIncluded")}
-            </h3>
-
-            <p className="text-sm text-slate-600">{t("noData")}</p>
-          </div>
+              {/* Cột Không bao gồm */}
+              <div>
+                <h4 className="font-bold text-slate-900 mb-3">{t("notIncluded") || "Không bao gồm"}:</h4>
+                {exclusionsList.length > 0 ? (
+                  <ul className="list-disc pl-5 space-y-2 text-sm text-slate-600">
+                    {exclusionsList.map((itemStr: string, idx: number) => (
+                      <li key={idx} className="leading-relaxed">{itemStr}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-slate-400 italic">{t("noData") || "Chưa có thông tin"}</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         {/*  FOC */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6">

@@ -1,4 +1,4 @@
-﻿{
+{
   "mainContact": "Main Contact",
   "fullName": "Full Name:",
   "email": "Email:",
@@ -69,5 +69,20 @@
   "saveChanges": "Save changes",
   "confirmBookTicket": "Confirm Booking",
   "bookingSessionNotFoundOrExpired": "Booking session does not exist or has expired",
-  "orderWillBeCancelledAfter": "If payment is not completed, the order will be automatically cancelled after"
+  "orderWillBeCancelledAfter": "If payment is not completed, the order will be automatically cancelled after",
+  "pleaseSelectTitle": "Please select title",
+  "pleaseEnterFirstName": "Please enter first name",
+  "pleaseEnterLastName": "Please enter last name",
+  "pleaseSelectCountry": "Please select nationality",
+  "pleaseEnterDateOfBirth": "Please select date of birth",
+  "pleaseEnterEmail": "Please enter email address",
+  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "pleaseEnterPhoneNumber": "Please enter phone number",
+  "copied": "Copied to clipboard",
+  "bankTransferInfo": "Bank Transfer Information",
+  "bankTransferDesc": "Please use the information below to perform the transaction.",
+  "quickPayment": "Quick Payment",
+  "scanQrDesc": "Scan QR code to pay.",
+  "downloadQR": "Download QR Code",
+  "copy": "Copy"
 }

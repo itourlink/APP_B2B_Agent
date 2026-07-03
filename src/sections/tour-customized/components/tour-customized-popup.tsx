@@ -81,6 +81,19 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
     const methods = useForm<SchemaType>({
         resolver: zodResolver(Schema) as any,
+        defaultValues: {
+            agentHost: "",
+            currency: "",
+            tourName: "",
+            dateStart: "",
+            nationality: "",
+            adults: 1,
+            category: [],
+            remark: "",
+            listLocation: "",
+            country: "",
+            city: "",
+        }
     });
 
 
