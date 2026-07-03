@@ -43,16 +43,16 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             nationality: z.string().min(1, t("selectNationality")),
 
             adults: z.coerce.number().min(1, t("minimumOneAdult")),
-            // children: z.coerce.number(),
+            children: z.coerce.number(),
 
             category: z.array(z.string()).min(1, t("selectCategory")),
 
             remark: z.string().optional(),
 
-            // sgl: z.coerce.number().min(0),
-            // dbl: z.coerce.number().min(0),
-            // twn: z.coerce.number().min(0),
-            // tpl: z.coerce.number().min(0),
+            sgl: z.coerce.number().optional(),
+            dbl: z.coerce.number().optional(),
+            twn: z.coerce.number().optional(),
+            tpl: z.coerce.number().optional(),
 
             listLocation: z.string().min(1, t("selectDestination")),
 
@@ -84,24 +84,24 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     });
 
 
-    const { setValue } = methods;
+    const { watch, setValue } = methods;
 
-    // const [sgl, dbl, twn, tpl] = watch([
-    //     "sgl",
-    //     "dbl",
-    //     "twn",
-    //     "tpl",
-    // ]);
+    const [sgl, dbl, twn, tpl] = watch([
+        "sgl",
+        "dbl",
+        "twn",
+        "tpl",
+    ]);
 
-    // useEffect(() => {
-    //     const total =
-    //         Number(sgl || 0) +
-    //         Number(dbl || 0) * 2 +
-    //         Number(twn || 0) * 2 +
-    //         Number(tpl || 0) * 3;
+    useEffect(() => {
+        const total =
+            Number(sgl || 0) +
+            Number(dbl || 0) * 2 +
+            Number(twn || 0) * 2 +
+            Number(tpl || 0) * 3;
 
-    //     setValue("adults", total);
-    // }, [sgl, dbl, twn, tpl, setValue]);
+        setValue("adults", total);
+    }, [sgl, dbl, twn, tpl, setValue]);
 
     const {
         handleSubmit,
@@ -152,12 +152,12 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             strCountryGUID: data.nationality,
 
             intAdult: data.adults,
-            // intNoOfChild: data.children,
+            intNoOfChild: data.children,
 
-            // intSGL: data.sgl,
-            // intDBL: data.dbl,
-            // intTWN: data.twn,
-            // intTPL: data.tpl,
+            intSGL: data.sgl,
+            intDBL: data.dbl,
+            intTWN: data.twn,
+            intTPL: data.tpl,
 
             dtmDateFrom: new Date(data.dateStart).toISOString(),
 
