@@ -167,6 +167,13 @@ const HotelItem = ({ hotel, viewMode, hotelLoading }: HotelItemProps) => {
             ? imgDefault
             : getUrlImage(isValidValue(hotel?.strSupplierImage));
 
+
+    const price = fCurrency(
+        hotel?.dblPriceFrom,
+        selectedCurrency?.label
+    );
+
+    const isPriceNA = price === "N/A";
     return (
         <div
             className={
@@ -307,18 +314,17 @@ const HotelItem = ({ hotel, viewMode, hotelLoading }: HotelItemProps) => {
 
                         <p
                             className={
-                                isGrid
-                                    ? "text-[#2563eb] font-bold text-xl leading-none"
-                                    : "text-[#2563eb] font-bold text-2xl leading-none"
+                                isPriceNA
+                                    ? "font-medium text-slate-400 italic"
+                                    : isGrid
+                                        ? "text-[#2563eb] font-bold text-xl leading-none"
+                                        : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
                             {hotelLoading ? (
                                 <div className="h-6 w-24 rounded bg-gray-200 animate-pulse" />
                             ) : (
-                                fCurrency(
-                                    hotel?.dblPriceFrom,
-                                    selectedCurrency?.label
-                                )
+                                price
                             )}
                         </p>
                     </div>

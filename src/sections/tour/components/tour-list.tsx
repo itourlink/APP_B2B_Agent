@@ -51,6 +51,7 @@ const TourList = () => {
         );
     }
 
+
     return (
         <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
             <div className="flex justify-between items-center mb-8">
@@ -169,7 +170,12 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { selectedCurrency } = useListCurrency()
 
     const isGrid = viewMode === "grid";
+    const price = fCurrency(
+        tour?.dblPriceFrom,
+        selectedCurrency?.label
+    );
 
+    const isPriceNA = price === "N/A";
     return (
         <div
             className={
@@ -293,17 +299,16 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
 
                         <p
                             className={
-                                isGrid
-                                    ? "text-[#2563eb] font-bold text-xl"
-                                    : "text-[#2563eb] font-bold text-2xl leading-none"
+                                isPriceNA
+                                    ? isGrid
+                                        ? "text-slate-400 italic font-medium text-xl"
+                                        : "text-slate-400 italic font-medium text-2xl leading-none"
+                                    : isGrid
+                                        ? "text-[#2563eb] font-bold text-xl"
+                                        : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-
-                            {fCurrency(
-                                tour?.dblPriceFrom,
-                                selectedCurrency?.label
-                            )}
-
+                            {price}
                         </p>
                     </div>
 

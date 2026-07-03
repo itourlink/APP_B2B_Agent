@@ -86,7 +86,7 @@ const TourDetail = () => {
   // const [showInclude, setShowInclude] = useState(true);
   // const [showExclude, setShowExclude] = useState(true);
   const [showInExClude, setShowInExClude] = useState(true);
-
+  const [showTerm, setShowTerm] = useState(true)
   // show all 
   const isAllOpen =
     tddData?.length > 0 &&
@@ -131,6 +131,7 @@ const TourDetail = () => {
 
   const remark =
     typeof ListData?.strRemark === "string" ? ListData.strRemark : "";
+  // price  
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
@@ -352,7 +353,7 @@ const TourDetail = () => {
               })}
           </div>
 
-          {/* INCLUDED / EXCLUDED */}
+
           {/* INCLUDE / EXCLUDE */}
           <div className="space-y-4">
             <button
@@ -428,25 +429,44 @@ const TourDetail = () => {
             )}
           </div>
 
-          {/* TERMS */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">
-              {t("termsAndConditions")}
-            </h2>
 
-            {tdLoading ? (
-              <SkeletonBlock />
-            ) : tdError ? (
-              <ErrorBlock />
-            ) : ListData?.strTermAndCondition ? (
-              <div
-                className="text-sm leading-7"
-                dangerouslySetInnerHTML={{
-                  __html: isValidValue(ListData?.strTermAndCondition),
-                }}
-              />
-            ) : (
-              <span className="text-sm">{t("noData")}</span>
+          {/* TERMS */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setShowTerm((prev) => !prev)}
+              className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+            >
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("termsAndConditions")}
+              </h2>
+
+              {showTerm ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+
+            {showTerm && (
+              <>
+                {tdLoading ? (
+                  <SkeletonBlock />
+                ) : tdError ? (
+                  <ErrorBlock />
+                ) : ListData?.strTermAndCondition ? (
+                  <div
+                    className="text-sm leading-7"
+                    dangerouslySetInnerHTML={{
+                      __html: isValidValue(ListData?.strTermAndCondition),
+                    }}
+                  />
+                ) : (
+                  <span className="text-sm text-slate-500">
+                    {t("noData")}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
