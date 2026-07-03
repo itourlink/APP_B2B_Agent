@@ -180,9 +180,10 @@ const SearchView = () => {
 
         ...hotelParams,
 
-        strFilterSupplierName: null,
-        // hotelFilter?.strFilterSupplierName ||
-        // hotelParams?.strFilterDestinationName,
+        strFilterSupplierName:
+          hotelFilter?.strFilterSupplierName ||
+          hotelParams?.strFilterDestinationName ||
+          null,
 
         strListEasiaCateID:
           hotelFilter?.strListEasiaCateID,
@@ -206,9 +207,10 @@ const SearchView = () => {
 
         ...hotelParams,
 
-        strFilterSupplierName: null,
-        // hotelFilter?.strFilterSupplierName ||
-        // hotelParams?.strFilterDestinationName,
+        strFilterSupplierName:
+          hotelFilter?.strFilterSupplierName ||
+          hotelParams?.strFilterDestinationName ||
+          null,
 
         strPriceFromRange:
           hotelFilter?.strPriceFromRange,
