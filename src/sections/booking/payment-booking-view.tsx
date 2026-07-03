@@ -137,10 +137,6 @@ const PaymentBookingView: React.FC = () => {
     };
   }, []);
 
-  const totalChildren = payloadItem?.strListChildAge
-    ? payloadItem.strListChildAge.split(",").filter(Boolean).lengths
-    : 0;
-
   const totalDeposit =
     Number(price?.dblTotalPrice || 0) *
     ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
@@ -221,6 +217,11 @@ const PaymentBookingView: React.FC = () => {
 
     setGlobalLoading(isPending);
   }, [isLoading, isVcPending, isListAGTMSPending, isDetailAGTMSPending]);
+
+  const hasPayterm =
+    paytermData &&
+    !Array.isArray(paytermData) &&
+    Object.keys(paytermData).length > 0;
 
   const handleBooking = async () => {
     if (isShowTravellerForm) {
@@ -1091,8 +1092,7 @@ const PaymentBookingView: React.FC = () => {
             </div>
 
             {/* Thông tin các đợt thanh toán và Alert */}
-            {paytermData?.length > 0 ? (
-
+            {hasPayterm ? (
               <div className="text-xs space-y-2 pt-2">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">
@@ -1126,7 +1126,9 @@ const PaymentBookingView: React.FC = () => {
                   </span>
                 </div>
               </div>
+
             ) : (
+
               <div className="text-xs space-y-2 pt-2">
                 <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                   {t("prepaymentNotDue")}
@@ -1147,7 +1149,6 @@ const PaymentBookingView: React.FC = () => {
                 </div>
               </div>
             )}
-
 
             {/* Khu vực Chọn Phương thức & Ngân hàng */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
