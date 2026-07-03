@@ -77,25 +77,35 @@ const TourDetail = () => {
 
   const { tddData, tddLoading, tddError } = useListTourDay(filters3);
 
-  const [openAll, setOpenAll] = useState(false);
+  // const [openAll, setOpenAll] = useState(false);
 
-  const [openDay, setOpenDay] = useState<number | null>(1);
+  // const [openDay, setOpenDay] = useState<number | null>(1);
 
-  const [showInclude, setShowInclude] = useState(true);
-  const [showExclude, setShowExclude] = useState(true);
+  const [openDays, setOpenDays] = useState<number[]>([]);
+
+  // const [showInclude, setShowInclude] = useState(true);
+  // const [showExclude, setShowExclude] = useState(true);
+  const [showInExClude, setShowInExClude] = useState(true);
+  const [showTerm, setShowTerm] = useState(true)
+  // show all 
+  const isAllOpen =
+    tddData?.length > 0 &&
+    tddData.every((item: any) => openDays.includes(item.No));
+
+
   const toggleDay = (day: number) => {
-    if (openAll) return;
-
-    setOpenDay((prev) => (prev === day ? null : day));
+    setOpenDays((prev) =>
+      prev.includes(day)
+        ? prev.filter((d) => d !== day)
+        : [...prev, day]
+    );
   };
 
   const toggleAllDays = () => {
-    setOpenAll((prev) => !prev);
-
-    if (!openAll) {
-      setOpenDay(null);
+    if (isAllOpen) {
+      setOpenDays([]);
     } else {
-      setOpenDay(1);
+      setOpenDays(tddData.map((item: any) => item.No));
     }
   };
 
@@ -104,23 +114,24 @@ const TourDetail = () => {
   const includedList =
     typeof ListData?.strIncluded === "string"
       ? ListData.strIncluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
     typeof ListData?.strExcluded === "string"
       ? ListData.strExcluded
-          .replace(/<\/p>/g, "")
-          .split("<p>")
-          .filter(Boolean)
-          .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .replace(/<\/p>/g, "")
+        .split("<p>")
+        .filter(Boolean)
+        .map((item: any) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const remark =
     typeof ListData?.strRemark === "string" ? ListData.strRemark : "";
+  // price  
 
   return (
     <section className="bg-slate-50 min-h-screen px-6 py-10 text-slate-700">
@@ -229,7 +240,7 @@ const TourDetail = () => {
               <img
                 src={
                   typeof ListData?.strTourImageUrl === "string" &&
-                  ListData.strTourImageUrl.trim()
+                    ListData.strTourImageUrl.trim()
                     ? getUrlImage(ListData.strTourImageUrl)
                     : imgDefault
                 }
@@ -258,9 +269,7 @@ const TourDetail = () => {
                   __html: remark,
                 }}
               />
-            ) : (
-              <span className="text-slate-500 text-sm">{t("noData")}</span>
-            )}
+            ) : null}
           </div>
 
           {/* ITINERARY */}
@@ -280,7 +289,7 @@ const TourDetail = () => {
                                     hover:underline
                                 "
               >
-                {openAll ? t("collapse") : t("showAll")}
+                {isAllOpen ? t("collapse") : t("showAll")}
               </button>
             </div>
 
@@ -295,7 +304,7 @@ const TourDetail = () => {
                   typeof tdd?.strDayContent === "string" &&
                   tdd?.strDayContent.trim() !== "";
 
-                const isOpen = openAll || openDay === tdd?.No;
+                const isOpen = openDays.includes(tdd?.No);
 
                 return (
                   <div
@@ -344,96 +353,120 @@ const TourDetail = () => {
               })}
           </div>
 
-          {/* INCLUDED / EXCLUDED */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <button
-                onClick={() => setShowInclude(!showInclude)}
-                className="mb-3 flex w-full  items-center justify-between font-bold"
-              >
-                <span>{t("included")}</span>
 
-                {showInclude ? (
-                  <ChevronUp className="h-5 w-5" />
-                ) : (
-                  <ChevronDown className="h-5 w-5" />
-                )}
-              </button>
+          {/* INCLUDE / EXCLUDE */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setShowInExClude((prev) => !prev)}
+              className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+            >
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("included")} / {t("excluded")}
+              </h2>
 
-              {showInclude && (
-                <div className="space-y-2">
-                  {includedList.map((item: any, i: any) => (
-                    <div key={i} className="flex items-start gap-2 text-sm">
-                      <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
+              {showInExClude ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
 
-                      <span
-                        className="leading-6"
-                        dangerouslySetInnerHTML={{
-                          __html: item,
-                        }}
-                      />
+            {showInExClude && (
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Bao gồm */}
+                <div>
+                  <h3 className="mb-3 font-bold">{t("included")}</h3>
+
+                  {includedList.length > 0 ? (
+                    <div className="space-y-2">
+                      {includedList.map((item: any, i: number) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
+
+                          <span
+                            className="leading-6"
+                            dangerouslySetInnerHTML={{
+                              __html: item,
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <span className="text-sm text-slate-500">
+                      {t("noData")}
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div>
+                {/* Không bao gồm */}
+                <div>
+                  <h3 className="mb-3 font-bold">{t("excluded")}</h3>
 
-              <button
-              onClick={() => setShowExclude(!showExclude)}
-              className="mb-3 flex w-full items-center  justify-between font-bold"
-              >
+                  {exclusionsList.length > 0 ? (
+                    <div className="space-y-2">
+                      {exclusionsList.map((item: any, i: number) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <XCircle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-red-500" />
 
-              <span>{t("excluded")}</span>
-              {showExclude ? (
-                <ChevronUp  className=" h-5 w-5"/>
-              ): (
-                <ChevronDown className="h-5 w-5 "/>
-              )}
-              </button>
-
-              {showExclude && (
-                   <div className="space-y-2">
-                {exclusionsList.map((item: any, i: any) => (
-                  <div key={i} className="flex items-start gap-2 text-sm">
-                    <XCircle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-red-500" />
-
-                    <span
-                      className="leading-6"
-                      dangerouslySetInnerHTML={{
-                        __html: item,
-                      }}
-                    />
-                  </div>
-                ))}
+                          <span
+                            className="leading-6"
+                            dangerouslySetInnerHTML={{
+                              __html: item,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-sm text-slate-500">
+                      {t("noData")}
+                    </span>
+                  )}
+                </div>
               </div>
-              )
-                
-              }
-             
-            </div>
+            )}
           </div>
 
-          {/* TERMS */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">
-              {t("termsAndConditions")}
-            </h2>
 
-            {tdLoading ? (
-              <SkeletonBlock />
-            ) : tdError ? (
-              <ErrorBlock />
-            ) : ListData?.strTermAndCondition ? (
-              <div
-                className="text-sm leading-7"
-                dangerouslySetInnerHTML={{
-                  __html: isValidValue(ListData?.strTermAndCondition),
-                }}
-              />
-            ) : (
-              <span className="text-sm">{t("noData")}</span>
+          {/* TERMS */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setShowTerm((prev) => !prev)}
+              className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+            >
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("termsAndConditions")}
+              </h2>
+
+              {showTerm ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+
+            {showTerm && (
+              <>
+                {tdLoading ? (
+                  <SkeletonBlock />
+                ) : tdError ? (
+                  <ErrorBlock />
+                ) : ListData?.strTermAndCondition ? (
+                  <div
+                    className="text-sm leading-7"
+                    dangerouslySetInnerHTML={{
+                      __html: isValidValue(ListData?.strTermAndCondition),
+                    }}
+                  />
+                ) : (
+                  <span className="text-sm text-slate-500">
+                    {t("noData")}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>

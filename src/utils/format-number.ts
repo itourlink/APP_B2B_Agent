@@ -153,10 +153,20 @@ export const fCurrency = (
   value: number | string | unknown,
   currencyCode?: string
 ) => {
-  const amount =
-    typeof value === "number" || typeof value === "string"
-      ? Number(value)
-      : 0;
+  // Không có dữ liệu
+  if (
+    value === null ||
+    value === undefined ||
+    (typeof value === "object" && value !== null)
+  ) {
+    return "N/A";
+  }
+  const amount = Number(value);
+  // Không convert được sang number
+  if (!Number.isFinite(amount)) {
+    return "N/A";
+  }
+
 
   const currency = currencyCode?.trim() || "USD";
 

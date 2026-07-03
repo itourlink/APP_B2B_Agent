@@ -43,7 +43,7 @@ export const useListTour = (filters?: { page?: number; pageSize?: number }) => {
         tourData: listData,
         totalRecords,
         totalPages,
-        tourLoading: query.isLoading ,
+        tourLoading: query.isLoading,
         tourError: query.isError,
     };
 };

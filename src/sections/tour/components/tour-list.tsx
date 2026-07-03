@@ -4,20 +4,33 @@ import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
+import Pagination from '@/components/pagination/pagination';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-    const [filters] = useState({
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
+    const [filters, setFilters] = useState({
         page: 1,
-        pageSize: 15,
+        pageSize: 10,
     });
-    const { tourData, tourLoading, tourError } = useListTour(filters);
+
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            page,
+            pageSize,
+        }));
+    }, [page, pageSize]);
+
+    const { tourData, totalRecords, totalPages, tourLoading, tourError } = useListTour(filters);
 
     if (tourLoading) {
         return (
@@ -50,6 +63,7 @@ const TourList = () => {
             </div>
         );
     }
+
 
     return (
         <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
@@ -113,6 +127,19 @@ const TourList = () => {
                 </div>
             )}
 
+            {!tourLoading && !tourError && tourData?.length > 0 && (
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages || 1}
+                        totalRecords={totalRecords}
+                        recordsPerPage={pageSize}
+                        onPageChange={setPage}
+                        onRecordsPerPageChange={setPageSize}
+                    />
+                </div>
+            )}
+
         </div>
     );
 };
@@ -169,7 +196,12 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { selectedCurrency } = useListCurrency()
 
     const isGrid = viewMode === "grid";
+    const price = fCurrency(
+        tour?.dblPriceFrom,
+        selectedCurrency?.label
+    );
 
+    const isPriceNA = price === "N/A";
     return (
         <div
             className={
@@ -293,17 +325,16 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
 
                         <p
                             className={
-                                isGrid
-                                    ? "text-[#2563eb] font-bold text-xl"
-                                    : "text-[#2563eb] font-bold text-2xl leading-none"
+                                isPriceNA
+                                    ? isGrid
+                                        ? "text-slate-400 italic font-medium text-xl"
+                                        : "text-slate-400 italic font-medium text-2xl leading-none"
+                                    : isGrid
+                                        ? "text-[#2563eb] font-bold text-xl"
+                                        : "text-[#2563eb] font-bold text-2xl leading-none"
                             }
                         >
-
-                            {fCurrency(
-                                tour?.dblPriceFrom,
-                                selectedCurrency?.label
-                            )}
-
+                            {price}
                         </p>
                     </div>
 
