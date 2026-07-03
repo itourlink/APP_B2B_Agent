@@ -32,6 +32,7 @@
   "selectedVoucher": "Đã chọn mã giảm giá ",
   "paymentFirstInstallment": "Thanh toán đợt 1",
   "paymentSecondInstallment": "Thanh toán đợt 2",
+  "payment": "Thanh toán",
   "paymentNotice": "Bạn sẽ thanh toán trước để hoàn thành quá trình book đặt",
   "paymentNoticePrefix": "Bạn sẽ thanh toán trước",
   "paymentNoticeSuffix": "để hoàn tất quá trình đặt chỗ",

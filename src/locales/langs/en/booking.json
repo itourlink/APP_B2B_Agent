@@ -32,6 +32,7 @@
   "selectedVoucher": "Selected voucher",
   "paymentFirstInstallment": "First Payment",
   "paymentSecondInstallment": "Second Payment",
+  "payment": "Payment",
   "paymentNotice": "You will make an advance payment before completing the booking process",
   "paymentNoticePrefix": "You will pay before",
   "paymentNoticeSuffix": "to complete the booking process",

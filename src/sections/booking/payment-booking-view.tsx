@@ -1091,45 +1091,63 @@ const PaymentBookingView: React.FC = () => {
             </div>
 
             {/* Thông tin các đợt thanh toán và Alert */}
-            <div className="text-xs space-y-2 pt-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-700">
-                  {t("paymentFirstInstallment")}
-                </span>
-                <span className="font-semibold text-[#1e5bb4] underline">
+            {paytermData?.length > 0 ? (
 
-                  {fCurrency(
-                    finalDeposit,
-                    selectedCurrency?.label
-                  )}
-                </span>
-              </div>
+              <div className="text-xs space-y-2 pt-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-700">
+                    {t("paymentFirstInstallment")}
+                  </span>
+                  <span className="font-semibold text-[#1e5bb4] underline">
 
-              {paytermData?.length > 0 ? (
+                    {fCurrency(
+                      finalDeposit,
+                      selectedCurrency?.label
+                    )}
+                  </span>
+                </div>
+
                 <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                   {t("paymentNoticePrefix")} {paymentDeadline}{" "}
                   {t("paymentNoticeSuffix")}
                 </div>
-              ) : (
+
+                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
+                  <span className="font-medium text-gray-700">
+                    {t("paymentSecondInstallment")}
+                  </span>
+
+                  <span className="font-semibold text-gray-800">
+
+                    {fCurrency(
+                      finalDebt,
+                      selectedCurrency?.label
+                    )}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs space-y-2 pt-2">
                 <div className="text-red-600 text-[11px] font-medium leading-relaxed">
                   {t("prepaymentNotDue")}
                 </div>
-              )}
 
-              <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-                <span className="font-medium text-gray-700">
-                  {t("paymentSecondInstallment")}
-                </span>
+                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
+                  <span className="font-medium text-gray-700">
+                    {t("payment")}
+                  </span>
 
-                <span className="font-semibold text-gray-800">
+                  <span className="font-semibold text-gray-800">
 
-                  {fCurrency(
-                    finalDebt,
-                    selectedCurrency?.label
-                  )}
-                </span>
+                    {fCurrency(
+                      finalDebt,
+                      selectedCurrency?.label
+                    )}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
+
 
             {/* Khu vực Chọn Phương thức & Ngân hàng */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
