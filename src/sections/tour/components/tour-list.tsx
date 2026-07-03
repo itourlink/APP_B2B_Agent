@@ -4,20 +4,33 @@ import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
+import Pagination from '@/components/pagination/pagination';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-    const [filters] = useState({
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
+    const [filters, setFilters] = useState({
         page: 1,
-        pageSize: 15,
+        pageSize: 10,
     });
-    const { tourData, tourLoading, tourError } = useListTour(filters);
+
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            page,
+            pageSize,
+        }));
+    }, [page, pageSize]);
+
+    const { tourData, totalRecords, totalPages, tourLoading, tourError } = useListTour(filters);
 
     if (tourLoading) {
         return (
@@ -111,6 +124,19 @@ const TourList = () => {
                             viewMode={viewMode}
                         />
                     ))}
+                </div>
+            )}
+
+            {!tourLoading && !tourError && tourData?.length > 0 && (
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages || 1}
+                        totalRecords={totalRecords}
+                        recordsPerPage={pageSize}
+                        onPageChange={setPage}
+                        onRecordsPerPageChange={setPageSize}
+                    />
                 </div>
             )}
 
