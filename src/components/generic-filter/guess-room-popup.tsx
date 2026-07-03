@@ -1,5 +1,5 @@
 import { useTranslate } from "@/locales";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ages = Array.from({ length: 17 }, (_, i) => i + 1);
@@ -102,6 +102,11 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
 
             return updated;
         });
+    };
+
+    const handleRemoveChild = (index: number) => {
+        setChildren((prev) => Math.max(0, prev - 1));
+        setChildAges((prev) => prev.filter((_, i) => i !== index));
     };
 
     const ROOM_CONFIG: { key: keyof RoomTypes; label: string }[] = [
@@ -263,6 +268,12 @@ const GuestRoomPopup = ({ isOpen, value, onDone, isRoomDetail = false }: Props) 
                                             </option>
                                         ))}
                                     </select>
+
+                                    <button
+                                        onClick={() => handleRemoveChild(index)}
+                                    >
+                                        <X size={16} color="red" className="cursor-pointer"/>
+                                    </button>
                                 </div>
                             ))}
                         </div>
