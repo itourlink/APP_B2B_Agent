@@ -58,5 +58,6 @@
     "description": "Description",
     "redirectingPage": "Redirecting...",
     "selectGitRoomNoticePrefix": "Please select ",
-    "selectGitRoomNoticeSuffix": " or more rooms to receive the GIT rate."
+    "selectGitRoomNoticeSuffix": " or more rooms to receive the GIT rate.",
+    "includedExclusions": "Included / Excluded"
 }
