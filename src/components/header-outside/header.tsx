@@ -15,7 +15,9 @@ import { useTranslate } from "@/locales";
 
 const HeaderOutside = () => {
   const { t } = useTranslate("header")
+  const pathname = location.pathname;
 
+  const hideCurrency = pathname.includes("/booking/payment-booking");
   const router = useRouter();
   const { user, userLoading } = useUser();
 
@@ -78,7 +80,7 @@ const HeaderOutside = () => {
         <div className="flex items-center">
           <div className="flex items-center gap-2">
             <Lang />
-            <Currency />
+            {!hideCurrency && <Currency />}
             <CartIcon />
             <Notification />
             <button onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">

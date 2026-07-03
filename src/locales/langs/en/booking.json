@@ -84,5 +84,8 @@
   "quickPayment": "Quick Payment",
   "scanQrDesc": "Scan QR code to pay.",
   "downloadQR": "Download QR Code",
-  "copy": "Copy"
+  "copy": "Copy",
+  "unitPrice": "Unit Price",
+  "pricePerPax": "Price per pax",
+  "prepaymentNotDue": "The prepayment is not due yet. You can order the product."
 }

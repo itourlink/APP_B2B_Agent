@@ -1,5 +1,7 @@
 import {
     Calendar,
+    ChevronDown,
+    ChevronUp,
     Users,
 } from "lucide-react";
 
@@ -264,6 +266,14 @@ const BookingForm = ({ item }: Props) => {
         ? new Date(startDate.getTime() + 1 * 24 * 60 * 60 * 1000)
         : null;
 
+    const childPrices = selectedChildPrices.map((childType: any) => ({
+        label: getChildAgeLabel(childType),
+        ageFrom: childType.intTourChildAgeFrom,
+        ageTo: childType.intTourChildAgeTo,
+        order: childType.intChildPriceOrderID,
+        price: getChildPrice(childType.intChildPriceOrderID),
+    }));
+
     const buildPayload = () => {
         return {
             strCompanyPartnerGUID: user?.strCompanyGUID,
@@ -307,7 +317,7 @@ const BookingForm = ({ item }: Props) => {
 
 
     const handleBooking = () => {
-        route.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), });
+        route.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), childPrices });
     };
 
     // ================= UI =================
@@ -323,16 +333,6 @@ const BookingForm = ({ item }: Props) => {
                             {t("enterInfoToShowPrice")}
                         </p>
                     </div>
-
-                    {/* <div className="flex gap-2">
-                        <button className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center">
-                            <HelpCircle size={14} />
-                        </button>
-
-                        <button className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center">
-                            <Download size={14} />
-                        </button>
-                    </div> */}
                 </div>
 
                 {!!price.dblTotalPrice && (
@@ -427,7 +427,12 @@ const BookingForm = ({ item }: Props) => {
                             </span>
                         </div>
 
-                        <span className="text-xs">▼</span>
+                        {active === "guestRoom" ? (
+                            <ChevronUp size={16}
+                                className="pointer-events-none text-slate-500" />
+                        ) : (
+                            <ChevronDown size={16} className="pointer-events-none text-slate-500" />
+                        )}
                     </button>
 
                     {active === "guestRoom" && (
@@ -449,38 +454,52 @@ const BookingForm = ({ item }: Props) => {
                 <div>
                     <label className="text-[11px] font-semibold"> {t("tourCategory")}</label>
 
-                    <select
-                        value={selectedStar ?? ""}
-                        onChange={(e) =>
-                            setSelectedStar(
-                                e.target.value ? Number(e.target.value) : null
-                            )
-                        }
-                        className="cursor-pointer w-full px-3 py-2 text-sm border border-slate-300 rounded-lg"
-                    >
-                        {starList.map((star: number) => (
-                            <option key={star} value={star} className="cursor-pointer">
-                                {"⭐".repeat(star)} ({star} {t("star")})
-                            </option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={selectedStar ?? ""}
+                            onChange={(e) =>
+                                setSelectedStar(e.target.value ? Number(e.target.value) : null)
+                            }
+                            className="w-full appearance-none cursor-pointer rounded-lg border border-slate-300 p-2 pr-10 text-sm"
+                        >
+                            {starList.map((star: any) => (
+                                <option key={star} value={star}>
+                                    {"⭐".repeat(star)} ({star} {t("star")})
+                                </option>
+                            ))}
+                        </select>
+
+                        <ChevronDown
+                            size={16}
+                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                        />
+                    </div>
                 </div>
 
                 {/* TYPE */}
                 <div>
-                    <label className="text-[11px] font-semibold">  {t("tourType")}</label>
+                    <label className="text-[11px] font-semibold">
+                        {t("tourType")}
+                    </label>
 
-                    <select
-                        value={joinType || ""}
-                        onChange={(e) => setJoinType(Number(e.target.value))}
-                        className="cursor-pointer w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
-                    >
-                        {joinTypeList.map((t: any) => (
-                            <option key={t.value} value={t.value}>
-                                {t.label}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={joinType ?? ""}
+                            onChange={(e) => setJoinType(Number(e.target.value))}
+                            className="w-full appearance-none cursor-pointer rounded-lg border border-slate-300 p-2 pr-10 text-sm"
+                        >
+                            {joinTypeList.map((t: any) => (
+                                <option key={t.value} value={t.value}>
+                                    {t.label}
+                                </option>
+                            ))}
+                        </select>
+
+                        <ChevronDown
+                            size={16}
+                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                        />
+                    </div>
                 </div>
 
                 {/* BUTTON */}

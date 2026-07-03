@@ -178,3 +178,49 @@ export const fCurrency = (
     maximumFractionDigits: 2,
   }).format(number);
 };
+
+export const fCurrencyKeepSymbol = (
+  value: number | string | unknown,
+  currency?: string
+) => {
+  const amount =
+    typeof value === "number" || typeof value === "string"
+      ? Number(value)
+      : 0;
+
+  const number = Number.isFinite(amount) ? amount : 0;
+
+  const code = (currency ?? "").trim().toUpperCase();
+
+  switch (code) {
+    case "VND":
+      return (
+        new Intl.NumberFormat("vi-VN", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(number) + "đ"
+      );
+
+    case "USD":
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(number);
+
+    case "EUR":
+      return new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(number);
+
+    default:
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(number);
+  }
+};

@@ -37,9 +37,10 @@ const PaymentBookingView: React.FC = () => {
 
   const { setGlobalLoading } = useGlobalLoading();
   const location = useLocation();
-  const item = location.state?.item;
-  const price = location.state?.price;
+  const item = location?.state?.item;
+  const price = location?.state?.price;
   const payloadItem = location.state?.payload;
+  const childPrices = location?.state?.childPrices
   const { showToast } = useToastStore();
   const { bankAccountData } = useListBankAccount();
   const { user } = useUser();
@@ -100,6 +101,7 @@ const PaymentBookingView: React.FC = () => {
     strTourGUID: item?.strTourGUID,
   });
 
+  console.log("paytermData", paytermData)
   const { ctData } = useListCity({
     strTableName: "MC02",
     strFeildSelect:
@@ -139,8 +141,6 @@ const PaymentBookingView: React.FC = () => {
     ? payloadItem.strListChildAge.split(",").filter(Boolean).lengths
     : 0;
 
-  const totalGuests = (payloadItem?.intAdult || 0) + totalChildren;
-
   const totalDeposit =
     Number(price?.dblTotalPrice || 0) *
     ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
@@ -173,6 +173,25 @@ const PaymentBookingView: React.FC = () => {
 
     { ' ' }
   }, [paytermData?.intHourInHold]);
+
+  const childPriceSummary = useMemo(() => {
+    const ages =
+      payloadItem?.strListChildAge
+        ?.split(",")
+        .map(Number)
+        .filter((n: any) => !Number.isNaN(n)) ?? [];
+
+    return childPrices.map((child: any) => {
+      const quantity = ages.filter(
+        (age: any) => age >= child.ageFrom && age <= child.ageTo
+      ).length;
+
+      return {
+        ...child,
+        quantity,
+      };
+    });
+  }, [childPrices, payloadItem?.strListChildAge]);
 
   const bankInfo = {
     accountName: selectedBankAccount?.strCompanyBankAccountName || "---",
@@ -880,7 +899,11 @@ const PaymentBookingView: React.FC = () => {
                   </th>
 
                   <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("totalGuests")}
+                    {t("guestQuantity")}
+                  </th>
+
+                  <th className="py-2 px-3 border border-[#1a52a3]">
+                    {t("pricePerPax")}
                   </th>
 
                   <th className="py-2 px-3 border border-[#1a52a3]">
@@ -898,73 +921,137 @@ const PaymentBookingView: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-gray-100 text-center text-gray-700">
                 <React.Fragment>
+                  {/* ================= ROW DATA ================= */}
                   <tr className="hover:bg-gray-50">
+
+                    {/* NO */}
                     <td className="py-3 px-3 align-top border-r border-gray-100">
                       {price.No}
                     </td>
+
+                    {/* SERVICE */}
                     <td className="py-3 px-4 text-left align-top border-r border-gray-100">
                       <div className="font-semibold text-gray-800">
                         {price?.strServiceName}
                       </div>
+
                       <div className="text-gray-500 text-[11px] mt-0.5">
                         {fDate(isValidValue(payloadItem?.dtmDateFrom))} -{" "}
                         {fDate(
                           addDays(
                             new Date(isValidValue(payloadItem?.dtmDateFrom)),
-                            item?.intNoOfDay || 0,
-                          ),
+                            item?.intNoOfDay || 0
+                          )
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-3 align-top border-r border-gray-100">
-                      {totalGuests}
-                    </td>
-                    <td className="py-3 px-3 align-top border-r border-gray-100">
-                      {fCurrency(
-                        price?.dblTotalPriceCom,
-                        selectedCurrency?.label
-                      )}
-                    </td>
-                    <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
 
-                      {fCurrency(
-                        price?.dblTotalPrice,
-                        selectedCurrency?.label
-                      )}
+                    {/* ADULT */}
+                    <td className="py-3 px-3 align-top border-r border-gray-100">
+                      <div className="space-y-2 text-left">
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-semibold">
+                            {t("adults")}
+                          </span>
+
+                          <span className="font-semibold">
+                            {payloadItem?.intAdult}
+                          </span>
+                        </div>
+
+                        {childPriceSummary.map((child: any) => (
+                          <div
+                            key={child.order}
+                            className="flex items-center justify-between border-t border-gray-100 pt-2"
+                          >
+                            <span className="text-[11px] font-semibold">
+                              {child.label}
+                              <span className="font-semibold">
+                                {" "}
+                                ({child.ageFrom}-{child.ageTo})
+                              </span>
+                            </span>
+
+                            <span className="font-semibold">
+                              {child.quantity}
+                            </span>
+                          </div>
+                        ))}
+
+                      </div>
                     </td>
-                    <td className="py-3 px-3 align-top font-medium">
-                      {fCurrency(
-                        totalDeposit,
-                        selectedCurrency?.label
-                      )}
+
+                    {/* CHILDREN */}
+                    <td className="py-3 px-3 align-top border-r border-gray-100">
+                      <div className="space-y-2 text-center">
+
+                        <div className="min-h-5">
+                          <span className="font-semibold text-gray-900">
+                            {fCurrency(price?.dblUnitPrice, selectedCurrency?.label)}
+                          </span>
+                        </div>
+
+                        {childPriceSummary.map((child: any) => (
+                          <div
+                            key={child.order}
+                            className="min-h-5 border-t border-gray-100 pt-2"
+                          >
+                            <span className="font-semibold text-gray-900">
+                              {fCurrency(child.price, selectedCurrency?.label)}
+                            </span>
+                          </div>
+                        ))}
+
+                      </div>
+                    </td>
+
+                    {/* COMMISSION / OTHER */}
+                    <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
+                      {fCurrency(price?.dblTotalPriceCom, selectedCurrency?.label)}
+                    </td>
+
+                    {/* TOTAL (BACKEND) */}
+                    <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
+                      {fCurrency(price?.dblTotalPrice, selectedCurrency?.label)}
+                    </td>
+
+                    {/* PAYMENT */}
+                    <td className="py-3 px-3 align-top font-semibold">
+                      {fCurrency(totalDeposit, selectedCurrency?.label)}
                     </td>
                   </tr>
-                  <tr className="bg-gray-50/50 font-semibold">
-                    <td className="py-2 px-3 border-r border-gray-100"></td>
+
+                  {/* ================= TOTAL ROW ================= */}
+                  <tr className="bg-gray-50/60 font-semibold">
+
+                    <td className="py-2 px-3 border-r border-gray-100" />
+
                     <td className="py-2 px-4 text-left border-r border-gray-100">
-                      {" "}
                       {t("totalPrice")}
                     </td>
-                    <td className="py-2 px-3 border-r border-gray-100"></td>
+
+                    {/* ADULT TOTAL */}
                     <td className="py-2 px-3 border-r border-gray-100">
-                      {fCurrency(
-                        price?.dblTotalPriceCom,
-                        selectedCurrency?.label
-                      )}
                     </td>
+
+                    {/* CHILD TOTAL */}
                     <td className="py-2 px-3 border-r border-gray-100">
-                      {fCurrency(
-                        price?.dblTotalPrice,
-                        selectedCurrency?.label
-                      )}
                     </td>
+
+
+                    {/* COMMISSION */}
+                    <td className="py-2 px-3 border-r border-gray-100">
+                    </td>
+
+                    {/* GRAND TOTAL */}
+                    <td className="py-2 px-3 border-r border-gray-100">
+                      {fCurrency(price?.dblTotalPrice, selectedCurrency?.label)}
+                    </td>
+
+                    {/* PAYMENT */}
                     <td className="py-2 px-3">
-
-                      {fCurrency(
-                        totalDeposit,
-                        selectedCurrency?.label
-                      )}
-
+                      {fCurrency(totalDeposit, selectedCurrency?.label)}
                     </td>
                   </tr>
                 </React.Fragment>
@@ -1018,12 +1105,16 @@ const PaymentBookingView: React.FC = () => {
                 </span>
               </div>
 
-              {/* Alert Đỏ */}
-              <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                {t("paymentNoticePrefix")} {paymentDeadline}
-                {" "}
-                {t("paymentNoticeSuffix")}
-              </div>
+              {paytermData?.length > 0 ? (
+                <div className="text-red-600 text-[11px] font-medium leading-relaxed">
+                  {t("paymentNoticePrefix")} {paymentDeadline}{" "}
+                  {t("paymentNoticeSuffix")}
+                </div>
+              ) : (
+                <div className="text-red-600 text-[11px] font-medium leading-relaxed">
+                  {t("prepaymentNotDue")}
+                </div>
+              )}
 
               <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
                 <span className="font-medium text-gray-700">

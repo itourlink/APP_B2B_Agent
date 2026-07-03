@@ -84,5 +84,8 @@
   "quickPayment": "Thanh toán nhanh",
   "scanQrDesc": "Quét mã QR để thanh toán.",
   "downloadQR": "Tải mã QR về máy",
-  "copy": "Sao chép"
+  "copy": "Sao chép",
+  "unitPrice": "Đơn giá",
+  "pricePerPax": "Giá mỗi khách",
+  "prepaymentNotDue": "Chưa đến hạn thanh toán trước. Bạn vẫn có thể đặt sản phẩm."
 }
