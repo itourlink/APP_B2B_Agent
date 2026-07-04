@@ -4,7 +4,6 @@ import { Building2, RotateCcw, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
 import Pagination from "@/components/pagination/pagination";
-import { useToastStore } from "@/zustand/useToastStore";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useCompanyOwnerListInfo } from "@/hooks/actions/useCompanyOwnerInfo";

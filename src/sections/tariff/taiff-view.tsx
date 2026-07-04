@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useLocation } from "react-router-dom";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
@@ -197,7 +196,6 @@ const MOCK_TARIFF_DATA = [
 
 const TariffView = () => {
     const router = useRouter();
-    const location = useLocation();
     const { coData } = useListCompanyOwner();
 
     const companyName = coData?.strCompanyName || "CÔNG TY KẾT NỐI DU LỊCH";
