@@ -84,7 +84,10 @@ export const paths = {
     notification: "/notification",
     cart: "/cart",
   },
-
+  // tariff
+  tariff: {
+    list: "/tariff",
+  },
   backdoor: "/backdoor",
 
   page403: "/error/403",

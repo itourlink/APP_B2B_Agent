@@ -12,12 +12,14 @@ import Notification from "@/sections/notification/components/notification";
 import CartIcon from "@/sections/cart/components/cart-icon";
 import TourCustomized from "@/sections/tour-customized/tour-customized";
 import { useTranslate } from "@/locales";
+import { useLocation } from "react-router-dom";
 
 const HeaderOutside = () => {
   const { t } = useTranslate("header")
-  const pathname = location.pathname;
+  const { pathname } = useLocation();
 
   const hideCurrency = pathname.includes("/booking/payment-booking");
+  const isTariff = pathname.includes("/tariff");
   const router = useRouter();
   const { user, userLoading } = useUser();
 
@@ -68,30 +70,38 @@ const HeaderOutside = () => {
           } className="overflow-hidden w-10 cursor-pointer">
             <img src={logo} alt="logo" className="w-full h-full object-contain cursor-pointer" />
           </button>
-          <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
-          <button onClick={() =>
-            router.push(
-              `${paths.shop.salesChannel.list}?company=${company}`
-            )
-          } className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
-            {t("salesChannelSetup")}
-          </button>
+          {!isTariff && (
+            <>
+              <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
+              <button onClick={() =>
+                router.push(
+                  `${paths.shop.salesChannel.list}?company=${company}`
+                )
+              } className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+                {t("salesChannelSetup")}
+              </button>
+            </>
+          )}
         </div>
         <div className="flex items-center">
           <div className="flex items-center gap-2">
             <Lang />
-            {!hideCurrency && <Currency />}
-            <CartIcon />
-            <Notification />
-            <button onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
-              {t("myRequest")}
-            </button>
-            <TourCustomized />
-            <button onClick={() => router.push(
-              `${paths.shop.agentCompany.list}?company=${company}`
-            )} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
-              {t("listAgentHost")}
-            </button>
+            {!hideCurrency && !isTariff && <Currency />}
+            {!isTariff && (
+              <>
+                <CartIcon />
+                <Notification />
+                <button onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+                  {t("myRequest")}
+                </button>
+                <TourCustomized />
+                <button onClick={() => router.push(
+                  `${paths.shop.agentCompany.list}?company=${company}`
+                )} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">
+                  {t("listAgentHost")}
+                </button>
+              </>
+            )}
           </div>
           <div className="ml-2">
             {renderAuthGroup()}
