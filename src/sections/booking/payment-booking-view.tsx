@@ -101,7 +101,6 @@ const PaymentBookingView: React.FC = () => {
     strTourGUID: item?.strTourGUID,
   });
 
-  console.log("paytermData", paytermData)
   const { ctData } = useListCity({
     strTableName: "MC02",
     strFeildSelect:

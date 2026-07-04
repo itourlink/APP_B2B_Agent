@@ -354,9 +354,6 @@ const SearchView = () => {
       dtmFilterDateValidTo: nextPayload?.dtmFilterDateValidTo ?? null,
     });
 
-
-    console.log("nextPayload?.dtmFilterDateValidFrom", nextPayload?.dtmFilterDateValidFrom)
-    console.log("nextPayload?.dtmFilterDateValidTo", nextPayload?.dtmFilterDateValidTo)
     // HOTEL
 
     setHotelFilter({
@@ -385,6 +382,7 @@ const SearchView = () => {
     return dates;
   };
 
+  const payloadSearch = searchSnapshot?.filters;
 
   return (
     <div className="">
@@ -467,7 +465,25 @@ const SearchView = () => {
               <div className="grid gap-6">
                 {rawData?.map((item: any, index: number) => {
 
-                  console.log("item ở tour series", item)
+                  const price = {
+                    dblTotalPrice: item?.dblTotalPrice,
+                    strTourPriceItemLevelGUID: item?.strTourPriceItemLevelGUID,
+                    No: item?.No ?? index + 1,
+                    strServiceName: item?.strServiceName,
+                    dblUnitPrice: item?.dblTotalPrice,
+                    dblTotalPriceCom: item?.dblTotalPriceCom,
+                  };
+
+                  const payload = {
+                    ...payloadSearch,
+
+                    intTWN: 0,
+                    dtmDateTo: payloadSearch?.dtmDateTo ?? payloadSearch?.dtmDateFrom,
+
+                    strTourGUID: item?.strTourGUID,
+                    strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
+                    strCompanyPartnerGUID: item?.strCompanyPartnerGUID,
+                  };
 
 
                   const from = seriesFilter.dtmFilterDateValidFrom;
@@ -596,7 +612,7 @@ const SearchView = () => {
                         </div>
 
                         <button
-                          onClick={() => router.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), childPrices })}
+                          onClick={() => router.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: payload, childPrices: [] })}
                           className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors"
                         >
                           {t("bookNow")}
