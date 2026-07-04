@@ -147,7 +147,9 @@ const AgentView = () => {
                 <div className="flex items-center gap-2 min-w-[150px]">
                     <button
                         onClick={() =>
-                            showToast("info", "Sắp ra mắt")
+                            router.replaceQuery(paths.tariff.list, {
+                                company: row?.strUrlLink,
+                            })
                         }
                         className="cursor-pointer px-4 py-1.5 bg-[#004b91] text-white text-[13px] font-medium rounded hover:bg-[#003d76] transition-all shadow-sm"
                     >

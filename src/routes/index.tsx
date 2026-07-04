@@ -33,6 +33,7 @@ const PaymentBookingCartPage = lazy(() => import("@/pages/booking/payment-bookin
 const PaymentBookingHotelPage = lazy(() => import("@/pages/booking/payment-booking-hotel"));
 const AgentPage = lazy(() => import("@/pages/content/agent"));
 const AgentHostPage = lazy(() => import("@/pages/overlay/agent-host"));
+const TariffPage = lazy(() => import("@/pages/tariff/list"));
 
 export function Router() {
 
@@ -83,6 +84,7 @@ export function Router() {
               path: paths.content.agent,
               element: <AgentPage />,
             },
+
           ],
         },
 
@@ -203,6 +205,7 @@ export function Router() {
               element: <SalesChannelPage />,
             },
 
+
           ],
         },
 
@@ -229,6 +232,10 @@ export function Router() {
             {
               path: paths.booking.paymentBookingHotel,
               element: <PaymentBookingHotelPage />,
+            },
+            {
+              path: paths.tariff.list,
+              element: <TariffPage />,
             },
           ],
         },
