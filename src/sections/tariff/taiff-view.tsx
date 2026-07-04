@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
@@ -8,7 +8,6 @@ import {
     ArrowLeft,
     Filter,
     RotateCcw,
-    Search,
     Download, SlidersHorizontal, ChevronDown
 } from "lucide-react";
 
@@ -201,7 +200,6 @@ const TariffView = () => {
     const location = useLocation();
     const { coData } = useListCompanyOwner();
 
-    const company = new URLSearchParams(location.search).get("company") || "";
     const companyName = coData?.strCompanyName || "CÔNG TY KẾT NỐI DU LỊCH";
 
 
