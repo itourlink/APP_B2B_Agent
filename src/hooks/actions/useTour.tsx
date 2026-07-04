@@ -204,6 +204,7 @@ export const useListTourDay = (filters?: { strTourGUID?: string }) => {
             }),
         enabled: !!user,
         placeholderData: keepPreviousData,
+        refetchOnWindowFocus: false,
     });
 
     const listData = query.data?.[0] ?? [];
@@ -372,6 +373,7 @@ export const useListTourSeries = (filters?: {
             }),
         enabled: !!user && !!coData,
         placeholderData: keepPreviousData,
+        refetchOnWindowFocus: false,
     });
 
     const listData = query.data?.[0] ?? [];

@@ -6,7 +6,7 @@ import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
 import { isValidValue } from "@/utils/utilts";
 import { getUrlImage } from "@/utils/format-image";
-import { Calendar, Clock, Flag, MapPin, Users } from "lucide-react";
+import { Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
@@ -354,6 +354,9 @@ const SearchView = () => {
       dtmFilterDateValidTo: nextPayload?.dtmFilterDateValidTo ?? null,
     });
 
+
+    console.log("nextPayload?.dtmFilterDateValidFrom", nextPayload?.dtmFilterDateValidFrom)
+    console.log("nextPayload?.dtmFilterDateValidTo", nextPayload?.dtmFilterDateValidTo)
     // HOTEL
 
     setHotelFilter({
@@ -367,6 +370,20 @@ const SearchView = () => {
     setPageHotel(1);
 
   }, [location.key]);
+
+  const getDateRange = (from: string, to: string) => {
+    const dates: string[] = [];
+
+    const current = new Date(from);
+    const end = new Date(to);
+
+    while (current <= end) {
+      dates.push(current.toISOString());
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
+  };
 
 
   return (
@@ -450,6 +467,18 @@ const SearchView = () => {
               <div className="grid gap-6">
                 {rawData?.map((item: any, index: number) => {
 
+                  console.log("item ở tour series", item)
+
+
+                  const from = seriesFilter.dtmFilterDateValidFrom;
+                  const to = seriesFilter.dtmFilterDateValidTo;
+
+                  const dateOptions =
+                    from && to
+                      ? getDateRange(from, to)
+                      : [item.dtmRealStartDate];
+
+
                   const imageSrc =
                     item?.strTourImageUrl === "" ||
                       (typeof item?.strTourImageUrl === "object" &&
@@ -457,6 +486,7 @@ const SearchView = () => {
                         Object.keys(item?.strTourImageUrl).length === 0)
                       ? imgDefault
                       : getUrlImage(isValidValue(item?.strTourImageUrl));
+
 
                   return (
                     <div
@@ -480,17 +510,19 @@ const SearchView = () => {
                           </h2>
 
                           <div className="flex gap-4 mb-4">
-                            <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48">
+                            <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer">
                               <option>
                                 {isValidValue(item?.strEasiaCateName)}
                               </option>
                             </select>
 
-                            <div className="border border-gray-300 rounded px-3 py-1 text-sm flex items-center gap-2 bg-white w-48">
-                              <Calendar size={14} />
-
-                              <span>{isValidValue(item?.dtmDateStarted)}</span>
-                            </div>
+                            <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer">
+                              {dateOptions.map((date) => (
+                                <option key={date} value={date}>
+                                  {new Date(date).toLocaleDateString()}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
@@ -564,14 +596,10 @@ const SearchView = () => {
                         </div>
 
                         <button
-                          onClick={() => router.push(paths.content.agent)}
+                          onClick={() => router.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: buildPayload(), childPrices })}
                           className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors"
                         >
                           {t("bookNow")}
-                        </button>
-
-                        <button className="mt-2 text-xs font-bold text-black uppercase bg-gray-100 px-2 py-1 rounded shadow-inner">
-                          {t("increaseDecreasePrice")}
                         </button>
                       </div>
                     </div>
@@ -654,7 +682,6 @@ const SearchView = () => {
                           : listHotel.hotelData?.[0]?.intTotalRecords || 0
                       }
                       recordsPerPage={pageSize}
-
                       onRecordsPerPageChange={handlePageSizeChange}
                     />
                   </>
@@ -683,7 +710,7 @@ const SearchView = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
