@@ -4,29 +4,24 @@ import { TourListCard } from "./tour-list-card";
 import { useListHotel, useSearchHotel } from "@/hooks/actions/useHotel";
 import SearchFilter from "./search-filter";
 import { useEffect, useMemo, useState } from "react";
-import { isValidValue } from "@/utils/utilts";
-import { getUrlImage } from "@/utils/format-image";
-import { Clock, Flag, MapPin, Users } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
-import { useRouter } from "@/routes/hooks/use-router";
-import { paths } from "@/routes/paths";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { useUser } from "@/hooks/actions/useAuth";
 import HotelListRowCard from "./hotel-list-row-card";
 import TourSearch from "../tour/components/tour-search";
 import HotelSearch from "../hotel/components/hotel-search";
 import { HotelCard } from "../hotel/components/hotel-card";
-import imgDefault from "@/assets/images/default-image.jpg"
 import { useTranslate } from "@/locales";
 import { useCurrency } from "@/components/currency/useCurrency";
-import { fCurrency } from "@/utils/format-number";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import TourListSeries from "./tour-list-series";
+import { useRouter } from "@/routes/hooks/use-router";
 
 const SearchView = () => {
+  const router = useRouter()
   const { t } = useTranslate("search")
   const { currencyId } = useCurrency();
   const { selectedCurrency } = useListCurrency();
-  const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
   const searchType =
@@ -459,202 +454,25 @@ const SearchView = () => {
               {loading ? t("loading") : t("searchResultCount", { count: resultCount })}
             </div>
 
-            {/* SERIES */}
-            {tsLoading && isSeries && (
-              <div className="flex items-center justify-center py-20">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-              </div>
-            )}
-
-            {!tsLoading && !!isSeries && (
-              <div className="grid gap-6">
-                {rawData?.map((item: any, index: number) => {
-
-                  const price = {
-                    dblTotalPrice: item?.dblTotalPrice,
-                    strTourPriceItemLevelGUID: item?.strTourPriceItemLevelGUID,
-                    No: item?.No ?? index + 1,
-                    strServiceName: item?.strServiceName,
-                    dblUnitPrice: item?.dblTotalPrice,
-                    dblTotalPriceCom: item?.dblTotalPriceCom,
-                  };
-
-                  const from = seriesFilter.dtmFilterDateValidFrom;
-                  const to = seriesFilter.dtmFilterDateValidTo;
-
-                  const dateOptions =
-                    from && to
-                      ? getDateRange(from, to)
-                      : [item.dtmRealStartDate];
-
-                  const selectedDate =
-                    selectedDates[item.strTourGUID] ?? dateOptions[0];
-
-
-                  const payload = {
-                    ...payloadSearch,
-
-                    dtmDateFrom: selectedDate,
-                    dtmDateTo: selectedDate,
-                    intAdult:
-                      payloadSearch?.intAdult ??
-                      searchTourPayload?.intNoOfAdult,
-                    strTourGUID: item?.strTourGUID,
-                    strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
-                    strCompanyPartnerGUID: item?.strCompanyPartnerGUID,
-                  };
-
-                  const imageSrc =
-                    item?.strTourImageUrl === "" ||
-                      (typeof item?.strTourImageUrl === "object" &&
-                        item?.strTourImageUrl !== null &&
-                        Object.keys(item?.strTourImageUrl).length === 0)
-                      ? imgDefault
-                      : getUrlImage(isValidValue(item?.strTourImageUrl));
-
-
-                  return (
-                    <div
-                      key={index}
-                      className="max-w-4xl mx-auto border border-gray-200 rounded-2xl p-6 flex gap-6 bg-white shadow-sm font-sans"
-                    >
-                      {/* IMAGE */}
-                      <div className="w-1/3">
-                        <img
-                          src={imageSrc}
-                          alt={isValidValue(item?.strTourName)}
-                          className="w-full h-full object-cover rounded-xl"
-                        />
-                      </div>
-
-                      {/* CONTENT */}
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div>
-                          <h2 className="text-xl font-bold text-gray-800 uppercase mb-4">
-                            {isValidValue(item?.strTourName)}
-                          </h2>
-
-                          <div className="flex gap-4 mb-4">
-                            <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer">
-                              <option>
-                                {isValidValue(item?.strEasiaCateName)}
-                              </option>
-                            </select>
-
-                            <select
-                              value={selectedDate}
-                              onChange={(e) =>
-                                setSelectedDates((prev) => ({
-                                  ...prev,
-                                  [item.strTourGUID]: e.target.value,
-                                }))
-                              }
-                              className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer"
-                            >
-                              {dateOptions.map((date) => (
-                                <option key={date} value={date}>
-                                  {new Date(date).toLocaleDateString()}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
-                            <div className="flex items-center gap-2">
-                              <Flag size={16} />
-
-                              <span>
-                                {t("by")}:
-                                <span className="font-medium ml-1">
-                                  {isValidValue(item?.strOwnerCompanyName)}
-                                </span>
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <Users size={16} />
-
-                              <span>{t("total")}: {isValidValue(item?.intPaxMax)}</span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <Clock size={16} />
-
-                              <span>
-                                {t("duration")}: {isValidValue(item?.intNoOfDay)}{" "}
-                                {t("days")}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold">
-                                {t("sold")} : {isValidValue(item?.intTotalPaxUsed)}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <MapPin size={16} />
-
-                              <span>
-                                {t("destinations")}:{" "}
-                                {isValidValue(item?.strListTourDestinationName)}
-                              </span>
-                            </div>
-
-                            <div className="space-y-1">
-                              <div className="text-blue-600 font-bold">
-                                +  {t("available")}: {isValidValue(item?.intTotalPaxRemain)}
-                              </div>
-
-                              <div className="text-blue-600 font-bold">
-                                +{t("hold")}: {isValidValue(item?.intTotalPaxHold)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <span className="inline-block mt-4 px-3 py-1 bg-blue-100 text-blue-500 rounded-full text-xs font-medium">
-                            {isValidValue(item?.strTourTypeName) ||
-                              t("dailyTour")}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* PRICE */}
-                      <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
-                        <div className="text-gray-700 font-bold text-lg mb-1">
-                          {t("price")} :
-                        </div>
-
-                        <div className="text-blue-600 text-3xl font-extrabold mb-4">
-
-                          {fCurrency(
-                            item?.dblTotalPrice,
-                            selectedCurrency?.label
-                          )}
-                        </div>
-
-                        <button
-                          onClick={() => router.replaceParams(paths.booking.paymentBooking, { item: item, price: price, payload: payload, childPrices: [] })}
-                          className="cursor-pointer w-full py-2 border border-gray-300 rounded-full text-blue-500 font-semibold hover:bg-blue-50 transition-colors"
-                        >
-                          {t("bookNow")}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {isSeries && !tsLoading && (
-              <Pagination
-                currentPage={pageSeries}
-                onPageChange={setPageSeries}
-                totalPages={tsTotalPages || 1}
-                totalRecords={tsData?.[0]?.intTotalRecords || 0}
-                onRecordsPerPageChange={handlePageSizeChange}
-              />
-            )}
+            <TourListSeries
+              loading={tsLoading}
+              data={rawData}
+              pageSeries={pageSeries}
+              setPageSeries={setPageSeries}
+              tsTotalPages={tsTotalPages}
+              tsData={tsData}
+              handlePageSizeChange={handlePageSizeChange}
+              payloadSearch={payloadSearch}
+              searchTourPayload={searchTourPayload}
+              seriesFilter={seriesFilter}
+              selectedDates={selectedDates}
+              setSelectedDates={setSelectedDates}
+              selectedCurrency={selectedCurrency}
+              router={router}
+              t={t}
+              getDateRange={getDateRange}
+              isSeries={isSeries}
+            />
 
             {/* HOTEL */}
             {isSearchHotel && (

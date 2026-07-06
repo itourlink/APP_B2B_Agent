@@ -199,14 +199,11 @@ const TariffView = () => {
     const router = useRouter();
     const { coData } = useListCompanyOwner();
 
-<<<<<<< HEAD
-=======
     // Call and log the GetDetailCompanyTopup API
     const { data: topupData, isLoading: topupLoading, isError: topupError } = useGetDetailCompanyTopup();
     console.log(">>> GetDetailCompanyTopup API Response:", { topupData, topupLoading, topupError });
 
     const company = new URLSearchParams(location.search).get("company") || "";
->>>>>>> a9d2678d22a7575fc0c886610b9033eb50504594
     const companyName = coData?.strCompanyName || "CÔNG TY KẾT NỐI DU LỊCH";
 
 
