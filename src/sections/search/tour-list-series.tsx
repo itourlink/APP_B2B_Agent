@@ -254,15 +254,14 @@ const TourListSeries = ({
                                 {/* PRICE */}
                                 <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
 
-                                    <div className="">
-                                        {t("adults")}:{' '}
-                                        {fCurrency(
-                                            item?.dblUnitPrice,
-                                            selectedCurrency?.label
-                                        )}
+                                    <div className="flex gap-1 items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm">
+                                        <span className="text-gray-500">
+                                            {t("adults")}:
+                                        </span>
 
-
-
+                                        <span className="font-semibold text-gray-900">
+                                            {fCurrency(item?.dblUnitPrice, selectedCurrency?.label)}
+                                        </span>
                                     </div>
                                     <div className="text-gray-700 font-bold text-lg mb-1">
                                         {t("price")} :
