@@ -8,6 +8,7 @@ import Currency from "@/components/currency/currency";
 import Notification from "@/sections/notification/components/notification";
 import CartIcon from "@/sections/cart/components/cart-icon";
 import TourCustomized from "@/sections/tour-customized/tour-customized";
+import Tariff from "@/sections/tariff/tariff";
 
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
@@ -219,6 +220,7 @@ const ShopHeader = () => {
                         </button>
 
                         <TourCustomized />
+                        <Tariff />
 
                         <button
                             onClick={() => window.open("https://myagentmember.itourlink.com/request-booking", "_blank")}

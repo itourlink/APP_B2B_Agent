@@ -10,6 +10,7 @@ export type ColumnDef<T> = {
   sort?: boolean;
   algin?: "center" | "start" | "end";
   title?: boolean;
+  cellProps?: (value: any, row: T, rowIndex: number) => React.TdHTMLAttributes<HTMLTableCellElement> | null;
 };
 
 type TableCoreProps<T> = {
@@ -157,12 +158,16 @@ export function TableCore<T extends object>({
                     {columnDefs.map((col, cIdx) => {
                       const rawValue = row[col.field];
                       const safeValue = safeValueFn(rawValue);
+                      const customCellProps = col.cellProps ? col.cellProps(safeValue, safeRow, rIdx) : {};
+
+                      if (customCellProps === null) return null;
 
                       return (
                         <td
                           key={cIdx}
                           className="px-4 py-3.5 text-[14px] text-gray-700"
                           title={col.title ? String(safeValue) : ""}
+                          {...customCellProps}
                         >
                           <div
                             className={`flex items-center ${getAlignmentClass(col.algin).split(" ")[0]
@@ -171,7 +176,7 @@ export function TableCore<T extends object>({
                             {col.render ? (
                               (() => {
                                 try {
-                                  return col.render(safeValue, safeRow, rIdx);
+                                  return col.render(safeValue, row, rIdx);
                                 } catch {
                                   return "--";
                                 }

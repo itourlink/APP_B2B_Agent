@@ -54,3 +54,18 @@ export function fDate(date: DatePickerFormat, format?: string) {
 
     return `${thu}, ${formatted}`;
 }
+
+
+export function fDateTariff(dateVal: any): string {
+    if (dateVal === null || dateVal === undefined) return "--";
+    if (typeof dateVal === "object") return "--";
+    const dateStr = String(dateVal).trim();
+    if (dateStr === "" || dateStr === "{}") return "--";
+
+    // If it's already in the "DD Thg MM, YYYY" or similar formatted style, return as is
+    if (dateStr.includes("Thg") || (!dateStr.includes("-") && !dateStr.includes("T"))) {
+        return dateStr;
+    }
+    const d = dayjs(dateStr);
+    return d.isValid() ? d.format("DD/MM/YYYY") : dateStr;
+}
