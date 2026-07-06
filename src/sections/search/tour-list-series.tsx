@@ -54,7 +54,6 @@ const TourListSeries = ({
     isSeries,
 }: TourListSeriesProps) => {
 
-    console.log("data", data)
     // const { tourChildAgeData } = useListTourChildAge({
     //     strTourGUID: item?.strTourGUID
     // })
