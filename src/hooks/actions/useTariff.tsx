@@ -58,9 +58,9 @@ export const useGetListSupplierMappingPrice = (filters?: {
     strPriceListGUID?: string | null;
     strPriceLevelGUID?: string | null;
     intComTypeID?: number;
-    intCateID?: number;
+    intCateID?: any;
     intBoatPriceTypeID?: number | null;
-    intEasiaCateID?: number | null;
+    intEasiaCateID?: any;
     strPriceRange?: string | null;
     dtmFilterDateFrom?: string | null;
     dtmFilterDateTo?: string | null;
@@ -72,6 +72,7 @@ export const useGetListSupplierMappingPrice = (filters?: {
     strOrder?: string | null;
     tblsReturn?: string;
     intTypeID?: number;
+    enabled?: boolean;
 }) => {
     const { user } = useUser();
     const { coData } = useListCompanyOwner();
@@ -110,7 +111,92 @@ export const useGetListSupplierMappingPrice = (filters?: {
                 tblsReturn: filters?.tblsReturn ?? "[0][2]",
                 intTypeID: filters?.intTypeID ?? 3,
             }),
-        enabled: !!user?.strUserGUID && !!filters?.dtmFilterDateFrom && !!filters?.dtmFilterDateTo,
+        enabled: !!user?.strUserGUID && !!filters?.dtmFilterDateFrom && !!filters?.dtmFilterDateTo && (filters?.enabled !== false),
+        placeholderData: keepPreviousData,
+    });
+
+    const listData = query.data?.[0] ?? [];
+    const totalRecords = listData?.[0]?.intTotalRecords || 0;
+    const totalPages = Math.ceil(totalRecords / pageSize);
+
+    return {
+        dataTariff: listData,
+        totalRecords,
+        totalPages,
+        isLoading: query.isLoading,
+        isFetching: query.isFetching,
+        isError: query.isError,
+        refetch: query.refetch,
+    };
+};
+
+
+//Tour/GetListTourPriceItemLevelInAd
+
+const fetchGetListTourPriceItemLevelInAd = async (body: any) => {
+    const res = await apiClient.post("Tour/GetListTourPriceItemLevelInAd", body);
+    return res.data;
+}
+
+export const useGetListTourPriceItemLevelInAd = (filters?: {
+    strTourPriceItemLevelGUID?: string | null;
+    strCompanyGUID?: string | null;
+    strTourGUID?: string | null;
+    strPriceLevelGUID?: string | null;
+    strPaxGroupTypeGUID?: string | null;
+    intCateID?: any;
+    intComType?: number;
+    intJoinTypeID?: number | null;
+    intProductID?: number;
+    intTypeID?: number;
+    strFilterServiceName?: string | null;
+    IsAllienceCopyTour?: boolean;
+    dtmFilterDateFrom?: string | null;
+    dtmFilterDateTo?: string | null;
+    strListCityCode?: string | null;
+    page?: number;
+    pageSize?: number;
+    strOrder?: string | null;
+    tblsReturn?: string;
+    enabled?: boolean;
+}) => {
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner();
+
+    const page = filters?.page ?? 1;
+    const pageSize = filters?.pageSize ?? 10;
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.TARIFF.LIST_TOUR_PRICE_ITEM_LEVEL_IN_AD,
+            filters,
+            user?.strUserGUID,
+            coData?.strCompanyGUID,
+        ],
+        queryFn: () =>
+            fetchGetListTourPriceItemLevelInAd({
+                strUserGUID: user?.strUserGUID ?? null,
+                strTourPriceItemLevelGUID: filters?.strTourPriceItemLevelGUID ?? null,
+                strCompanyGUID: filters?.strCompanyGUID ?? coData?.strCompanyGUID ?? user?.strCompanyGUID ?? null,
+                strTourGUID: filters?.strTourGUID ?? null,
+                strPriceLevelGUID: filters?.strPriceLevelGUID ?? null,
+                strPaxGroupTypeGUID: filters?.strPaxGroupTypeGUID ?? null,
+                intCateID: filters?.intCateID ?? null,
+                intComType: filters?.intComType ?? 0,
+                intJoinTypeID: filters?.intJoinTypeID ?? null,
+                intProductID: filters?.intProductID ?? 101,
+                intTypeID: filters?.intTypeID ?? 3,
+                strFilterServiceName: filters?.strFilterServiceName ?? "",
+                IsAllienceCopyTour: filters?.IsAllienceCopyTour ?? false,
+                dtmFilterDateFrom: filters?.dtmFilterDateFrom ?? "2026-01-01",
+                dtmFilterDateTo: filters?.dtmFilterDateTo ?? "2026-12-31",
+                strListCityCode: filters?.strListCityCode ?? null,
+                intCurPage: page,
+                intPageSize: pageSize,
+                strOrder: filters?.strOrder ?? null,
+                tblsReturn: filters?.tblsReturn ?? "[0][1]",
+            }),
+        enabled: !!user?.strUserGUID && !!filters?.dtmFilterDateFrom && !!filters?.dtmFilterDateTo && (filters?.enabled !== false),
         placeholderData: keepPreviousData,
     });
 

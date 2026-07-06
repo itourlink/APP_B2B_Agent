@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useGetListSupplierMappingPrice } from "@/hooks/actions/useTariff";
+import { useGetListSupplierMappingPrice, useGetListTourPriceItemLevelInAd } from "@/hooks/actions/useTariff";
 import { fCurrency, safeText } from "@/utils/format-number";
 import { fDateTariff } from "@/utils/format-time";
 import Pagination from "@/components/pagination/pagination";
@@ -32,39 +32,46 @@ const TariffList = () => {
     const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Ánh xạ supplierType sang intTypeID và intCateID
-    const { mappedIntTypeID, mappedIntCateID } = useMemo(() => {
-        switch (appliedFilters.supplierType) {
-            case "Boat":
-                return { mappedIntTypeID: 1, mappedIntCateID: 3 };
-            case "Flight":
-                return { mappedIntTypeID: 4, mappedIntCateID: 6 };
-            case "Vehicle":
-                return { mappedIntTypeID: 2, mappedIntCateID: 31 };
-            case "Hotel":
-            default:
-                return { mappedIntTypeID: 3, mappedIntCateID: 1 };
-        }
-    }, [appliedFilters.supplierType]);
+    const isHotel = appliedFilters.supplierType === "Hotel";
 
-    // Gọi API lấy dữ liệu sử dụng các bộ lọc đã được áp dụng
+    // Gọi API lấy dữ liệu Hotel sử dụng useGetListSupplierMappingPrice
+    const hotelQuery = useGetListSupplierMappingPrice({
+        strFilterSupplierName: appliedFilters.serviceName || null,
+        dtmFilterDateFrom: appliedFilters.dateFrom || "2026-01-01",
+        dtmFilterDateTo: appliedFilters.dateTo || "2026-12-31",
+        intTypeID: 3,
+        intCateID: 1,
+        intEasiaCateID: appliedFilters.category || null,
+        strListCityCode: appliedFilters.destination ? `${appliedFilters.destination},` : null,
+        page: currentPage,
+        pageSize: pageSize,
+        enabled: isHotel,
+    });
+
+    // Gọi API lấy dữ liệu Transport / Excursion sử dụng useGetListTourPriceItemLevelInAd
+    // Đối với Transport (Boat): intProductID = 101, intTypeID = 3
+    // Đối với Excursion (Flight): intProductID = 102 (hoặc tùy loại, tạm thời để 101/102 tùy thuộc vào loại hình)
+    const tourQuery = useGetListTourPriceItemLevelInAd({
+        strFilterServiceName: appliedFilters.serviceName || "",
+        dtmFilterDateFrom: appliedFilters.dateFrom || "2026-01-01",
+        dtmFilterDateTo: appliedFilters.dateTo || "2026-12-31",
+        intProductID: appliedFilters.supplierType === "Transport" ? 101 : 100,
+        intTypeID: 3,
+        intCateID: appliedFilters.category || null,
+        strListCityCode: appliedFilters.destination ? `${appliedFilters.destination},` : null,
+        page: currentPage,
+        pageSize: pageSize,
+        enabled: !isHotel,
+    });
+
+    // Trích xuất dữ liệu dựa trên loại hình đang chọn
     const {
         dataTariff: tariffData,
         totalRecords: tariffTotalRecords,
         isLoading: tariffLoading,
         isFetching: tariffFetching,
         isError: tariffError
-    } = useGetListSupplierMappingPrice({
-        strFilterSupplierName: appliedFilters.serviceName || null,
-        dtmFilterDateFrom: appliedFilters.dateFrom || "2026-01-01",
-        dtmFilterDateTo: appliedFilters.dateTo || "2026-12-31",
-        intTypeID: mappedIntTypeID,
-        intCateID: mappedIntCateID,
-        strFilterItemTypeName: appliedFilters.category || null,
-        strListCityCode: appliedFilters.destination === "Hanoi" ? "VN00010001," : appliedFilters.destination === "Ho Chi Minh" ? "VN00010002," : null,
-        page: currentPage,
-        pageSize: pageSize,
-    });
+    } = isHotel ? hotelQuery : tourQuery;
 
     // Hàm xử lý Lọc: Đồng bộ giá trị UI đang nhập vào bộ lọc áp dụng gọi API
     const handleSearch = () => {

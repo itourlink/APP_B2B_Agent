@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import DateRangePopup from "@/components/generic-filter/date-range-popup";
@@ -11,6 +11,155 @@ import {
     ChevronDown,
     Download
 } from "lucide-react";
+import { useListCity } from "@/hooks/actions/useCity";
+import { useListSQLData } from "@/hooks/actions/useSql";
+import { twMerge } from "tailwind-merge";
+
+type Option = {
+    label: string;
+    value: string;
+    flag?: string;
+};
+
+interface SearchSelectProps {
+    value: string;
+    onChange: (val: string) => void;
+    options: Option[];
+    placeholder?: string;
+    disabled?: boolean;
+    loading?: boolean;
+}
+
+const getFlagClass = (flag?: string) => {
+    if (!flag) return "";
+    return flag.replaceAll("flag-icon", "fi");
+};
+
+const SearchSelect = ({
+    value,
+    onChange,
+    options,
+    placeholder = "-- Chọn --",
+    disabled = false,
+    loading = false,
+}: SearchSelectProps) => {
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState("");
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        if (disabled && open) setOpen(false);
+    }, [disabled, open]);
+
+    useEffect(() => {
+        if (!open) setSearch("");
+    }, [open]);
+
+    const selectedOption = options.find((opt) => opt.value === value);
+    const filteredOptions = options.filter((opt) =>
+        opt.label.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <div className="flex flex-col gap-1 w-full" ref={ref}>
+            <div className="relative w-full">
+                <div
+                    className={twMerge(
+                        "flex items-center justify-between px-3 h-11 rounded-lg border border-gray-300 text-sm focus-within:border-blue-500",
+                        disabled
+                            ? "bg-gray-100 cursor-not-allowed opacity-70"
+                            : "cursor-pointer bg-white"
+                    )}
+                    onClick={() => {
+                        if (disabled) return;
+                        setOpen(!open);
+                    }}
+                >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        {loading ? (
+                            <span className="text-gray-400">Loading...</span>
+                        ) : selectedOption ? (
+                            <div className="flex items-center gap-2 truncate">
+                                {selectedOption.flag && (
+                                    <span
+                                        className={twMerge(
+                                            getFlagClass(selectedOption.flag),
+                                            "rounded-sm w-5 h-4.5 bg-cover bg-center inline-block flex-shrink-0"
+                                        )}
+                                    />
+                                )}
+                                <span className="text-gray-700 truncate">{selectedOption.label}</span>
+                            </div>
+                        ) : (
+                            <span className="text-gray-400">{placeholder}</span>
+                        )}
+                    </div>
+                    <ChevronDown
+                        size={16}
+                        className={twMerge("text-gray-500 transition-transform duration-200 flex-shrink-0", open && !disabled && "rotate-180")}
+                    />
+                </div>
+
+                {open && !disabled && (
+                    <div className="absolute top-full left-0 w-full mt-1 z-[99] bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                        <div className="p-2 border-b border-gray-100">
+                            <input
+                                autoFocus
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Tìm kiếm..."
+                                className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <div className="max-h-52 overflow-auto">
+                            {filteredOptions.length > 0 ? (
+                                filteredOptions.map((opt) => (
+                                    <div
+                                        key={opt.value}
+                                        className={twMerge(
+                                            "px-3 py-2 text-sm cursor-pointer hover:bg-gray-50 flex items-center gap-2",
+                                            opt.value === value && "bg-blue-50/50 font-medium text-[#004b91]"
+                                        )}
+                                        onClick={() => {
+                                            onChange(opt.value);
+                                            setOpen(false);
+                                            setSearch("");
+                                        }}
+                                    >
+                                        {opt.flag && (
+                                            <span
+                                                className={twMerge(
+                                                    getFlagClass(opt.flag),
+                                                    "rounded-sm w-5 h-4.5 bg-cover bg-center inline-block flex-shrink-0"
+                                                )}
+                                            />
+                                        )}
+                                        <span>{opt.label}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="px-3 py-2 text-sm text-gray-400">
+                                    Không tìm thấy
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 interface TariffSearchProps {
     serviceName: string;
@@ -84,6 +233,69 @@ const TariffSearch = ({
         };
     }, []);
 
+    // country 
+    const { ctData: countryData = [], ctLoading: isCountryLoading } = useListCity({
+        strTableName: "MC02",
+        strFeildSelect:
+            "MC02_CountryCode AS code, MC02_CountryGUID AS intID, MC02_CountryName AS strName, MC02_CountryGUID AS id, MC02_CountryName AS text, MC02_CountryName AS strCountryName, MC02_CountryFlagIcon strCountryFlagIcon",
+        strWhere: "WHERE (IsActive=1) ORDER BY MC02_CountryName ASC",
+    });
+
+    // region
+    const { ctData: regionData = [], ctLoading: isRegionLoading } = useListSQLData({
+        strTableName: "MC03",
+        strFeildSelect:
+            "MC03_RegionCode AS strRegionCode, MC03_RegionName AS strRegionName",
+        strWhere: country
+            ? `WHERE IsActive=1
+                AND MC03_RegionCode LIKE '%${country}%'
+                AND MC03.IsActive=1
+                ORDER BY MC03_RegionName`
+            : "",
+    });
+
+    // city
+    const { ctData: cityData = [], ctLoading: isCityLoading } = useListSQLData({
+        strTableName: "MC04",
+        strFeildSelect:
+            "MC04_CityCode AS strCityCode, MC04_CityName AS strCityName",
+        strWhere: region
+            ? `WHERE IsActive=1
+            AND MC04_CityCode LIKE '%${region}%'
+            AND MC04.IsActive=1
+            ORDER BY MC04_CityName`
+            : "",
+    });
+
+    const countryOptions = useMemo<Option[]>(
+        () =>
+            (countryData || []).map((item: any) => ({
+                label: item.strName || "",
+                value: item.code || "",
+                flag: item.strCountryFlagIcon || "",
+            })),
+        [countryData]
+    );
+
+    const regionOptions = useMemo<Option[]>(
+        () =>
+            (regionData || []).map((item: any) => ({
+                label: item.strRegionName || "",
+                value: item.strRegionCode || "",
+            })),
+        [regionData]
+    );
+
+    const cityOptions = useMemo<Option[]>(
+        () =>
+            (cityData || []).map((item: any) => ({
+                label: item.strCityName || "",
+                value: item.strCityCode || "",
+            })),
+        [cityData]
+    );
+
+
     return (
         <div className="w-full">
             {/* Title Header with Back Arrow */}
@@ -113,8 +325,8 @@ const TariffSearch = ({
                             className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
                         >
                             <option value="Hotel">Hotel</option>
-                            <option value="Boat">Transport</option>
-                            <option value="Flight">Excursion</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Excursion">Excursion</option>
                         </select>
                     </div>
 
@@ -229,75 +441,78 @@ const TariffSearch = ({
                         </div>
 
                         {/* Category */}
-                        <div className="relative">
-                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                                Category
-                            </label>
-                            <select
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
-                            >
-                                <option value="">-- Chọn --</option>
-                                <option value="Standard">Standard</option>
-                                <option value="Superior">Superior</option>
-                                <option value="Deluxe">Deluxe</option>
-                                <option value="Suite">Suite</option>
-                            </select>
-                        </div>
+                        {supplierType === "Hotel" && (
+                            <div className="relative">
+                                <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
+                                    Category
+                                </label>
+                                <select
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
+                                >
+                                    <option value="">--- Select ---</option>
+                                    <option value="1">★</option>
+                                    <option value="2">★★</option>
+                                    <option value="3">★★★</option>
+                                    <option value="4">★★★★</option>
+                                    <option value="5">★★★★★</option>
+                                    <option value="6">★★★★★★</option>
+                                </select>
+                            </div>
+                        )
+
+                        }
 
                         {/* Country */}
                         <div className="relative">
-                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
+                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
                                 Chọn quốc gia
                             </label>
-                            <select
+                            <SearchSelect
                                 value={country}
-                                onChange={(e) => {
-                                    setCountry(e.target.value);
+                                onChange={(val) => {
+                                    setCountry(val);
                                     setRegion("");
                                     setDestination("");
                                 }}
-                                className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
-                            >
-                                <option value="">-- Chọn --</option>
-                                <option value="Vietnam">Việt Nam</option>
-                            </select>
+                                options={countryOptions}
+                                loading={isCountryLoading}
+                                placeholder="Chọn quốc gia"
+                            />
                         </div>
 
                         {/* Region */}
                         <div className="relative">
-                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
+                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
                                 Chọn Vùng miền
                             </label>
-                            <select
+                            <SearchSelect
                                 value={region}
-                                onChange={(e) => {
-                                    setRegion(e.target.value);
+                                onChange={(val) => {
+                                    setRegion(val);
                                     setDestination("");
                                 }}
-                                className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
-                            >
-                                <option value="">-- Chọn --</option>
-                                <option value="North">Miền Bắc</option>
-                                <option value="South">Miền Nam</option>
-                            </select>
+                                options={regionOptions}
+                                loading={isRegionLoading}
+                                disabled={!country}
+                                placeholder="Chọn Vùng miền"
+                            />
                         </div>
 
                         {/* Destination */}
                         <div className="relative">
-                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
+                            <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
                                 Chọn Địa điểm
                             </label>
-                            <select
+                            <SearchSelect
                                 value={destination}
-                                onChange={(e) => setDestination(e.target.value)}
-                                className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
-                            >
-                                <option value="">-- Chọn --</option>
-                                {region === "North" && <option value="Hanoi">Hà Nội</option>}
-                                {region === "South" && <option value="Ho Chi Minh">TP. HCM</option>}
-                            </select>
+                                onChange={(val) => setDestination(val)}
+                                options={cityOptions}
+                                loading={isCityLoading}
+                                disabled={!region}
+                                placeholder="Chọn Địa điểm"
+                            />
                         </div>
                     </div>
                 )}
