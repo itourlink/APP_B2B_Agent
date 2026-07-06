@@ -2,6 +2,7 @@ import apiClient from "@/axios";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useUser } from "./useAuth";
 import { QUERY_KEYS } from "./query-keys";
+import { useListCompanyOwner } from "./useCompanyOwner";
 
 const fetchDetailCompanyTopup = async (body: {
     strUserGUID: string | null;
@@ -73,6 +74,7 @@ export const useGetListSupplierMappingPrice = (filters?: {
     intTypeID?: number;
 }) => {
     const { user } = useUser();
+    const { coData } = useListCompanyOwner();
 
     const page = filters?.page ?? 1;
     const pageSize = filters?.pageSize ?? 10;
@@ -82,12 +84,13 @@ export const useGetListSupplierMappingPrice = (filters?: {
             QUERY_KEYS.TARIFF.LIST_SUPPLIER_MAPPING_PRICE,
             filters,
             user?.strUserGUID,
+            coData?.strCompanyGUID,
         ],
         queryFn: () =>
             fetchListSupplierMappingPrice({
                 strUserGUID: user?.strUserGUID ?? null,
                 strSupplierMappingPriceGUID: filters?.strSupplierMappingPriceGUID ?? null,
-                strCompanyGUID: filters?.strCompanyGUID ?? user?.strCompanyGUID ?? null,
+                strCompanyGUID: filters?.strCompanyGUID ?? coData?.strCompanyGUID ?? user?.strCompanyGUID ?? null,
                 strSupplierGUID: filters?.strSupplierGUID ?? null,
                 strPriceListGUID: filters?.strPriceListGUID ?? null,
                 strPriceLevelGUID: filters?.strPriceLevelGUID ?? null,
@@ -107,7 +110,7 @@ export const useGetListSupplierMappingPrice = (filters?: {
                 tblsReturn: filters?.tblsReturn ?? "[0][2]",
                 intTypeID: filters?.intTypeID ?? 3,
             }),
-        enabled: !!user?.strUserGUID,
+        enabled: !!user?.strUserGUID && !!filters?.dtmFilterDateFrom && !!filters?.dtmFilterDateTo,
         placeholderData: keepPreviousData,
     });
 
@@ -116,7 +119,7 @@ export const useGetListSupplierMappingPrice = (filters?: {
     const totalPages = Math.ceil(totalRecords / pageSize);
 
     return {
-        data: listData,
+        dataTariff: listData,
         totalRecords,
         totalPages,
         isLoading: query.isLoading,

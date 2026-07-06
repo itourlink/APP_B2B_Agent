@@ -234,3 +234,12 @@ export const fCurrencyKeepSymbol = (
       }).format(number);
   }
 };
+
+export const safeText = (value: any, fallback = ""): string => {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === "object") {
+    // If it's an empty object {} from API, return fallback
+    return fallback;
+  }
+  return String(value);
+};
