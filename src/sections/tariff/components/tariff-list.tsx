@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useGetListSupplierMappingPrice, useGetListTourPriceItemLevelInAd } from "@/hooks/actions/useTariff";
 import { fCurrency, safeText } from "@/utils/format-number";
 import { fDateTariff } from "@/utils/format-time";
 import Pagination from "@/components/pagination/pagination";
 import TariffSearch from "./tariff-search";
+import { TableCore, type ColumnDef } from "@/components/table/table-core";
 
 const TariffList = () => {
     // Các trạng thái bộ lọc đang nhập trên UI (Không kích hoạt gọi API trực tiếp)
@@ -49,8 +50,6 @@ const TariffList = () => {
     });
 
     // Gọi API lấy dữ liệu Transport / Excursion sử dụng useGetListTourPriceItemLevelInAd
-    // Đối với Transport (Boat): intProductID = 101, intTypeID = 3
-    // Đối với Excursion (Flight): intProductID = 102 (hoặc tùy loại, tạm thời để 101/102 tùy thuộc vào loại hình)
     const tourQuery = useGetListTourPriceItemLevelInAd({
         strFilterServiceName: appliedFilters.serviceName || "",
         dtmFilterDateFrom: appliedFilters.dateFrom || "2026-01-01",
@@ -134,6 +133,123 @@ const TariffList = () => {
         return spans;
     }, [tariffData]);
 
+    // Định nghĩa danh sách các cột cho TableCore
+    const columnDefs = useMemo<ColumnDef<any>[]>(() => {
+        return [
+            {
+                field: "No" as any,
+                headerName: "STT",
+                algin: "center",
+                width: 60,
+                render: (_val, row, rowIndex) => row.No || rowIndex + 1,
+            },
+            {
+                field: "strSupplierName",
+                headerName: isHotel ? "Hotel name" : "Service name",
+                width: 320,
+                cellProps: (_val, _row, rowIndex) => {
+                    const span = hotelGroupSpans[rowIndex];
+                    if (span === undefined) return null; // Ẩn hoàn toàn ô td
+                    return {
+                        rowSpan: span,
+                        className: "px-4 py-4 font-semibold text-gray-900 border-r border-gray-100 align-middle text-center bg-white",
+                    };
+                },
+                render: (_val, row) => {
+                    const hotelName = safeText(row.strSupplierName || row.strTourName || "");
+                    const hotelRating = safeText(row.strEasiaCateName) || "";
+                    const displayHotelName = hotelRating ? `${hotelName} (${hotelRating})` : hotelName;
+                    const hotelAddress = safeText(row.strSupplierAddress || "");
+                    const hotelWebsite = safeText(row.strSupplierWeb || "");
+
+                    return (
+                        <div className="space-y-1 flex flex-col items-center justify-center w-full">
+                            <span className="text-[#004b91] uppercase block truncate max-w-[280px]" title={displayHotelName}>
+                                {displayHotelName}
+                            </span>
+                            {hotelAddress && (
+                                <p className="text-gray-500 font-normal text-xs truncate max-w-[280px]" title={hotelAddress}>
+                                    {hotelAddress}
+                                </p>
+                            )}
+                            {hotelWebsite && (
+                                <a
+                                    href={hotelWebsite}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-blue-500 text-xs font-normal hover:underline block truncate max-w-[280px]"
+                                    title={hotelWebsite}
+                                >
+                                    {hotelWebsite}
+                                </a>
+                            )}
+                        </div>
+                    );
+                },
+            },
+            {
+                field: "strItemTypeName",
+                headerName: isHotel ? "Room name" : "Item name",
+                width: 250,
+                render: (_val, row) => safeText(row.strItemTypeName || row.strPriceLevelName || ""),
+            },
+            {
+                field: "dtmDateFrom",
+                headerName: "Date from",
+                algin: "center",
+                render: (_val, row) => fDateTariff(row.dtmDateFrom || row.dateFrom),
+            },
+            {
+                field: "dtmDateTo",
+                headerName: "Date to",
+                algin: "center",
+                render: (_val, row) => fDateTariff(row.dtmDateTo || row.dateTo),
+            },
+            {
+                field: "dblPrice",
+                headerName: "Price",
+                algin: "end",
+                render: (_val, row) => {
+                    const priceVal = row.dblPrice !== undefined ? row.dblPrice : row.price;
+                    return fCurrency(priceVal, "VND");
+                },
+            },
+            {
+                field: "dblPriceSGL",
+                headerName: "Price SGL",
+                algin: "end",
+                render: (_val, row) => {
+                    const priceSglVal = row.dblPriceSGL !== undefined ? row.dblPriceSGL : row.priceSgl;
+                    return fCurrency(priceSglVal, "VND");
+                },
+            },
+            {
+                field: "dblPriceTPL",
+                headerName: "Price Dbl",
+                algin: "end",
+                render: (_val, row) => {
+                    const priceDblVal = row.dblPriceTPL !== undefined ? row.dblPriceTPL : row.priceDbl;
+                    return fCurrency(priceDblVal, "VND");
+                },
+            },
+            {
+                field: "dblPriceChild",
+                headerName: "Price Child",
+                algin: "end",
+                render: (_val, row) => {
+                    const priceChildVal = row.dblPriceChild !== undefined ? row.dblPriceChild : row.priceChild;
+                    return fCurrency(priceChildVal, "VND");
+                },
+            },
+            {
+                field: "strRemark",
+                headerName: "Remark",
+                algin: "center",
+                render: (_val, row) => safeText(row.strRemark) || "--",
+            },
+        ];
+    }, [isHotel, hotelGroupSpans]);
+
     return (
         <div className="w-full">
             <TariffSearch
@@ -168,126 +284,17 @@ const TariffList = () => {
                 <div className="bg-white rounded-xl border border-red-200 shadow-sm p-12 text-center text-red-500 font-medium bg-red-50/20">
                     Có lỗi xảy ra khi tải dữ liệu.
                 </div>
+            ) : !appliedFilters.dateFrom || !appliedFilters.dateTo ? (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center text-amber-500 font-medium bg-amber-50/10">
+                    Vui lòng chọn khoảng ngày để xem dữ liệu.
+                </div>
             ) : (
                 <>
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse text-left text-sm">
-                                <thead>
-                                    <tr className="bg-blue-50/70 border-b border-gray-200">
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-center w-12">STT</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 w-1/4">Hotel name</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 w-1/4">Room name</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-center">Date from</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-center">Date to</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-right">Price</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-right">Price SGL</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-right">Price Dbl</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-right">Price Child</th>
-                                        <th className="px-4 py-3 font-semibold text-gray-600 text-center">Remark</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100 text-[13px] text-gray-700">
-                                    {!appliedFilters.dateFrom || !appliedFilters.dateTo ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12 text-center text-amber-500 font-medium bg-amber-50/10">
-                                                Vui lòng chọn khoảng ngày để xem dữ liệu.
-                                            </td>
-                                        </tr>
-                                    ) : tariffFetching ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12 text-center text-gray-500 font-medium bg-gray-50/50">
-                                                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#004b91] mr-3 align-middle"></div>
-                                                Đang tìm kiếm...
-                                            </td>
-                                        </tr>
-                                    ) : !tariffData || tariffData.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12 text-center text-gray-400 font-medium bg-gray-50/50">
-                                                Không có dữ liệu .
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        tariffData.map((row: any, idx: number) => {
-                                            const span = hotelGroupSpans[idx];
-                                            const hotelName = safeText(row.strSupplierName || "---");
-                                            const hotelRating = safeText(row.strEasiaCateName) || "";
-                                            const displayHotelName = hotelRating ? `${hotelName} (${hotelRating})` : hotelName;
-                                            const hotelAddress = safeText(row.strSupplierAddress || "");
-                                            const hotelWebsite = safeText(row.strSupplierWeb || "");
-
-                                            const roomName = safeText(row.strItemTypeName || "---");
-                                            const dateFrom = fDateTariff(row.dtmDateFrom || row.dateFrom);
-                                            const dateTo = fDateTariff(row.dtmDateTo || row.dateTo);
-
-                                            const priceVal = row.dblPrice !== undefined ? row.dblPrice : row.price;
-                                            const priceSglVal = row.dblPriceSGL !== undefined ? row.dblPriceSGL : row.priceSgl;
-                                            const priceDblVal = row.dblPriceTPL !== undefined ? row.dblPriceTPL : row.priceDbl;
-                                            const priceChildVal = row.dblPriceChild !== undefined ? row.dblPriceChild : row.priceChild;
-
-                                            const remark = safeText(row.strRemark);
-
-                                            return (
-                                                <tr key={row.strSupplierMappingPriceGUID || idx} className="hover:bg-slate-50/40 transition-colors">
-                                                    <td className="px-4 py-4 text-center text-gray-400 font-medium border-r border-gray-100">
-                                                        {row.No || idx + 1}
-                                                    </td>
-
-                                                    {/* Ô hiển thị tên khách sạn được gộp dòng dựa trên số lượng phòng trùng nhau */}
-                                                    {span !== undefined ? (
-                                                        <td
-                                                            rowSpan={span}
-                                                            className="px-4 py-4 font-semibold text-gray-900 border-r border-gray-100 align-middle text-center bg-white"
-                                                        >
-                                                            <div className="space-y-1 flex flex-col items-center justify-center">
-                                                                <span className="text-[#004b91] uppercase block">{displayHotelName}</span>
-                                                                {hotelAddress && <p className="text-gray-500 font-normal text-xs">{hotelAddress}</p>}
-                                                                {hotelWebsite && (
-                                                                    <a
-                                                                        href={hotelWebsite}
-                                                                        target="_blank"
-                                                                        rel="noreferrer"
-                                                                        className="text-blue-500 text-xs font-normal hover:underline block"
-                                                                    >
-                                                                        {hotelWebsite}
-                                                                    </a>
-                                                                )}
-                                                            </div>
-                                                        </td>
-                                                    ) : null}
-
-                                                    <td className="px-4 py-4 border-r border-gray-100 font-medium">
-                                                        {roomName}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-center border-r border-gray-100 text-gray-500">
-                                                        {dateFrom}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-center border-r border-gray-100 text-gray-500">
-                                                        {dateTo}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-right font-medium border-r border-gray-100 text-gray-500">
-                                                        {fCurrency(priceVal, "VND")}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-right font-medium border-r border-gray-100 text-gray-500">
-                                                        {fCurrency(priceSglVal, "VND")}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-right font-medium border-r border-gray-100 text-gray-500">
-                                                        {fCurrency(priceDblVal, "VND")}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-right font-medium border-r border-gray-100 text-gray-500">
-                                                        {fCurrency(priceChildVal, "VND")}
-                                                    </td>
-                                                    <td className="px-4 py-4 text-center text-gray-400">
-                                                        {remark || "--"}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <TableCore
+                        rowData={tariffData || []}
+                        columnDefs={columnDefs}
+                        loading={tariffFetching}
+                    />
 
                     {/* Thanh phân trang kết quả */}
                     {tariffTotalRecords > 0 && (
