@@ -5,8 +5,6 @@ import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Users } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
-import { useListPrice } from "@/hooks/actions/useBooking";
-import { useState } from "react";
 
 type TourListSeriesProps = {
     loading: boolean;
@@ -56,51 +54,10 @@ const TourListSeries = ({
     isSeries,
 }: TourListSeriesProps) => {
 
-    console.log("searchTourPayload",searchTourPayload)
-    const [canFetchPrice, setCanFetchPrice] = useState(false);
-
-    const [startDate, setStartDate] = useState<Date | null>(null);
-
-    // const xmlNoOfChild = useMemo(() => {
-    //     if (!guestValue.childAges?.length) {
-    //         return null;
-    //     }
-
-    //     return guestValue.childAges
-    //         .map((age) => `<child>${age}</child>`)
-    //         .join("");
-    // }, [guestValue.childAges]);
-
-
-    // ================= PRICE API =================
-    const { priceData } = useListPrice({
-
-        // IsHasPriceKid: item?.IsHasPriceKid,
-
-        // enabled: canFetchPrice && !!startDate,
-
-        // strTourGUID: item?.strTourGUID,
-
-        // intNoOfAdult: guestValue.adults,
-
-        // intNoOfSGLSup: guestValue.roomTypes?.sgl,
-
-        // intNoOfTPLRec: guestValue.roomTypes?.tpl,
-
-        // dtmFilterDateFrom: startDate
-        //     ? startDate.toISOString()
-        //     : null,
-
-        // xmlNoOfChild,
-
-        // intEasiaCateID: selectedStar,
-
-        // intJoinTypeID: 1,
-
-        // strPriceLevelGUID: item?.strPriceLevelGUID ?? "",
-    });
-
-    const price = priceData?.[0] ?? [];
+    console.log("data", data)
+    // const { tourChildAgeData } = useListTourChildAge({
+    //     strTourGUID: item?.strTourGUID
+    // })
 
     return (
         <div>
@@ -297,6 +254,17 @@ const TourListSeries = ({
 
                                 {/* PRICE */}
                                 <div className="w-1/4 flex flex-col items-center justify-center border-l border-gray-100 pl-6">
+
+                                    <div className="">
+                                        {t("adults")}:{' '}
+                                        {fCurrency(
+                                            item?.dblUnitPrice,
+                                            selectedCurrency?.label
+                                        )}
+
+
+
+                                    </div>
                                     <div className="text-gray-700 font-bold text-lg mb-1">
                                         {t("price")} :
                                     </div>

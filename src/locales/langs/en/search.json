@@ -29,8 +29,9 @@
   "apply": "Apply",
   "hotel": "Hotel",
   "bookRoomNow": "Book room now",
-"destination": "Destination",
-"searchPlaceholder": "Search...",
-"checkInCheckOutDate": "Check-in date - Check-out date",
-"redirectingPage": "Redirecting..."
+  "destination": "Destination",
+  "searchPlaceholder": "Search...",
+  "checkInCheckOutDate": "Check-in date - Check-out date",
+  "redirectingPage": "Redirecting...",
+  "adults": "Adults"
 }
