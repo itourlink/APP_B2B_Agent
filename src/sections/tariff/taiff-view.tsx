@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { useGetDetailCompanyTopup, useGetListSupplierMappingPrice } from "@/hooks/actions/useTariff";
 import Pagination from "@/components/pagination/pagination";
 import {
     ArrowLeft,
@@ -201,6 +202,10 @@ const TariffView = () => {
     const location = useLocation();
     const { coData } = useListCompanyOwner();
 
+    // Call and log the GetDetailCompanyTopup API
+    const { data: topupData, isLoading: topupLoading, isError: topupError } = useGetDetailCompanyTopup();
+    console.log(">>> GetDetailCompanyTopup API Response:", { topupData, topupLoading, topupError });
+
     const company = new URLSearchParams(location.search).get("company") || "";
     const companyName = coData?.strCompanyName || "CÔNG TY KẾT NỐI DU LỊCH";
 
@@ -220,6 +225,22 @@ const TariffView = () => {
     // Pagination States
     const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Call and log the GetListSupplierMappingPrice API
+    const { 
+        data: tariffData, 
+        totalRecords: tariffTotalRecords, 
+        isLoading: tariffLoading, 
+        isError: tariffError 
+    } = useGetListSupplierMappingPrice({
+        strCompanyGUID: coData?.strCompanyGUID,
+        strFilterSupplierName: serviceName || null,
+        dtmFilterDateFrom: dateFrom || "2026-01-01",
+        dtmFilterDateTo: dateTo || "2026-12-31",
+        page: currentPage,
+        pageSize: pageSize,
+    });
+    console.log(">>> GetListSupplierMappingPrice API Response:", { tariffData, tariffTotalRecords, tariffLoading, tariffError });
 
     // Filter & Search logic
     const filteredData = useMemo(() => {

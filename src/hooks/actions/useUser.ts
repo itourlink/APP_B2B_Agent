@@ -426,3 +426,11 @@ export const useAddCopyTourCustomized = async (body: any) => {
     );
     return res.data;
 }
+
+// tariff
+export const useGetDetailCompanyTopup = async (body: any) => {
+    const res = await apiClient.post(
+        "user/GetDetailCompanyTopup", body
+    );
+    return res.data;
+};
