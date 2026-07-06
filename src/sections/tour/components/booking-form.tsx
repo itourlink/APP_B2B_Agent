@@ -303,7 +303,16 @@ const BookingForm = ({ item }: Props) => {
                     queryKey: [QUERY_KEYS.CART.LIST_CART],
                 });
 
-                route.push(`${paths.shop.cart.list}?company=${company}`);
+                route.pushQuery(
+                    paths.shop.cart.list,
+                    {
+                        company,
+                    },
+                    {
+                        childPrices,
+                    }
+                );
+
                 showToast("success", t("addToCartSuccess"));
             },
             onError: () => {
