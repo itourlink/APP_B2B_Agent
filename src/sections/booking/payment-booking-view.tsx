@@ -39,6 +39,7 @@ const PaymentBookingView: React.FC = () => {
   const location = useLocation();
   const item = location?.state?.item;
   const price = location?.state?.price;
+  console.log("location",location)
   const payloadItem = location.state?.payload;
   const childPrices = location?.state?.childPrices
   const { showToast } = useToastStore();

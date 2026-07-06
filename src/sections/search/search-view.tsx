@@ -19,10 +19,13 @@ import { HotelCard } from "../hotel/components/hotel-card";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useTranslate } from "@/locales";
 import { useCurrency } from "@/components/currency/useCurrency";
+import { fCurrency } from "@/utils/format-number";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const SearchView = () => {
   const { t } = useTranslate("search")
   const { currencyId } = useCurrency();
+  const { selectedCurrency } = useListCurrency();
   const router = useRouter();
   const location = useLocation();
   const state = (location.state || {}) as any;
@@ -318,6 +321,8 @@ const SearchView = () => {
 
   const resultCount = rawData?.[0]?.intTotalRecords || 0;
 
+  const [selectedDates, setSelectedDates] = useState<Record<string, string>>({});
+
   useEffect(() => {
     const nextPayload =
       searchSnapshot?.draftFilters2 ||
@@ -474,18 +479,6 @@ const SearchView = () => {
                     dblTotalPriceCom: item?.dblTotalPriceCom,
                   };
 
-                  const payload = {
-                    ...payloadSearch,
-
-                    intTWN: 0,
-                    dtmDateTo: payloadSearch?.dtmDateTo ?? payloadSearch?.dtmDateFrom,
-
-                    strTourGUID: item?.strTourGUID,
-                    strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
-                    strCompanyPartnerGUID: item?.strCompanyPartnerGUID,
-                  };
-
-
                   const from = seriesFilter.dtmFilterDateValidFrom;
                   const to = seriesFilter.dtmFilterDateValidTo;
 
@@ -494,6 +487,22 @@ const SearchView = () => {
                       ? getDateRange(from, to)
                       : [item.dtmRealStartDate];
 
+                  const selectedDate =
+                    selectedDates[item.strTourGUID] ?? dateOptions[0];
+
+
+                  const payload = {
+                    ...payloadSearch,
+
+                    dtmDateFrom: selectedDate,
+                    dtmDateTo: selectedDate,
+                    intAdult:
+                      payloadSearch?.intAdult ??
+                      searchTourPayload?.intNoOfAdult,
+                    strTourGUID: item?.strTourGUID,
+                    strCompanyOwnerGUID: item?.strCompanyOwnerGUID,
+                    strCompanyPartnerGUID: item?.strCompanyPartnerGUID,
+                  };
 
                   const imageSrc =
                     item?.strTourImageUrl === "" ||
@@ -532,7 +541,16 @@ const SearchView = () => {
                               </option>
                             </select>
 
-                            <select className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer">
+                            <select
+                              value={selectedDate}
+                              onChange={(e) =>
+                                setSelectedDates((prev) => ({
+                                  ...prev,
+                                  [item.strTourGUID]: e.target.value,
+                                }))
+                              }
+                              className="border border-gray-300 rounded px-3 py-1 text-sm bg-white w-48 cursor-pointer"
+                            >
                               {dateOptions.map((date) => (
                                 <option key={date} value={date}>
                                   {new Date(date).toLocaleDateString()}
@@ -608,7 +626,11 @@ const SearchView = () => {
                         </div>
 
                         <div className="text-blue-600 text-3xl font-extrabold mb-4">
-                          ${isValidValue(item?.dblTotalPrice)}
+
+                          {fCurrency(
+                            item?.dblTotalPrice,
+                            selectedCurrency?.label
+                          )}
                         </div>
 
                         <button

@@ -54,12 +54,9 @@ const BookingForm = ({ item }: Props) => {
     const { coData } = useListCompanyOwner();
     const { selectedCurrency } = useListCurrency();
     const { currencyId } = useCurrency();
-
     const company =
         new URLSearchParams(location.search).get("company") || "";
-
     const { showToast } = useToastStore();
-
     const { tourChildAgeData } = useListTourChildAge({
         strTourGUID: item?.strTourGUID
     })
