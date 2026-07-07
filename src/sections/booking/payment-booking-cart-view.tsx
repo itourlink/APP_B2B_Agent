@@ -26,7 +26,6 @@ const PaymentBookingCartView: React.FC = () => {
     const { setGlobalLoading } = useGlobalLoading();
 
     const location = useLocation();
-    const childPrices = location?.state?.childPrices
 
     const items =
         location.state?.items || [];
@@ -36,6 +35,9 @@ const PaymentBookingCartView: React.FC = () => {
 
     const totalPrice =
         Number(location.state?.totalPrice || 0);
+
+    const totalCommission =
+        Number(location.state?.totalCommission || 0);
 
     const { showToast } = useToastStore();
     const { bankAccountData } = useListBankAccount();
@@ -127,6 +129,23 @@ const PaymentBookingCartView: React.FC = () => {
             window.removeEventListener("click", handleClickOutside);
         };
     }, []);
+
+    const extractNumber = (value?: string) => {
+        if (!value) return 0;
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(value, "text/html");
+        const text = doc.body.textContent || "";
+
+        const match = text.match(/(\d+)/);
+        return match ? Number(match[1]) : 0;
+    };
+
+    const totalGuests = items.reduce(
+        (sum: number, item: any) =>
+            sum + extractNumber(item?.intQuantity),
+        0
+    );
 
     const totalDeposit = totalPrice * 0.3;
 
@@ -951,11 +970,7 @@ const PaymentBookingCartView: React.FC = () => {
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        {t("guestQuantity")}
-                                    </th>
-
-                                    <th className="py-2 px-3 border border-[#1a52a3]">
-                                        {t("pricePerPax")}
+                                        {t("totalGuests")}
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
@@ -993,114 +1008,63 @@ const PaymentBookingCartView: React.FC = () => {
                                             </div>
                                         </td>
 
-                                        {/* ADULT */}
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            <div className="space-y-2 text-left">
-
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-[11px] font-semibold">
-                                                        {t("adults")}
-                                                    </span>
-
-                                                    <span className="font-semibold">
-                                                        {item?.intAdult}
-                                                    </span>
-                                                </div>
-
-                                                {childPrices.map((child: any) => (
-                                                    <div
-                                                        key={child.order}
-                                                        className="flex items-center justify-between border-t border-gray-100 pt-2"
-                                                    >
-                                                        <span className="text-[11px] font-semibold">
-                                                            {child.label}
-                                                            <span className="font-semibold">
-                                                                {" "}
-                                                                ({child.ageFrom}-{child.ageTo})
-                                                            </span>
-                                                        </span>
-
-                                                        <span className="font-semibold">
-                                                            {child.quantity}
-                                                        </span>
-                                                    </div>
-                                                ))}
-
-                                            </div>
+                                            {extractNumber(item?.intQuantity)}
                                         </td>
 
-                                        {/* CHILDREN */}
                                         <td className="py-3 px-3 align-top border-r border-gray-100">
-                                            <div className="space-y-2 text-center">
-
-                                                <div className="min-h-5">
-                                                    <span className="font-semibold text-gray-900">
-                                                        {fCurrency(item?.dblUnitPrice, selectedCurrency?.label)}
-                                                    </span>
-                                                </div>
-
-                                                {childPrices.map((child: any) => (
-                                                    <div
-                                                        key={child.order}
-                                                        className="min-h-5 border-t border-gray-100 pt-2"
-                                                    >
-                                                        <span className="font-semibold text-gray-900">
-                                                            {fCurrency(child.price, selectedCurrency?.label)}
-                                                        </span>
-                                                    </div>
-                                                ))}
-
-                                            </div>
+                                            {fCurrency(
+                                                item?.dblPriceTotalAgentCom,
+                                                selectedCurrency?.label
+                                            )}
                                         </td>
 
-
-                                        {/* COMMISSION / OTHER */}
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
-                                            {fCurrency(item?.dblTotalPriceCom, selectedCurrency?.label)}
+                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-medium">
+                                            {fCurrency(
+                                                item?.dblPriceTotal,
+                                                selectedCurrency?.label
+                                            )}
                                         </td>
 
-                                        {/* TOTAL (BACKEND) */}
-                                        <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
-                                            {fCurrency(item?.dblTotalPrice, selectedCurrency?.label)}
-                                        </td>
-
-                                        {/* PAYMENT */}
-                                        <td className="py-3 px-3 align-top font-semibold">
-                                            {fCurrency(totalDeposit, selectedCurrency?.label)}
+                                        <td className="py-3 px-3 align-top font-medium">
+                                            {fCurrency(
+                                                Number(item?.dblPriceTotal || 0) * 0.3,
+                                                selectedCurrency?.label
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
 
-                                {/* ================= TOTAL ROW ================= */}
-                                <tr className="bg-gray-50/60 font-semibold">
-
-                                    <td className="py-2 px-3 border-r border-gray-100" />
+                                <tr className="bg-gray-50/50 font-semibold">
+                                    <td className="py-2 px-3 border-r border-gray-100"></td>
 
                                     <td className="py-2 px-4 text-left border-r border-gray-100">
                                         {t("totalPrice")}
                                     </td>
 
-                                    {/* ADULT TOTAL */}
                                     <td className="py-2 px-3 border-r border-gray-100">
+                                        {totalGuests}
                                     </td>
 
-                                    {/* CHILD TOTAL */}
                                     <td className="py-2 px-3 border-r border-gray-100">
+                                        {fCurrency(
+                                            totalCommission,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
-
-                                    {/* COMMISSION */}
                                     <td className="py-2 px-3 border-r border-gray-100">
+                                        {fCurrency(
+                                            totalPrice,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
 
-                                    {/* GRAND TOTAL */}
-                                    <td className="py-2 px-3 border-r border-gray-100">
-                                        {fCurrency(totalPrice, selectedCurrency?.label)}
-                                    </td>
-
-                                    {/* PAYMENT */}
                                     <td className="py-2 px-3">
-                                        {fCurrency(totalDeposit, selectedCurrency?.label)}
+                                        {fCurrency(
+                                            totalDeposit,
+                                            selectedCurrency?.label
+                                        )}
                                     </td>
                                 </tr>
                             </tbody>

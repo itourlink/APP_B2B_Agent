@@ -12,13 +12,9 @@ import { paths } from "@/routes/paths";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useTranslate } from "@/locales";
 import { fCurrency } from "@/utils/format-number";
-import { useLocation } from "react-router-dom";
 
 
 const CartList = () => {
-  const location = useLocation()
-  console.log("location", location)
-  const childPrices = location?.state?.childPrices
   const { t } = useTranslate("cart")
   const [filters] = useState({
     page: 1,
@@ -369,7 +365,6 @@ const CartList = () => {
                     strListCartServiceItemGUID,
                     totalPrice,
                     totalCommission,
-                    childPrices
                   }
                 );
               }}

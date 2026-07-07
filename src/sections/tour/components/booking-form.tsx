@@ -308,9 +308,9 @@ const BookingForm = ({ item }: Props) => {
                     {
                         company,
                     },
-                    {
-                        childPrices,
-                    }
+                    // {
+                    //     childPrices,
+                    // }
                 );
 
                 showToast("success", t("addToCartSuccess"));
