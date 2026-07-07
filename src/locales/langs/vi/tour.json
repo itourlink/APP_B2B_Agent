@@ -140,5 +140,7 @@
     "tourSeries": "Chuỗi Tour",
     "infants": "Em bé",
     "smallKids": "Trẻ nhỏ",
-    "kids": "Trẻ em"
+    "kids": "Trẻ em",
+    "tourHasNoPrice": "Tour chưa có giá",
+    "loadingPrice": "Đang tải giá..."
 }

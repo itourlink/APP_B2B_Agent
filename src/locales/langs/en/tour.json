@@ -128,6 +128,7 @@
     "infants": "Infants",
     "smallKids": "Small Kids",
     "kids": "Kids",
-    "tourSeries": "Tour Series"
-
+    "tourSeries": "Tour Series",
+    "tourHasNoPrice": "This tour has no price yet",
+    "loadingPrice": "Loading price..."
 }

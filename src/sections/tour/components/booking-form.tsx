@@ -121,9 +121,9 @@ const BookingForm = ({ item }: Props) => {
 
     // ================= STAR LIST =================
     const starList = useMemo(() => {
-        if (!item?.strListEasiaCateID) return [];
+        if (!item?.strListStarCateID) return [];
 
-        return item.strListEasiaCateID
+        return item.strListStarCateID
             .split(",")
             .map((id: string) => Number(id))
             .filter(Boolean);
@@ -176,7 +176,7 @@ const BookingForm = ({ item }: Props) => {
 
 
     // ================= PRICE API =================
-    const { priceData } = useListPrice({
+    const { priceData, priceLoading } = useListPrice({
 
         IsHasPriceKid: item?.IsHasPriceKid,
 
@@ -341,7 +341,11 @@ const BookingForm = ({ item }: Props) => {
                     </div>
                 </div>
 
-                {!!price.dblTotalPrice && (
+                {priceLoading ? (
+                    <div className="text-[12px] text-gray-500 italic">
+                        {t("loadingPrice")}
+                    </div>
+                ) : price?.dblTotalPrice != null ? (
                     <div className="">
                         <div className="text-[24px] font-semibold text-[#0c63e6]">
                             {t("totalPrice")}: {fCurrency(price.dblTotalPrice, selectedCurrency?.label)}
@@ -372,7 +376,11 @@ const BookingForm = ({ item }: Props) => {
                             {t("remainingSlots")}: {price.intPaxRemain ?? "0"} {t("slots")}
                         </div>
                     </div>
-                )}
+                ) : canFetchPrice ? (
+                    <div className="rounded-md border border-red-200 bg-red-50 p-2 text-[12px] font-medium italic text-red-600">
+                        {t("tourHasNoPrice")}
+                    </div>
+                ) : null}
 
                 {/* DATE */}
                 <div ref={dateRef}>
