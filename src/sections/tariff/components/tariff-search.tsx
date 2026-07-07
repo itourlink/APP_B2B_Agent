@@ -183,6 +183,7 @@ interface TariffSearchProps {
 
     onSearch: () => void;
     onReset: () => void;
+    onExport: () => void;
     isLoading?: boolean;
 }
 
@@ -205,6 +206,7 @@ const TariffSearch = ({
     setDestination,
     onSearch,
     onReset,
+    onExport,
     isLoading = false
 }: TariffSearchProps) => {
     const router = useRouter();
@@ -382,7 +384,7 @@ const TariffSearch = ({
                         </button>
                         <button
                             type="button"
-                            onClick={() => alert("Xuất Excel...")}
+                            onClick={onExport}
                             className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 ml-auto shadow-sm transition-colors cursor-pointer"
                         >
                             <Download size={16} />
