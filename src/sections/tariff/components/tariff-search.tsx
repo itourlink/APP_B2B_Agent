@@ -14,6 +14,7 @@ import {
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListSQLData } from "@/hooks/actions/useSql";
 import { twMerge } from "tailwind-merge";
+import { useTranslate } from "@/locales";
 
 type Option = {
     label: string;
@@ -209,6 +210,9 @@ const TariffSearch = ({
     onExport,
     isLoading = false
 }: TariffSearchProps) => {
+    const { t } = useTranslate("tariff");
+    useTranslate("genericFilter");
+
     const router = useRouter();
     const { coData } = useListCompanyOwner();
     const companyName = coData?.strCompanyName;
@@ -318,31 +322,31 @@ const TariffSearch = ({
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     {/* Supplier Type */}
                     <div className="relative">
-                        <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                            supplier type
+                        <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 capitalize">
+                            {t("supplierType")}
                         </label>
                         <select
                             value={supplierType}
                             onChange={(e) => setSupplierType(e.target.value)}
                             className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500 bg-white"
                         >
-                            <option value="Hotel">Hotel</option>
-                            <option value="Transport">Transport</option>
-                            <option value="Excursion">Excursion</option>
+                            <option value="Hotel">{t("hotel")}</option>
+                            <option value="Transport">{t("transport")}</option>
+                            <option value="Excursion">{t("excursion")}</option>
                         </select>
                     </div>
 
                     {/* Service Name */}
                     <div className="relative">
                         <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                            Tên dịch vụ
+                            {t("serviceName")}
                         </label>
                         <input
                             type="text"
                             value={serviceName}
                             onChange={(e) => setServiceName(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Nhập tên dịch vụ..."
+                            placeholder={t("enterServiceName")}
                             className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:border-blue-500"
                         />
                     </div>
@@ -359,7 +363,7 @@ const TariffSearch = ({
                             ) : (
                                 <Filter size={16} />
                             )}
-                            Lọc
+                            {t("filter")}
                         </button>
 
                         <button
@@ -368,7 +372,7 @@ const TariffSearch = ({
                             className="h-11 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                         >
                             <RotateCcw size={16} />
-                            Reset
+                            {t("reset")}
                         </button>
                         <button
                             type="button"
@@ -388,7 +392,7 @@ const TariffSearch = ({
                             className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 ml-auto shadow-sm transition-colors cursor-pointer"
                         >
                             <Download size={16} />
-                            Xuất Excel
+                            {t("exportExcel")}
                         </button>
                     </div>
                 </div>
@@ -407,10 +411,10 @@ const TariffSearch = ({
                                 className="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none flex items-center justify-between bg-white text-left cursor-pointer relative"
                             >
                                 <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                                    Date from - Date to <span className="text-red-500 font-bold">*</span>
+                                    {t("dateFromDateTo")} <span className="text-red-500 font-bold">*</span>
                                 </label>
                                 <span className="text-gray-700">
-                                    {dateFrom && dateTo ? `${dateFrom} — ${dateTo}` : "Chọn khoảng ngày..."}
+                                    {dateFrom && dateTo ? `${dateFrom} — ${dateTo}` : t("selectDateRange")}
                                 </span>
                             </button>
 
@@ -446,7 +450,7 @@ const TariffSearch = ({
                         {supplierType === "Hotel" && (
                             <div className="relative">
                                 <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                                    Category
+                                    {t("category")}
                                 </label>
                                 <select
                                     value={category}
@@ -462,14 +466,12 @@ const TariffSearch = ({
                                     <option value="6">★★★★★★</option>
                                 </select>
                             </div>
-                        )
-
-                        }
+                        )}
 
                         {/* Country */}
                         <div className="relative">
                             <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
-                                Chọn quốc gia
+                                {t("selectCountry")}
                             </label>
                             <SearchSelect
                                 value={country}
@@ -480,14 +482,14 @@ const TariffSearch = ({
                                 }}
                                 options={countryOptions}
                                 loading={isCountryLoading}
-                                placeholder="Chọn quốc gia"
+                                placeholder={t("selectCountry")}
                             />
                         </div>
 
                         {/* Region */}
                         <div className="relative">
                             <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
-                                Chọn Vùng miền
+                                {t("selectRegion")}
                             </label>
                             <SearchSelect
                                 value={region}
@@ -498,14 +500,14 @@ const TariffSearch = ({
                                 options={regionOptions}
                                 loading={isRegionLoading}
                                 disabled={!country}
-                                placeholder="Chọn Vùng miền"
+                                placeholder={t("selectRegion")}
                             />
                         </div>
 
                         {/* Destination */}
                         <div className="relative">
                             <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] font-medium text-gray-500 z-10">
-                                Chọn Địa điểm
+                                {t("selectDestination")}
                             </label>
                             <SearchSelect
                                 value={destination}
@@ -513,7 +515,7 @@ const TariffSearch = ({
                                 options={cityOptions}
                                 loading={isCityLoading}
                                 disabled={!region}
-                                placeholder="Chọn Địa điểm"
+                                placeholder={t("selectDestination")}
                             />
                         </div>
                     </div>

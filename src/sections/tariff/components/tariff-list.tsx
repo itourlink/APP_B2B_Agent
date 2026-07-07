@@ -13,8 +13,7 @@ import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { buildHotelExportUrl, buildTourExportUrl } from "@/utils/export.service";
 
 const TariffList = () => {
-    const { t } = useTranslate("sửa dịch trang ở đây");
-    useTranslate("genericFilter");
+    const { t } = useTranslate("tariff");
     const { user } = useUser();
     const { coData } = useListCompanyOwner(); // Company chủ sở hữu (giống như useTariff dùng)
     const [supplierType, setSupplierType] = useState("Hotel");
@@ -84,7 +83,7 @@ const TariffList = () => {
     // Hàm xử lý Lọc: Đồng bộ giá trị UI đang nhập vào bộ lọc áp dụng gọi API
     const handleSearch = () => {
         if (!dateFrom || !dateTo) {
-            alert("Vui lòng chọn khoảng ngày (Date from - Date to) trước khi lọc!");
+            alert(t("pleaseSelectDateRange"));
             return;
         }
         setAppliedFilters({
@@ -185,14 +184,14 @@ const TariffList = () => {
         return [
             {
                 field: "No" as any,
-                headerName: "STT",
+                headerName: t("stt"),
                 algin: "center",
                 width: 60,
                 render: (_val, row, rowIndex) => row.No || rowIndex + 1,
             },
             {
                 field: "strSupplierName",
-                headerName: isHotel ? "Hotel name" : "Service name",
+                headerName: isHotel ? t("hotelName") : t("serviceName"),
                 width: 320,
                 cellProps: (_val, _row, rowIndex) => {
                     const span = hotelGroupSpans[rowIndex];
@@ -236,25 +235,25 @@ const TariffList = () => {
             },
             {
                 field: "strItemTypeName",
-                headerName: isHotel ? "Room name" : "Item name",
+                headerName: isHotel ? t("roomName") : t("itemName"),
                 width: 250,
                 render: (_val, row) => safeText(row.strItemTypeName || row.strPriceLevelName || ""),
             },
             {
                 field: "dtmDateFrom",
-                headerName: "Date from",
+                headerName: t("dateFrom"),
                 algin: "center",
                 render: (_val, row) => fDateTariff(row.dtmDateFrom || row.dateFrom),
             },
             {
                 field: "dtmDateTo",
-                headerName: "Date to",
+                headerName: t("dateTo"),
                 algin: "center",
                 render: (_val, row) => fDateTariff(row.dtmDateTo || row.dateTo),
             },
             {
                 field: "dblPrice",
-                headerName: "Price",
+                headerName: t("price"),
                 algin: "end",
                 render: (_val, row) => {
                     const priceVal = row.dblPrice !== undefined ? row.dblPrice : row.price;
@@ -263,7 +262,7 @@ const TariffList = () => {
             },
             {
                 field: "dblPriceSGL",
-                headerName: "Price SGL",
+                headerName: t("priceSgl"),
                 algin: "end",
                 render: (_val, row) => {
                     const priceSglVal = row.dblPriceSGL !== undefined ? row.dblPriceSGL : row.priceSgl;
@@ -272,7 +271,7 @@ const TariffList = () => {
             },
             {
                 field: "dblPriceTPL",
-                headerName: "Price Dbl",
+                headerName: t("priceDbl"),
                 algin: "end",
                 render: (_val, row) => {
                     const priceDblVal = row.dblPriceTPL !== undefined ? row.dblPriceTPL : row.priceDbl;
@@ -281,7 +280,7 @@ const TariffList = () => {
             },
             {
                 field: "dblPriceChild",
-                headerName: "Price Child",
+                headerName: t("priceChild"),
                 algin: "end",
                 render: (_val, row) => {
                     const priceChildVal = row.dblPriceChild !== undefined ? row.dblPriceChild : row.priceChild;
@@ -290,12 +289,12 @@ const TariffList = () => {
             },
             {
                 field: "strRemark",
-                headerName: "Remark",
+                headerName: t("remark"),
                 algin: "center",
                 render: (_val, row) => safeText(row.strRemark) || "--",
             },
         ];
-    }, [isHotel, hotelGroupSpans]);
+    }, [isHotel, hotelGroupSpans, t]);
 
     return (
         <div className="w-full">
@@ -326,15 +325,15 @@ const TariffList = () => {
             {tariffLoading ? (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center text-gray-500 font-medium">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#004b91] mr-3"></div>
-                    Đang tải dữ liệu...
+                    {t("loadingData")}
                 </div>
             ) : tariffError ? (
                 <div className="bg-white rounded-xl border border-red-200 shadow-sm p-12 text-center text-red-500 font-medium bg-red-50/20">
-                    Có lỗi xảy ra khi tải dữ liệu.
+                    {t("errorLoadingData")}
                 </div>
             ) : !appliedFilters.dateFrom || !appliedFilters.dateTo ? (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center text-amber-500 font-medium bg-amber-50/10">
-                    Vui lòng chọn khoảng ngày để xem dữ liệu.
+                    {t("selectDateRangeToView")}
                 </div>
             ) : (
                 <>
