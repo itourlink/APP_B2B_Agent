@@ -1,7 +1,8 @@
 import { Star } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ReactSlider from "react-slider";
 import { useTranslate } from "@/locales";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 const transportList = [
     { label: "Vietnam Airline", value: "1" },
@@ -37,7 +38,6 @@ type Props = {
 export default function SearchFilter({
     isSeries,
     isHotel,
-    isQuick,
     tourFilter,
     setTourFilter,
     seriesFilter,
@@ -45,14 +45,26 @@ export default function SearchFilter({
     onApply,
 }: Props) {
     const { t } = useTranslate("search");
-    const [priceRange, setPriceRange] = useState([0, 250]);
+    const { selectedCurrency } = useListCurrency();
+
+    const isVnd = selectedCurrency?.label === "VND";
+    const minPrice = 0;
+    const maxPrice = isVnd ? 15000000 : 1000;
+    const stepPrice = isVnd ? 100000 : 10;
+    const defaultPriceRange = useMemo(() => [0, isVnd ? 15000000 : 500], [isVnd]);
+
+    const [priceRange, setPriceRange] = useState(defaultPriceRange);
     const [dayRange, setDayRange] = useState([1, 10]);
+
+    useEffect(() => {
+        setPriceRange(defaultPriceRange);
+    }, [defaultPriceRange]);
 
     const currentFilter = isSeries ? seriesFilter : tourFilter;
     const setCurrentFilter = isSeries ? setSeriesFilter : setTourFilter;
 
     const resetFilter = () => {
-        setPriceRange([0, 250]);
+        setPriceRange(defaultPriceRange);
         setDayRange([1, 10]);
 
         const resetData = {
@@ -125,40 +137,40 @@ export default function SearchFilter({
                 />
             </div>
 
-            {(!isHotel || !isQuick) && (
-                <div className="mb-4">
-                    <h4 className="text-xs font-medium mb-2">{t("priceUsd")}</h4>
+            <div className="mb-4">
+                <h4 className="text-xs font-medium mb-2">
+                    {t("price")} ({selectedCurrency?.label || "USD"})
+                </h4>
 
-                    <ReactSlider
-                        className="w-full h-2"
-                        thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
-                        trackClassName="h-2 rounded"
-                        value={priceRange}
-                        min={0}
-                        max={500}
-                        step={5}
-                        onChange={(value: any) => {
-                            setPriceRange(value);
+                <ReactSlider
+                    className="w-full h-2"
+                    thumbClassName="h-4 w-4 bg-blue-600 rounded-full cursor-pointer -top-1"
+                    trackClassName="h-2 rounded"
+                    value={priceRange}
+                    min={minPrice}
+                    max={maxPrice}
+                    step={stepPrice}
+                    onChange={(value: any) => {
+                        setPriceRange(value);
 
-                            setCurrentFilter((prev: any) => ({
-                                ...prev,
-                                strPriceFromRange: `${value[0]},${value[1]}`,
-                            }));
-                        }}
-                        renderTrack={(props: any, state: any) => (
-                            <div
-                                {...props}
-                                className={`h-2 rounded ${state.index === 1 ? "bg-blue-600" : "bg-slate-200"}`}
-                            />
-                        )}
-                    />
+                        setCurrentFilter((prev: any) => ({
+                            ...prev,
+                            strPriceFromRange: `${value[0]},${value[1]}`,
+                        }));
+                    }}
+                    renderTrack={(props: any, state: any) => (
+                        <div
+                            {...props}
+                            className={`h-2 rounded ${state.index === 1 ? "bg-blue-600" : "bg-slate-200"}`}
+                        />
+                    )}
+                />
 
-                    <div className="flex justify-between text-[10px] mt-2 text-gray-500">
-                        <span>{priceRange[0]}</span>
-                        <span>{priceRange[1]}</span>
-                    </div>
+                <div className="flex justify-between text-[10px] mt-2 text-gray-500">
+                    <span>{priceRange[0]?.toLocaleString()}</span>
+                    <span>{priceRange[1]?.toLocaleString()}</span>
                 </div>
-            )}
+            </div>
 
             {!isHotel && (
                 <div className="mb-4">
