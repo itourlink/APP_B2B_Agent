@@ -5,9 +5,13 @@ import { fDateTariff } from "@/utils/format-time";
 import Pagination from "@/components/pagination/pagination";
 import TariffSearch from "./tariff-search";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
+import { useUser } from "@/hooks/actions/useAuth";
+import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { buildHotelExportUrl, buildTourExportUrl } from "@/utils/export.service";
 
 const TariffList = () => {
-    // Các trạng thái bộ lọc đang nhập trên UI (Không kích hoạt gọi API trực tiếp)
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner(); // Company chủ sở hữu (giống như useTariff dùng)
     const [supplierType, setSupplierType] = useState("Hotel");
     const [serviceName, setServiceName] = useState("");
     const [dateFrom, setDateFrom] = useState("2026-01-01");
@@ -112,6 +116,44 @@ const TariffList = () => {
             destination: "",
         });
         setCurrentPage(1);
+    };
+
+    // Bước 2, 4, 5, 6 — Tạo URL export dựa trên appliedFilters và mở trong tab mới
+    const handleExport = () => {
+        if (!user?.strUserGUID) {
+            alert("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+            return;
+        }
+
+        // Dùng coData?.strCompanyGUID (giống useTariff hook) — là CompanyGUID của chủ sở hữu
+        const strCompanyGUID = coData?.strCompanyGUID ?? user.strCompanyGUID;
+
+        let exportUrl: string;
+
+        if (appliedFilters.supplierType === "Hotel") {
+            exportUrl = buildHotelExportUrl({
+                strUserGUID: user.strUserGUID,
+                strCompanyGUID,
+                dateFrom: appliedFilters.dateFrom,
+                dateTo: appliedFilters.dateTo,
+                serviceName: appliedFilters.serviceName,
+                category: appliedFilters.category,
+                destination: appliedFilters.destination,
+            });
+        } else {
+            exportUrl = buildTourExportUrl({
+                strUserGUID: user.strUserGUID,
+                strCompanyGUID,
+                supplierType: appliedFilters.supplierType as "Transport" | "Excursion",
+                dateFrom: appliedFilters.dateFrom,
+                dateTo: appliedFilters.dateTo,
+                serviceName: appliedFilters.serviceName,
+                category: appliedFilters.category,
+                destination: appliedFilters.destination,
+            });
+        }
+
+        window.open(exportUrl, "_blank");
     };
 
     // Nhóm các khách sạn lại để tính toán số dòng cần gộp (rowSpan) dựa trên tên khách sạn
@@ -271,6 +313,7 @@ const TariffList = () => {
                 setDestination={setDestination}
                 onSearch={handleSearch}
                 onReset={handleReset}
+                onExport={handleExport}
                 isLoading={tariffLoading || tariffFetching}
             />
 
