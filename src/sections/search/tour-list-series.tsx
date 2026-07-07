@@ -202,8 +202,12 @@ const TourListSeries = ({
                                                     {t("duration")}:{" "}
                                                     {isValidValue(
                                                         item?.intNoOfDay
-                                                    )}{" "}
-                                                    {t("days")}
+                                                    )}
+                                                    {' '}{t("days")}
+                                                    /{" "}
+                                                    {isValidValue(
+                                                        Number(item?.intNoOfDay) - 1
+                                                    )}{" "} {t("nights")}
                                                 </span>
                                             </div>
 
