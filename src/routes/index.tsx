@@ -234,7 +234,7 @@ export function Router() {
               element: <PaymentBookingHotelPage />,
             },
             {
-              path: paths.tariff.list,
+              path: paths.shop.tariff.list,
               element: <TariffPage />,
             },
           ],

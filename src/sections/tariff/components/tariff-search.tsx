@@ -216,6 +216,9 @@ const TariffSearch = ({
     const router = useRouter();
     const { coData } = useListCompanyOwner();
     const companyName = coData?.strCompanyName;
+
+    const company =
+        new URLSearchParams(location.search).get("company") || "";
     //search enter 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {

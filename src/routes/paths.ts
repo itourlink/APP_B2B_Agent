@@ -67,6 +67,10 @@ export const paths = {
     salesChannel: {
       list: "/shop/sales-channel",
     },
+    
+    tariff: {
+      list: "/shop/tariff",
+    },
   },
 
   booking: {
@@ -84,10 +88,7 @@ export const paths = {
     notification: "/notification",
     cart: "/cart",
   },
-  // tariff
-  tariff: {
-    list: "/tariff",
-  },
+
   backdoor: "/backdoor",
 
   page403: "/error/403",
