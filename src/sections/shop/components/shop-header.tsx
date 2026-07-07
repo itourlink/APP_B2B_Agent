@@ -25,6 +25,8 @@ const ShopHeader = () => {
     const router = useRouter();
     const location = useLocation();
     const { t } = useTranslate("header")
+    useTranslate("noti")
+
     const pathname = location.pathname;
 
     const company =

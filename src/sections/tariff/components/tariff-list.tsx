@@ -5,8 +5,12 @@ import { fDateTariff } from "@/utils/format-time";
 import Pagination from "@/components/pagination/pagination";
 import TariffSearch from "./tariff-search";
 import { TableCore, type ColumnDef } from "@/components/table/table-core";
+import { useTranslate } from "@/locales";
 
 const TariffList = () => {
+    const { t } = useTranslate("sửa dịch trang ở đây");
+    useTranslate("genericFilter");
+
     // Các trạng thái bộ lọc đang nhập trên UI (Không kích hoạt gọi API trực tiếp)
     const [supplierType, setSupplierType] = useState("Hotel");
     const [serviceName, setServiceName] = useState("");
