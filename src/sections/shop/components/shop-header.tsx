@@ -8,7 +8,7 @@ import Currency from "@/components/currency/currency";
 import Notification from "@/sections/notification/components/notification";
 import CartIcon from "@/sections/cart/components/cart-icon";
 import TourCustomized from "@/sections/tour-customized/tour-customized";
-import Tariff from "@/sections/tariff/tariff";
+import Tariff from "@/sections/tariff/components/tariff";
 
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
