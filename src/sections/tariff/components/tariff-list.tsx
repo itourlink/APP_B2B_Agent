@@ -25,7 +25,7 @@ const TariffList = () => {
     const [region, setRegion] = useState("");
     const [destination, setDestination] = useState("");
 
-    // Bộ lọc thực tế được áp dụng để gọi API (Chỉ cập nhật khi bấm Lọc hoặc Reset)
+    // Bộ lọc thực tế được áp dụng để gọi API 
     const [appliedFilters, setAppliedFilters] = useState({
         serviceName: "",
         dateFrom: "2026-01-01",
@@ -51,7 +51,7 @@ const TariffList = () => {
         intTypeID: 3,
         intCateID: 1,
         intEasiaCateID: appliedFilters.category || null,
-        strListCityCode: appliedFilters.destination ? `${appliedFilters.destination},` : null,
+        strListCityCode: appliedFilters.destination || null,
         page: currentPage,
         pageSize: pageSize,
         enabled: isHotel,
@@ -65,7 +65,7 @@ const TariffList = () => {
         intProductID: appliedFilters.supplierType === "Transport" ? 101 : 100,
         intTypeID: 3,
         intCateID: appliedFilters.category || null,
-        strListCityCode: appliedFilters.destination ? `${appliedFilters.destination},` : null,
+        strListCityCode: appliedFilters.destination || null,
         page: currentPage,
         pageSize: pageSize,
         enabled: !isHotel,
