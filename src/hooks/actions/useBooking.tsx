@@ -17,7 +17,7 @@ export const useListPrice = (filters?: {
     dtmFilterDateFrom?: string | null;
     xmlNoOfChild?: string | null;
     strPriceLevelGUID?: string | null;
-    intEasiaCateID?: number | null;
+    intEasiaCateID?: number | string | null;
     intJoinTypeID?: number | null;
     enabled?: boolean;
     IsHasPriceKid?: boolean | false;
