@@ -16,9 +16,9 @@ import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PaymentCountdown from "./payment-countdown";
+import PaymentCountdown from "../components/payment-countdown";
 import { getFlagClass, isValidValue } from "@/utils/utilts";
-import BookingPopup from "./booking-popup";
+import BookingPopup from "../components/booking-popup";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useGlobalLoading } from "@/zustand/useGlobalLoading";
 import { fDate } from "@/utils/format-time";
@@ -28,9 +28,9 @@ import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { fCurrency } from "@/utils/format-number";
 import i18next from "i18next";
-import PaymentTableBooking from "./payment-table-booking";
-import PaymentVouBank from "./payment-vou-bank-booking";
-import PaymentFormBooking from "./payment-form-booking";
+import PaymentTableBooking from "./components/payment-table-booking";
+import PaymentVouBank from "./components/payment-vou-bank-booking";
+import PaymentFormBooking from "./components/payment-form-booking";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");

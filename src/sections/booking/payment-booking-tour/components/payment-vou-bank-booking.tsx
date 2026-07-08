@@ -1,5 +1,5 @@
 import type { ToastType } from "@/zustand/useToastStore";
-import VoucherList from "./voucher-list";
+import VoucherList from "../../components/voucher-list";
 
 interface PaymentDetailSectionProps {
     t: any;

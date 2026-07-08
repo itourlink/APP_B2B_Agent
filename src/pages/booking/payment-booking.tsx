@@ -1,5 +1,5 @@
 import { CONFIG } from "../../config-global";
-import PaymentBookingView from "@/sections/booking/payment-booking-view";
+import PaymentBookingView from "@/sections/booking/payment-booking-tour/payment-booking-view";
 
 const metadata = { title: `Payment Booking - ${CONFIG.appName}` };
 
