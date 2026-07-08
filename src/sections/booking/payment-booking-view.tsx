@@ -19,7 +19,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PaymentCountdown from "./payment-countdown";
 import { getFlagClass, isValidValue } from "@/utils/utilts";
-import VoucherList from "./voucher-list";
 import BookingPopup from "./booking-popup";
 import { useToastStore } from "@/zustand/useToastStore";
 import { useGlobalLoading } from "@/zustand/useGlobalLoading";
@@ -30,6 +29,8 @@ import { useListCurrency } from "@/components/currency/useListCurrency";
 import { useCurrency } from "@/components/currency/useCurrency";
 import { fCurrency } from "@/utils/format-number";
 import i18next from "i18next";
+import PaymentTableBooking from "./payment-table-booking";
+import PaymentVouBank from "./payment-vou-bank-booking";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
@@ -886,427 +887,67 @@ const PaymentBookingView: React.FC = () => {
             </h2>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-[#1e5bb4] text-white font-medium text-center">
-                  <th className="py-2 px-3 border border-[#1a52a3] w-12">
-                    {t("no")}
-                  </th>
-
-                  <th className="py-2 px-4 border border-[#1a52a3] text-left">
-                    {t("serviceName")}
-                  </th>
-
-                  <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("guestQuantity")}
-                  </th>
-
-                  <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("pricePerPax")}
-                  </th>
-
-                  <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("totalCommissionPrice")}
-                  </th>
-
-                  <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("totalPrice")}
-                  </th>
-
-                  <th className="py-2 px-3 border border-[#1a52a3]">
-                    {t("totalPaymentAmount")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-center text-gray-700">
-                <React.Fragment>
-                  {/* ================= ROW DATA ================= */}
-                  <tr className="hover:bg-gray-50">
-
-                    {/* NO */}
-                    <td className="py-3 px-3 align-top border-r border-gray-100">
-                      {price.No}
-                    </td>
-
-                    {/* SERVICE */}
-                    <td className="py-3 px-4 text-left align-top border-r border-gray-100">
-                      <div className="font-semibold text-gray-800">
-                        {price?.strServiceName}
-                      </div>
-
-                      <div className="text-gray-500 text-[11px] mt-0.5">
-                        {fDate(isValidValue(payloadItem?.dtmDateFrom))} -{" "}
-                        {fDate(
-                          addDays(
-                            new Date(isValidValue(payloadItem?.dtmDateFrom)),
-                            item?.intNoOfDay || 0
-                          )
-                        )}
-                      </div>
-                    </td>
-
-                    {/* ADULT */}
-                    <td className="py-3 px-3 align-top border-r border-gray-100">
-                      <div className="space-y-2 text-left">
-
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-semibold">
-                            {t("adults")}
-                          </span>
-
-                          <span className="font-semibold">
-                            {payloadItem?.intAdult}
-                          </span>
-                        </div>
-
-                        {childPriceSummary.map((child: any) => (
-                          <div
-                            key={child.order}
-                            className="flex items-center justify-between border-t border-gray-100 pt-2"
-                          >
-                            <span className="text-[11px] font-semibold">
-                              {child.label}
-                              <span className="font-semibold">
-                                {" "}
-                                ({child.ageFrom}-{child.ageTo})
-                              </span>
-                            </span>
-
-                            <span className="font-semibold">
-                              {child.quantity}
-                            </span>
-                          </div>
-                        ))}
-
-                      </div>
-                    </td>
-
-                    {/* CHILDREN */}
-                    <td className="py-3 px-3 align-top border-r border-gray-100">
-                      <div className="space-y-2 text-center">
-
-                        <div className="min-h-5">
-                          <span className="font-semibold text-gray-900">
-                            {fCurrency(price?.dblUnitPrice, selectedCurrency?.label)}
-                          </span>
-                        </div>
-
-                        {childPriceSummary.map((child: any) => (
-                          <div
-                            key={child.order}
-                            className="min-h-5 border-t border-gray-100 pt-2"
-                          >
-                            <span className="font-semibold text-gray-900">
-                              {fCurrency(child.price, selectedCurrency?.label)}
-                            </span>
-                          </div>
-                        ))}
-
-                      </div>
-                    </td>
-
-                    {/* COMMISSION / OTHER */}
-                    <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
-                      {fCurrency(price?.dblTotalPriceCom, selectedCurrency?.label)}
-                    </td>
-
-                    {/* TOTAL (BACKEND) */}
-                    <td className="py-3 px-3 align-top border-r border-gray-100 font-semibold">
-                      {fCurrency(price?.dblTotalPrice, selectedCurrency?.label)}
-                    </td>
-
-                    {/* PAYMENT */}
-                    <td className="py-3 px-3 align-top font-semibold">
-                      {fCurrency(totalDeposit, selectedCurrency?.label)}
-                    </td>
-                  </tr>
-
-                  {/* ================= TOTAL ROW ================= */}
-                  <tr className="bg-gray-50/60 font-semibold">
-
-                    <td className="py-2 px-3 border-r border-gray-100" />
-
-                    <td className="py-2 px-4 text-left border-r border-gray-100">
-                      {t("totalPrice")}
-                    </td>
-
-                    {/* ADULT TOTAL */}
-                    <td className="py-2 px-3 border-r border-gray-100">
-                    </td>
-
-                    {/* CHILD TOTAL */}
-                    <td className="py-2 px-3 border-r border-gray-100">
-                    </td>
-
-
-                    {/* COMMISSION */}
-                    <td className="py-2 px-3 border-r border-gray-100">
-                    </td>
-
-                    {/* GRAND TOTAL */}
-                    <td className="py-2 px-3 border-r border-gray-100">
-                      {fCurrency(price?.dblTotalPrice, selectedCurrency?.label)}
-                    </td>
-
-                    {/* PAYMENT */}
-                    <td className="py-2 px-3">
-                      {fCurrency(totalDeposit, selectedCurrency?.label)}
-                    </td>
-                  </tr>
-                </React.Fragment>
-              </tbody>
-            </table>
-          </div>
+          <PaymentTableBooking
+            t={t}
+            price={price}
+            payloadItem={payloadItem}
+            item={item}
+            childPriceSummary={childPriceSummary}
+            selectedCurrency={selectedCurrency}
+            totalDeposit={totalDeposit}
+            fCurrency={fCurrency}
+            fDate={fDate}
+            addDays={addDays}
+            isValidValue={isValidValue}
+          />
 
           {/* Section Voucher & Chi tiết đợt thanh toán bên dưới table */}
-          <div className="p-5 border-t border-gray-100 space-y-4">
-            {/* Nút Voucher */}
-            <div>
-              <button
-                onClick={() => setIsShowVoucher(!isShowVoucher)}
-                className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                <span>🎟️</span>
-                {t("voucher")}
-              </button>
+          <PaymentVouBank
 
-              <VoucherList
-                isOpen={isShowVoucher}
-                onSelectVoucher={(voucher) => {
-                  setSelectedVoucher(voucher);
-                }}
-                totalPaymentAmount={finalVoucherPayment}
-                depositAmount={totalDeposit}
-                onVoucherAmountChange={(amount) => {
-                  setTotalVoucherAmount(amount);
-                }}
-              />
+            t={t}
 
-              {selectedVoucher && (
-                <div className="mt-2 text-xs text-green-600 font-medium">
-                  {t("selectedVoucher")}: {selectedVoucher?.VoucherCode}
-                </div>
-              )}
-            </div>
+            isShowVoucher={isShowVoucher}
+            setIsShowVoucher={setIsShowVoucher}
 
-            {/* Thông tin các đợt thanh toán và Alert */}
-            {hasPayterm ? (
-              <div className="text-xs space-y-2 pt-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-gray-700">
-                    {t("paymentFirstInstallment")}
-                  </span>
-                  <span className="font-semibold text-[#1e5bb4] underline">
+            selectedVoucher={selectedVoucher}
+            setSelectedVoucher={setSelectedVoucher}
 
-                    {fCurrency(
-                      finalDeposit,
-                      selectedCurrency?.label
-                    )}
-                  </span>
-                </div>
+            finalVoucherPayment={finalVoucherPayment}
+            totalDeposit={totalDeposit}
+            setTotalVoucherAmount={setTotalVoucherAmount}
 
-                <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                  {t("paymentNoticePrefix")} {paymentDeadline}{" "}
-                  {t("paymentNoticeSuffix")}
-                </div>
 
-                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-                  <span className="font-medium text-gray-700">
-                    {t("paymentSecondInstallment")}
-                  </span>
+            hasPayterm={hasPayterm}
+            finalDeposit={finalDeposit}
+            finalDebt={finalDebt}
+            paymentDeadline={paymentDeadline}
 
-                  <span className="font-semibold text-gray-800">
 
-                    {fCurrency(
-                      finalDebt,
-                      selectedCurrency?.label
-                    )}
-                  </span>
-                </div>
-              </div>
+            fCurrency={fCurrency}
+            selectedCurrency={selectedCurrency}
 
-            ) : (
 
-              <div className="text-xs space-y-2 pt-2">
-                <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                  {t("prepaymentNotDue")}
-                </div>
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
 
-                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-                  <span className="font-medium text-gray-700">
-                    {t("payment")}
-                  </span>
 
-                  <span className="font-semibold text-gray-800">
+            bankAccountData={bankAccountData}
+            selectedBankAccount={selectedBankAccount}
+            setSelectedBankAccount={setSelectedBankAccount}
 
-                    {fCurrency(
-                      finalDebt,
-                      selectedCurrency?.label
-                    )}
-                  </span>
-                </div>
-              </div>
-            )}
 
-            {/* Khu vực Chọn Phương thức & Ngân hàng */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
-              <div>
-                <label className="block font-medium text-gray-700 mb-1.5">
-                  {t("paymentMethod")}
-                </label>
+            bankInfo={bankInfo}
 
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
-                >
-                  <option value="Bank transfer">{t("bankTransfer")}</option>
-                  <option value="Payment online">{t("paymentOnline")}</option>
-                </select>
-              </div>
 
-              {/* Chỉ hiện khi Bank transfer */}
-              {paymentMethod === "Bank transfer" && (
-                <div>
-                  <label className="block font-medium text-gray-700 mb-1.5">
-                    {t("bankAccount")}
-                  </label>
+            paidRemark={paidRemark}
+            setPaidRemark={setPaidRemark}
 
-                  <select
-                    value={selectedBankAccount?.strCompanyBankAccountGUID || ""}
-                    onChange={(e) => {
-                      const bank = bankAccountData?.find(
-                        (x: any) =>
-                          x.strCompanyBankAccountGUID === e.target.value,
-                      );
+            showToast={showToast}
 
-                      setSelectedBankAccount(bank);
-                    }}
-                    className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
-                  >
-                    {bankAccountData?.map((bank: any) => (
-                      <option
-                        key={bank.strCompanyBankAccountGUID}
-                        value={bank.strCompanyBankAccountGUID}
-                      >
-                        {bank.strCompanyBankAccountName} -{" "}
-                        {bank.strCompanyBankAccountCode}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
+            isLoading={isLoading}
+            setIsOpenConfirm={setIsOpenConfirm}
 
-            {/* Chỉ hiện thông tin ngân hàng khi thanh toán chuyển khoản */}
-            {paymentMethod === "Bank transfer" && (
-              <div className="grid grid-cols-1 md:grid-cols-12 border border-gray-200 rounded-lg overflow-hidden mt-4 bg-white shadow-sm">
-                {/* Cột bên trái: Thông tin tài khoản */}
-                <div className="md:col-span-6 p-6 space-y-4 text-xs">
-
-                  <div className="space-y-3">
-                    <div>
-                      <span className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t("accountName") || "TÊN TÀI KHOẢN"}</span>
-                      <span className="text-sm font-bold text-gray-855 block mt-0.5">{bankInfo.accountName}</span>
-                    </div>
-
-                    <div>
-                      <span className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t("accountNumber") || "SỐ TÀI KHOẢN"}</span>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-sm font-bold text-gray-855 tracking-wider">{bankInfo.accountNumber}</span>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(bankInfo.accountNumber);
-                            showToast("success", t("copied") || "Đã sao chép vào bộ nhớ tạm");
-                          }}
-                          className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-500 transition-colors"
-                          title={t("copy") || "Sao chép"}
-                        >
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t("bankName") || "NGÂN HÀNG"}</span>
-                      <span className="text-xs font-semibold text-gray-800 block mt-0.5">{bankInfo.bankName}</span>
-                    </div>
-
-                    {bankInfo.bankAddress && (
-                      <div>
-                        <span className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t("bankAddress") || "ĐỊA CHỈ NGÂN HÀNG"}</span>
-                        <span className="text-xs text-gray-600 block mt-0.5 leading-relaxed">{bankInfo.bankAddress}</span>
-                      </div>
-                    )}
-
-                    {bankInfo.swiftCode && (
-                      <div>
-                        <span className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t("swiftCode") || "MÃ SWIFT"}</span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs font-semibold text-gray-800 tracking-wider">{bankInfo.swiftCode}</span>
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(bankInfo.swiftCode);
-                              showToast("success", t("copied") || "Đã sao chép vào bộ nhớ tạm");
-                            }}
-                            className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-500 transition-colors"
-                            title={t("copy") || "Sao chép"}
-                          >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Cột bên phải: Quét mã QR */}
-                <div className="md:col-span-6 bg-gray-50/70 p-6 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-gray-200/80">
-                  <div className="w-52 h-52 bg-white border border-gray-200/60 p-2 rounded-lg flex items-center justify-center shadow-sm">
-                    <img
-                      src={bankInfo.qrPlaceholder}
-                      alt={t("qrCodePayment")}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-
-                  <span className="text-[10px] text-gray-400 mt-1">
-                    {t("qrCode")}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Ô nhập ghi chú */}
-            <div className="pt-2 text-xs">
-              <textarea
-                value={paidRemark}
-                onChange={(e) => setPaidRemark(e.target.value)}
-                placeholder={t("note")}
-
-                rows={3}
-                className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
-              />
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setIsOpenConfirm(true)}
-                disabled={isLoading}
-                className="cursor-pointer bg-[#0f4c81] hover:bg-[#0b3a63] text-white font-medium text-xs py-2 px-6 rounded shadow transition-colors duration-150 disabled:opacity-50"
-              >
-                {isLoading ? t("bookingProcessing") : t("bookingNow")}
-
-              </button>
-            </div>
-          </div>
+          />
         </div>
       </div>
 
