@@ -9,7 +9,6 @@ import {
   useListBankAccount,
   useListTourPaymentTerm,
 } from "@/hooks/actions/useBooking";
-import { twMerge } from "tailwind-merge";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { statusTabMap, TITLES_OPTIONS } from "@/utils/option-data";
@@ -31,6 +30,7 @@ import { fCurrency } from "@/utils/format-number";
 import i18next from "i18next";
 import PaymentTableBooking from "./payment-table-booking";
 import PaymentVouBank from "./payment-vou-bank-booking";
+import PaymentFormBooking from "./payment-form-booking";
 
 const PaymentBookingView: React.FC = () => {
   const { t } = useTranslate("booking");
@@ -512,368 +512,26 @@ const PaymentBookingView: React.FC = () => {
           </div>
 
           {isShowTravellerForm && (
-            <div className="mt-4 p-4 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                {/* Danh xưng */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("title")} <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="intSaluteID"
-                    value={travellerForm.intSaluteID}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        intSaluteID: e.target.value,
-                      }));
-                      if (travellerErrors.intSaluteID) {
-                        setTravellerErrors((prev: any) => ({ ...prev, intSaluteID: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 outline-none focus:border-blue-500 bg-white",
-                      travellerErrors.intSaluteID ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                  >
-                    {TITLES_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  {travellerErrors.intSaluteID && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.intSaluteID}</span>
-                    </div>
-                  )}
-                </div>
+            <PaymentFormBooking
+              t={t}
+              travellerForm={travellerForm}
+              setTravellerForm={setTravellerForm}
+              travellerErrors={travellerErrors}
+              setTravellerErrors={setTravellerErrors}
 
-                {/* Tên */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("firstName")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="strPassengerFirstName"
-                    value={travellerForm.strPassengerFirstName}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        strPassengerFirstName: e.target.value,
-                      }));
-                      if (travellerErrors.strPassengerFirstName) {
-                        setTravellerErrors((prev: any) => ({ ...prev, strPassengerFirstName: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
-                      travellerErrors.strPassengerFirstName ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                    placeholder={t("enterFirstName")}
-                  />
-                  {travellerErrors.strPassengerFirstName && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.strPassengerFirstName}</span>
-                    </div>
-                  )}
-                </div>
+              isOpenCountry={isOpenCountry}
+              setIsOpenCountry={setIsOpenCountry}
 
-                {/* Họ và đệm */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("lastName")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="strPassengerLastName"
-                    value={travellerForm.strPassengerLastName}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        strPassengerLastName: e.target.value,
-                      }));
-                      if (travellerErrors.strPassengerLastName) {
-                        setTravellerErrors((prev: any) => ({ ...prev, strPassengerLastName: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
-                      travellerErrors.strPassengerLastName ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                    placeholder={t("enterLastName")}
-                  />
-                  {travellerErrors.strPassengerLastName && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.strPassengerLastName}</span>
-                    </div>
-                  )}
-                </div>
+              countrySearch={countrySearch}
+              setCountrySearch={setCountrySearch}
 
-                {/* Quốc tịch */}
-                <div
-                  className="relative"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // setIsOpenCountry(true);
-                  }}
-                >
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("nationality")} <span className="text-red-500">*</span>
-                  </label>
+              filteredCountries={filteredCountries}
+              selectedCountry={selectedCountry}
 
-                  {/* Select box */}
-                  <div
-                    onClick={() => setIsOpenCountry(!isOpenCountry)}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 bg-white cursor-pointer flex items-center justify-between",
-                      travellerErrors.strCountryGUID ? "border-red-500" : "border-gray-300"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      {selectedCountry?.flag && (
-                        <span
-                          className={twMerge(
-                            getFlagClass(selectedCountry.flag),
-                            "rounded-sm shrink-0"
-                          )}
-                        />
-                      )}
+              getFlagClass={getFlagClass}
 
-                      <span
-                        className={
-                          selectedCountry ? "text-black" : "text-gray-400"
-                        }
-                      >
-                        {selectedCountry?.label || t("selectCountry")}
-                      </span>
-                    </div>
-
-                    <span className="text-gray-500 text-sm">⌄</span>
-                  </div>
-
-                  {/* Popup dropdown */}
-                  {isOpenCountry && (
-                    <div className="absolute z-50 mt-1 w-full bg-white border border-blue-400 rounded shadow-lg">
-                      {/* Search */}
-                      <div className="p-2 border-b border-gray-200">
-                        <input
-                          autoFocus
-                          type="text"
-                          value={countrySearch}
-                          onChange={(e) => setCountrySearch(e.target.value)}
-                          placeholder={t("search")}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-blue-500"
-                        />
-                      </div>
-
-                      {/* List */}
-                      <div className="max-h-60 overflow-y-auto">
-                        {filteredCountries.length > 0 ? (
-                          filteredCountries.map((item: any) => (
-                            <div
-                              key={item.value}
-                              className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => {
-                                setTravellerForm((prev: any) => ({
-                                  ...prev,
-                                  strCountryGUID: item.value,
-                                }));
-                                if (travellerErrors.strCountryGUID) {
-                                  setTravellerErrors((prev: any) => ({ ...prev, strCountryGUID: "" }));
-                                }
-
-                                setIsOpenCountry(false);
-                              }}
-                            >
-                              {item.flag && (
-                                <span
-                                  className={twMerge(
-                                    getFlagClass(item.flag),
-                                    "rounded-sm shrink-0"
-                                  )}
-                                />
-                              )}
-
-                              <span>{item.label}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="px-3 py-2 text-sm text-gray-400">
-                            {t("countryNotFound")}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {travellerErrors.strCountryGUID && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.strCountryGUID}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Độ tuổi */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("age")} <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="intAgeID"
-                    disabled
-                    className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 bg-gray-100"
-                  >
-                    <option value="3">{t("adult")}</option>
-                  </select>
-                </div>
-
-                {/* Ngày sinh */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("dateOfBirth")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="dtmPassengerBirthday"
-                    value={travellerForm.dtmPassengerBirthday}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        dtmPassengerBirthday: e.target.value,
-                      }));
-                      if (travellerErrors.dtmPassengerBirthday) {
-                        setTravellerErrors((prev: any) => ({ ...prev, dtmPassengerBirthday: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "cursor-pointer w-full border rounded px-3 py-1.5 outline-none focus:border-blue-500",
-                      travellerErrors.dtmPassengerBirthday ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                  />
-                  {travellerErrors.dtmPassengerBirthday && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.dtmPassengerBirthday}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("email")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="strPassengerEmail"
-                    value={travellerForm.strPassengerEmail}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        strPassengerEmail: e.target.value,
-                      }));
-                      if (travellerErrors.strPassengerEmail) {
-                        setTravellerErrors((prev: any) => ({ ...prev, strPassengerEmail: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
-                      travellerErrors.strPassengerEmail ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                    placeholder="example@gmail.com"
-                  />
-                  {travellerErrors.strPassengerEmail && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.strPassengerEmail}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Số điện thoại */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    {t("phoneNumber")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="strPassengerPhone"
-                    value={travellerForm.strPassengerPhone}
-                    onChange={(e) => {
-                      setTravellerForm((prev: any) => ({
-                        ...prev,
-                        strPassengerPhone: e.target.value,
-                      }));
-                      if (travellerErrors.strPassengerPhone) {
-                        setTravellerErrors((prev: any) => ({ ...prev, strPassengerPhone: "" }));
-                      }
-                    }}
-                    className={twMerge(
-                      "w-full border rounded px-3 py-2 outline-none focus:border-blue-500",
-                      travellerErrors.strPassengerPhone ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500"
-                    )}
-                    placeholder={t("enterPhoneNumber")}
-                  />
-                  {travellerErrors.strPassengerPhone && (
-                    <div className="text-red-500 text-[10px] mt-1.5 flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                      </svg>
-                      <span>{travellerErrors.strPassengerPhone}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Ghi chú hành khách */}
-              <div className="mt-4 text-xs">
-                <textarea
-                  name="strPassengerRemark"
-                  value={travellerForm.strPassengerRemark}
-                  onChange={(e) =>
-                    setTravellerForm((prev: any) => ({
-                      ...prev,
-                      strPassengerRemark: e.target.value,
-                    }))
-                  }
-                  placeholder={t("note")}
-                  rows={3}
-                  className="w-full border border-gray-300 rounded p-3 outline-none focus:border-blue-500 transition-colors resize-none placeholder-gray-400"
-                />
-              </div>
-            </div>
+              TITLES_OPTIONS={TITLES_OPTIONS}
+            />
           )}
         </div>
 
