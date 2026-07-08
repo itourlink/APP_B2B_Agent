@@ -145,7 +145,7 @@ const AgentView = () => {
                 <div className="flex items-center gap-2 min-w-[150px]">
                     <button
                         onClick={() =>
-                            router.replaceQuery(paths.tariff.list, {
+                            router.replaceQuery(paths.shop.tariff.list, {
                                 company: row?.strUrlLink,
                             })
                         }

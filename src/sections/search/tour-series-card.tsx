@@ -4,7 +4,6 @@ import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Users } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
-import { useListPrice, useListTourChildAge } from "@/hooks/actions/useBooking";
 
 type TourSeriesCardProps = {
     item: any;
