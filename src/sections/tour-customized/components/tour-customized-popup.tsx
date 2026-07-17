@@ -43,7 +43,7 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             nationality: z.string().min(1, t("selectNationality")),
 
             adults: z.coerce.number().min(1, t("minimumOneAdult")),
-            children: z.coerce.number(),
+            children: z.coerce.number().optional(),
 
             category: z.array(z.string()).min(1, t("selectCategory")),
 
@@ -468,6 +468,11 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                     type="number"
                     label={{ text: t("children") }}
                     placeholder="0"
+                    min={0}
+                    inputMode="numeric"
+                    onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                 />
 
                 <Field.MultiSelect
