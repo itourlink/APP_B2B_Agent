@@ -1,0 +1,1 @@
+var e=`-- Chọn --`,t=`Tìm kiếm...`,n=`Không tìm thấy`,r={selectPlaceholder:e,searchPlaceholder:t,noResult:n};export{r as default,n as noResult,t as searchPlaceholder,e as selectPlaceholder};

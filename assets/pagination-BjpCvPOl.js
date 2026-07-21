@@ -1,0 +1,1 @@
+var e=`Trước`,t=`Tiếp theo`,n={previous:e,next:t};export{n as default,t as next,e as previous};

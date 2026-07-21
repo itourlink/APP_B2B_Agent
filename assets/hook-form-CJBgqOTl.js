@@ -1,0 +1,1 @@
+var e=`-- Select --`,t=`Search...`,n=`No results found`,r={selectPlaceholder:e,searchPlaceholder:t,noResult:n};export{r as default,n as noResult,t as searchPlaceholder,e as selectPlaceholder};

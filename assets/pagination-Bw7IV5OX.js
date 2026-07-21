@@ -1,0 +1,1 @@
+var e=`Previous`,t=`Next`,n={previous:e,next:t};export{n as default,t as next,e as previous};

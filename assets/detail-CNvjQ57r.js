@@ -1,0 +1,1 @@
+import{n as e,t}from"./config-global-BP8HS-yw.js";var n=e(),r=()=>(0,n.jsx)(`div`,{}),i={title:`Voucher - ${t.appName}`},a=()=>(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`title`,{children:i.title}),(0,n.jsx)(r,{})]});export{a as default};
