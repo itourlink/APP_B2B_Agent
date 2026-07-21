@@ -19,7 +19,7 @@ type FilterItem =
     }
     | { type: "guest"; key: string; label?: string }
     | { type: "guestRoom"; key: string; label?: string; isRoomDetail?: boolean }
-    | { type: "dateRange"; keyStart: string; keyEnd: string; label?: string }
+    | { type: "dateRange"; keyStart: string; keyEnd: string; label?: string; allowSameDay?: boolean; }
     | { type: "date"; key: string; label?: string }
     | { type: "select"; key: string; label?: string; options: Option[] }
     | { type: "toggle"; key: string; label?: string }
@@ -260,6 +260,7 @@ export const GenericFilter = ({
                             <div className="absolute top-[81px]">
                                 <DateRangePopup
                                     isOpen
+                                    allowSameDay={item.allowSameDay}
                                     value={{
                                         startDate: values[item.keyStart],
                                         endDate: values[item.keyEnd],

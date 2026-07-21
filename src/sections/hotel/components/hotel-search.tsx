@@ -373,9 +373,10 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         type: "dateRange",
                         keyStart: "start",
                         keyEnd: "end",
-                        label:
-                            t("checkInCheckOutDate"),
+                        label: t("checkInCheckOutDate"),
+                        allowSameDay: false,
                     },
+                    
                     {
                         type: "guestRoom",
                         key: "guestRoom",
