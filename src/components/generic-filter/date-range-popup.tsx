@@ -40,6 +40,12 @@ const DateRangePopup = ({
     !value.startDate && !value.endDate
   );
 
+  const isSameDay =
+    temp[0].startDate &&
+    temp[0].endDate &&
+    temp[0].startDate.toDateString() ===
+    temp[0].endDate.toDateString();
+
   useEffect(() => {
     setIsCleared(
       !value.startDate && !value.endDate
@@ -134,15 +140,22 @@ const DateRangePopup = ({
         </button>
 
         <button
-          type="button"
+          disabled={isSameDay}
           onClick={(e) => {
             e.preventDefault();
+
             onApply({
               startDate: temp[0].startDate,
               endDate: temp[0].endDate,
             });
           }}
-          className="px-4 py-2 bg-[#4a6fa5] hover:bg-[#3b5b7e] transition text-white rounded-lg cursor-pointer"
+          className={`
+        px-4 py-2 rounded-lg text-white
+        ${isSameDay
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#4a6fa5] hover:bg-[#3b5b7e]"
+            }
+    `}
         >
           {t("apply")}
         </button>
