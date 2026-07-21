@@ -181,6 +181,7 @@ const AgentView = () => {
             open={true}
             className="w-[90vw] max-w-none"
             lang={true}
+            logout={true}
         >
             <div>
                 <div

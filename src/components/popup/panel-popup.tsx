@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, X } from "lucide-react";
-import { useEffect } from "react";
+import { ChevronLeft, LogOut, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Lang from "../lang/lang";
+import { CONFIG } from "@/config-global";
 
 interface Props {
   open: boolean;
@@ -15,6 +16,7 @@ interface Props {
   description?: string;
   isOverflowHidden?: boolean;
   lang?: boolean;
+  logout?: boolean;
   className?: string;
   footer?: React.ReactNode;
   bodyClassName?: string;
@@ -32,8 +34,12 @@ const PanelPopup = ({
   className,
   footer,
   lang,
+  logout,
   bodyClassName,
 }: Props) => {
+
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -69,6 +75,9 @@ const PanelPopup = ({
     ? "max-h-[calc(90vh-140px)]"
     : "max-h-[calc(90vh-96px)]";
 
+  const handleLogout = async () => {
+    window.location.href = `${CONFIG.serverUrl}auth/logout`;
+  };
   return (
     <AnimatePresence>
       {open && (
@@ -131,10 +140,25 @@ const PanelPopup = ({
                     </button>
                   )}
 
-                  {lang && (
-                    <Lang/>
+                  <div className="flex items-center gap-2">
+                    {lang && (
+                      <Lang />
+                    )}
+                    {logout && (
+                      <button
+                        onClick={() => setConfirmLogout(true)}
+                        className="h-10 rounded-lg border border-[rgba(64,64,64,0.5)] px-3 flex items-center justify-evenly cursor-pointer"
+                      >
+                        <LogOut size={18} />
+                      </button>
+                    )}
 
-                  )}
+                    <LogoutPopup
+                      open={confirmLogout}
+                      onClose={() => setConfirmLogout(false)}
+                      onConfirm={handleLogout}
+                    />
+                  </div>
                 </div>
 
                 <div
@@ -171,3 +195,41 @@ const PanelPopup = ({
 };
 
 export default PanelPopup;
+
+interface LogoutPopupProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+const LogoutPopup = ({
+  open,
+  onClose,
+  onConfirm,
+}: LogoutPopupProps) => (
+  <PanelPopup
+    open={open}
+    className="w-[400px]"
+    title="Confirm logout"
+  >
+    <p className="text-sm text-gray-600">
+      Are you sure you want to log out?
+    </p>
+
+    <div className="mt-6 flex justify-end gap-3">
+      <button
+        onClick={onClose}
+        className="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+      >
+        Cancel
+      </button>
+
+      <button
+        onClick={onConfirm}
+        className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600 cursor-pointer"
+      >
+        Logout
+      </button>
+    </div>
+  </PanelPopup>
+);
