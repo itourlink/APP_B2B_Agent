@@ -1,15 +1,17 @@
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { formatPrice, truncateText } from "@/utils/format-number";
+import { fCurrency, truncateText } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { useListCurrency } from "@/components/currency/useListCurrency";
 
 export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
     const { t } = useTranslate("search");
+    const { selectedCurrency } = useListCurrency()
 
     const starList = String(isValidValue(tour?.strListEasiaCateID || ""))
         .split(",")
@@ -22,8 +24,8 @@ export const TourListCard = ({ tour }: any) => {
                 <img
                     src={
                         tour?.strTourImageUrl === "" ||
-                        (typeof tour?.strTourImageUrl === "object" &&
-                            Object.keys(tour?.strTourImageUrl).length === 0)
+                            (typeof tour?.strTourImageUrl === "object" &&
+                                Object.keys(tour?.strTourImageUrl).length === 0)
                             ? imgDefault
                             : getUrlImage(String(isValidValue(tour?.strTourImageUrl)))
                     }
@@ -111,7 +113,10 @@ export const TourListCard = ({ tour }: any) => {
                         <p className="text-xs text-gray-500">{t("priceFrom")}</p>
 
                         <p className="text-[#2563eb] font-bold text-xl">
-                            {formatPrice(Number(isValidValue(tour?.dblPriceFrom)))}
+                            {fCurrency(
+                                tour?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
 
