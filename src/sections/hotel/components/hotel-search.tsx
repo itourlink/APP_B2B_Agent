@@ -64,6 +64,13 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
 
     const { t } = useTranslate("search")
     const location = useLocation();
+
+    console.log("🏠 HotelSearch INIT", {
+        pathname: location.pathname,
+        search: location.search,
+        locationState: location.state,
+        initialHotel,
+    });
     const company =
         new URLSearchParams(location.search).get("company");
 
@@ -71,7 +78,13 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
 
     const router = useRouter();
 
-    const [filters, setFilters] = useState(DEFAULT_FILTERS);
+    const [filters, setFilters] =
+        useState<FilterState>({
+            ...DEFAULT_FILTERS,
+            guestRoom: {
+                ...DEFAULT_FILTERS.guestRoom,
+            },
+        });
 
     const [selectedHotel, setSelectedHotel] =
         useState<any | null>(null);
@@ -97,6 +110,12 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
         try {
             const parsed = JSON.parse(raw);
 
+            console.log("✅ PARSED HOTEL STATE", {
+                filters: parsed.filters,
+                draftFilters: parsed.draftFilters,
+                selectedHotel: parsed.selectedHotel,
+            });
+
             const restoredFilters = {
                 ...parsed.filters,
 
@@ -110,14 +129,26 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
             };
 
             setFilters((prev) => {
+
+                console.log("🟡 BEFORE RESTORE FILTERS", prev);
+
                 if (prev.strFilterDestinationName) {
+                    console.log(
+                        "⛔ SKIP RESTORE BECAUSE EXIST",
+                        prev.strFilterDestinationName
+                    );
+
                     return prev;
                 }
 
-                return {
+                const next = {
                     ...prev,
                     ...restoredFilters,
                 };
+
+                console.log("🟢 AFTER RESTORE FILTERS", next);
+
+                return next;
             });
 
             setDraftFilters((prev) => ({
@@ -156,52 +187,42 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
     useEffect(() => {
         if (hydratedRef.current || !initialHotel) return;
 
+        console.log("🏨 INITIAL HOTEL EFFECT", {
+            initialHotel,
+            currentFilters: filters,
+        });
+
         const normalizedHotel = {
             ...initialHotel,
-            strSupplierGUID: initialHotel.strSupplierGUID ?? initialHotel.strSupplierGUID,
-            strSupplierName: initialHotel.strSupplierName,
+
+            strSupplierGUID:
+                initialHotel.strSupplierGUID,
+
+            strSupplierName:
+                initialHotel.strSupplierName ||
+                initialHotel.strDestinationName ||
+                "",
         };
 
         setSelectedHotel(normalizedHotel);
 
         setFilters((prev) => ({
             ...prev,
-            strFilterDestinationName: normalizedHotel.strSupplierName,
+            strFilterDestinationName:
+                prev.strFilterDestinationName ||
+                normalizedHotel.strSupplierName,
         }));
 
         hydratedRef.current = true;
     }, [initialHotel]);
-
-    // useEffect(() => {
-    //     const params = new URLSearchParams(location.search);
-    //     const raw = params.get("hotelSearchState");
-    //     if (!raw) return;
-
-    //     try {
-    //         const parsed = JSON.parse(raw);
-
-    //         const restoredFilters = {
-    //             ...parsed.filters,
-    //             start: parsed.filters?.start ? new Date(parsed.filters.start) : null,
-    //             end: parsed.filters?.end ? new Date(parsed.filters.end) : null,
-    //         };
-
-    //         setFilters((prev) => ({
-    //             ...prev,
-    //             ...restoredFilters,
-    //         }));
-
-    //         setDraftFilters((prev) => ({
-    //             ...prev,
-    //             ...parsed.draftFilters,
-    //         }));
-
-    //         setSelectedHotel(parsed.selectedHotel || null);
-
-    //         hydratedRef.current = true; // 👈 chặn initialHotel override
-    //     } catch { }
-    // }, [location.search]);
-
+    useEffect(() => {
+        console.log("🔥 FILTERS CHANGED", {
+            strFilterDestinationName:
+                filters.strFilterDestinationName,
+            start: filters.start,
+            guestRoom: filters.guestRoom,
+        });
+    }, [filters]);
     const handleSearch = () => {
         const snapshot = {
             filters,
@@ -423,7 +444,10 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         ) {
                             setSelectedHotel(null);
                         }
-
+                        console.log(
+                            "🔴 INITIAL HOTEL SET FILTER",
+                            next
+                        );
                         return next;
                     });
                 }}
