@@ -112,7 +112,6 @@ const ShopHeader = () => {
         pathname.startsWith(paths.shop.notification.list);
 
     useEffect(() => {
-        if (!menu?.length) return;
 
         // SEARCH PAGE => KHÔNG REDIRECT
         if (isSearchPage || isAgentCompanyPage || isSaleChannelPage || isCartPage || isNotificationPage) return;
@@ -157,8 +156,6 @@ const ShopHeader = () => {
 
         router.push(url);
     };
-
-    if (!menu?.length) return null;
 
     return (
         <div className="bg-white px-6 sticky top-0 left-0 w-full z-50 shadow h-30 flex flex-col justify-center gap-5">
@@ -239,33 +236,37 @@ const ShopHeader = () => {
             </div>
 
             <div className="flex items-center gap-5 overflow-x-auto">
-                {(menu || []).map((item) => {
-                    if (!item) return null;
+                {menu?.length > 0 && (
+                    <div className="flex items-center gap-5 overflow-x-auto">
+                        {menu.map((item) => {
+                            if (!item) return null;
 
-                    const isActive = isSearchPage
-                        ? item.link === searchMenuMap[searchType]
-                        : isPathMatch(item);
+                            const isActive = isSearchPage
+                                ? item.link === searchMenuMap[searchType]
+                                : isPathMatch(item);
 
-                    return (
-                        <div
-                            key={item.id}
-                            onClick={() => handleNavigate(item.link)}
-                            className={`
-                                flex items-center gap-2 p-1 cursor-pointer transition-all whitespace-nowrap
-                                ${isActive
-                                    ? "text-[#2566b0] font-semibold"
-                                    : "text-gray-700 hover:text-[#2566b0] font-semibold"
-                                }
-                            `}
-                        >
-                            <div>{item.icon}</div>
-
-                            <div className="text-[14px]">
-                                {item.title}
-                            </div>
-                        </div>
-                    );
-                })}
+                            return (
+                                <div
+                                    key={item.id}
+                                    onClick={() => handleNavigate(item.link)}
+                                    className={`
+                        flex items-center gap-2 p-1 cursor-pointer 
+                        transition-all whitespace-nowrap
+                        ${isActive
+                                            ? "text-[#2566b0] font-semibold"
+                                            : "text-gray-700 hover:text-[#2566b0] font-semibold"
+                                        }
+                    `}
+                                >
+                                    <div>{item.icon}</div>
+                                    <div className="text-[14px]">
+                                        {item.title}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

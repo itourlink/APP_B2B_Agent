@@ -62,17 +62,10 @@ const AuthUserInfo = () => {
 
                     <div className="mt-2">
                         <button onClick={() => {
-                            // router.push(paths.content.info);
                             window.open("https://myagentmember.itourlink.com", "_blank");
                         }} className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
                             <User size={18} /> {t("profile")}
                         </button>
-                        {/* <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
-                            <FileText size={18} /> Đơn đặt của tôi
-                        </button>
-                        <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors text-sm">
-                            <Heart size={18} /> Yêu thích
-                        </button> */}
                     </div>
 
                     <div className="mt-2 pt-2 border-t border-slate-50">
