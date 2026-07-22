@@ -130,7 +130,7 @@ export const useListTourPublish = (filters?: {
     } = filters || {};
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR_PUBLISH, filters, coData?.strCompanyGUID],
+        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR_PUBLISH, filters, coData?.strCompanyGUID, currencyId],
         queryFn: () =>
             fetchListTourPublish({
                 strTourGUID: null,
