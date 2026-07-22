@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Lang from "../lang/lang";
 import { CONFIG } from "@/config-global";
+import { LogoutPopup } from "./logout-popup";
 
 interface Props {
   open: boolean;
@@ -195,41 +196,3 @@ const PanelPopup = ({
 };
 
 export default PanelPopup;
-
-interface LogoutPopupProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
-
-const LogoutPopup = ({
-  open,
-  onClose,
-  onConfirm,
-}: LogoutPopupProps) => (
-  <PanelPopup
-    open={open}
-    className="w-[400px]"
-    title="Confirm logout"
-  >
-    <p className="text-sm text-gray-600">
-      Are you sure you want to log out?
-    </p>
-
-    <div className="mt-6 flex justify-end gap-3">
-      <button
-        onClick={onClose}
-        className="rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50 cursor-pointer"
-      >
-        Cancel
-      </button>
-
-      <button
-        onClick={onConfirm}
-        className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600 cursor-pointer"
-      >
-        Logout
-      </button>
-    </div>
-  </PanelPopup>
-);
