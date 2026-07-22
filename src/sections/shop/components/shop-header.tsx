@@ -113,13 +113,6 @@ const ShopHeader = () => {
 
     useEffect(() => {
 
-        console.log("REDIRECT", {
-            menuLength: menu.length,
-            hasActive,
-            pathname,
-            firstItem: menu[0],
-        });
-
         // SEARCH PAGE => KHÔNG REDIRECT
         if (isSearchPage || isAgentCompanyPage || isSaleChannelPage || isCartPage || isNotificationPage) return;
 
@@ -163,14 +156,6 @@ const ShopHeader = () => {
 
         router.push(url);
     };
-
-    console.log("HEADER RENDER", {
-        pathname,
-        menuData,
-        menu,
-    });
-
-    console.log("RETURN HEADER");
 
     return (
         <div className="bg-white px-6 sticky top-0 left-0 w-full z-50 shadow h-30 flex flex-col justify-center gap-5">

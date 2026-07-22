@@ -44,39 +44,6 @@ const TourSeriesCard = ({
 
     getDateRange,
 }: TourSeriesCardProps) => {
-
-    // console.log("item", item)
-    // const tourGUID = item?.strTourGUID;
-
-    // const { tourChildAgeData } = useListTourChildAge({
-    //     strTourGUID: item?.strTourGUID
-    // });
-    // const formatStarToNumber = (star: string) => {
-    //     return String(star?.length ?? 0);
-    // };
-
-    // console.log("searchTourPayload.dtmFilterDateValidFrom", searchTourPayload.dtmFilterDateValidFrom)
-    // ================= PRICE API =================
-    // const { priceData, priceLoading } = useListPrice({
-    //     IsHasPriceKid: item?.IsHasPriceKid,
-    //     strTourGUID: item?.strTourGUID,
-    //     enabled: !!item?.strTourGUID,
-    //     intNoOfAdult: searchTourPayload.intNoOfAdult,
-    //     intNoOfSGLSup: searchTourPayload.intNoOfSGLSup,
-    //     intNoOfTPLRec: searchTourPayload.intNoOfTPLRec,
-    //     dtmFilterDateFrom: searchTourPayload.dtmFilterDateValidFrom
-    //         ? new Date(searchTourPayload.dtmFilterDateValidFrom).toISOString()
-    //         : null,
-    //     xmlNoOfChild: searchTourPayload?.strListNoOfChild,
-    //     intEasiaCateID: formatStarToNumber(item?.strEasiaCateName),
-    //     intJoinTypeID: 1,
-    //     strPriceLevelGUID: item?.strTourPriceItemLevelGUID ?? "",
-    // });
-
-    // const price1 = priceData?.[0] ?? [];
-    // console.log("price1", price1)
-
-
     const price = {
         dblTotalPrice: item?.dblTotalPrice,
         strTourPriceItemLevelGUID:
