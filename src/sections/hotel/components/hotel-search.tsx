@@ -402,10 +402,7 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         ) {
                             setSelectedHotel(null);
                         }
-                        console.log(
-                            "🔴 INITIAL HOTEL SET FILTER",
-                            next
-                        );
+                       
                         return next;
                     });
                 }}
