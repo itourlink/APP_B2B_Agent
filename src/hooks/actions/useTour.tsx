@@ -319,7 +319,7 @@ export const useListTourSeries = (filters?: {
     } = filters || {};
 
     const query = useQuery({
-        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR_SERIES, filters],
+        queryKey: [QUERY_KEYS.TOUR.LIST_TOUR_SERIES, filters, currencyId],
         queryFn: () =>
             fetchListTourSeries({
                 strTourGUID: null,
