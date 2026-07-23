@@ -402,6 +402,7 @@ const PaymentVouBank = ({
             rounded
             text-xs
             disabled:opacity-50
+            cursor-pointer
           "
 
                 >
