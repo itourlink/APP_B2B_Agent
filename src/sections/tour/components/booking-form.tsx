@@ -135,6 +135,13 @@ const BookingForm = ({ item }: Props) => {
         }
     }, [starList]);
 
+    console.log("starList", starList)
+
+    const hasStarCategory =
+        Array.isArray(starList) &&
+        starList.length > 0 &&
+        starList.every((item) => Number(item) > 0);
+
     // ================= JOIN TYPE =================
     const joinTypeList = useMemo(() => {
         if (!item?.strListJoinTypeID) return [];
@@ -519,7 +526,7 @@ const BookingForm = ({ item }: Props) => {
                 {/* BUTTON */}
                 <button
                     onClick={handleBooking}
-                    disabled={!startDate || !price?.strTourPriceItemLevelGUID}
+                    disabled={!startDate || !price?.strTourPriceItemLevelGUID || !hasStarCategory}
                     className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
                     {t("bookNow")}
@@ -527,7 +534,7 @@ const BookingForm = ({ item }: Props) => {
 
                 <button
                     onClick={handleAddtoCart}
-                    disabled={!startDate || !price?.strTourPriceItemLevelGUID}
+                    disabled={!startDate || !price?.strTourPriceItemLevelGUID || !hasStarCategory}
                     className="w-full bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer text-white py-2.5 text-sm rounded-lg disabled:opacity-50"
                 >
                     {t("addToCart")}
