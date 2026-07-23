@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { addNewTourCustomized } from "@/hooks/actions/useTour";
 import { useUser } from "@/hooks/actions/useAuth";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListTourCustomized } from "@/hooks/actions/useUser";
 import BannerMediaField from "@/components/media/banner-media-field";
@@ -255,17 +255,27 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         strWhere: "WHERE (IsActive=1)  ORDER BY MC02_CountryName ASC ",
     });
 
-    const COUNTRY_OPTIONS = ctData.map((item: any) => ({
-        label: item.strName,
-        value: item.id,
-        flag: item.strCountryFlagIcon,
-    }));
+    const COUNTRY_OPTIONS = useMemo(
+        () =>
+            ctData.map((item: any) => ({
+                label: item.strName,
+                value: item.id,
+                flag: item.strCountryFlagIcon,
+            })),
+        [ctData]
+    );
 
-    const COUNTRY_OPTIONS_LIST = ctData.map((item: any) => ({
-        label: item.strName,
-        value: item.code,
-        flag: item.strCountryFlagIcon,
-    }));
+    const COUNTRY_OPTIONS_LIST = useMemo(
+        () =>
+            ctData.map((item: any) => ({
+                label: item.strName,
+                value: item.code,
+                flag: item.strCountryFlagIcon,
+            })),
+        [ctData]
+    );
+
+
 
     const { ctData: ntData } = useListCity({
         strTableName: "MC04",
@@ -276,13 +286,22 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                ORDER BY MC04_CityName`,
     });
 
-    const CITY_OPTIONS = ntData.map((item: any) => ({
-        label: item.strCityName,
-        value: item.strCityCode,
-    }));
-
+    const CITY_OPTIONS = useMemo(
+        () =>
+            ntData.map((item: any) => ({
+                label: item.strCityName,
+                value: item.strCityCode,
+            })),
+        [ntData]
+    );
     const [locations, setLocations] = useState<
-        { countryCode: string; cityCode: string; nights: number }[]
+        {
+            countryCode: string;
+            countryName: string;
+            cityCode: string;
+            cityName: string;
+            nights: number;
+        }[]
     >([]);
 
     const watchedCountry = methods.watch("country");
@@ -311,18 +330,19 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
         if (!cityVal) return showToast("error", t("selectCity"));
         if (!countryVal || !cityVal) return;
 
-        setLocations((prev) => {
-            if (prev.some((x) => x.cityCode === cityVal)) return prev;
+        const country = COUNTRY_OPTIONS_LIST.find((x: any) => x.value === countryVal);
+        const city = CITY_OPTIONS.find((x: any) => x.value === cityVal);
 
-            return [
-                ...prev,
-                {
-                    countryCode: countryVal,
-                    cityCode: cityVal,
-                    nights: 1,
-                },
-            ];
-        });
+        setLocations(prev => [
+            ...prev,
+            {
+                countryCode: countryVal,
+                countryName: country?.label ?? "",
+                cityCode: cityVal,
+                cityName: city?.label ?? "",
+                nights: 1,
+            },
+        ]);
 
         methods.setValue("city", "");
         methods.clearErrors(["country", "city", "listLocation"]);
@@ -347,6 +367,8 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
     }, [locations]);
 
     useEffect(() => {
+        if (!CITY_OPTIONS.length || !COUNTRY_OPTIONS_LIST.length) return;
+
         const initial = methods.getValues("listLocation") || "";
         if (!initial) return;
 
@@ -356,15 +378,26 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
             .map((item) => {
                 const [cityCode, nights] = item.split("!");
 
+                const city = CITY_OPTIONS.find((x: any) => x.value === cityCode);
+
                 return {
-                    countryCode: "",
-                    cityCode: cityCode || "",
+                    countryCode: cityCode.slice(0, 2),
+                    countryName:
+                        COUNTRY_OPTIONS_LIST.find((x: any) => x.value === cityCode.slice(0, 2))
+                            ?.label ?? "",
+                    cityCode,
+                    cityName: city?.label ?? cityCode,
                     nights: Number(nights) || 1,
                 };
             });
 
-        if (parsed.length) setLocations(parsed);
-    }, []);
+        setLocations(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(parsed)) {
+                return prev;
+            }
+            return parsed;
+        });
+    }, [CITY_OPTIONS, COUNTRY_OPTIONS_LIST]);
 
     const watchedBannerImg = methods.watch("bannerImg");
 
@@ -533,10 +566,11 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
                         >
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold text-gray-800">
-                                    {item.cityCode}
+                                    {item.cityName}
                                 </span>
+
                                 <span className="text-xs text-gray-400">
-                                    {item.countryCode}
+                                    {item.countryName}
                                 </span>
                             </div>
 
