@@ -34,7 +34,7 @@ const AuthUserInfo = () => {
         <div className="relative inline-block text-left" ref={menuRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 bg-blue-50 p-2 rounded-lg hover:bg-blue-100 transition-all cursor-pointer"
+                className="flex items-center gap-2 bg-blue-50 p-1 rounded-lg hover:bg-blue-100 transition-all cursor-pointer"
             >
 
                 {isValidValue(user?.strAvatar) ?
