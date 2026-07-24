@@ -485,7 +485,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                     // Luôn redirect sang service sau khi booking thành công
                     bookingTab?.location.replace(
-                        "https://myagentmember.itourlink.com/service?activeTab=booked"
+                        "https://myagentmember.itourlink.com/service?activeTab=hold"
                     );
                 },
 
