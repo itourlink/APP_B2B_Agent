@@ -110,7 +110,7 @@ export const useCompanyDes = (filters?: {
         queryKey: [QUERY_KEYS.COMPANY_OWNER.LIST_COMPANY_DES_DAY, filters, coData?.strCompanyGUID],
         queryFn: () =>
             fetchCompanyDes({
-                strCompanyOwnerGUID: coData?.strCompanyGUID,
+                strCompanyOwnerGUID: null,
                 strDestinationGUID: null,
                 strFilterSearchText: null,
                 intFilterByCateID: intFilterByCateID,

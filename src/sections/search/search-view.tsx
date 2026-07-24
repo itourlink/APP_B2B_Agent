@@ -24,6 +24,7 @@ const SearchView = () => {
   const { selectedCurrency } = useListCurrency();
   const location = useLocation();
   const state = (location.state || {}) as any;
+
   const searchType =
     new URLSearchParams(location.search)
       .get("type");
@@ -189,6 +190,8 @@ const SearchView = () => {
       }
       : undefined
   );
+
+  
   // LIST HOTEL
   const listHotel = useListHotel(
     !isQuick
@@ -200,8 +203,8 @@ const SearchView = () => {
         ...hotelParams,
 
         strFilterSupplierName:
-          hotelFilter?.strFilterSupplierName ||
-          hotelParams?.strFilterDestinationName ||
+          // hotelFilter?.strFilterSupplierName ||
+          // hotelParams?.strFilterDestinationName ||
           null,
 
         strPriceFromRange:

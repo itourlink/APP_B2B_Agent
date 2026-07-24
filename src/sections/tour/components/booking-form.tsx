@@ -135,8 +135,6 @@ const BookingForm = ({ item }: Props) => {
         }
     }, [starList]);
 
-    console.log("starList", starList)
-
     const hasStarCategory =
         Array.isArray(starList) &&
         starList.length > 0 &&
