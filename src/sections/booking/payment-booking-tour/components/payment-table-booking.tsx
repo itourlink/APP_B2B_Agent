@@ -64,7 +64,7 @@ const PaymentTableBooking: React.FC<PaymentTableProps> = ({
                         </th>
 
                         <th className="py-2 px-3 border border-[#1a52a3]">
-                            {t("totalPaymentAmount")}
+                            {t("totalDeposit")}
                         </th>
                     </tr>
                 </thead>
