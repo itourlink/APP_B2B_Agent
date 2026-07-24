@@ -42,9 +42,8 @@ const SearchView = () => {
   const mode = state?.mode; // "quick" | "list"
   const isQuick = mode === "quick";
   const isSearchHotel = mode === "quick" || state?.isSearchHotel;
-  // const pageSize = 5;
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(9);
 
   const handlePageSizeChange = (value: number) => {
     setPageSize(value);
@@ -284,7 +283,6 @@ const SearchView = () => {
     const totalPages = getTotalPages(
       hotelSource,
       pageSize
-      // isQuick ? pageSize : 12
     );
 
     if (pageHotel > totalPages && totalPages > 0) {
