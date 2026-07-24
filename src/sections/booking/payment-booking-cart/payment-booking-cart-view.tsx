@@ -238,6 +238,12 @@ const PaymentBookingCartView: React.FC = () => {
             setTravellerErrors({});
         }
 
+        // Mở tab loading ngay khi user click
+        const bookingTab = window.open(
+            "https://myagentmember.itourlink.com/service?activeTab=loading",
+            "_blank"
+        );
+
         try {
             // APPLY VOUCHER
             if (selectedVoucher?.length > 0) {
@@ -247,12 +253,10 @@ const PaymentBookingCartView: React.FC = () => {
                             new Promise((resolve, reject) => {
                                 markUsedVoucherApi(
                                     {
-                                        VoucherCode:
-                                            voucher?.voucherCode,
+                                        VoucherCode: voucher?.voucherCode,
 
                                         updatedBy:
-                                            user?.strUserGUID ||
-                                            null,
+                                            user?.strUserGUID || null,
                                     },
                                     {
                                         onSuccess: () =>
@@ -280,11 +284,6 @@ const PaymentBookingCartView: React.FC = () => {
 
             const companyGUID =
                 coData?.strCompanyGUID || null;
-
-            // let serviceUrl =
-            //     "http://localhost:5173/service?activeTab=booked";
-            let serviceUrl =
-                "https://myagentmember.itourlink.com/service?activeTab=booked";
 
             // PAYLOAD BOOKING
             const payload = {
@@ -403,9 +402,7 @@ const PaymentBookingCartView: React.FC = () => {
                             res?.[0]?.[0]
                                 ?.strListAgentHostServiceItemGUID;
 
-                        // chỉ xử lý TMS nếu có serviceGUID
                         if (serviceGUID) {
-                            // GET EMAIL TEMPLATE
                             const emailData =
                                 await fetchGetEmailSendAGHByAGBApi(
                                     {
@@ -426,7 +423,6 @@ const PaymentBookingCartView: React.FC = () => {
                                     }
                                 );
 
-                            // SEND EMAIL
                             if (emailData) {
                                 await fetchGetSendEmailApi(
                                     {
@@ -462,7 +458,6 @@ const PaymentBookingCartView: React.FC = () => {
                                 );
                             }
 
-                            // CALL TMS APIs SONG SONG
                             await Promise.all([
                                 listAGTMS({
                                     strCompanyGUID:
@@ -481,28 +476,26 @@ const PaymentBookingCartView: React.FC = () => {
                                 }),
                             ]);
                         }
-
-                        // LUÔN ĐÁ TRANG
-                        window.open(
-                            serviceUrl,
-                            "_blank"
-                        );
                     } catch (err) {
-
-                        // lỗi TMS vẫn đá trang
-                        window.open(
-                            serviceUrl,
-                            "_blank"
+                        console.error(
+                            "after booking error",
+                            err
                         );
                     }
+
+                    // Luôn redirect sang service sau khi booking thành công
+                    bookingTab?.location.replace(
+                        "https://myagentmember.itourlink.com/service?activeTab=booked"
+                    );
                 },
 
-                onError: (_) => {
+                onError: () => {
                     showToast(
                         "error",
                         t("bookingFailed")
                     );
 
+                    bookingTab?.close();
                 },
             });
         } catch (err) {
@@ -510,6 +503,8 @@ const PaymentBookingCartView: React.FC = () => {
                 "error",
                 t("invalidVoucher")
             );
+
+            bookingTab?.close();
         }
     };
 
