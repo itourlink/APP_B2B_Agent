@@ -254,6 +254,11 @@ const PaymentBookingView: React.FC = () => {
       setTravellerErrors({});
     }
 
+    const bookingTab = window.open(
+      "https://myagentmember.itourlink.com/service?activeTab=loading",
+      "_blank",
+    );
+
     try {
       // apply voucher trước
       if (selectedVoucher?.length > 0) {
@@ -264,7 +269,6 @@ const PaymentBookingView: React.FC = () => {
                 markUsedVoucherApi(
                   {
                     VoucherCode: voucher?.voucherCode,
-
                     updatedBy: user?.strUserGUID || null,
                   },
                   {
@@ -272,7 +276,6 @@ const PaymentBookingView: React.FC = () => {
 
                     onError: (err) => {
                       showToast("error", t("voucherApplyFailed"));
-
                       reject(err);
                     },
                   },
@@ -375,20 +378,19 @@ const PaymentBookingView: React.FC = () => {
             : null,
       };
 
-      // let serviceUrl = "http://localhost:5173/service?activeTab=booked";
-
-      let serviceUrl = "https://myagentmember.itourlink.com/service?activeTab=booked";
-
       addBookingForTourApi(payload, {
         onSuccess: async (res) => {
           showToast("success", t("bookingSuccess"));
 
-          try {
-            const serviceGUID = res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
+          const intBK = res?.[1]?.[0]?.intStatusBk;
 
-            // chỉ xử lý TMS khi có serviceGUID
+          const activeTab = statusTabMap[intBK] ?? "booked";
+
+          try {
+            const serviceGUID =
+              res?.[1]?.[0]?.strListAgentHostServiceItemGUID;
+
             if (serviceGUID) {
-              // get email template
               const emailData = await fetchGetEmailSendAGHByAGBApi({
                 strBookingGUID: null,
 
@@ -401,7 +403,6 @@ const PaymentBookingView: React.FC = () => {
                 strEmailTemplateCode: "BKK",
               });
 
-              // send email
               if (emailData) {
                 await fetchGetSendEmailApi({
                   strEmailsSendTo: emailData?.strEmailsSendTo || null,
@@ -422,7 +423,6 @@ const PaymentBookingView: React.FC = () => {
                 });
               }
 
-              // call TMS APIs song song
               await Promise.all([
                 listAGTMS({
                   strCompanyGUID: companyGUID,
@@ -437,29 +437,28 @@ const PaymentBookingView: React.FC = () => {
                 }),
               ]);
             }
-
-            const intBK = res?.[1]?.[0]?.intStatusBk;
-
-            const activeTab = statusTabMap[intBK] ?? "booked";
-
-            serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
-            // serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
-
-            // luôn đá trang
-            window.open(serviceUrl, "_blank");
           } catch (err) {
-            // lỗi TMS vẫn cho đá trang
-            window.open(serviceUrl, "_blank");
+            console.error("after booking error", err);
           }
+
+          // Luôn đá trang, kể cả email/TMS lỗi
+          bookingTab?.location.replace(
+            `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`,
+          );
         },
 
-        onError: (_) => {
+        onError: () => {
           showToast("error", t("bookingFailed"));
+
+          bookingTab?.close();
         },
       });
     } catch (err) {
       showToast("error", t("invalidVoucher"));
+
+      bookingTab?.close();
     }
+
   };
 
   return (
