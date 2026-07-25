@@ -88,7 +88,7 @@
   "changeDayOrder": "Change Day Order",
   "saveSuccess": "Saved successfully",
   "saveError": "Failed to save",
-  "dayScheduleEmpty": "No days in the itinerary yet",
+  "dayScheduleEmpty": "No days in the schedule yet",
   "addLastDay": "Add Last Day",
   "serviceDetail": "Service Detail",
   "mapApiLoadingArea": "Map API Loading Area...",
