@@ -11,6 +11,8 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useTranslate } from "@/locales";
 
 const AgentView = () => {
+
+    console.log("ssssssssssssssssssssssssssssss")
     const router = useRouter();
     const { t } = useTranslate("agent");
     const IS_DEMO_SINGLE_DATA = false;
