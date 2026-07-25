@@ -290,12 +290,6 @@ const HotelItem = ({ hotel, viewMode, hotelLoading }: HotelItemProps) => {
                             >
                                 <div className="w-full border-t border-gray-100" />
                             </div>
-
-                            <div className="relative flex justify-center">
-                                <span className="bg-gray-50 px-3 text-[11px] font-bold text-gray-900 italic tracking-wider">
-                                    {t("markupDiscount")}
-                                </span>
-                            </div>
                         </div>
                     )}
                 </div>

@@ -5,12 +5,14 @@ import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
-import { useNavigate } from "react-router-dom";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { useRouter } from "@/routes/hooks/use-router";
+import { useNavigate } from "react-router-dom";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
     const company = new URLSearchParams(location.search).get("company") || "";
+    const router = useRouter()
     const navigate = useNavigate()
     const { selectedCurrency } = useListCurrency()
 
@@ -101,12 +103,14 @@ export const TourCard = ({ tour }: any) => {
 
                     <button
                         onClick={() => {
-                            const url = `${paths.shop.tour.detail}?company=${company}`;
+                            navigate(location.pathname + location.search, {
+                                replace: true,
+                                state: { item: tour },
+                            });
 
-                            navigate(url, {
-                                state: {
-                                    item: tour,
-                                },
+                            window.scrollTo({
+                                top: 0,
+                                behavior: "smooth",
                             });
                         }}
                         className="cursor-pointer text-[#2566b0] border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"

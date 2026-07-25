@@ -92,13 +92,6 @@ export const TourListCard = ({ tour }: any) => {
                         </span>
                     </div>
                 </div>
-
-                <div className="relative flex justify-center mb-3">
-                    <span className="px-3 py-1 text-[11px] font-bold text-gray-900 italic tracking-wider w-full text-center bg-gray-100">
-                        {t("increaseDecreasePrice")}
-                    </span>
-                </div>
-
                 <div className="mb-4">
                     <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
                         {String(isValidValue(tour?.strLangCode)) === "CATEID_SETTOUR"

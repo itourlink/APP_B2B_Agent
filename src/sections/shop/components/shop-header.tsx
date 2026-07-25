@@ -57,7 +57,6 @@ const ShopHeader = () => {
     const { user, userLoading } = useUser();
     const { coData } = useListCompanyOwner();
 
-    console.log("coData", coData)
     const handleLogin = async () => {
         if (company) {
             localStorage.setItem("company", company);
@@ -181,16 +180,6 @@ const ShopHeader = () => {
                     </button>
 
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
-
-                    {/* <button
-                        onClick={() => window.open("https://myagentmember.itourlink.com/agent", "_blank")}
-                        // onClick={() => window.location.href = "http://localhost:5177/"}
-                        className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
-                    >
-                        {t("member")}
-                    </button>
-
-                    <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" /> */}
 
                     <button
                         onClick={() => router.push(paths?.shop?.home)}

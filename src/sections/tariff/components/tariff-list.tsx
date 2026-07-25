@@ -38,7 +38,7 @@ const TariffList = () => {
     });
 
     // Các trạng thái phân trang
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(2);
     const [currentPage, setCurrentPage] = useState(1);
 
     const isHotel = appliedFilters.supplierType === "Hotel";
@@ -290,8 +290,14 @@ const TariffList = () => {
             {
                 field: "strRemark",
                 headerName: t("remark"),
-                algin: "center",
-                render: (_val, row) => safeText(row.strRemark) || "--",
+                align: "center",
+                render: (_val, row) => (
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: row?.strRemark || "--",
+                        }}
+                    />
+                ),
             },
         ];
     }, [isHotel, hotelGroupSpans, t]);
