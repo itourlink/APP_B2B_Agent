@@ -1,5 +1,4 @@
 import { useTranslate } from "@/locales";
-import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
 import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
