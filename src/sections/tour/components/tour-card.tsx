@@ -8,6 +8,7 @@ import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from "@/components/currency/useListCurrency";
 // import { useRouter } from "@/routes/hooks/use-router";
 import { useNavigate } from "react-router-dom";
+import { normalizeDestinationDisplay } from "./tour-list";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
@@ -71,7 +72,7 @@ export const TourCard = ({ tour }: any) => {
 
                         <span className="line-clamp-2 leading-snug">
                             {t("destinations")}:{" "}
-                            {isValidValue(tour?.strListTourDestinationName)}
+                            {isValidValue(normalizeDestinationDisplay(tour?.strListTourDestinationName))}
                         </span>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Users } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
+import { normalizeDestinationDisplay } from "../tour/components/tour-list";
 
 type TourSeriesCardProps = {
     item: any;
@@ -235,7 +236,7 @@ const TourSeriesCard = ({
                             <span>
                                 {t("destinations")}:{" "}
                                 {isValidValue(
-                                    item?.strListTourDestinationName
+                                    normalizeDestinationDisplay(item?.strListTourDestinationName)
                                 )}
                             </span>
 

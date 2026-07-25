@@ -7,6 +7,7 @@ import { Clock, Flag, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/components/currency/useListCurrency";
+import { normalizeDestinationDisplay } from "../tour/components/tour-list";
 
 export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
@@ -88,7 +89,7 @@ export const TourListCard = ({ tour }: any) => {
 
                         <span className="line-clamp-2 leading-snug">
                             {t("destinations")}{" "}
-                            {String(isValidValue(tour?.strListTourDestinationName))}
+                            {String(isValidValue(normalizeDestinationDisplay(tour?.strListTourDestinationName)))}
                         </span>
                     </div>
                 </div>
