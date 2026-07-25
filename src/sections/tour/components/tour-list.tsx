@@ -190,6 +190,22 @@ type TourItemProps = {
     viewMode: "grid" | "list";
 };
 
+export const normalizeDestinationDisplay = (value: string = "") => {
+    const map: Record<string, string> = {
+        "Ha Noi": "Hanoi",
+        "Hai Phong": "Haiphong",
+        "Ho Chi Minh": "Ho Chi Minh City",
+    };
+
+    let result = value;
+
+    Object.entries(map).forEach(([key, val]) => {
+        result = result.replaceAll(key, val);
+    });
+
+    return result;
+};
+
 const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { t } = useTranslate("tour");
     const router = useRouter();
@@ -295,7 +311,9 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                             <span className="line-clamp-2 leading-relaxed">
                                 {t("destinations")}:
                                 {" "}
-                                {tour?.strListTourDestinationName || "--"}
+                                {tour?.strListTourDestinationName
+                                    ? normalizeDestinationDisplay(tour.strListTourDestinationName)
+                                    : "--"}
                             </span>
                         </div>
                     </div>

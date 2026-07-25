@@ -6,13 +6,13 @@ import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from "@/components/currency/useListCurrency";
-import { useRouter } from "@/routes/hooks/use-router";
+// import { useRouter } from "@/routes/hooks/use-router";
 import { useNavigate } from "react-router-dom";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
-    const company = new URLSearchParams(location.search).get("company") || "";
-    const router = useRouter()
+    // const company = new URLSearchParams(location.search).get("company") || "";
+    // const router = useRouter()
     const navigate = useNavigate()
     const { selectedCurrency } = useListCurrency()
 

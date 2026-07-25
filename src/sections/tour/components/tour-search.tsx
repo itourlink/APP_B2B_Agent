@@ -133,18 +133,46 @@ const TourSearch = () => {
       });
 
       setSelectedTour(parsed.selectedTour || null);
-    } catch {}
+    } catch { }
   }, [location.search]);
+
+  const normalizeDestinationSearch = (value: string) => {
+    const map: Record<string, string> = {
+      haiphong: "hai phong",
+      hanoi: "ha noi",
+      hochiminh: "ho chi minh",
+      hochiminhcity: "ho chi minh",
+    };
+
+    const key = value
+      ?.toLowerCase()
+      .replace(/\s+/g, "");
+
+    return map[key] ?? value;
+  };
+
 
   const searchPayload = {
     intCurPage: filters.page,
     intPageSize: filters.pageSize,
-
     isTourSeries: filters.isTourSeries,
-    strFilterDestinationName: filters.strFilterDestinationName,
+
+    strFilterDestinationName: normalizeDestinationSearch(
+      filters.strFilterDestinationName
+    ),
 
     ...draftFilters2,
   };
+
+  // const searchPayload = {
+  //   intCurPage: filters.page,
+  //   intPageSize: filters.pageSize,
+
+  //   isTourSeries: filters.isTourSeries,
+  //   strFilterDestinationName: filters.strFilterDestinationName,
+
+  //   ...draftFilters2,
+  // };
 
   const { searchData, searchLoading } = useSearchTour(searchPayload);
 
@@ -223,13 +251,13 @@ const TourSearch = () => {
 
                   close();
 
-                //   close(() => {
-                //     const input = document.querySelector(
-                //       'input[placeholder="' + t("searchPlaceholder") + '"]',
-                //     ) as HTMLInputElement | null;
+                  //   close(() => {
+                  //     const input = document.querySelector(
+                  //       'input[placeholder="' + t("searchPlaceholder") + '"]',
+                  //     ) as HTMLInputElement | null;
 
-                //     input?.focus();
-                //   });
+                  //     input?.focus();
+                  //   });
                 }}
               />
             ),

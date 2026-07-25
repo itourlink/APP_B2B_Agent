@@ -25,6 +25,7 @@ import { isValidValue } from "@/utils/utilts";
 import { TourCard } from "./tour-card";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { normalizeDestinationDisplay } from "./tour-list";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -186,7 +187,7 @@ const TourDetail = () => {
                   <div className="flex items-center gap-5 text-sm text-slate-600 flex-wrap">
                     <div className="flex items-center gap-1">
                       <MapPin size={16} className="text-[#2566b0]" />
-                      {isValidValue(ListData?.strListTourDestinationName)}
+                      {isValidValue(normalizeDestinationDisplay(ListData?.strListTourDestinationName))}
                     </div>
 
                     <div className="flex items-center gap-1">
