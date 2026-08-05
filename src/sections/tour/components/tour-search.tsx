@@ -138,10 +138,9 @@ const TourSearch = () => {
 
   const normalizeDestinationSearch = (value: string) => {
     const map: Record<string, string> = {
-      haiphong: "hai phong",
-      hanoi: "ha noi",
-      hochiminh: "ho chi minh",
-      hochiminhcity: "ho chi minh",
+      haiphong: "Haiphong",
+      hanoi: "Hanoi",
+      hochiminhcity: "Ho Chi Minh City",
     };
 
     const key = value
