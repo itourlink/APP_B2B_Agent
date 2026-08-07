@@ -1,11 +1,14 @@
 import { useListCompanyPartner } from '@/hooks/actions/useCompanyOwner';
 import { useTranslate } from '@/locales';
+import { useRouter } from '@/routes/hooks/use-router';
+import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
 import { Mail, Phone, MapPin, Link2 } from 'lucide-react';
 
 
 const PartnerCard = ({ partner }: any) => {
     const { t } = useTranslate("tour")
+    const router = useRouter();
 
     return (
         <div className="relative group overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] 
@@ -36,7 +39,11 @@ const PartnerCard = ({ partner }: any) => {
                         </div>
 
                         <div className="space-y-3 pt-2 border-t border-gray-100">
-                            <button className="flex items-center gap-2.5 text-[#2566b0] text-sm font-medium hover:underline group-hover:underline">
+                            <button onClick={() =>
+                                router.replaceQuery(paths.shop.tariff.list, {
+                                    company: partner?.strUrlLink,
+                                })
+                            } className="cursor-pointer flex items-center gap-2.5 text-[#2566b0] text-sm font-medium hover:underline group-hover:underline">
                                 <Link2 size={14} className="text-[#2566b0]" />
                                 <span>[{t("tariffLink")}]</span>
                             </button>

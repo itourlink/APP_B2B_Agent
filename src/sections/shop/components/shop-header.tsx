@@ -1,4 +1,4 @@
-import { LogIn } from "lucide-react";
+import { Home, LogIn } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 import logo from "../../../../public/favicon.png";
@@ -20,13 +20,15 @@ import { useListMenu } from "@/hooks/actions/useMenu";
 import { useEffect } from "react";
 import { buildMenu } from "@/components/header-outside/data-menu";
 import { useTranslate } from "@/locales";
+import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
+import { isValidValue } from "@/utils/utilts";
+import { getUrlImage } from "@/utils/format-image";
 
 const ShopHeader = () => {
     const router = useRouter();
     const location = useLocation();
     const { t } = useTranslate("header")
     useTranslate("noti")
-
     const pathname = location.pathname;
 
     const company =
@@ -53,6 +55,7 @@ const ShopHeader = () => {
     const menu = buildMenu(menuData || [], t);
 
     const { user, userLoading } = useUser();
+    const { coData } = useListCompanyOwner();
 
     const handleLogin = async () => {
         if (company) {
@@ -112,7 +115,6 @@ const ShopHeader = () => {
         pathname.startsWith(paths.shop.notification.list);
 
     useEffect(() => {
-        if (!menu?.length) return;
 
         // SEARCH PAGE => KHÔNG REDIRECT
         if (isSearchPage || isAgentCompanyPage || isSaleChannelPage || isCartPage || isNotificationPage) return;
@@ -158,8 +160,6 @@ const ShopHeader = () => {
         router.push(url);
     };
 
-    if (!menu?.length) return null;
-
     return (
         <div className="bg-white px-6 sticky top-0 left-0 w-full z-50 shadow h-30 flex flex-col justify-center gap-5">
             <div className="flex items-center justify-between">
@@ -182,11 +182,20 @@ const ShopHeader = () => {
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
 
                     <button
-                        onClick={() => window.open("https://myagentmember.itourlink.com/agent", "_blank")}
-                        // onClick={() => window.location.href = "http://localhost:5177/"}
+                        onClick={() => router.push(paths?.shop?.home)}
                         className="cursor-pointer rounded-lg px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95"
                     >
-                        {t("member")}
+                        {isValidValue(coData?.strCompanyLogo) ?
+
+                            <div className="w-10 flex items-center justify-center text-white overflow-hidden">
+                                <img src={getUrlImage(isValidValue(coData?.strCompanyLogo))} alt={isValidValue(coData?.strCompanyLogo)} className="w-full h-full object-cover" />
+                            </div>
+                            :
+                            <div className="w-8 h-8 bg-[#2566b0] rounded-full flex items-center justify-center text-white">
+                                <Home />
+                            </div>
+
+                        }
                     </button>
 
                     <div className="h-10 w-px bg-[rgba(64,64,64,0.5)]" />
@@ -239,33 +248,37 @@ const ShopHeader = () => {
             </div>
 
             <div className="flex items-center gap-5 overflow-x-auto">
-                {(menu || []).map((item) => {
-                    if (!item) return null;
+                {menu?.length > 0 && (
+                    <div className="flex items-center gap-5 overflow-x-auto">
+                        {menu.map((item) => {
+                            if (!item) return null;
 
-                    const isActive = isSearchPage
-                        ? item.link === searchMenuMap[searchType]
-                        : isPathMatch(item);
+                            const isActive = isSearchPage
+                                ? item.link === searchMenuMap[searchType]
+                                : isPathMatch(item);
 
-                    return (
-                        <div
-                            key={item.id}
-                            onClick={() => handleNavigate(item.link)}
-                            className={`
-                                flex items-center gap-2 p-1 cursor-pointer transition-all whitespace-nowrap
-                                ${isActive
-                                    ? "text-[#2566b0] font-semibold"
-                                    : "text-gray-700 hover:text-[#2566b0] font-semibold"
-                                }
-                            `}
-                        >
-                            <div>{item.icon}</div>
-
-                            <div className="text-[14px]">
-                                {item.title}
-                            </div>
-                        </div>
-                    );
-                })}
+                            return (
+                                <div
+                                    key={item.id}
+                                    onClick={() => handleNavigate(item.link)}
+                                    className={`
+                        flex items-center gap-2 p-1 cursor-pointer 
+                        transition-all whitespace-nowrap
+                        ${isActive
+                                            ? "text-[#2566b0] font-semibold"
+                                            : "text-gray-700 hover:text-[#2566b0] font-semibold"
+                                        }
+                    `}
+                                >
+                                    <div>{item.icon}</div>
+                                    <div className="text-[14px]">
+                                        {item.title}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

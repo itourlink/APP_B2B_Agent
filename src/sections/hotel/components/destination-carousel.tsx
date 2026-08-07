@@ -75,6 +75,7 @@ const DestinationCarousel = () => {
     const { tcdData, tcdLoading, tcdError } = useCompanyDes(filters);
 
     const handleSelectDestination = (dest: any) => {
+
         const today = new Date();
         const snapshot = {
             filters: {
@@ -95,7 +96,7 @@ const DestinationCarousel = () => {
                 intNoOfRooms: 1,
                 dtmFilterCheckIn: today,
                 dtmFilterCheckOut: null,
-                strFilterLocationCode: dest?.strLocationCode || dest?.strDestinationCode || dest?.strDestinationGUID || null,
+                strFilterLocationCode: dest?.strDestinationCode || null,
                 IsShowAll: false,
             },
             selectedHotel: null,

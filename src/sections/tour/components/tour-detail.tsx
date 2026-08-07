@@ -25,6 +25,7 @@ import { isValidValue } from "@/utils/utilts";
 import { TourCard } from "./tour-card";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { normalizeDestinationDisplay } from "./tour-list";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -186,7 +187,7 @@ const TourDetail = () => {
                   <div className="flex items-center gap-5 text-sm text-slate-600 flex-wrap">
                     <div className="flex items-center gap-1">
                       <MapPin size={16} className="text-[#2566b0]" />
-                      {isValidValue(ListData?.strListTourDestinationName)}
+                      {isValidValue(normalizeDestinationDisplay(ListData?.strListTourDestinationName))}
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -254,51 +255,77 @@ const TourDetail = () => {
           </div>
 
           {/* DESCRIPTION */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-slate-900">
-              {t("description")}
-            </h2>
-
-            {tdLoading ? (
+          {tdLoading ? (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("description")}
+              </h2>
               <SkeletonBlock />
-            ) : tdError ? (
+            </div>
+          ) : tdError ? (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("description")}
+              </h2>
               <ErrorBlock />
-            ) : remark.trim() ? (
+            </div>
+          ) : remark.trim() ? (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("description")}
+              </h2>
+
               <div
                 dangerouslySetInnerHTML={{
                   __html: remark,
                 }}
               />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
 
           {/* ITINERARY */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
-                {t("itinerary")}
-              </h2>
+          {tddLoading ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("schedule")}
+                </h2>
+              </div>
 
-              <button
-                type="button"
-                onClick={toggleAllDays}
-                className="
-                                    text-sm
-                                    font-medium
-                                    text-blue-600
-                                    hover:underline
-                                "
-              >
-                {isAllOpen ? t("collapse") : t("showAll")}
-              </button>
+              <SkeletonBlock />
             </div>
+          ) : tddError ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("schedule")}
+                </h2>
+              </div>
 
-            {tddLoading && <SkeletonBlock />}
-            {tddError && <ErrorBlock />}
+              <ErrorBlock />
+            </div>
+          ) : tddData?.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("schedule")}
+                </h2>
 
-            {!tddLoading &&
-              !tddError &&
-              tddData?.map((tdd: any) => {
+                <button
+                  type="button"
+                  onClick={toggleAllDays}
+                  className="
+          text-sm
+          font-medium
+          text-blue-600
+          hover:underline
+        "
+                >
+                  {isAllOpen ? t("collapse") : t("showAll")}
+                </button>
+              </div>
+
+              {tddData.map((tdd: any) => {
                 const hasContent =
                   tdd?.strDayContent &&
                   typeof tdd?.strDayContent === "string" &&
@@ -314,24 +341,36 @@ const TourDetail = () => {
                     <button
                       onClick={() => toggleDay(tdd?.No)}
                       className="
-                                                w-full
-                                                flex
-                                                items-center
-                                                justify-between
-                                                p-4
-                                                bg-slate-50
-                                                hover:bg-slate-100
-                                                transition-colors
-                                            "
+              w-full
+              flex
+              items-center
+              justify-between
+              pt-4 pb-4 pr-4
+              bg-slate-50
+              hover:bg-slate-100
+              transition-colors
+            "
                     >
-                      <div className="font-semibold text-slate-800">
+                      <div
+                        className="
+    inline-flex
+    items-center
+    rounded-r-full
+    bg-[#dff3ff]
+    px-4
+    py-1.5
+    text-sm
+    font-medium
+    text-[#2566b0]
+  "
+                      >
                         {t("day")} {tdd?.No}
                       </div>
 
                       {isOpen ? (
-                        <ChevronUp size={18} />
+                        <ChevronUp size={18} color="#2566b0"/>
                       ) : (
-                        <ChevronDown size={18} />
+                        <ChevronDown size={18}/>
                       )}
                     </button>
 
@@ -351,124 +390,145 @@ const TourDetail = () => {
                   </div>
                 );
               })}
-          </div>
+            </div>
+          ) : null}
 
 
           {/* INCLUDE / EXCLUDE */}
-          <div className="space-y-4">
-            <button
-              type="button"
-              onClick={() => setShowInExClude((prev) => !prev)}
-              className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
-            >
-              <h2 className="text-xl font-bold text-slate-900">
-                {t("included")} / {t("excluded")}
-              </h2>
+          {includedList.length > 0 || exclusionsList.length > 0 ? (
+            <div className="space-y-4">
+              <button
+                type="button"
+                onClick={() => setShowInExClude((prev) => !prev)}
+                className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+              >
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("included")} / {t("excluded")}
+                </h2>
 
-              {showInExClude ? (
-                <ChevronUp className="h-5 w-5" />
-              ) : (
-                <ChevronDown className="h-5 w-5" />
+                {showInExClude ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+
+              {showInExClude && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Included */}
+                  {includedList.length > 0 && (
+                    <div>
+                      <h3 className="mb-3 font-bold">
+                        {t("included")}
+                      </h3>
+
+                      <div className="space-y-2">
+                        {includedList.map((item: any, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
+
+                            <span
+                              className="leading-6"
+                              dangerouslySetInnerHTML={{
+                                __html: item,
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Excluded */}
+                  {exclusionsList.length > 0 && (
+                    <div>
+                      <h3 className="mb-3 font-bold">
+                        {t("excluded")}
+                      </h3>
+
+                      <div className="space-y-2">
+                        {exclusionsList.map((item: any, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <XCircle className="mt-0.5 h-[18px] h-[18px] w-[18px] shrink-0 text-red-500" />
+
+                            <span
+                              className="leading-6"
+                              dangerouslySetInnerHTML={{
+                                __html: item,
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
-            </button>
-
-            {showInExClude && (
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Bao gồm */}
-                <div>
-                  <h3 className="mb-3 font-bold">{t("included")}</h3>
-
-                  {includedList.length > 0 ? (
-                    <div className="space-y-2">
-                      {includedList.map((item: any, i: number) => (
-                        <div key={i} className="flex items-start gap-2 text-sm">
-                          <CheckCircle2 className="mt-0.5 h-[18px] w-[18px] shrink-0 text-green-500" />
-
-                          <span
-                            className="leading-6"
-                            dangerouslySetInnerHTML={{
-                              __html: item,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-sm text-slate-500">
-                      {t("noData")}
-                    </span>
-                  )}
-                </div>
-
-                {/* Không bao gồm */}
-                <div>
-                  <h3 className="mb-3 font-bold">{t("excluded")}</h3>
-
-                  {exclusionsList.length > 0 ? (
-                    <div className="space-y-2">
-                      {exclusionsList.map((item: any, i: number) => (
-                        <div key={i} className="flex items-start gap-2 text-sm">
-                          <XCircle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-red-500" />
-
-                          <span
-                            className="leading-6"
-                            dangerouslySetInnerHTML={{
-                              __html: item,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-sm text-slate-500">
-                      {t("noData")}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          ) : null}
 
 
           {/* TERMS */}
-          <div className="space-y-4">
-            <button
-              type="button"
-              onClick={() => setShowTerm((prev) => !prev)}
-              className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
-            >
-              <h2 className="text-xl font-bold text-slate-900">
-                {t("termsAndConditions")}
-              </h2>
+          {tdLoading ? (
+            <div className="space-y-4">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+              >
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("termsAndConditions")}
+                </h2>
+              </button>
 
-              {showTerm ? (
-                <ChevronUp className="h-5 w-5" />
-              ) : (
-                <ChevronDown className="h-5 w-5" />
-              )}
-            </button>
+              <SkeletonBlock />
+            </div>
+          ) : tdError ? (
+            <div className="space-y-4">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+              >
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("termsAndConditions")}
+                </h2>
+              </button>
 
-            {showTerm && (
-              <>
-                {tdLoading ? (
-                  <SkeletonBlock />
-                ) : tdError ? (
-                  <ErrorBlock />
-                ) : ListData?.strTermAndCondition ? (
-                  <div
-                    className="text-sm leading-7"
-                    dangerouslySetInnerHTML={{
-                      __html: isValidValue(ListData?.strTermAndCondition),
-                    }}
-                  />
+              <ErrorBlock />
+            </div>
+          ) : ListData?.strTermAndCondition?.trim() ? (
+            <div className="space-y-4">
+              <button
+                type="button"
+                onClick={() => setShowTerm((prev) => !prev)}
+                className="flex w-full items-center justify-between border-b border-slate-200 pb-3"
+              >
+                <h2 className="text-xl font-bold text-slate-900">
+                  {t("termsAndConditions")}
+                </h2>
+
+                {showTerm ? (
+                  <ChevronUp className="h-5 w-5" />
                 ) : (
-                  <span className="text-sm text-slate-500">
-                    {t("noData")}
-                  </span>
+                  <ChevronDown className="h-5 w-5" />
                 )}
-              </>
-            )}
-          </div>
+              </button>
+
+              {showTerm && (
+                <div
+                  className="text-sm leading-7"
+                  dangerouslySetInnerHTML={{
+                    __html: isValidValue(ListData?.strTermAndCondition),
+                  }}
+                />
+              )}
+            </div>
+          ) : null}
         </div>
 
         {/* RIGHT */}

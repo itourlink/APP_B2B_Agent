@@ -1,4 +1,4 @@
-import PaymentBookingHotelView from "@/sections/booking/payment-booking-hotel-view";
+import PaymentBookingHotelView from "@/sections/booking/payment-booking-hotel/payment-booking-hotel-view";
 import { CONFIG } from "../../config-global";
 
 const metadata = { title: `Payment Booking- ${CONFIG.appName}` };

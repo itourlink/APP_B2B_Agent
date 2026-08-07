@@ -29,16 +29,38 @@ export const useCompanyOwnerListInfo = (params: {
         ],
         queryFn: () =>
             fetchCompanyOwnerList({
-                strUserPartnerGUID: user?.strUserGUID,
-                strCompanyPartnerGUID: user?.strCompanyGUID,
-                strCompanyOwnerGUID: params.strCompanyOwnerGUID || null,
-                intCurPage: params.page,
-                intPageSize: params.pageSize,
-                strOrder: params.strOrder || null,
-                strFilterCompanyName: params.nameProvider || null,
-                strCompanyNameUrl: params.strCompanyNameUrl || null,
+                strUserPartnerGUID: user?.strUserGUID || null,
+                strCompanyPartnerGUID: user?.strCompanyGUID || null,
+
+                strCompanyOwnerGUID:
+                    typeof params.strCompanyOwnerGUID === "string"
+                        ? params.strCompanyOwnerGUID
+                        : null,
+
+                intCurPage: params.page ?? null,
+                intPageSize: params.pageSize ?? null,
+
+                strOrder:
+                    typeof params.strOrder === "string"
+                        ? params.strOrder
+                        : null,
+
+                strFilterCompanyName:
+                    typeof params.nameProvider === "string"
+                        ? params.nameProvider
+                        : null,
+
+                strCompanyNameUrl:
+                    typeof params.strCompanyNameUrl === "string"
+                        ? params.strCompanyNameUrl
+                        : null,
+
                 IsOwnerFriend: true,
-                tblsReturn: params.tblsReturn || "[0]",
+
+                tblsReturn:
+                    typeof params.tblsReturn === "string"
+                        ? params.tblsReturn
+                        : "[0]",
             }),
         enabled: !!user?.strUserGUID && !!user?.strCompanyGUID,
         placeholderData: keepPreviousData,

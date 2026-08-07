@@ -6,9 +6,9 @@ import { statusTabMap, TITLES_OPTIONS } from '@/utils/option-data';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import PaymentCountdown from './payment-countdown';
-import VoucherList from './voucher-list';
-import BookingPopup from './booking-popup';
+import PaymentCountdown from '../components/payment-countdown';
+import VoucherList from '../components/voucher-list';
+import BookingPopup from '../components/booking-popup';
 import { useToastStore } from '@/zustand/useToastStore';
 import { useGlobalLoading } from '@/zustand/useGlobalLoading';
 import { fDateTime } from '@/utils/format-time';
@@ -1012,7 +1012,7 @@ const PaymentBookingHotelView: React.FC = () => {
                                     </th>
 
                                     <th className="py-2 px-3 border border-[#1a52a3]">
-                                        {t("totalPaymentAmount")}
+                                        {t("totalDeposit")}
                                     </th>
                                 </tr>
                             </thead>

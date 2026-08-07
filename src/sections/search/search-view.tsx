@@ -24,6 +24,7 @@ const SearchView = () => {
   const { selectedCurrency } = useListCurrency();
   const location = useLocation();
   const state = (location.state || {}) as any;
+
   const searchType =
     new URLSearchParams(location.search)
       .get("type");
@@ -42,9 +43,8 @@ const SearchView = () => {
   const mode = state?.mode; // "quick" | "list"
   const isQuick = mode === "quick";
   const isSearchHotel = mode === "quick" || state?.isSearchHotel;
-  // const pageSize = 5;
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(9);
 
   const handlePageSizeChange = (value: number) => {
     setPageSize(value);
@@ -190,6 +190,8 @@ const SearchView = () => {
       }
       : undefined
   );
+
+  
   // LIST HOTEL
   const listHotel = useListHotel(
     !isQuick
@@ -201,8 +203,8 @@ const SearchView = () => {
         ...hotelParams,
 
         strFilterSupplierName:
-          hotelFilter?.strFilterSupplierName ||
-          hotelParams?.strFilterDestinationName ||
+          // hotelFilter?.strFilterSupplierName ||
+          // hotelParams?.strFilterDestinationName ||
           null,
 
         strPriceFromRange:
@@ -284,7 +286,6 @@ const SearchView = () => {
     const totalPages = getTotalPages(
       hotelSource,
       pageSize
-      // isQuick ? pageSize : 12
     );
 
     if (pageHotel > totalPages && totalPages > 0) {

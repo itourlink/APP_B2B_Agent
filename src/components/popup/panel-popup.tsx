@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, X } from "lucide-react";
-import { useEffect } from "react";
+import { ChevronLeft, LogOut, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Lang from "../lang/lang";
+import { CONFIG } from "@/config-global";
+import { LogoutPopup } from "./logout-popup";
 
 interface Props {
   open: boolean;
@@ -15,6 +17,7 @@ interface Props {
   description?: string;
   isOverflowHidden?: boolean;
   lang?: boolean;
+  logout?: boolean;
   className?: string;
   footer?: React.ReactNode;
   bodyClassName?: string;
@@ -32,8 +35,12 @@ const PanelPopup = ({
   className,
   footer,
   lang,
+  logout,
   bodyClassName,
 }: Props) => {
+
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -69,6 +76,9 @@ const PanelPopup = ({
     ? "max-h-[calc(90vh-140px)]"
     : "max-h-[calc(90vh-96px)]";
 
+  const handleLogout = async () => {
+    window.location.href = `${CONFIG.serverUrl}auth/logout`;
+  };
   return (
     <AnimatePresence>
       {open && (
@@ -121,20 +131,36 @@ const PanelPopup = ({
                     </div>
                   </div>
 
-                  {onClose && (
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="cursor-pointer inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
-                    >
-                      <X size={18} />
-                    </button>
-                  )}
 
-                  {lang && (
-                    <Lang/>
 
-                  )}
+                  <div className="flex items-center gap-2">
+                    {onClose && (
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="cursor-pointer inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                    {lang && (
+                      <Lang />
+                    )}
+                    {logout && (
+                      <button
+                        onClick={() => setConfirmLogout(true)}
+                        className="h-10 rounded-lg border border-[rgba(64,64,64,0.5)] px-3 flex items-center justify-evenly cursor-pointer"
+                      >
+                        <LogOut size={18} />
+                      </button>
+                    )}
+
+                    <LogoutPopup
+                      open={confirmLogout}
+                      onClose={() => setConfirmLogout(false)}
+                      onConfirm={handleLogout}
+                    />
+                  </div>
                 </div>
 
                 <div

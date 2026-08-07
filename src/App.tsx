@@ -23,14 +23,15 @@ function App() {
     }
   }, []);
 
-  const { user } = useUser();
-  const { setCurrencyId } = useCurrency();
+  const { user } = useUser()
+
+  const { currencyId, setCurrencyId } = useCurrency();
 
   useEffect(() => {
-    if (user?.intCurrencyID) {
+    if (currencyId === null && user?.intCurrencyID) {
       setCurrencyId(user.intCurrencyID);
     }
-  }, [user]);
+  }, [currencyId, user, setCurrencyId]);
 
   return (
     <BrowserRouter>

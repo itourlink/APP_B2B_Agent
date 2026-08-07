@@ -7,12 +7,17 @@ import i18next from "i18next";
 
 type Props = {
   isOpen?: boolean;
+
   value: {
     startDate: Date | null;
     endDate: Date | null;
   };
+
   onApply: (range: Props["value"]) => void;
+
   minDate?: Date | null;
+
+  allowSameDay?: boolean;
 };
 
 const DateRangePopup = ({
@@ -20,6 +25,7 @@ const DateRangePopup = ({
   value,
   onApply,
   minDate,
+  allowSameDay = true,
 }: Props) => {
   const { t } = useTranslate("genericFilter");
 
@@ -39,6 +45,16 @@ const DateRangePopup = ({
   const [isCleared, setIsCleared] = useState(
     !value.startDate && !value.endDate
   );
+
+  const isSameDay =
+    temp[0].startDate &&
+    temp[0].endDate &&
+    temp[0].startDate.toDateString() ===
+    temp[0].endDate.toDateString();
+
+
+  const isInvalidRange =
+    !allowSameDay && isSameDay;
 
   useEffect(() => {
     setIsCleared(
@@ -135,14 +151,24 @@ const DateRangePopup = ({
 
         <button
           type="button"
+          disabled={isInvalidRange}
           onClick={(e) => {
             e.preventDefault();
+
+            if (isInvalidRange) return;
+
             onApply({
               startDate: temp[0].startDate,
               endDate: temp[0].endDate,
             });
           }}
-          className="px-4 py-2 bg-[#4a6fa5] hover:bg-[#3b5b7e] transition text-white rounded-lg cursor-pointer"
+          className={`
+    px-4 py-2 rounded-lg transition text-white
+    ${isInvalidRange
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#4a6fa5] hover:bg-[#3b5b7e] cursor-pointer"
+            }
+  `}
         >
           {t("apply")}
         </button>

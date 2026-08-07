@@ -61,24 +61,23 @@ interface Props {
 }
 
 const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => {
-
     const { t } = useTranslate("search")
     const location = useLocation();
     const company =
         new URLSearchParams(location.search).get("company");
-
     const [isNavigating, setIsNavigating] = useState(false);
-
     const router = useRouter();
-
-    const [filters, setFilters] = useState(DEFAULT_FILTERS);
-
+    const [filters, setFilters] =
+        useState<FilterState>({
+            ...DEFAULT_FILTERS,
+            guestRoom: {
+                ...DEFAULT_FILTERS.guestRoom,
+            },
+        });
     const [selectedHotel, setSelectedHotel] =
         useState<any | null>(null);
-
     const [draftFilters, setDraftFilters] =
         useState(DEFAULT_FILTERS2);
-
     const { searchDesData, searchDesLoading } =
         useSearchDesHotel({
             page: filters.page,
@@ -86,7 +85,6 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
             strFilterDestinationName:
                 filters.strFilterDestinationName,
         });
-
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
@@ -114,10 +112,12 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                     return prev;
                 }
 
-                return {
+                const next = {
                     ...prev,
                     ...restoredFilters,
                 };
+
+                return next;
             });
 
             setDraftFilters((prev) => ({
@@ -158,50 +158,28 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
 
         const normalizedHotel = {
             ...initialHotel,
-            strSupplierGUID: initialHotel.strSupplierGUID ?? initialHotel.strSupplierGUID,
-            strSupplierName: initialHotel.strSupplierName,
+
+            strSupplierGUID:
+                initialHotel.strSupplierGUID,
+
+            strSupplierName:
+                initialHotel.strSupplierName ||
+                initialHotel.strDestinationName ||
+                "",
         };
 
         setSelectedHotel(normalizedHotel);
 
         setFilters((prev) => ({
             ...prev,
-            strFilterDestinationName: normalizedHotel.strSupplierName,
+            strFilterDestinationName:
+                prev.strFilterDestinationName ||
+                normalizedHotel.strSupplierName,
         }));
 
         hydratedRef.current = true;
     }, [initialHotel]);
-
-    // useEffect(() => {
-    //     const params = new URLSearchParams(location.search);
-    //     const raw = params.get("hotelSearchState");
-    //     if (!raw) return;
-
-    //     try {
-    //         const parsed = JSON.parse(raw);
-
-    //         const restoredFilters = {
-    //             ...parsed.filters,
-    //             start: parsed.filters?.start ? new Date(parsed.filters.start) : null,
-    //             end: parsed.filters?.end ? new Date(parsed.filters.end) : null,
-    //         };
-
-    //         setFilters((prev) => ({
-    //             ...prev,
-    //             ...restoredFilters,
-    //         }));
-
-    //         setDraftFilters((prev) => ({
-    //             ...prev,
-    //             ...parsed.draftFilters,
-    //         }));
-
-    //         setSelectedHotel(parsed.selectedHotel || null);
-
-    //         hydratedRef.current = true; // 👈 chặn initialHotel override
-    //     } catch { }
-    // }, [location.search]);
-
+    
     const handleSearch = () => {
         const snapshot = {
             filters,
@@ -352,9 +330,10 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         type: "dateRange",
                         keyStart: "start",
                         keyEnd: "end",
-                        label:
-                            t("checkInCheckOutDate"),
+                        label: t("checkInCheckOutDate"),
+                        allowSameDay: false,
                     },
+
                     {
                         type: "guestRoom",
                         key: "guestRoom",
@@ -423,7 +402,7 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
                         ) {
                             setSelectedHotel(null);
                         }
-
+                       
                         return next;
                     });
                 }}

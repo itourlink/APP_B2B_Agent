@@ -4,7 +4,7 @@ import { useRouter } from '@/routes/hooks/use-router';
 import { paths } from '@/routes/paths';
 import { getUrlImage } from '@/utils/format-image';
 import { Flag, Clock, MapPin, LayoutGrid, List } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
@@ -32,6 +32,17 @@ const TourList = () => {
 
     const { tourData, totalRecords, totalPages, tourLoading, tourError } = useListTour(filters);
 
+    const listRef = useRef<HTMLDivElement>(null);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+
+        listRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    };
+
     if (tourLoading) {
         return (
             <div className="max-w-7xl mx-auto p-6">
@@ -54,6 +65,7 @@ const TourList = () => {
         );
     }
 
+    // api
     if (!tourData || tourData.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -66,81 +78,86 @@ const TourList = () => {
 
 
     return (
-        <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-800">
-                    {t("featuredTours")}
-                </h2>
+        <div className="scroll-mt-[250px]" ref={listRef}>
+            <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        {t("featuredTours")}
+                    </h2>
 
-                <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
-                    <span className="text-[12px] text-gray-500 ml-2">
-                        {t("displayMode")}:
-                    </span>
 
-                    <div className="flex gap-1">
-                        <button
-                            onClick={() => setViewMode("grid")}
-                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid"
-                                ? "bg-[#2566b0] text-white shadow-sm"
-                                : "text-gray-400 hover:bg-gray-200"
-                                }`}
-                        >
-                            <LayoutGrid size={16} />
-                        </button>
+                    <div className="flex items-center gap-3 bg-gray-50 p-1 rounded-lg border border-gray-200">
+                        <span className="text-[12px] text-gray-500 ml-2">
+                            {t("displayMode")}:
+                        </span>
 
-                        <button
-                            onClick={() => setViewMode("list")}
-                            className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list"
-                                ? "bg-[#2566b0] text-white shadow-sm"
-                                : "text-gray-400 hover:bg-gray-200"
-                                }`}
-                        >
-                            <List size={16} />
-                        </button>
+                        <div className="flex gap-1">
+                            <button
+                                onClick={() => setViewMode("grid")}
+                                className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "grid"
+                                    ? "bg-[#2566b0] text-white shadow-sm"
+                                    : "text-gray-400 hover:bg-gray-200"
+                                    }`}
+                            >
+                                <LayoutGrid size={16} />
+                            </button>
+
+                            <button
+                                onClick={() => setViewMode("list")}
+                                className={`cursor-pointer p-1.5 rounded-md transition-all ${viewMode === "list"
+                                    ? "bg-[#2566b0] text-white shadow-sm"
+                                    : "text-gray-400 hover:bg-gray-200"
+                                    }`}
+                            >
+                                <List size={16} />
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {tourLoading && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {[...Array(8)].map((_, i) => (
-                        <TourCardSkeleton key={i} />
-                    ))}
-                </div>
-            )}
-            {tourError && <TourError />}
 
-            {!tourLoading && !tourError && (
-                <div
-                    className={
-                        viewMode === "grid"
-                            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-                            : "flex flex-col gap-4"
-                    }
-                >
-                    {tourData?.map((tour: any) => (
-                        <TourItem
-                            key={tour.strTourGUID}
-                            tour={tour}
-                            viewMode={viewMode}
+                {tourLoading && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {[...Array(8)].map((_, i) => (
+                            <TourCardSkeleton key={i} />
+                        ))}
+                    </div>
+                )}
+                {tourError && <TourError />}
+
+                {!tourLoading && !tourError && (
+                    <div
+                        className={
+                            viewMode === "grid"
+                                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+                                : "flex flex-col gap-4"
+                        }
+                    >
+                        {tourData?.map((tour: any) => (
+                            <TourItem
+                                key={tour.strTourGUID}
+                                tour={tour}
+                                viewMode={viewMode}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                {!tourLoading && !tourError && tourData?.length > 0 && (
+                    <div className="mt-8 border-t border-gray-100 pt-6">
+                        <Pagination
+                            currentPage={page}
+                            totalPages={totalPages || 1}
+                            totalRecords={totalRecords}
+                            recordsPerPage={pageSize}
+                            onPageChange={handlePageChange}
+                            onRecordsPerPageChange={setPageSize}
                         />
-                    ))}
-                </div>
-            )}
+                    </div>
+                )}
 
-            {!tourLoading && !tourError && tourData?.length > 0 && (
-                <div className="mt-8 border-t border-gray-100 pt-6">
-                    <Pagination
-                        currentPage={page}
-                        totalPages={totalPages || 1}
-                        totalRecords={totalRecords}
-                        recordsPerPage={pageSize}
-                        onPageChange={setPage}
-                        onRecordsPerPageChange={setPageSize}
-                    />
-                </div>
-            )}
-
+            </div>
         </div>
+
     );
 };
 
@@ -188,6 +205,22 @@ const TourError = () => {
 type TourItemProps = {
     tour: any;
     viewMode: "grid" | "list";
+};
+
+export const normalizeDestinationDisplay = (value: string = "") => {
+    const map: Record<string, string> = {
+        "Ha Noi": "Hanoi",
+        "Hai Phong": "Haiphong",
+        "Ho Chi Minh": "Ho Chi Minh City",
+    };
+
+    let result = value;
+
+    Object.entries(map).forEach(([key, val]) => {
+        result = result.replaceAll(key, val);
+    });
+
+    return result;
 };
 
 const TourItem = ({ tour, viewMode }: TourItemProps) => {
@@ -295,7 +328,9 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                             <span className="line-clamp-2 leading-relaxed">
                                 {t("destinations")}:
                                 {" "}
-                                {tour?.strListTourDestinationName || "--"}
+                                {tour?.strListTourDestinationName
+                                    ? normalizeDestinationDisplay(tour.strListTourDestinationName)
+                                    : "--"}
                             </span>
                         </div>
                     </div>

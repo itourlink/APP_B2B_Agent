@@ -389,10 +389,6 @@ const VehicleDetail = () => {
           </div>
         </div>
 
-        {/* =========================================
-          CỘT PHẢI: WIDGET ĐẶT XE (STICKY)
-          Đã thêm self-start, h-fit và tăng top-24 để tránh Header
-          ========================================= */}
         <div className="w-full lg:w-[320px] flex-shrink-0 sticky top-[150px] self-start h-fit">
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
             <h2 className="text-xl font-medium text-[#2566b0] mb-5">Đặt Xe</h2>

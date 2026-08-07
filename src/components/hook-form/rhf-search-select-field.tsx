@@ -153,13 +153,13 @@ export function RHFSearchSelect({
                                 <div className="absolute top-full left-0 w-full mt-1 z-10 bg-white border border-[#cccccc] rounded-xl shadow-lg overflow-hidden">
 
                                     {/* SEARCH */}
-                                    <div className="p-2 border-b">
+                                    <div className="p-2 border-b border-slate-300">
                                         <input
                                             autoFocus
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
                                             placeholder={t("searchPlaceholder")}
-                                            className="w-full px-3 py-2 text-sm border rounded-md outline-none"
+                                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none"
                                         />
                                     </div>
 

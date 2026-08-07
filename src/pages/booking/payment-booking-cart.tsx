@@ -1,4 +1,4 @@
-import PaymentBookingCartView from "@/sections/booking/payment-booking-cart-view";
+import PaymentBookingCartView from "@/sections/booking/payment-booking-cart/payment-booking-cart-view";
 import { CONFIG } from "../../config-global";
 
 const metadata = { title: `Payment Booking- ${CONFIG.appName}` };

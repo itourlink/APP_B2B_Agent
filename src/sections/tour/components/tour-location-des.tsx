@@ -47,6 +47,17 @@ const TourLocationDes = ({
             isRealString(item?.strServiceNameUrl)
     );
 
+    const destinationNameMap: Record<string, string> = {
+        VN0000: "Hanoi",
+        VN0005: "Haiphong",
+        VN0200: "Ho Chi Minh City",
+    };
+
+    const getDestinationDisplayName = (item: any) => {
+        return destinationNameMap[item?.strDestinationCode]
+            ?? item?.strDestinationName;
+    };
+
     if (isLoading) {
         return (
             <div className="w-105 bg-white rounded-xl shadow-lg border border-gray-300 text-sm">
@@ -105,7 +116,7 @@ const TourLocationDes = ({
 
                             <div className="text-left">
                                 <div className="font-semibold text-gray-900">
-                                    {item.strDestinationName}
+                                    {getDestinationDisplayName(item)}
                                 </div>
                             </div>
                         </button>

@@ -1,15 +1,18 @@
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { formatPrice, truncateText } from "@/utils/format-number";
+import { fCurrency, truncateText } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
+import { useListCurrency } from "@/components/currency/useListCurrency";
+import { normalizeDestinationDisplay } from "../tour/components/tour-list";
 
 export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
     const { t } = useTranslate("search");
+    const { selectedCurrency } = useListCurrency()
 
     const starList = String(isValidValue(tour?.strListEasiaCateID || ""))
         .split(",")
@@ -22,8 +25,8 @@ export const TourListCard = ({ tour }: any) => {
                 <img
                     src={
                         tour?.strTourImageUrl === "" ||
-                        (typeof tour?.strTourImageUrl === "object" &&
-                            Object.keys(tour?.strTourImageUrl).length === 0)
+                            (typeof tour?.strTourImageUrl === "object" &&
+                                Object.keys(tour?.strTourImageUrl).length === 0)
                             ? imgDefault
                             : getUrlImage(String(isValidValue(tour?.strTourImageUrl)))
                     }
@@ -86,17 +89,10 @@ export const TourListCard = ({ tour }: any) => {
 
                         <span className="line-clamp-2 leading-snug">
                             {t("destinations")}{" "}
-                            {String(isValidValue(tour?.strListTourDestinationName))}
+                            {String(isValidValue(normalizeDestinationDisplay(tour?.strListTourDestinationName)))}
                         </span>
                     </div>
                 </div>
-
-                <div className="relative flex justify-center mb-3">
-                    <span className="px-3 py-1 text-[11px] font-bold text-gray-900 italic tracking-wider w-full text-center bg-gray-100">
-                        {t("increaseDecreasePrice")}
-                    </span>
-                </div>
-
                 <div className="mb-4">
                     <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
                         {String(isValidValue(tour?.strLangCode)) === "CATEID_SETTOUR"
@@ -111,7 +107,10 @@ export const TourListCard = ({ tour }: any) => {
                         <p className="text-xs text-gray-500">{t("priceFrom")}</p>
 
                         <p className="text-[#2563eb] font-bold text-xl">
-                            {formatPrice(Number(isValidValue(tour?.dblPriceFrom)))}
+                            {fCurrency(
+                                tour?.dblPriceFrom,
+                                selectedCurrency?.label
+                            )}
                         </p>
                     </div>
 

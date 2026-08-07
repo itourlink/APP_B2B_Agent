@@ -57,7 +57,7 @@
     "share": "Chia sẻ",
     "description": "Mô tả",
     "noData": "Không có dữ liệu",
-    "itinerary": "Lịch trình",
+    "schedule": "Lịch trình",
     "collapse": "Thu gọn",
     "showAll": "Hiển thị tất cả",
     "noContentYet": "Chưa có nội dung",
@@ -140,5 +140,7 @@
     "tourSeries": "Chuỗi Tour",
     "infants": "Em bé",
     "smallKids": "Trẻ nhỏ",
-    "kids": "Trẻ em"
+    "kids": "Trẻ em",
+    "tourHasNoPrice": "Tour chưa có giá",
+    "loadingPrice": "Đang tải giá..."
 }

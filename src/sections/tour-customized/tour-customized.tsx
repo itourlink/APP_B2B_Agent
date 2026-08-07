@@ -6,6 +6,7 @@ import { useTranslate } from "@/locales"
 const TourCustomized = () => {
     const [openPopup, setOpenPopup] = useState(false)
     const { t } = useTranslate("tourcustomize")
+    useTranslate("tourcustomize");
     return (
         <>
             <button onClick={() => setOpenPopup(true)} className="cursor-pointer rounded-lg border border-[rgba(64,64,64,0.5)] px-3 py-2 text-[14px] font-medium text-gray-700 hover:text-[#2566b0] hover:bg-blue-50 transition-all duration-200 active:scale-95">

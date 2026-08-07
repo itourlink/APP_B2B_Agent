@@ -68,12 +68,6 @@ export const HotelCard = ({ hotel, hotelLoading }: any) => {
                     <div className="absolute inset-0 flex items-center" aria-hidden="true">
                         <div className="w-full border-t border-gray-100"></div>
                     </div>
-
-                    <div className="relative flex justify-center">
-                        <span className="bg-gray-50 px-3 text-[11px] font-bold text-gray-900 italic tracking-wider">
-                            {t("markupDiscount")}
-                        </span>
-                    </div>
                 </div>
 
                 <div className="mt-auto flex items-end justify-between">

@@ -11,6 +11,8 @@ import PanelPopup from "@/components/popup/panel-popup";
 import { useTranslate } from "@/locales";
 
 const AgentView = () => {
+
+    console.log("ssssssssssssssssssssssssssssss")
     const router = useRouter();
     const { t } = useTranslate("agent");
     const IS_DEMO_SINGLE_DATA = false;
@@ -145,7 +147,7 @@ const AgentView = () => {
                 <div className="flex items-center gap-2 min-w-[150px]">
                     <button
                         onClick={() =>
-                            router.replaceQuery(paths.tariff.list, {
+                            router.replaceQuery(paths.shop.tariff.list, {
                                 company: row?.strUrlLink,
                             })
                         }
@@ -181,6 +183,7 @@ const AgentView = () => {
             open={true}
             className="w-[90vw] max-w-none"
             lang={true}
+            logout={true}
         >
             <div>
                 <div
