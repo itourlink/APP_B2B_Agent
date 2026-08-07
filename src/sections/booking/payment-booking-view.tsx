@@ -441,8 +441,8 @@ const PaymentBookingView: React.FC = () => {
 
             const activeTab = statusTabMap[intBK] ?? "booked";
 
-            serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
-            // serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
+            // serviceUrl = `https://myagentmember.itourlink.com/service?activeTab=${activeTab}`;
+            serviceUrl = `http://localhost:5173/service?activeTab=${activeTab}`;
 
             // luôn đá trang
             window.open(serviceUrl, "_blank");

@@ -16,8 +16,8 @@ export const useListHotel = (filters?: {
     strSupplierGUID?: string | null;
     strFilterLocationCode?: string | null;
     strFilterSupplierName?: string | null;
-    intNoOfRooms?: number | null;
-    dtmFilterCheckIn?: string | Date | null;
+   intNoOfRooms?: number | null;
+     dtmFilterCheckIn?: string | Date | null;
     dtmFilterCheckOut?: string | Date | null;
     IsShowAll?: boolean;
     strPriceFromRange?: string | null;
