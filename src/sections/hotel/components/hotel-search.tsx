@@ -180,7 +180,7 @@ const HotelSearch = ({ initialHotel, onDateBookingChange, onSearch }: Props) => 
         hydratedRef.current = true;
     }, [initialHotel]);
     
-    const handleSearch = () => {
+    const   handleSearch = () => {
         const snapshot = {
             filters,
             draftFilters,
