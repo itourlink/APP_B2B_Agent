@@ -4,7 +4,6 @@ import {
   fetchGetEmailSendAGHByAGB,
   fetchGetSendEmail,
   markUsedVoucher,
-  useDetailAGTransTMSMutation,
   useListAGTransTMSMutation,
   useListBankAccount,
   useListTourPaymentTerm,
@@ -95,8 +94,8 @@ const PaymentBookingView: React.FC = () => {
   const { mutateAsync: listAGTMS, isPending: isListAGTMSPending } =
     useListAGTransTMSMutation();
 
-  const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
-    useDetailAGTransTMSMutation();
+  // const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
+  //   useDetailAGTransTMSMutation();
 
   const { paytermData } = useListTourPaymentTerm({
     strTourGUID: item?.strTourGUID,
@@ -212,11 +211,10 @@ const PaymentBookingView: React.FC = () => {
   }
 
   useEffect(() => {
-    const isPending =
-      isLoading || isVcPending || isListAGTMSPending || isDetailAGTMSPending;
+    const isPending = isLoading || isVcPending || isListAGTMSPending;
 
     setGlobalLoading(isPending);
-  }, [isLoading, isVcPending, isListAGTMSPending, isDetailAGTMSPending]);
+  }, [isLoading, isVcPending, isListAGTMSPending]);
 
   const hasPayterm =
     paytermData &&
@@ -430,11 +428,11 @@ const PaymentBookingView: React.FC = () => {
                   strListAgentHostServiceItemGUID: serviceGUID,
                 }),
 
-                detailAGTMS({
-                  strAgentHostCompanyGUID: companyGUID,
+                // detailAGTMS({
+                //   strAgentHostCompanyGUID: companyGUID,
 
-                  strListAgentHostServiceItemGUID: serviceGUID,
-                }),
+                //   strListAgentHostServiceItemGUID: serviceGUID,
+                // }),
               ]);
             }
           } catch (err) {
