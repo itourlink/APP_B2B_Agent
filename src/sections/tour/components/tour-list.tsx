@@ -9,6 +9,7 @@ import imgDefault from "@/assets/images/default-image.jpg"
 import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
 import Pagination from '@/components/pagination/pagination';
+import { normalizeDestinationDisplay } from '@/utils/normalize-destination-display';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -205,22 +206,6 @@ const TourError = () => {
 type TourItemProps = {
     tour: any;
     viewMode: "grid" | "list";
-};
-
-export const normalizeDestinationDisplay = (value: string = "") => {
-    const map: Record<string, string> = {
-        "Ha Noi": "Hanoi",
-        "Hai Phong": "Haiphong",
-        "Ho Chi Minh": "Ho Chi Minh City",
-    };
-
-    let result = value;
-
-    Object.entries(map).forEach(([key, val]) => {
-        result = result.replaceAll(key, val);
-    });
-
-    return result;
 };
 
 const TourItem = ({ tour, viewMode }: TourItemProps) => {

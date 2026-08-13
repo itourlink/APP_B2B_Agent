@@ -25,7 +25,7 @@ import { isValidValue } from "@/utils/utilts";
 import { TourCard } from "./tour-card";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
-import { normalizeDestinationDisplay } from "./tour-list";
+import { normalizeDestinationDisplay } from "@/utils/normalize-destination-display";
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
