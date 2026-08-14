@@ -425,7 +425,7 @@ const PaymentBookingView: React.FC = () => {
 
                   strEmailsCC: emailData?.strEmailsCC || null,
 
-                  strEmailsBCC: esongmailData?.strEmailsBCC || null,
+                  strEmailsBCC: emailData?.strEmailsBCC || null,
 
                   strAttachments: null,
 
