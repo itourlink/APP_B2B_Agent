@@ -4,6 +4,7 @@ import {
   fetchGetEmailSendAGHByAGB,
   fetchGetSendEmail,
   markUsedVoucher,
+  useDetailAGTransTMSMutation,
   useListAGTransTMSMutation,
   useListBankAccount,
   useListTourPaymentTerm,
@@ -94,8 +95,8 @@ const PaymentBookingView: React.FC = () => {
   const { mutateAsync: listAGTMS, isPending: isListAGTMSPending } =
     useListAGTransTMSMutation();
 
-  // const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
-  //   useDetailAGTransTMSMutation();
+  const { mutateAsync: detailAGTMS, isPending: isDetailAGTMSPending } =
+    useDetailAGTransTMSMutation();
 
   const { paytermData } = useListTourPaymentTerm({
     strTourGUID: item?.strTourGUID,
@@ -211,10 +212,17 @@ const PaymentBookingView: React.FC = () => {
   }
 
   useEffect(() => {
-    const isPending = isLoading || isVcPending || isListAGTMSPending;
+    const isPending =
+      isLoading || isVcPending || isListAGTMSPending || isDetailAGTMSPending;
 
     setGlobalLoading(isPending);
-  }, [isLoading, isVcPending, isListAGTMSPending]);
+  }, [
+    isLoading,
+    isVcPending,
+    isListAGTMSPending,
+    isDetailAGTMSPending,
+    setGlobalLoading,
+  ]);
 
   const hasPayterm =
     paytermData &&
@@ -421,19 +429,36 @@ const PaymentBookingView: React.FC = () => {
                 });
               }
 
-              await Promise.all([
-                listAGTMS({
+              console.log("1. CALL GetListAgentHostServiceTransToTMS");
+
+              try {
+                const listResult = await listAGTMS({
                   strCompanyGUID: companyGUID,
-
                   strListAgentHostServiceItemGUID: serviceGUID,
-                }),
+                });
 
-                // detailAGTMS({
-                //   strAgentHostCompanyGUID: companyGUID,
+                console.log(
+                  "2. GetListAgentHostServiceTransToTMS SUCCESS:",
+                  listResult,
+                );
+              } catch (listError) {
+                console.error(
+                  "2. GetListAgentHostServiceTransToTMS ERROR:",
+                  listError,
+                );
+              }
 
-                //   strListAgentHostServiceItemGUID: serviceGUID,
-                // }),
-              ]);
+              console.log("3. CALL GetDetailBookingServiceTransToTMS");
+
+              const detailResult = await detailAGTMS({
+                strAgentHostCompanyGUID: companyGUID,
+                strListAgentHostServiceItemGUID: serviceGUID,
+              });
+
+              console.log(
+                "4. GetDetailBookingServiceTransToTMS SUCCESS:",
+                detailResult,
+              );
             }
           } catch (err) {
             console.error("after booking error", err);
