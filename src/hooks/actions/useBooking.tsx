@@ -415,3 +415,62 @@ export const useListTourChildAge = (filters?: {
         tourChildAgeError: query.isError,
     };
 };
+export interface TourPaymentPreviewResult {
+    tourGUID: string;
+    dateFrom: string;
+    totalPrice: number;
+    daysUntilDeparture: number;
+    paymentPercentage: number;
+    paymentAmount: number;
+    remainingAmount: number;
+    paymentTermGUID: string;
+    paymentTermName: string;
+}
+
+export const calculateTourPaymentPreview = async (params: {
+    tourGuid: string;
+    dateFrom: string;
+    totalPrice: number;
+}): Promise<TourPaymentPreviewResult> => {
+    const res = await apiClient.get<TourPaymentPreviewResult>(
+        "booking/CalculateTourPaymentPreview",
+        {
+            params: {
+                tourGuid: params.tourGuid,
+                dateFrom: params.dateFrom,
+                totalPrice: params.totalPrice,
+            },
+        }
+    );
+      return res as unknown as TourPaymentPreviewResult;
+};
+
+export const useTourPaymentPreview = (params?: {
+    tourGuid?: string;
+    dateFrom?: string;
+    totalPrice?: number;
+}) => {
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.BOOKING.CALCULATE_PRICE,
+            params?.tourGuid,
+            params?.dateFrom,
+            params?.totalPrice,
+        ],
+        queryFn: () =>
+            calculateTourPaymentPreview({
+                tourGuid: params?.tourGuid as string,
+                dateFrom: params?.dateFrom as string,
+                totalPrice: params?.totalPrice as number,
+            }),
+        enabled:
+            !!params?.tourGuid && !!params?.dateFrom && !!params?.totalPrice,
+        placeholderData: keepPreviousData,
+    });
+
+    return {
+        paymentPreviewData: query.data,
+        paymentPreviewLoading: query.isLoading,
+        paymentPreviewError: query.isError,
+    };
+};

@@ -256,8 +256,6 @@ const PaymentBookingView: React.FC = () => {
     // Chỉ chạy SAU KHI API 1 hoàn thành
     // ======================================================
 
-    console.log("3. CALL GetDetailBookingServiceTransToTMS");
-
     try {
       const detailResult = await detailAGTMS({
         strAgentHostCompanyGUID: companyGUID,
@@ -268,7 +266,6 @@ const PaymentBookingView: React.FC = () => {
         "4. GetDetailBookingServiceTransToTMS SUCCESS:",
         detailResult,
       );
-      console.log("END SYNC TMS");
      
 
       return detailResult;
@@ -470,8 +467,7 @@ const PaymentBookingView: React.FC = () => {
       // ======================================================
       // 6. ADD BOOKING
       // ======================================================
-
-      console.log("1. CALL AddBookingForTour");
+console.log("🔵 ĐANG CHẠY FILE 1 - payment-booking-tour/payment-booking-view.tsx");
 
       const res = await addBookingForTourApi(payload);
 

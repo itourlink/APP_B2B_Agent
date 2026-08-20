@@ -1,14 +1,5 @@
 import { useUser } from "@/hooks/actions/useAuth";
-import {
-  addBookingForTour,
-  fetchGetEmailSendAGHByAGB,
-  fetchGetSendEmail,
-  markUsedVoucher,
-  useDetailAGTransTMSMutation,
-  useListAGTransTMSMutation,
-  useListBankAccount,
-  useListTourPaymentTerm,
-} from "@/hooks/actions/useBooking";
+import { addBookingForTour, fetchGetEmailSendAGHByAGB, fetchGetSendEmail, markUsedVoucher, useDetailAGTransTMSMutation, useListAGTransTMSMutation, useListBankAccount, useListTourPaymentTerm, useTourPaymentPreview } from "@/hooks/actions/useBooking";
 import { useListCity } from "@/hooks/actions/useCity";
 import { useListCompanyOwner } from "@/hooks/actions/useCompanyOwner";
 import { statusTabMap, TITLES_OPTIONS } from "@/utils/option-data";
@@ -100,7 +91,13 @@ const PaymentBookingView: React.FC = () => {
 
   const { paytermData } = useListTourPaymentTerm({
     strTourGUID: item?.strTourGUID,
-  });
+});
+
+const { paymentPreviewData, paymentPreviewLoading } = useTourPaymentPreview({
+    tourGuid: item?.strTourGUID,
+    dateFrom: payloadItem?.dtmDateFrom,
+    totalPrice: Number(price?.dblTotalPrice || 0),
+});
 
   const { ctData } = useListCity({
     strTableName: "MC02",
@@ -137,11 +134,8 @@ const PaymentBookingView: React.FC = () => {
     };
   }, []);
 
-  const totalDeposit =
-    Number(price?.dblTotalPrice || 0) *
-    ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
-
-  const totalDebt = Number(price?.dblTotalPrice || 0) - Number(totalDeposit);
+const totalDeposit = paymentPreviewData?.paymentAmount ?? 0;
+const totalDebt = paymentPreviewData?.remainingAmount ?? 0;
   const [finalVoucherPayment] = useState(Number(price?.dblTotalPrice || 0));
   const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
 
@@ -428,7 +422,7 @@ const PaymentBookingView: React.FC = () => {
                   intEmailConfigID: null,
                 });
               }
-
+console.log("🔴 ĐANG CHẠY FILE 2 - payment-booking-view.tsx (cấp ngoài)");
               console.log("1. CALL GetListAgentHostServiceTransToTMS");
 
               try {
@@ -564,6 +558,8 @@ const PaymentBookingView: React.FC = () => {
             <span className="text-gray-600 text-lg">💼</span>
             <h2 className="text-base font-bold text-gray-700 uppercase tracking-wide">
               {t("travelConnectionCompany")}
+              
+
             </h2>
           </div>
 
@@ -579,6 +575,7 @@ const PaymentBookingView: React.FC = () => {
             fDate={fDate}
             addDays={addDays}
             isValidValue={isValidValue}
+            
           />
 
           {/* Section Voucher & Chi tiết đợt thanh toán bên dưới table */}
@@ -624,7 +621,7 @@ const PaymentBookingView: React.FC = () => {
 
             showToast={showToast}
 
-            isLoading={isLoading}
+            isLoading={isLoading || paymentPreviewLoading}
             setIsOpenConfirm={setIsOpenConfirm}
 
           />

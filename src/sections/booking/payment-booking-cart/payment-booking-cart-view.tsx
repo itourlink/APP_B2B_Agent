@@ -1023,7 +1023,7 @@ const PaymentBookingCartView: React.FC = () => {
 
                                         <td className="py-3 px-3 align-top font-medium">
                                             {fCurrency(
-                                                Number(item?.dblPriceTotal || 0) * 0.3,
+                                                totalDeposit,
                                                 selectedCurrency?.label
                                             )}
                                         </td>
