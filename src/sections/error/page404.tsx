@@ -1,9 +1,19 @@
 import { Home, ArrowLeft, Map } from "lucide-react";
 import { paths } from "@/routes/paths";
 import { useRouter } from "@/routes/hooks/use-router";
+import { useTranslate } from "@/locales";
 
 const Page404 = () => {
-    const router = useRouter()
+    const { t } = useTranslate("error");
+    const router = useRouter();
+
+    const handleGoBack = () => {
+        if (window.history.length > 1) {
+            router.back();
+        } else {
+            router.push(paths.content.agent);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
@@ -20,33 +30,37 @@ const Page404 = () => {
                 </div>
 
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                    Ối! Trang này không tồn tại
+                    {t("pageNotFoundTitle")}
                 </h2>
                 <p className="text-gray-500 mb-10 leading-relaxed">
-                    Có vẻ như chuyến đi của bạn đã rẽ nhầm hướng. Đừng lo lắng, chúng tôi sẽ giúp bạn quay lại lộ trình đúng đắn.
+                    {t("pageNotFoundDesc")}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <button
-                        onClick={() => router.push(paths.content.agent)}
+                        type="button"
+                        onClick={handleGoBack}
                         className="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full hover:bg-gray-100 hover:border-gray-300 transition-all active:scale-95 text-[14px]"
                     >
                         <ArrowLeft size={18} />
-                        <h1 className="text-[13px] uppercase font-bold text-gray-800">  Quay lại</h1>
+                        <span className="text-[13px] uppercase font-bold text-gray-800">
+                            {t("goBack")}
+                        </span>
                     </button>
 
                     <button
+                        type="button"
                         onClick={() => router.push(paths.content.agent)}
                         className="cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-[#4a6fa5] text-white font-bold rounded-full shadow-lg shadow-blue-200 hover:bg-[#3b5b7e] transition-all active:scale-95 uppercase tracking-wide text-[13px]"
                     >
                         <Home size={18} />
-                        Về trang chủ
+                        {t("backToHome")}
                     </button>
                 </div>
 
                 <div className="mt-16 pt-8 border-t border-gray-200/60">
                     <p className="text-sm text-gray-400">
-                        © 2026 iTourlink. Hệ thống kết nối du lịch hàng đầu.
+                        {t("copyright")}
                     </p>
                 </div>
             </div>

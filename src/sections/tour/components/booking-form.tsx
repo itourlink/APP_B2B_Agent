@@ -121,12 +121,13 @@ const BookingForm = ({ item }: Props) => {
 
     // ================= STAR LIST =================
     const starList = useMemo(() => {
-        if (!item?.strListStarCateID) return [];
+        const rawStar = item?.strListStarCateID || item?.strListEasiaCateID;
+        if (!rawStar) return [];
 
-        return item.strListStarCateID
+        return String(rawStar)
             .split(",")
-            .map((id: string) => Number(id))
-            .filter(Boolean);
+            .map((id: string) => Number(id.trim()))
+            .filter((val) => !isNaN(val) && val > 0);
     }, [item]);
 
     useEffect(() => {
