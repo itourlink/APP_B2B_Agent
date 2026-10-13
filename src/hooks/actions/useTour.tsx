@@ -91,6 +91,12 @@ export const useDetailTour = (filters?: {
     };
 };
 
+const toNullableNumber = (val: any): number | null => {
+    if (val === null || val === undefined || val === "" || val === "all") return null;
+    const num = Number(val);
+    return isNaN(num) ? null : num;
+};
+
 const fetchListTourPublish = async (body: any) => {
     const res = await apiClient.post("tour/GetListTourPublish", body);
     return res.data;
@@ -99,8 +105,8 @@ const fetchListTourPublish = async (body: any) => {
 export const useListTourPublish = (filters?: {
     page?: number | null;
     pageSize?: number | null;
-    intCateID?: number | null;
-    intProductID?: number | null;
+    intCateID?: number | string | null;
+    intProductID?: number | string | null;
     strNoOfDayRange?: string | null;
     strFilterServiceName?: string | null;
     strListEasiaCateID?: string | null;
@@ -140,8 +146,8 @@ export const useListTourPublish = (filters?: {
                 intLangID: user?.intLangID,
                 strPriceLevelGUID: null,
 
-                intCateID,
-                intProductID,
+                intCateID: toNullableNumber(intCateID),
+                intProductID: toNullableNumber(intProductID),
                 strNoOfDayRange,
                 strFilterServiceName,
                 strListEasiaCateID,
@@ -338,8 +344,8 @@ export const useListTourSeries = (filters?: {
 
                 strPriceLevelGUID: null,
 
-                intCateID,
-                intProductID,
+                intCateID: toNullableNumber(intCateID),
+                intProductID: toNullableNumber(intProductID),
 
                 strNoOfDayRange,
                 strFilterServiceName,

@@ -318,9 +318,15 @@ const TourSearch = () => {
               setDraftFilters2((prev) => ({
                 ...prev,
 
-                intCateID: v?.mainType === "all" ? null : v?.mainType,
+                intCateID:
+                  v?.mainType === "all" || !v?.mainType
+                    ? null
+                    : Number(v.mainType),
 
-                intProductID: v?.subType === "all" ? null : v?.subType,
+                intProductID:
+                  v?.subType === "all" || !v?.subType
+                    ? null
+                    : Number(v.subType),
               }));
             }
 
