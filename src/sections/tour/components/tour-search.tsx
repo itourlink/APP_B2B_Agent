@@ -43,8 +43,8 @@ const DEFAULT_FILTERS2: {
   dtmFilterDateValidFrom: string | null;
   dtmFilterDateValidTo: string | null;
 
-  intCateID?: string | null;
-  intProductID?: string | null;
+  intCateID?: number | string | null;
+  intProductID?: number | string | null;
 } = {
   intNoOfAdult: 1,
   strListNoOfChild: "",
