@@ -1,12 +1,19 @@
+
 import { motion } from "framer-motion";
 import Logo from "../../../public/favicon.png";
 
 const Ripple = ({ delay }: { delay: number }) => (
   <motion.div
-    className="absolute w-16 h-16 rounded-full border border-sky-400/40"
+    className="
+      absolute
+      w-16 h-16
+      rounded-full
+      border border-sky-400/40
+      pointer-events-none
+    "
     initial={{ scale: 1, opacity: 0 }}
     animate={{
-      scale: 4,
+      scale: [1, 2.5, 4],
       opacity: [0, 0.5, 0],
     }}
     transition={{
@@ -18,15 +25,21 @@ const Ripple = ({ delay }: { delay: number }) => (
   />
 );
 
-export function SplashScreen() {
+export function SplashScreen({
+  className = "",
+}: {
+  className?: string;
+} = {}) {
   return (
     <div
-      className="
-        fixed inset-0 z-[999999]
+      className={`
+        fixed inset-0
+        z-[999999]
         flex items-center justify-center
-        bg-white/20
-        backdrop-blur-md
-      "
+        bg-transparent
+        pointer-events-none
+        ${className}
+      `}
     >
       <div className="relative flex items-center justify-center">
         <Ripple delay={0} />
@@ -36,7 +49,13 @@ export function SplashScreen() {
         <motion.img
           src={Logo}
           alt="Logo"
-          className="w-14 h-14 z-10 drop-shadow-lg"
+          draggable={false}
+          className="
+            relative z-10
+            w-14 h-14
+            object-contain
+            drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]
+          "
           animate={{
             y: [0, -5, 0],
             scale: [1, 1.08, 1],

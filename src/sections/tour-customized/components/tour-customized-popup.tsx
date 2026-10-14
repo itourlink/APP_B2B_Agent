@@ -215,10 +215,18 @@ const TourCustomizedPopup = ({ onClose }: Props) => {
 
                     const params = new URLSearchParams({
                         strTourCode: itemDetailTour?.strTourCode ?? "",
+                        strTourCustomizedGUID: guid,
                     });
+                    //  const url = `http://localhost:5173/detail-tour?${params.toString()}`;
+                    // const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
+                    const isLocal =
+                        window.location.hostname === "localhost" ||
+                        window.location.hostname === "127.0.0.1";
+                    const baseUrl = isLocal
+                        ? "http://localhost:5173"
+                        : "https://myagentmember.itourlink.com";
 
-                    // const url = `http://localhost:5173/detail-tour?${params.toString()}`;
-                    const url = `https://myagentmember.itourlink.com/detail-tour?${params.toString()}`;
+                    const url = `${baseUrl}/detail-tour?${params.toString()}`;
 
                     window.open(
                         url,
