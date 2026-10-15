@@ -1,7 +1,7 @@
 import { useRouter } from "@/routes/hooks/use-router";
 import { paths } from "@/routes/paths";
 import { getUrlImage } from "@/utils/format-image";
-import { fCurrency, truncateText } from "@/utils/format-number";
+import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Star } from "lucide-react";
 import imgDefault from "@/assets/images/default-image.jpg";
@@ -57,8 +57,11 @@ export const TourListCard = ({ tour }: any) => {
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-[#1a4a8d] font-bold text-lg leading-tight uppercase mb-4 h-14 line-clamp-2">
-                    {truncateText(String(isValidValue(tour?.strTourName)), 40)}
+                <h3
+                    title={String(isValidValue(tour?.strTourName))}
+                    className="text-[#1a4a8d] font-bold text-lg leading-[26px] uppercase mb-4 h-[52px] line-clamp-2"
+                >
+                    {String(isValidValue(tour?.strTourName))}
                 </h3>
 
                 <div className="space-y-2 mb-4 text-sm text-gray-600">

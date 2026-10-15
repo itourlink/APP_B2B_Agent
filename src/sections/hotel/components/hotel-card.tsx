@@ -30,7 +30,10 @@ export const HotelCard = ({ hotel, hotelLoading }: any) => {
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-gray-800 font-bold text-[15px] leading-tight uppercase mb-4 h-12 line-clamp-2">
+                <h3
+                    title={isValidValue(hotel?.strSupplierName)}
+                    className="text-gray-800 font-bold text-[15px] leading-6 uppercase mb-4 h-12 line-clamp-2"
+                >
                     {isValidValue(hotel?.strSupplierName)}
                 </h3>
 

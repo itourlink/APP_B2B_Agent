@@ -259,7 +259,10 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
             >
                 <div>
                     {isGrid ? (
-                        <h3 className="text-[#1a4a8d] font-bold text-lg leading-tight uppercase mb-4 h-14 line-clamp-2">
+                        <h3
+                            title={tour?.strTourName}
+                            className="text-[#1a4a8d] font-bold text-lg leading-[26px] uppercase mb-4 h-[52px] line-clamp-2"
+                        >
                             {tour?.strTourName}
                         </h3>
                     ) : (
