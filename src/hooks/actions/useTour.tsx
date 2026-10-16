@@ -5,7 +5,7 @@ import { useListCompanyOwner } from "./useCompanyOwner";
 import { QUERY_KEYS } from "./query-keys";
 import { useCurrency } from "@/components/currency/useCurrency";
 
-const fetchListTour = async (body: any) => {
+const fetchListTour = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("tour/GetListTourPublishInTopForHmPgTour", body);
     return res.data;
 };
@@ -48,7 +48,7 @@ export const useListTour = (filters?: { page?: number; pageSize?: number }) => {
     };
 };
 
-export const fetchDetailTour = async (body: any) => {
+export const fetchDetailTour = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("tour/GetListTourDetailByPtn", body);
     return res.data;
 };
@@ -91,13 +91,13 @@ export const useDetailTour = (filters?: {
     };
 };
 
-const toNullableNumber = (val: any): number | null => {
+const toNullableNumber = (val: unknown): number | null => {
     if (val === null || val === undefined || val === "" || val === "all") return null;
     const num = Number(val);
     return isNaN(num) ? null : num;
 };
 
-const fetchListTourPublish = async (body: any) => {
+const fetchListTourPublish = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("tour/GetListTourPublish", body);
     return res.data;
 };
@@ -186,7 +186,7 @@ export const useListTourPublish = (filters?: {
     };
 };
 
-const fetchListTourDay = async (body: any) => {
+const fetchListTourDay = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("tour/GetListTourDayByPtn", body);
     return res.data;
 };
@@ -221,7 +221,7 @@ export const useListTourDay = (filters?: { strTourGUID?: string }) => {
         tddError: query.isError,
     };
 };
-const fetchSearchTour = async (body: any) => {
+const fetchSearchTour = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("system/GetListDirectorySearchingForTourByAgent", body);
     return res.data;
 };
@@ -266,9 +266,130 @@ export const useSearchTour = (filters?: {
         searchError: query.isError,
     };
 };
-const fetchListTourSeries = async (body: any) => {
+const fetchListTourSeries = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("Tour/GetListTourSeriesPublish", body);
     return res.data;
+};
+
+export const fetchListPaxBookingTourForBooking = async (
+    body: Record<string, unknown>
+) => {
+    const res = await apiClient.post("tour/GetListPaxBookingTourForBkByPtn", body);
+    return res.data;
+};
+
+const toPaxBookingDate = (value?: number | null, endOfDay = false) => {
+    if (value === null || value === undefined || !Number.isFinite(value)) {
+        return null;
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+
+    return new Date(Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        endOfDay ? 23 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 999 : 0
+    )).toISOString();
+};
+
+export const useListFixedTourDepartures = (filters?: {
+    strTourGUID?: string;
+    intEasiaCateID?: number | string | null;
+    dtmDateValidFrom?: number | null;
+    dtmDateValidTo?: number | null;
+    intNoOfAdult?: number;
+    strListNoOfChild?: string | null;
+    intNoOfSGLSup?: number;
+    intNoOfTPLRec?: number;
+    IsHasPriceKid?: boolean;
+    viewMode?: "calendar" | "list";
+    page?: number;
+    pageSize?: number;
+    enabled?: boolean;
+}) => {
+    const { user } = useUser();
+    const { coData } = useListCompanyOwner();
+    const { currencyId } = useCurrency();
+
+    const easiaCateID =
+        filters?.intEasiaCateID === "" ||
+        filters?.intEasiaCateID === null ||
+        filters?.intEasiaCateID === undefined
+            ? null
+            : Number(filters.intEasiaCateID);
+    const normalizedEasiaCateID =
+        easiaCateID !== null && Number.isInteger(easiaCateID)
+            ? easiaCateID
+            : null;
+    const isListView = filters?.viewMode === "list";
+    const currentPage = Math.max(Number(filters?.page ?? 1), 1);
+    const pageSize = Math.max(Number(filters?.pageSize ?? 10), 1);
+
+    const payload = {
+        strUserGUID: user?.strUserGUID ?? null,
+        strPriceLevelGUID: null,
+        strCompanyOwnerGUID: coData?.strCompanyGUID ?? null,
+        strTourGUID: filters?.strTourGUID ?? null,
+        strPaxBookingTourCode: null,
+        intEasiaCateID: normalizedEasiaCateID,
+        intTransportOptionID: null,
+        intNoOfAdult: Number(filters?.intNoOfAdult ?? 2),
+        strListNoOfChild: filters?.strListNoOfChild ?? "",
+        intNoOfSGLSup: Number(filters?.intNoOfSGLSup ?? 0),
+        intNoOfTPLRec: Number(filters?.intNoOfTPLRec ?? 0),
+        IsHasPriceKid: Boolean(filters?.IsHasPriceKid),
+        dtmDateValidFrom: isListView
+            ? null
+            : toPaxBookingDate(filters?.dtmDateValidFrom),
+        dtmDateValidTo: isListView
+            ? null
+            : toPaxBookingDate(filters?.dtmDateValidTo, true),
+        intCurrencyView:
+            currencyId === null || currencyId === undefined
+                ? null
+                : Number(currencyId),
+        intCurPage: isListView ? currentPage : null,
+        intPageSize: isListView ? pageSize : null,
+        strOrder: null,
+        tblsReturn: "[0]",
+    };
+
+    const query = useQuery({
+        queryKey: [
+            QUERY_KEYS.TOUR.LIST_FIXED_TOUR_DEPARTURES,
+            payload,
+        ],
+        queryFn: () => fetchListPaxBookingTourForBooking(payload),
+        enabled:
+            filters?.enabled === true &&
+            !!filters?.strTourGUID &&
+            !!user?.strUserGUID &&
+            !!coData?.strCompanyGUID &&
+            !!currencyId &&
+            (isListView ||
+                (!!payload.dtmDateValidFrom && !!payload.dtmDateValidTo)),
+        placeholderData: keepPreviousData,
+        refetchOnWindowFocus: false,
+    });
+
+    const departureData = query.data?.[0] ?? [];
+    const totalRecords = Number(
+        departureData?.[0]?.intTotalRecords ?? departureData.length ?? 0
+    );
+
+    return {
+        departureData,
+        totalRecords,
+        totalPages: Math.max(Math.ceil(totalRecords / pageSize), 1),
+        departureLoading: query.isLoading || query.isFetching,
+        departureError: query.isError,
+        refetchDepartures: query.refetch,
+    };
 };
 
 export const useListTourSeries = (filters?: {
@@ -396,7 +517,7 @@ export const useListTourSeries = (filters?: {
 };
 
 
-export const addNewTourCustomized = async (body: any) => {
+export const addNewTourCustomized = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("tourcustomized/AddTourCustomized", body);
     return res.data;
 };

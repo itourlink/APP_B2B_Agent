@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import BookingForm from "./booking-form";
+import BookingFormFit from "./booking-form-fit";
 import {
   useDetailTour,
   useListTourDay,
@@ -26,6 +27,16 @@ import { TourCard } from "./tour-card";
 import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
 import { normalizeDestinationDisplay } from "@/utils/normalize-destination-display";
+
+type TourDay = {
+  No: number;
+  strTourDayGUID?: string;
+  strDayContent?: string | null;
+};
+
+type RelatedTour = {
+  strTourGUID?: string;
+};
 
 /* --- Skeleton + Error --- */
 const SkeletonBlock = () => (
@@ -91,7 +102,7 @@ const TourDetail = () => {
   // show all 
   const isAllOpen =
     tddData?.length > 0 &&
-    tddData.every((item: any) => openDays.includes(item.No));
+    tddData.every((item: TourDay) => openDays.includes(item.No));
 
 
   const toggleDay = (day: number) => {
@@ -106,11 +117,21 @@ const TourDetail = () => {
     if (isAllOpen) {
       setOpenDays([]);
     } else {
-      setOpenDays(tddData.map((item: any) => item.No));
+      setOpenDays(tddData.map((item: TourDay) => item.No));
     }
   };
 
   const ListData = tdData?.[0]?.[0] || {};
+  const sourceTourGUID =
+    item?.item?.strTourGUID || ListData?.strTourGUID;
+  const bookingItem = {
+    ...item?.item,
+    ...ListData,
+    strTourGUID: sourceTourGUID,
+  };
+  const isFixedDeparture =
+    item?.item?.strLangCode === "CATEID_SETTOURFIXED" ||
+    ListData?.strLangCode === "CATEID_SETTOURFIXED";
 
   const includedList =
     typeof ListData?.strIncluded === "string"
@@ -118,7 +139,7 @@ const TourDetail = () => {
         .replace(/<\/p>/g, "")
         .split("<p>")
         .filter(Boolean)
-        .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .map((item: string) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const exclusionsList =
@@ -127,7 +148,7 @@ const TourDetail = () => {
         .replace(/<\/p>/g, "")
         .split("<p>")
         .filter(Boolean)
-        .map((item: any) => item.replace(/^\s*-\s*/, ""))
+        .map((item: string) => item.replace(/^\s*-\s*/, ""))
       : [];
 
   const remark =
@@ -325,7 +346,7 @@ const TourDetail = () => {
                 </button>
               </div>
 
-              {tddData.map((tdd: any) => {
+              {tddData.map((tdd: TourDay) => {
                 const hasContent =
                   tdd?.strDayContent &&
                   typeof tdd?.strDayContent === "string" &&
@@ -379,7 +400,7 @@ const TourDetail = () => {
                         {hasContent ? (
                           <div
                             dangerouslySetInnerHTML={{
-                              __html: tdd?.strDayContent,
+                              __html: tdd.strDayContent ?? "",
                             }}
                           />
                         ) : (
@@ -423,7 +444,7 @@ const TourDetail = () => {
                       </h3>
 
                       <div className="space-y-2">
-                        {includedList.map((item: any, i: number) => (
+                        {includedList.map((item: string, i: number) => (
                           <div
                             key={i}
                             className="flex items-start gap-2 text-sm"
@@ -450,7 +471,7 @@ const TourDetail = () => {
                       </h3>
 
                       <div className="space-y-2">
-                        {exclusionsList.map((item: any, i: number) => (
+                        {exclusionsList.map((item: string, i: number) => (
                           <div
                             key={i}
                             className="flex items-start gap-2 text-sm"
@@ -534,7 +555,11 @@ const TourDetail = () => {
         {/* RIGHT */}
         <div className="relative">
           <div className="sticky top-32">
-            <BookingForm item={ListData} />
+            {isFixedDeparture ? (
+              <BookingFormFit item={bookingItem} />
+            ) : (
+              <BookingForm item={ListData} />
+            )}
           </div>
         </div>
       </div>
@@ -550,7 +575,7 @@ const TourDetail = () => {
 
         {!tdpLoading && !tdpError && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {tdpData?.map((t: any) => (
+            {tdpData?.map((t: RelatedTour) => (
               <TourCard key={t.strTourGUID} tour={t} />
             ))}
           </div>

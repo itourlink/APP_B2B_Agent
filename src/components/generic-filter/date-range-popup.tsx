@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { format } from "date-fns";
 import { vi, enUS } from "date-fns/locale";
 import { DateRange } from "react-date-range";
+import type { Range } from "react-date-range";
 import { useTranslate } from "@/locales";
 import i18next from "i18next";
 
@@ -18,6 +19,8 @@ type Props = {
   minDate?: Date | null;
 
   allowSameDay?: boolean;
+
+  autoApply?: boolean;
 };
 
 const DateRangePopup = ({
@@ -26,6 +29,7 @@ const DateRangePopup = ({
   onApply,
   minDate,
   allowSameDay = true,
+  autoApply = false,
 }: Props) => {
   const { t } = useTranslate("genericFilter");
 
@@ -34,7 +38,7 @@ const DateRangePopup = ({
       ? vi
       : enUS;
 
-  const [temp, setTemp] = useState([
+  const [temp, setTemp] = useState<Range[]>([
     {
       startDate: value.startDate || new Date(),
       endDate: value.endDate || new Date(),
@@ -45,6 +49,7 @@ const DateRangePopup = ({
   const [isCleared, setIsCleared] = useState(
     !value.startDate && !value.endDate
   );
+  const selectionClickCount = useRef(0);
 
   const isSameDay =
     temp[0].startDate &&
@@ -56,23 +61,10 @@ const DateRangePopup = ({
   const isInvalidRange =
     !allowSameDay && isSameDay;
 
-  useEffect(() => {
-    setIsCleared(
-      !value.startDate && !value.endDate
-    );
-
-    setTemp([
-      {
-        startDate: value.startDate || new Date(),
-        endDate: value.endDate || new Date(),
-        key: "selection",
-      },
-    ]);
-  }, [value]);
-
   if (!isOpen) return null;
 
   const handleClear = () => {
+    selectionClickCount.current = 0;
     setTemp([
       {
         startDate: new Date(),
@@ -92,9 +84,30 @@ const DateRangePopup = ({
       <DateRange
         locale={locale}
         ranges={temp}
-        onChange={(item: any) => {
+        onChange={(item) => {
+          const selection = item.selection;
           setIsCleared(false);
-          setTemp([item.selection]);
+          setTemp([selection]);
+
+          if (!autoApply) return;
+
+          if (selectionClickCount.current === 0) {
+            selectionClickCount.current = 1;
+            return;
+          }
+
+          const selectedSameDay =
+            selection.startDate &&
+            selection.endDate &&
+            selection.startDate.toDateString() === selection.endDate.toDateString();
+
+          if (!allowSameDay && selectedSameDay) return;
+
+          selectionClickCount.current = 0;
+          onApply({
+            startDate: selection.startDate ?? null,
+            endDate: selection.endDate ?? null,
+          });
         }}
         moveRangeOnFirstSelection={false}
         showDateDisplay={false}
@@ -140,7 +153,7 @@ const DateRangePopup = ({
         </div>
       </div>
 
-      <div className="flex justify-end gap-2 mt-4">
+      {!autoApply && <div className="flex justify-end gap-2 mt-4">
         <button
           type="button"
           onClick={handleClear}
@@ -158,8 +171,8 @@ const DateRangePopup = ({
             if (isInvalidRange) return;
 
             onApply({
-              startDate: temp[0].startDate,
-              endDate: temp[0].endDate,
+              startDate: temp[0].startDate ?? null,
+              endDate: temp[0].endDate ?? null,
             });
           }}
           className={`
@@ -172,7 +185,7 @@ const DateRangePopup = ({
         >
           {t("apply")}
         </button>
-      </div>
+      </div>}
     </div>
   );
 };
