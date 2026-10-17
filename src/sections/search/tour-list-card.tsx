@@ -4,10 +4,11 @@ import { getUrlImage } from "@/utils/format-image";
 import { fCurrency } from "@/utils/format-number";
 import { isValidValue } from "@/utils/utilts";
 import { Clock, Flag, MapPin, Star } from "lucide-react";
-import imgDefault from "@/assets/images/default-image.jpg";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { normalizeDestinationDisplay } from "@/utils/normalize-destination-display";
+
+const TOUR_DEFAULT_IMAGE = "/image/tour.png";
 
 export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
@@ -27,11 +28,15 @@ export const TourListCard = ({ tour }: any) => {
                         tour?.strTourImageUrl === "" ||
                             (typeof tour?.strTourImageUrl === "object" &&
                                 Object.keys(tour?.strTourImageUrl).length === 0)
-                            ? imgDefault
+                            ? TOUR_DEFAULT_IMAGE
                             : getUrlImage(String(isValidValue(tour?.strTourImageUrl)))
                     }
                     alt={String(isValidValue(tour?.strTourName))}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = TOUR_DEFAULT_IMAGE;
+                    }}
                 />
 
                 {starList.length > 0 && (

@@ -26,6 +26,11 @@ const AuthUserInfo = () => {
   if (userLoading) return <div className="animate-pulse">Loading...</div>;
   if (!user) return null;
 
+  const avatarSrc =
+    typeof user.strAvatar === "string" && user.strAvatar.trim()
+      ? getUrlImage(user.strAvatar)
+      : "/image/info.png";
+
   const handleLogout = async () => {
     window.location.href = `${CONFIG.serverUrl}auth/logout`;
   };
@@ -39,19 +44,17 @@ const AuthUserInfo = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 bg-blue-50 p-2 rounded-lg hover:bg-blue-100 transition-all cursor-pointer"
       >
-        {isValidValue(user?.strAvatar) ? (
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white overflow-hidden">
-            <img
-              src={getUrlImage(isValidValue(user?.strAvatar))}
-              alt={isValidValue(user?.strAvatar)}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-8 h-8 bg-[#2566b0] rounded-full flex items-center justify-center text-white">
-            <User size={20} />
-          </div>
-        )}
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white overflow-hidden">
+          <img
+            src={avatarSrc}
+            alt="Avatar"
+            className="w-full h-full object-cover"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = "/image/info.png";
+            }}
+          />
+        </div>
 
         <span className="font-medium text-slate-700">
           {truncateText(isValidValue(user?.strFullName), 10) || "User"}
