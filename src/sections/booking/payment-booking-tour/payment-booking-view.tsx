@@ -134,14 +134,32 @@ const { paymentPreviewData, paymentPreviewLoading } = useTourPaymentPreview({
     };
   }, []);
 
-const totalDeposit = paymentPreviewData?.paymentAmount ?? 0;
-const totalDebt = paymentPreviewData?.remainingAmount ?? 0;
-  const [finalVoucherPayment] = useState(Number(price?.dblTotalPrice || 0));
+  const totalOrderPrice = Number(price?.dblTotalPrice || location.state?.totalPrice || 0);
+
+  // Tính totalDeposit (Đợt 1): Ưu tiên lấy từ paymentPreviewData?.paymentAmount nếu có, hoặc tính theo paytermData?.dblPaymentPercentage
+  const totalDeposit = useMemo(() => {
+    if (paymentPreviewData?.paymentAmount !== undefined && paymentPreviewData?.paymentAmount !== null) {
+      return Number(paymentPreviewData.paymentAmount) || 0;
+    }
+    const percent = Number(paytermData?.dblPaymentPercentage) || 0;
+    if (percent > 0 && totalOrderPrice > 0) {
+      return (totalOrderPrice * percent) / 100;
+    }
+    return 0;
+  }, [paymentPreviewData?.paymentAmount, paytermData?.dblPaymentPercentage, totalOrderPrice]);
+
+  const finalVoucherPayment = totalOrderPrice;
   const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
 
-  const finalDeposit = Math.max(totalDeposit - totalVoucherAmount, 0);
+  // Tổng tiền đơn hàng sau khi giảm trừ voucher
+  const totalAfterVoucher = Math.max(0, totalOrderPrice - totalVoucherAmount);
 
-  const finalDebt = Math.max(totalDebt - totalVoucherAmount, 0);
+  // Thanh toán đợt 1 (Prepayment / Charge): Trừ voucher tối đa về 0
+  const finalDeposit = Math.min(Math.max(0, totalDeposit - totalVoucherAmount), totalAfterVoucher);
+
+  // Thanh toán đợt 2 (Remaining Balance / Stage 2):
+  // Công thức chuẩn nghiệp vụ: calculateStage2Payment(total, charge) = Math.max(0, total - charge)
+  const finalDebt = Math.max(0, totalAfterVoucher - finalDeposit);
 
   const paymentDeadline = useMemo(() => {
     const holdHours = Number(paytermData?.intHourInHold ?? 24);
@@ -364,7 +382,7 @@ const totalDebt = paymentPreviewData?.remainingAmount ?? 0;
 
         IsTraveller: isShowTravellerForm,
 
-        intPaymentMethodID: paymentMethod === "Bank transfer" ? 1 : 2,
+        intPaymentMethodID: finalDeposit === 0 ? null : (paymentMethod === "Bank transfer" ? 1 : 2),
 
         strCompanyBankAccountGUID:
           selectedBankAccount?.strCompanyBankAccountGUID || null,
@@ -640,7 +658,7 @@ console.log("🔴 ĐANG CHẠY FILE 2 - payment-booking-view.tsx (cấp ngoài)"
         finalDebt={finalDebt}
         totalVoucherAmount={totalVoucherAmount}
         paymentMethod={paymentMethod}
-        totalPrice={price?.dblUnitPrice}
+        totalPrice={totalOrderPrice}
       />
     </div>
   );

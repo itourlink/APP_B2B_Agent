@@ -136,17 +136,22 @@ const PaymentBookingView: React.FC = () => {
     };
   }, []);
 
-  const totalDeposit =
-    Number(price?.dblTotalPrice || 0) *
-    ((Number(paytermData?.dblPaymentPercentage) || 0) / 100);
+  const totalOrderPrice = Number(price?.dblTotalPrice || location.state?.totalPrice || 0);
 
-  const totalDebt = Number(price?.dblTotalPrice || 0) - Number(totalDeposit);
-  const [finalVoucherPayment] = useState(Number(price?.dblTotalPrice || 0));
+  const totalDeposit = useMemo(() => {
+    const percent = Number(paytermData?.dblPaymentPercentage) || 0;
+    if (percent > 0 && totalOrderPrice > 0) {
+      return (totalOrderPrice * percent) / 100;
+    }
+    return 0;
+  }, [paytermData?.dblPaymentPercentage, totalOrderPrice]);
+
+  const finalVoucherPayment = totalOrderPrice;
   const [totalVoucherAmount, setTotalVoucherAmount] = useState(0);
 
-  const finalDeposit = Math.max(totalDeposit - totalVoucherAmount, 0);
-
-  const finalDebt = Math.max(totalDebt - totalVoucherAmount, 0);
+  const totalAfterVoucher = Math.max(0, totalOrderPrice - totalVoucherAmount);
+  const finalDeposit = Math.min(Math.max(0, totalDeposit - totalVoucherAmount), totalAfterVoucher);
+  const finalDebt = Math.max(0, totalAfterVoucher - finalDeposit);
 
   const paymentDeadline = useMemo(() => {
     const holdHours = Number(paytermData?.intHourInHold ?? 24);

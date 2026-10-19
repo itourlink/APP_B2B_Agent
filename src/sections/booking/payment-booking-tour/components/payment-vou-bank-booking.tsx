@@ -122,238 +122,167 @@ const PaymentVouBank = ({
 
 
             {/* Payment detail */}
+            <div className="text-xs space-y-2 pt-2">
+                <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">
+                        {t("paymentFirstInstallment")}
+                    </span>
 
-            {
-                hasPayterm ? (
-
-                    <div className="text-xs space-y-2 pt-2">
-
-                        <div className="flex justify-between items-center">
-                            <span className="font-medium text-gray-700">
-                                {t("paymentFirstInstallment")}
-                            </span>
-
-                            <span className="font-semibold text-[#1e5bb4] underline">
-                                {fCurrency(
-                                    finalDeposit,
-                                    selectedCurrency?.label
-                                )}
-                            </span>
-                        </div>
-
-
-                        <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                            {t("paymentNoticePrefix")} {paymentDeadline}{" "}
-                            {t("paymentNoticeSuffix")}
-                        </div>
-
-
-                        <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-
-                            <span className="font-medium text-gray-700">
-                                {t("paymentSecondInstallment")}
-                            </span>
-
-                            <span className="font-semibold text-gray-800">
-                                {fCurrency(
-                                    finalDebt,
-                                    selectedCurrency?.label
-                                )}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                ) : (
-
-                    <div className="text-xs space-y-2 pt-2">
-
-                        <div className="text-red-600 text-[11px] font-medium leading-relaxed">
-                            {t("prepaymentNotDue")}
-                        </div>
-
-
-                        <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
-
-                            <span className="font-medium text-gray-700">
-                                {t("payment")}
-                            </span>
-
-                            <span className="font-semibold text-gray-800">
-                                {fCurrency(
-                                    finalDebt,
-                                    selectedCurrency?.label
-                                )}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                )
-            }
-
-
-
-            {/* Payment method */}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
-
-                <div>
-
-                    <label className="block font-medium text-gray-700 mb-1.5">
-                        {t("paymentMethod")}
-                    </label>
-
-
-                    <select
-                        value={paymentMethod}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-full bg-white border border-gray-300 rounded px-3 py-2"
-                    >
-
-                        <option value="Bank transfer">
-                            {t("bankTransfer")}
-                        </option>
-
-                        <option value="Payment online">
-                            {t("paymentOnline")}
-                        </option>
-
-                    </select>
-
-
+                    <span className="font-semibold text-[#1e5bb4] underline">
+                        {fCurrency(
+                            finalDeposit,
+                            selectedCurrency?.label
+                        )}
+                    </span>
                 </div>
 
-
-
-                {paymentMethod === "Bank transfer" && (
-                    <div>
-                        <label className="block font-medium text-gray-700 mb-1.5">
-                            {t("bankAccount")}
-                        </label>
-
-                        <select
-                            value={
-                                selectedBankAccount?.strCompanyBankAccountGUID || ""
-                            }
-                            onChange={(e) => {
-                                const bank = bankAccountData?.find(
-                                    (x: any) =>
-                                        x.strCompanyBankAccountGUID === e.target.value
-                                );
-
-                                setSelectedBankAccount(bank);
-                            }}
-                            className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
-                        >
-                            {bankAccountData?.map((bank: any) => (
-                                <option
-                                    key={bank.strCompanyBankAccountGUID}
-                                    value={bank.strCompanyBankAccountGUID}
-                                >
-                                    {bank.strCompanyBankAccountName} -{" "}
-                                    {bank.strCompanyBankAccountCode}
-                                </option>
-                            ))}
-                        </select>
+                {finalDeposit === 0 ? (
+                    <div className="text-red-600 text-[11px] font-medium leading-relaxed">
+                        {t("prepaymentNotDue")}
+                    </div>
+                ) : (
+                    <div className="text-red-600 text-[11px] font-medium leading-relaxed">
+                        {t("paymentNoticePrefix")} {paymentDeadline}{" "}
+                        {t("paymentNoticeSuffix")}
                     </div>
                 )}
 
+                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-200">
+                    <span className="font-medium text-gray-700">
+                        {t("paymentSecondInstallment")}
+                    </span>
+
+                    <span className="font-semibold text-gray-800">
+                        {fCurrency(
+                            finalDebt,
+                            selectedCurrency?.label
+                        )}
+                    </span>
+                </div>
             </div>
 
+            {/* Payment method: Ẩn khi đợt 1 = 0 theo logic main.js */}
+            {finalDeposit > 0 && (
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-xs">
+                        <div>
+                            <label className="block font-medium text-gray-700 mb-1.5">
+                                {t("paymentMethod")}
+                            </label>
 
+                            <select
+                                value={paymentMethod}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="w-full bg-white border border-gray-300 rounded px-3 py-2"
+                            >
+                                <option value="Bank transfer">
+                                    {t("bankTransfer")}
+                                </option>
 
-            {/* Bank info */}
-
-            {
-                paymentMethod === "Bank transfer" && (
-
-                    <div className="border border-slate-200 rounded-lg mt-4 bg-white">
-
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-
-                            <div className="p-6 text-xs space-y-4">
-
-                                <div>
-                                    <label>
-                                        {t("accountName")}
-                                    </label>
-
-                                    <div className="font-bold">
-                                        {bankInfo.accountName}
-                                    </div>
-                                </div>
-
-
-                                <div>
-                                    <label>
-                                        {t("accountNumber")}
-                                    </label>
-
-                                    <div className="font-bold">
-                                        {bankInfo.accountNumber}
-
-                                        <button
-                                            className="ml-2"
-                                            onClick={() => {
-
-                                                navigator.clipboard.writeText(
-                                                    bankInfo.accountNumber
-                                                );
-
-                                                showToast(
-                                                    "success",
-                                                    t("copied")
-                                                );
-
-                                            }}
-                                        >
-                                            📋
-                                        </button>
-
-                                    </div>
-
-                                </div>
-
-
-
-                                <div>
-
-                                    <label>
-                                        {t("bankName")}
-                                    </label>
-
-                                    <div>
-                                        {bankInfo.bankName}
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-
-
-
-                            <div className="bg-gray-50 flex items-center justify-center p-6">
-
-                                <img
-                                    src={bankInfo.qrPlaceholder}
-                                    className="w-52 h-52 object-contain"
-                                    alt="QR"
-                                />
-
-                            </div>
-
-
+                                <option value="Payment online">
+                                    {t("paymentOnline")}
+                                </option>
+                            </select>
                         </div>
 
+                        {paymentMethod === "Bank transfer" && (
+                            <div>
+                                <label className="block font-medium text-gray-700 mb-1.5">
+                                    {t("bankAccount")}
+                                </label>
+
+                                <select
+                                    value={
+                                        selectedBankAccount?.strCompanyBankAccountGUID || ""
+                                    }
+                                    onChange={(e) => {
+                                        const bank = bankAccountData?.find(
+                                            (x: any) =>
+                                                x.strCompanyBankAccountGUID === e.target.value
+                                        );
+
+                                        setSelectedBankAccount(bank);
+                                    }}
+                                    className="w-full bg-white border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500 transition-colors"
+                                >
+                                    {bankAccountData?.map((bank: any) => (
+                                        <option
+                                            key={bank.strCompanyBankAccountGUID}
+                                            value={bank.strCompanyBankAccountGUID}
+                                        >
+                                            {bank.strCompanyBankAccountName} -{" "}
+                                            {bank.strCompanyBankAccountCode}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
 
-                )
-            }
+                    {/* Bank info */}
+                    {paymentMethod === "Bank transfer" && (
+                        <div className="border border-slate-200 rounded-lg mt-4 bg-white">
+                            <div className="grid grid-cols-1 md:grid-cols-2">
+                                <div className="p-6 text-xs space-y-4">
+                                    <div>
+                                        <label>
+                                            {t("accountName")}
+                                        </label>
+
+                                        <div className="font-bold">
+                                            {bankInfo.accountName}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label>
+                                            {t("accountNumber")}
+                                        </label>
+
+                                        <div className="font-bold">
+                                            {bankInfo.accountNumber}
+
+                                            <button
+                                                className="ml-2"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        bankInfo.accountNumber
+                                                    );
+
+                                                    showToast(
+                                                        "success",
+                                                        t("copied")
+                                                    );
+                                                }}
+                                            >
+                                                📋
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label>
+                                            {t("bankName")}
+                                        </label>
+
+                                        <div>
+                                            {bankInfo.bankName}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-gray-50 flex items-center justify-center p-6">
+                                    <img
+                                        src={bankInfo.qrPlaceholder}
+                                        className="w-52 h-52 object-contain"
+                                        alt="QR"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
 
 
 

@@ -131,7 +131,11 @@ const TourDetail = () => {
   };
   const isFixedDeparture =
     item?.item?.strLangCode === "CATEID_SETTOURFIXED" ||
-    ListData?.strLangCode === "CATEID_SETTOURFIXED";
+    ListData?.strLangCode === "CATEID_SETTOURFIXED" ||
+    Number(item?.item?.intTourTypeID) === 21 ||
+    Number(ListData?.intTourTypeID) === 21 ||
+    Number(item?.item?.intTypeTour) === 21 ||
+    Number(ListData?.intTypeTour) === 21;
 
   const includedList =
     typeof ListData?.strIncluded === "string"
