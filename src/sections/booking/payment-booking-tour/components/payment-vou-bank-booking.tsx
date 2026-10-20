@@ -13,7 +13,7 @@ interface PaymentDetailSectionProps {
     totalDeposit: number;
     setTotalVoucherAmount: (value: number) => void;
 
-    hasPayterm: boolean;
+    hasPayterm?: boolean;
     finalDeposit: number;
     finalDebt: number;
     paymentDeadline: string;
@@ -55,7 +55,6 @@ const PaymentVouBank = ({
     totalDeposit,
     setTotalVoucherAmount,
 
-    hasPayterm,
     finalDeposit,
     finalDebt,
     paymentDeadline,
