@@ -10,6 +10,7 @@ import { useListCurrency } from '@/components/currency/useListCurrency';
 import { fCurrency } from '@/utils/format-number';
 import Pagination from '@/components/pagination/pagination';
 import { normalizeDestinationDisplay } from '@/utils/normalize-destination-display';
+import { getTourType } from '@/utils/tour-type';
 
 const TourList = () => {
     const { t } = useTranslate("tour")
@@ -212,6 +213,13 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
     const { t } = useTranslate("tour");
     const router = useRouter();
     const { selectedCurrency } = useListCurrency()
+    const tourType = getTourType(tour);
+    const tourTypeLabel =
+        tourType === "fixed"
+            ? t("fixedTour")
+            : tourType === "package"
+                ? `${t("packageTour")} - FIT`
+                : `${t("dailyTour")} - FIT`;
 
     const isGrid = viewMode === "grid";
     const price = fCurrency(
@@ -272,9 +280,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                             </h3>
 
                             <span className="shrink-0 bg-[#e6f0ff] text-[#2563eb] text-xs font-semibold px-3 py-1 rounded-full">
-                                {tour?.strLangCode === "CATEID_SETTOUR"
-                                    ? t("dailyTour")
-                                    : t("package")}
+                                {tourTypeLabel}
                             </span>
                         </div>
                     )}
@@ -326,9 +332,7 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
                     {isGrid && (
                         <div className="mb-4">
                             <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
-                                {tour?.strLangCode === "CATEID_SETTOUR"
-                                    ? t("dailyTour")
-                                    : t("package")}
+                                {tourTypeLabel}
                             </span>
                         </div>
                     )}

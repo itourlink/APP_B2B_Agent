@@ -18,6 +18,9 @@ export function i18nOptions(lng = fallbackLng, ns = defaultNS) {
     defaultNS,
     fallbackNS: defaultNS,
     supportedLngs: languages,
+    react: {
+      useSuspense: false,
+    },
   };
 }
 

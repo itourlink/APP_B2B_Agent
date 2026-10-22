@@ -389,9 +389,15 @@ const PaymentBookingView: React.FC = () => {
 
         strTourGUID: item?.strTourGUID || null,
 
-        strTourPriceItemLevelGUID: price?.strTourPriceItemLevelGUID || null,
+        strTourPriceItemLevelGUID:
+          price?.strTourPriceItemLevelGUID ||
+          payloadItem?.strTourPriceItemLevelGUID ||
+          null,
 
-        strDepartureTourLevelGUID: null,
+        strDepartureTourLevelGUID:
+          payloadItem?.strDepartureTourLevelGUID ||
+          price?.strDepartureTourLevelGUID ||
+          null,
 
         intAdult: payloadItem?.intAdult || 0,
 
@@ -407,7 +413,7 @@ const PaymentBookingView: React.FC = () => {
 
         dtmDateFrom: payloadItem?.dtmDateFrom || null,
 
-        dtmDateTo: null,
+        dtmDateTo: payloadItem?.dtmDateTo || null,
 
         intCurrencyID: currencyId || 3,
 

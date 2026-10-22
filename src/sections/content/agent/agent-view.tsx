@@ -162,9 +162,6 @@ const AgentView = () => {
                                 paths.shop.home,
                                 {
                                     company: row?.strUrlLink,
-                                },
-                                {
-                                    target: "_blank",
                                 }
                             )
                         }

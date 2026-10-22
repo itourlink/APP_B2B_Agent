@@ -13,10 +13,14 @@ const ShopView = () => {
             "company"
         ) || "";
 
-    const { menuData } = useListMenu();
+    const { menuData, menuLoading } = useListMenu();
+
+    if (menuLoading) {
+        return null;
+    }
 
     const firstMenu = menuData?.find(
-        (item:any) => item?.IsShowMenu
+        (item: { IsShowMenu?: boolean }) => item?.IsShowMenu
     );
 
     const redirectPath =

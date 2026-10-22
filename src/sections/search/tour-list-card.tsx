@@ -7,6 +7,7 @@ import { Clock, Flag, MapPin, Star } from "lucide-react";
 import { useTranslate } from "@/locales";
 import { useListCurrency } from "@/components/currency/useListCurrency";
 import { normalizeDestinationDisplay } from "@/utils/normalize-destination-display";
+import { getTourType } from "@/utils/tour-type";
 
 const TOUR_DEFAULT_IMAGE = "/image/tour.png";
 
@@ -14,6 +15,13 @@ export const TourListCard = ({ tour }: any) => {
     const router = useRouter();
     const { t } = useTranslate("search");
     const { selectedCurrency } = useListCurrency()
+    const tourType = getTourType(tour);
+    const tourTypeLabel =
+        tourType === "fixed"
+            ? t("fixedTour")
+            : tourType === "package"
+                ? `${t("packageTour")} - FIT`
+                : `${t("dailyTour")} - FIT`;
 
     const starList = String(isValidValue(tour?.strListEasiaCateID || ""))
         .split(",")
@@ -103,10 +111,7 @@ export const TourListCard = ({ tour }: any) => {
                 </div>
                 <div className="mb-4">
                     <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
-                        {String(isValidValue(tour?.strLangCode)) === "CATEID_SETTOUR"
-                            ? t("dailyTour")
-                            : t("packageTour")}{" "}
-                        - {String(isValidValue(tour?.strProductName))}
+                        {tourTypeLabel}
                     </span>
                 </div>
 

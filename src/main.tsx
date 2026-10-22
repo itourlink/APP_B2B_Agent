@@ -12,7 +12,8 @@ import "react-date-range/dist/theme/default.css";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
       // gcTime: 0,
       // gcTime: 1000 * 60 * 60 * 2,
       retry: 1,

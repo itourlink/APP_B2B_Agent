@@ -88,7 +88,7 @@ const ShopHeader = () => {
         );
     };
 
-    const isPathMatch = (item: any) => {
+    const isPathMatch = (item: { match?: string[] }) => {
         // SEARCH PAGE => KHÔNG CHECK MATCH THƯỜNG
         if (isSearchPage) {
             return false;
@@ -115,6 +115,8 @@ const ShopHeader = () => {
         pathname.startsWith(paths.shop.notification.list);
 
     useEffect(() => {
+        // ShopView là nơi duy nhất điều hướng từ /shop đến menu đầu tiên.
+        if (pathname === paths.shop.home) return;
 
         // SEARCH PAGE => KHÔNG REDIRECT
         if (isSearchPage || isAgentCompanyPage || isSaleChannelPage || isCartPage || isNotificationPage) return;
@@ -139,7 +141,12 @@ const ShopHeader = () => {
         menu,
         hasActive,
         company,
+        isAgentCompanyPage,
+        isCartPage,
+        isNotificationPage,
         isSearchPage,
+        isSaleChannelPage,
+        pathname,
         router,
     ]);
 

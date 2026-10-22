@@ -1,8 +1,10 @@
 import apiClient from "@/axios";
 import { useUserStore } from "@/zustand/useUserStore";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { IUser } from "../interfaces/auth";
 import type { ApiResponseUser } from "../interfaces/axios";
+
+let hasFetchedUser = false;
 
 export const useUser = () => {
   const user = useUserStore((state) => state.user);
@@ -12,11 +14,9 @@ export const useUser = () => {
   const clearUser = useUserStore((state) => state.clearUser);
   const setLoading = useUserStore((state) => state.setLoading);
 
-  const hasFetched = useRef(false);
-
   useEffect(() => {
-    if (hasFetched.current || user !== null) return;
-    hasFetched.current = true;
+    if (hasFetchedUser || user !== null) return;
+    hasFetchedUser = true;
 
     const fetchUser = async () => {
       setLoading(true);
@@ -24,7 +24,7 @@ export const useUser = () => {
       try {
         const res = (await apiClient.get<ApiResponseUser<IUser>>(
           "user/GetMemberDetail"
-        )) as any;
+        )) as unknown as ApiResponseUser<IUser>;
 
         if (res?.isSuccess) {
           const user = res.data?.[0]?.[0] || null;
@@ -40,7 +40,7 @@ export const useUser = () => {
     };
 
     fetchUser();
-  }, [user]);
+  }, [clearUser, setLoading, setUser, user]);
 
   return { user, userLoading };
 };

@@ -8,6 +8,7 @@ import { useListCurrency } from "@/components/currency/useListCurrency";
 // import { useRouter } from "@/routes/hooks/use-router";
 import { useNavigate } from "react-router-dom";
 import { normalizeDestinationDisplay } from "@/utils/normalize-destination-display";
+import { getTourType } from "@/utils/tour-type";
 
 export const TourCard = ({ tour }: any) => {
     const { t } = useTranslate("tour");
@@ -15,6 +16,13 @@ export const TourCard = ({ tour }: any) => {
     // const router = useRouter()
     const navigate = useNavigate()
     const { selectedCurrency } = useListCurrency()
+    const tourType = getTourType(tour);
+    const tourTypeLabel =
+        tourType === "fixed"
+            ? t("fixedTour")
+            : tourType === "package"
+                ? `${t("packageTour")} - FIT`
+                : `${t("dailyTour")} - FIT`;
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
@@ -82,9 +90,7 @@ export const TourCard = ({ tour }: any) => {
                 {/* TYPE */}
                 <div className="mb-4">
                     <span className="bg-[#e6f0ff] text-[#3b82f6] text-xs font-medium px-3 py-1 rounded-full">
-                        {tour?.strLangCode === "CATEID_SETTOUR"
-                            ? t("dailyTour")
-                            : t("package")}
+                        {tourTypeLabel}
                     </span>
                 </div>
 

@@ -3,13 +3,13 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./query-keys";
 import { useListCompanyOwner } from "./useCompanyOwner";
 
-const fetchListMenu = async (body: any) => {
+const fetchListMenu = async (body: Record<string, unknown>) => {
     const res = await apiClient.post("system/GetWebMenu", body);
     return res.data;
 };
 
 export const useListMenu = () => {
-    const { coData } = useListCompanyOwner();
+    const { coData, coLoading, coError } = useListCompanyOwner();
     const companyGUID = coData?.strCompanyGUID;
 
     const query = useQuery({
@@ -26,14 +26,14 @@ export const useListMenu = () => {
         },
         enabled: !!companyGUID,
         placeholderData: keepPreviousData,
-        refetchOnMount: true,
     });
 
     const listData = query.data?.[0] ?? [];
 
     return {
         menuData: listData,
-        menuLoading: query.isLoading,
-        menuError: query.isError,
+        menuLoading:
+            coLoading || (!coError && !companyGUID) || query.isLoading,
+        menuError: coError || query.isError,
     };
 };
