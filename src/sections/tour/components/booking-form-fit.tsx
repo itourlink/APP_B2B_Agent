@@ -10,7 +10,7 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { CalendarDays, ChevronDown, ChevronUp, Filter, Users } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronUp, Filter, RotateCcw, Users } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -67,6 +67,7 @@ type FixedDeparture = {
   strEasiaCateName?: string;
   strDayStatusName?: string;
   strPaxStatusName?: string;
+  strDayStatusColorCode?: string;
   dblUnitPrice?: number;
   dblTotalPrice?: number;
   dblTotalPriceCom?: number;
@@ -211,6 +212,7 @@ const BookingFormFit = ({ item }: Props) => {
   });
   const [selectedDeparture, setSelectedDeparture] = useState<FixedDeparture | null>(null);
   const [draftDeparture, setDraftDeparture] = useState<FixedDeparture | null>(null);
+  const [expandedDates, setExpandedDates] = useState<Record<string, boolean>>({});
   const effectiveStar = selectedStar || starList[0] || "";
 
   const defaultDepartureRange = useMemo(() => {
@@ -222,6 +224,13 @@ const BookingFormFit = ({ item }: Props) => {
   }, []);
 
   const queryDateRange = useMemo(() => {
+    if (calendarOpen && calendarView === "calendar") {
+      const start = startOfWeek(startOfMonth(visibleMonth), { weekStartsOn: 1 });
+      const end = endOfWeek(endOfMonth(visibleMonth), { weekStartsOn: 1 });
+      end.setHours(23, 59, 59, 999);
+      return { start: start.getTime(), end: end.getTime() };
+    }
+
     if (appliedFilters.start && appliedFilters.end) {
       return {
         start: appliedFilters.start,
@@ -235,7 +244,7 @@ const BookingFormFit = ({ item }: Props) => {
     const end = endOfWeek(endOfMonth(visibleMonth), { weekStartsOn: 1 });
     end.setHours(23, 59, 59, 999);
     return { start: start.getTime(), end: end.getTime() };
-  }, [appliedFilters.end, appliedFilters.start, calendarOpen, defaultDepartureRange, visibleMonth]);
+  }, [appliedFilters.end, appliedFilters.start, calendarOpen, calendarView, defaultDepartureRange, visibleMonth]);
 
   const childAges = guestValue.childAges.join(",");
   const {
@@ -276,9 +285,9 @@ const BookingFormFit = ({ item }: Props) => {
   const effectiveDeparture = useMemo(() => {
     const refreshedSelectedDeparture = selectedDeparture
       ? departures.find(
-          (departure) =>
-            getDepartureKey(departure) === getDepartureKey(selectedDeparture)
-        )
+        (departure) =>
+          getDepartureKey(departure) === getDepartureKey(selectedDeparture)
+      )
       : null;
 
     return (
@@ -426,6 +435,9 @@ const BookingFormFit = ({ item }: Props) => {
       start: filterStart,
       end: filterEnd,
     });
+    if (filterStart) {
+      setVisibleMonth(startOfMonth(new Date(filterStart)));
+    }
   };
 
   const departureColumns = useMemo<ColumnDef<FixedDeparture>[]>(
@@ -448,9 +460,8 @@ const BookingFormFit = ({ item }: Props) => {
               checked={checked}
               disabled={!available}
               onChange={() => setDraftDeparture(departure)}
-              aria-label={`${t("selectDeparture")} ${
-                date ? format(date, "dd/MM/yyyy") : ""
-              }`}
+              aria-label={`${t("selectDeparture")} ${date ? format(date, "dd/MM/yyyy") : ""
+                }`}
               className="h-4 w-4 accent-[#257EF8]"
             />
           );
@@ -565,9 +576,7 @@ const BookingFormFit = ({ item }: Props) => {
             <div className="text-xs text-slate-600">
               ({t("pricePerPax")}: {fCurrency(unitPrice, selectedCurrency?.label)})
             </div>
-            <div className="text-xs text-slate-600">
-              ({t("commissionPrice")}: <span className="text-red-500">{fCurrency(commissionPrice, selectedCurrency?.label)}</span>)
-            </div>
+
           </div>
         ) : appliedFilters.start ? (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-700">
@@ -802,162 +811,145 @@ const BookingFormFit = ({ item }: Props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    setCalendarPickerMode(null);
                     setVisibleMonth((month) => subMonths(month, 1));
                   }}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-1 text-slate-700"
                 >
-                  « {t("previousMonth")}
+                  &laquo; {t("previousMonth")}
                 </button>
 
-                <div className="relative flex items-center font-semibold text-slate-700">
+                <div className="flex items-center gap-2 font-semibold text-slate-700 text-sm md:text-base">
+                  <span>
+                    {t("month")} : {format(visibleMonth, "MM")}
+                  </span>
                   <button
                     type="button"
-                    onClick={() =>
-                      setCalendarPickerMode((current) => current === "month" ? null : "month")
-                    }
-                    className="rounded-md px-2 py-1 hover:bg-slate-100"
+                    title={t("currentMonth") || "Tháng hiện tại"}
+                    onClick={() => setVisibleMonth(startOfMonth(new Date()))}
+                    className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition"
                   >
-                    {t("month")}: {format(visibleMonth, "M")}
+                    <RotateCcw size={14} />
                   </button>
                   <span>-</span>
+                  <span>
+                    {t("year")} : {format(visibleMonth, "yyyy")}
+                  </span>
                   <button
                     type="button"
-                    onClick={() => {
-                      const visibleYear = visibleMonth.getFullYear();
-                      setCalendarYearPageStart(Math.floor(visibleYear / 10) * 10);
-                      setCalendarPickerMode((current) => current === "year" ? null : "year");
-                    }}
-                    className="rounded-md px-2 py-1 hover:bg-slate-100"
+                    title={t("currentYear") || "Năm hiện tại"}
+                    onClick={() => setVisibleMonth(startOfMonth(new Date()))}
+                    className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition"
                   >
-                    {t("year")}: {format(visibleMonth, "yyyy")}
+                    <RotateCcw size={14} />
                   </button>
-
-                  {calendarPickerMode === "month" && (
-                    <div className="absolute left-1/2 top-9 z-40 grid w-[300px] -translate-x-1/2 grid-cols-3 gap-1 rounded-lg border border-slate-200 bg-white p-3 text-sm font-normal shadow-xl">
-                      {Array.from({ length: 12 }, (_, month) => (
-                        <button
-                          type="button"
-                          key={month}
-                          onClick={() => {
-                            setVisibleMonth(startOfMonth(new Date(
-                              visibleMonth.getFullYear(),
-                              month,
-                              1
-                            )));
-                            setCalendarPickerMode(null);
-                          }}
-                          className={`rounded-md px-2 py-2 ${
-                            visibleMonth.getMonth() === month
-                              ? "bg-[#2566b0] text-white"
-                              : "text-slate-700 hover:bg-blue-50"
-                          }`}
-                        >
-                          {t("month")} {month + 1}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {calendarPickerMode === "year" && (
-                    <div className="absolute left-1/2 top-9 z-40 w-[260px] -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-3 text-sm font-normal shadow-xl">
-                      <div className="mb-2 text-center font-semibold text-slate-700">
-                        {calendarYearPageStart} - {calendarYearPageStart + 9}
-                      </div>
-                      <div className="grid grid-cols-2 gap-1">
-                        {Array.from({ length: 10 }, (_, index) => {
-                          const year = calendarYearPageStart + index;
-                          return (
-                            <button
-                              type="button"
-                              key={year}
-                              onClick={() => {
-                                setVisibleMonth(startOfMonth(new Date(
-                                  year,
-                                  visibleMonth.getMonth(),
-                                  1
-                                )));
-                                setCalendarPickerMode(null);
-                              }}
-                              className={`rounded-md px-2 py-2 ${
-                                visibleMonth.getFullYear() === year
-                                  ? "bg-[#2566b0] text-white"
-                                  : "text-slate-700 hover:bg-blue-50"
-                              }`}
-                            >
-                              {year}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <div className="mt-2 flex justify-between border-t border-slate-100 pt-2">
-                        <button
-                          type="button"
-                          onClick={() => setCalendarYearPageStart((year) => year - 10)}
-                          className="rounded-md px-3 py-1.5 text-slate-600 hover:bg-slate-100"
-                        >
-                          ‹ 10
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCalendarYearPageStart((year) => year + 10)}
-                          className="rounded-md px-3 py-1.5 text-slate-600 hover:bg-slate-100"
-                        >
-                          10 ›
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <button
                   type="button"
                   onClick={() => {
-                    setCalendarPickerMode(null);
                     setVisibleMonth((month) => addMonths(month, 1));
                   }}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-1 text-slate-700"
                 >
-                  {t("nextMonth")} »
+                  {t("nextMonth")} &raquo;
                 </button>
               </div>
 
               <div className="grid grid-cols-7 border-b border-gray-200 text-center text-xs font-semibold text-[#257EF8] md:text-sm">
-                {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
-                  <div key={day} className="py-2">{t(day)}</div>
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                  <div key={day} className="py-2.5">
+                    {day}
+                  </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7">
+              <div className="grid grid-cols-7 border-l border-t border-gray-200">
                 {calendarDays.map((day) => {
-                  const dayDepartures = departuresByDay[format(day, "yyyy-MM-dd")] ?? [];
+                  const dateKey = format(day, "yyyy-MM-dd");
+                  const dayDepartures = departuresByDay[dateKey] ?? [];
                   const availableDeparture = dayDepartures.find((departure) => getRemainingPax(departure) > 0);
                   const displayedDeparture = availableDeparture ?? dayDepartures[0];
+                  const hasTour = !!displayedDeparture;
                   const isSelected = draftDeparture && getDepartureKey(draftDeparture) === getDepartureKey(displayedDeparture);
-                  const selectable = !!availableDeparture;
+                  const isAvailable = getRemainingPax(displayedDeparture) > 0;
+                  const isExpanded = !!expandedDates[dateKey];
+                  const bookingBeforeDate = getBookingBeforeDate(displayedDeparture);
+                  const dayStatusColor = displayedDeparture?.strDayStatusColorCode;
 
                   return (
-                    <button
-                      type="button"
+                    <div
                       key={day.toISOString()}
-                      disabled={!selectable}
-                      onClick={() => selectable && setDraftDeparture(availableDeparture)}
-                      className={`min-h-20 border-b border-r border-gray-200 p-1.5 text-left align-top transition md:min-h-28 md:p-2 ${!isSameMonth(day, visibleMonth) ? "bg-slate-50 text-slate-400" : "bg-white"} ${selectable ? "cursor-pointer hover:bg-blue-50" : "cursor-default"} ${isSelected ? "ring-2 ring-inset ring-[#257EF8]" : ""}`}
+                      style={{
+                        backgroundColor: dayStatusColor
+                          ? dayStatusColor
+                          : !isSameMonth(day, visibleMonth)
+                            ? "#f8fafc"
+                            : "#ffffff",
+                      }}
+                      onClick={() => {
+                        if (hasTour && isAvailable) {
+                          setDraftDeparture(displayedDeparture);
+                        }
+                      }}
+                      className={`min-h-24 md:min-h-28 border-b border-r border-gray-200 p-1.5 md:p-2 text-left align-top transition relative ${
+                        hasTour && isAvailable ? "cursor-pointer hover:opacity-95" : ""
+                      } ${isSelected ? "ring-2 ring-inset ring-[#257EF8]" : ""}`}
                     >
-                      <span className="text-sm font-semibold">{format(day, "d")}</span>
-                      {displayedDeparture && (
-                        <span className="mt-2 block text-[10px] leading-4 text-slate-600 md:text-xs">
-                          <span className="mb-1 flex gap-1">
-                            {dayDepartures.slice(0, 5).map((departure) => (
-                              <span key={getDepartureKey(departure)} className={`h-2 w-2 rounded-full ${getRemainingPax(departure) > 0 ? "border border-slate-300 bg-white" : "bg-red-300"}`} />
-                            ))}
-                          </span>
-                          <span className="block font-medium">{fCurrency(displayedDeparture?.dblUnitPrice, selectedCurrency?.label)}</span>
-                          <span className={getRemainingPax(displayedDeparture) > 0 ? "text-[#257EF8]" : "text-red-500"}>
-                            {t("remaining")}: {getRemainingPax(displayedDeparture)}
-                          </span>
+                      <div className="flex items-center gap-1.5">
+                        {hasTour && (
+                          <input
+                            type="radio"
+                            name="calendar-departure-radio"
+                            checked={!!isSelected}
+                            disabled={!isAvailable}
+                            onChange={() => setDraftDeparture(displayedDeparture)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="h-3.5 w-3.5 accent-[#257EF8] cursor-pointer"
+                          />
+                        )}
+                        <span
+                          className={`text-sm font-semibold ${
+                            !isSameMonth(day, visibleMonth)
+                              ? "text-slate-400"
+                              : "text-slate-800"
+                          }`}
+                        >
+                          {format(day, "d")}
                         </span>
+                      </div>
+
+                      {hasTour && (
+                        <div className="mt-1 space-y-0.5 text-[11px] leading-tight text-slate-700">
+                          <div className="font-bold text-slate-900">
+                            {fCurrency(displayedDeparture.dblUnitPrice, selectedCurrency?.label)}
+                          </div>
+                          <div className="text-slate-600">
+                            {t("remaining") || "Còn lại"}: <span className="font-medium">{getRemainingPax(displayedDeparture)}</span>
+                          </div>
+
+                          {bookingBeforeDate && (
+                            <div className="pt-0.5">
+                              {!isExpanded ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExpandedDates((prev) => ({ ...prev, [dateKey]: true }));
+                                  }}
+                                  className="text-[#257EF8] hover:underline text-[10px] font-medium"
+                                >
+                                  Xem thêm
+                                </button>
+                              ) : (
+                                <div className="text-[10px] text-slate-600 border-t border-slate-200/80 pt-1 mt-1 leading-normal">
+                                  <div className="font-semibold text-slate-700">Booking Before Date:</div>
+                                  <div>{format(bookingBeforeDate, "EEE, dd 'Thg' MM, yyyy")}</div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       )}
-                    </button>
+                    </div>
                   );
                 })}
               </div>

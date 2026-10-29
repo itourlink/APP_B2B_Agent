@@ -246,13 +246,19 @@ const TourItem = ({ tour, viewMode }: TourItemProps) => {
             >
                 <img
                     src={
-                        tour?.strTourImageUrl === "" ||
+                        !tour?.strTourImageUrl ||
+                            tour?.strTourImageUrl === "" ||
+                            tour?.strTourImageUrl === "---" ||
                             (typeof tour?.strTourImageUrl === "object" &&
                                 Object.keys(tour?.strTourImageUrl).length === 0)
                             ? imgDefault
                             : getUrlImage(tour?.strTourImageUrl)
                     }
                     alt={tour?.strTourName}
+                    onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = imgDefault;
+                    }}
                     className="w-full h-full object-cover hover:scale-105 transition-all duration-500"
                 />
             </div>

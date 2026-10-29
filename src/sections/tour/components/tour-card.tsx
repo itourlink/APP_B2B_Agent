@@ -38,6 +38,7 @@ export const TourCard = ({ tour }: any) => {
                     }
                     alt={isValidValue(tour?.strTourName)}
                     onError={(e) => {
+                        e.currentTarget.onerror = null;
                         e.currentTarget.src = imgDefault;
                     }}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"

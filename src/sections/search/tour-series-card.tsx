@@ -109,6 +109,10 @@ const TourSeriesCard = ({
                 <img
                     src={imageSrc}
                     alt={isValidValue(item?.strTourName)}
+                    onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = imgDefault;
+                    }}
                     className="w-full h-full object-cover rounded-xl"
                 />
             </div>

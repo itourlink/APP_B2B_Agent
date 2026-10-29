@@ -271,6 +271,7 @@ const TourDetail = () => {
                     : imgDefault
                 }
                 onError={(e) => {
+                  e.currentTarget.onerror = null;
                   e.currentTarget.src = imgDefault;
                 }}
                 className="w-full h-full object-cover"
@@ -393,9 +394,9 @@ const TourDetail = () => {
                       </div>
 
                       {isOpen ? (
-                        <ChevronUp size={18} color="#2566b0"/>
+                        <ChevronUp size={18} color="#2566b0" />
                       ) : (
-                        <ChevronDown size={18}/>
+                        <ChevronDown size={18} />
                       )}
                     </button>
 
