@@ -93,7 +93,6 @@ type GuestValue = {
 };
 
 type CalendarView = "calendar" | "list";
-type CalendarPickerMode = "month" | "year" | null;
 
 const parseApiDate = (value?: string | number | Date | null): Date | null => {
   if (value === null || value === undefined || value === "") return null;
@@ -165,10 +164,6 @@ const BookingFormFit = ({ item }: Props) => {
   const [listPage, setListPage] = useState(1);
   const listPageSize = 10;
   const [visibleMonth, setVisibleMonth] = useState(startOfMonth(new Date()));
-  const [calendarPickerMode, setCalendarPickerMode] = useState<CalendarPickerMode>(null);
-  const [calendarYearPageStart, setCalendarYearPageStart] = useState(() =>
-    Math.floor(new Date().getFullYear() / 10) * 10
-  );
   const [guestValue, setGuestValue] = useState<GuestValue>({
     rooms: 1,
     adults: 2,
@@ -331,11 +326,6 @@ const BookingFormFit = ({ item }: Props) => {
       ? Number(effectiveDeparture.dblUnitPrice) * guestValue.adults
       : item?.dblPriceFrom);
   const unitPrice = effectiveDeparture?.dblUnitPrice ?? item?.dblPriceFrom;
-  const commissionPrice =
-    effectiveDeparture?.dblTotalPriceCom ??
-    effectiveDeparture?.dblCommissionPrice ??
-    effectiveDeparture?.dblTotalExtraCommissionPrice ??
-    0;
   const remainingPax = getRemainingPax(effectiveDeparture);
 
   const { mutate: addCart, isPending: addingToCart } = useMutation({
